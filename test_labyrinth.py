@@ -3088,6 +3088,1073 @@ class executeJihad(unittest.TestCase):
 
 # Sleeper/Active cell testing
 
+	def testJihadOneCell(self):
+		app = Labyrinth(1, 1, testScenarioSetup)
+		app.map["Gulf States"].alignment = "Neutral"
+		app.map["Gulf States"].governance = 3
+		app.map["Gulf States"].sleeperCells = 1
+		app.map["Gulf States"].activeCells = 0
+		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].besieged = 0
+		app.map["Gulf States"].regimeChange = 1
+		app.map["Gulf States"].aid = 1
+		app.executeJihad("Gulf States", [3])
+		self.assertEqual(app.map["Gulf States"].governance, 3) # gov still 3
+		self.assertEqual(app.map["Gulf States"].sleeperCells, 0) # sleeper goes active
+		self.assertEqual(app.map["Gulf States"].activeCells, 1) #  sleeper goes active
+		self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
+		self.assertEqual(app.map["Gulf States"].aid, 1) # still there
+		self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
+		self.assertEqual(app.map["Gulf States"].alignment, "Neutral") # need three fails to move alingment
+		self.assertEqual(app.funding, 5)
+		self.assertEqual(app.prestige, 7)
+
+		app = Labyrinth(1, 1, testScenarioSetup)
+		app.map["Gulf States"].alignment = "Neutral"
+		app.map["Gulf States"].governance = 3
+		app.map["Gulf States"].sleeperCells = 1
+		app.map["Gulf States"].activeCells = 0
+		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].besieged = 0
+		app.map["Gulf States"].regimeChange = 1
+		app.map["Gulf States"].aid = 1
+		app.executeJihad("Gulf States", [4])
+		self.assertEqual(app.map["Gulf States"].governance, 3) # gov still 3
+		self.assertEqual(app.map["Gulf States"].sleeperCells, 0) # lose sleeper cell
+		self.assertEqual(app.map["Gulf States"].activeCells, 0) # 
+		self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
+		self.assertEqual(app.map["Gulf States"].aid, 1) # still there
+		self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
+		self.assertEqual(app.map["Gulf States"].alignment, "Neutral") # need three fails to move alingment
+		self.assertEqual(app.funding, 5)
+		self.assertEqual(app.prestige, 7)
+
+	def testJihadTwoSleeperCells(self):
+		app = Labyrinth(1, 1, testScenarioSetup)
+		app.map["Gulf States"].alignment = "Neutral"
+		app.map["Gulf States"].governance = 3
+		app.map["Gulf States"].sleeperCells = 2
+		app.map["Gulf States"].activeCells = 0
+		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].besieged = 0
+		app.map["Gulf States"].regimeChange = 1
+		app.map["Gulf States"].aid = 1
+		app.executeJihad("Gulf States", [3])
+		self.assertEqual(app.map["Gulf States"].governance, 3) # gov still 3
+		self.assertEqual(app.map["Gulf States"].sleeperCells, 1) # sleeper goes active
+		self.assertEqual(app.map["Gulf States"].activeCells, 1) # sleeper goes active
+		self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
+		self.assertEqual(app.map["Gulf States"].aid, 1) # still there
+		self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
+		self.assertEqual(app.map["Gulf States"].alignment, "Neutral") # need three fails to move alingment
+		self.assertEqual(app.funding, 5)
+		self.assertEqual(app.prestige, 7)
+
+		app = Labyrinth(1, 1, testScenarioSetup)
+		app.map["Gulf States"].alignment = "Neutral"
+		app.map["Gulf States"].governance = 3
+		app.map["Gulf States"].sleeperCells = 2
+		app.map["Gulf States"].activeCells = 0
+		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].besieged = 0
+		app.map["Gulf States"].regimeChange = 1
+		app.map["Gulf States"].aid = 1
+		app.executeJihad("Gulf States", [4])
+		self.assertEqual(app.map["Gulf States"].governance, 3) # gov still 3
+		self.assertEqual(app.map["Gulf States"].sleeperCells, 1) # lose sleeper cell
+		self.assertEqual(app.map["Gulf States"].activeCells, 0) # lose sleeper cell
+		self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
+		self.assertEqual(app.map["Gulf States"].aid, 1) # still there
+		self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
+		self.assertEqual(app.map["Gulf States"].alignment, "Neutral") # need three fails to move alingment
+		self.assertEqual(app.funding, 5)
+		self.assertEqual(app.prestige, 7)
+
+		app = Labyrinth(1, 1, testScenarioSetup)
+		app.map["Gulf States"].alignment = "Neutral"
+		app.map["Gulf States"].governance = 3
+		app.map["Gulf States"].sleeperCells = 2
+		app.map["Gulf States"].activeCells = 0
+		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].besieged = 0
+		app.map["Gulf States"].regimeChange = 1
+		app.map["Gulf States"].aid = 1
+		app.executeJihad("Gulf States", [3,3])
+		self.assertEqual(app.map["Gulf States"].governance, 3) # gov still 3
+		self.assertEqual(app.map["Gulf States"].sleeperCells, 2) 
+		self.assertEqual(app.map["Gulf States"].activeCells, 0)
+		self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
+		self.assertEqual(app.map["Gulf States"].aid, 1) # still there
+		self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
+		self.assertEqual(app.map["Gulf States"].alignment, "Neutral") # need three fails to move alingment
+		self.assertEqual(app.funding, 5)
+		self.assertEqual(app.prestige, 7)
+
+		app = Labyrinth(1, 1, testScenarioSetup)
+		app.map["Gulf States"].alignment = "Neutral"
+		app.map["Gulf States"].governance = 3
+		app.map["Gulf States"].sleeperCells = 2
+		app.map["Gulf States"].activeCells = 0
+		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].besieged = 0
+		app.map["Gulf States"].regimeChange = 1
+		app.map["Gulf States"].aid = 1
+		app.executeJihad("Gulf States", [3,4])
+		self.assertEqual(app.map["Gulf States"].governance, 3) # gov still 3
+		self.assertEqual(app.map["Gulf States"].sleeperCells, 1) 
+		self.assertEqual(app.map["Gulf States"].activeCells, 0)
+		self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
+		self.assertEqual(app.map["Gulf States"].aid, 1) # still there
+		self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
+		self.assertEqual(app.map["Gulf States"].alignment, "Neutral") # need three fails to move alingment
+		self.assertEqual(app.funding, 5)
+		self.assertEqual(app.prestige, 7)
+
+		app = Labyrinth(1, 1, testScenarioSetup)
+		app.map["Gulf States"].alignment = "Neutral"
+		app.map["Gulf States"].governance = 3
+		app.map["Gulf States"].sleeperCells = 2
+		app.map["Gulf States"].activeCells = 0
+		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].besieged = 0
+		app.map["Gulf States"].regimeChange = 1
+		app.map["Gulf States"].aid = 1
+		app.executeJihad("Gulf States", [4,4])
+		self.assertEqual(app.map["Gulf States"].governance, 3) # gov still 3
+		self.assertEqual(app.map["Gulf States"].sleeperCells, 0) 
+		self.assertEqual(app.map["Gulf States"].activeCells, 0)
+		self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
+		self.assertEqual(app.map["Gulf States"].aid, 1) # still there
+		self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
+		self.assertEqual(app.map["Gulf States"].alignment, "Neutral") # need three fails to move alingment
+		self.assertEqual(app.funding, 5)
+		self.assertEqual(app.prestige, 7)
+
+	def testJihadTwoActiveCells(self):
+		app = Labyrinth(1, 1, testScenarioSetup)
+		app.map["Gulf States"].alignment = "Neutral"
+		app.map["Gulf States"].governance = 3
+		app.map["Gulf States"].sleeperCells = 0
+		app.map["Gulf States"].activeCells = 2
+		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].besieged = 0
+		app.map["Gulf States"].regimeChange = 1
+		app.map["Gulf States"].aid = 1
+		app.executeJihad("Gulf States", [3])
+		self.assertEqual(app.map["Gulf States"].governance, 3) # gov still 3
+		self.assertEqual(app.map["Gulf States"].sleeperCells, 0) 
+		self.assertEqual(app.map["Gulf States"].activeCells, 2)
+		self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
+		self.assertEqual(app.map["Gulf States"].aid, 1) # still there
+		self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
+		self.assertEqual(app.map["Gulf States"].alignment, "Neutral") # need three fails to move alingment
+		self.assertEqual(app.funding, 5)
+		self.assertEqual(app.prestige, 7)
+
+		app = Labyrinth(1, 1, testScenarioSetup)
+		app.map["Gulf States"].alignment = "Neutral"
+		app.map["Gulf States"].governance = 3
+		app.map["Gulf States"].sleeperCells = 0
+		app.map["Gulf States"].activeCells = 2
+		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].besieged = 0
+		app.map["Gulf States"].regimeChange = 1
+		app.map["Gulf States"].aid = 1
+		app.executeJihad("Gulf States", [4])
+		self.assertEqual(app.map["Gulf States"].governance, 3) # gov still 3
+		self.assertEqual(app.map["Gulf States"].sleeperCells, 0)
+		self.assertEqual(app.map["Gulf States"].activeCells, 1)
+		self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
+		self.assertEqual(app.map["Gulf States"].aid, 1) # still there
+		self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
+		self.assertEqual(app.map["Gulf States"].alignment, "Neutral") # need three fails to move alingment
+		self.assertEqual(app.funding, 5)
+		self.assertEqual(app.prestige, 7)
+
+		app = Labyrinth(1, 1, testScenarioSetup)
+		app.map["Gulf States"].alignment = "Neutral"
+		app.map["Gulf States"].governance = 3
+		app.map["Gulf States"].sleeperCells = 0
+		app.map["Gulf States"].activeCells = 2
+		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].besieged = 0
+		app.map["Gulf States"].regimeChange = 1
+		app.map["Gulf States"].aid = 1
+		app.executeJihad("Gulf States", [3,3])
+		self.assertEqual(app.map["Gulf States"].governance, 3) # gov still 3
+		self.assertEqual(app.map["Gulf States"].sleeperCells, 0) 
+		self.assertEqual(app.map["Gulf States"].activeCells, 2)
+		self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
+		self.assertEqual(app.map["Gulf States"].aid, 1) # still there
+		self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
+		self.assertEqual(app.map["Gulf States"].alignment, "Neutral") # need three fails to move alingment
+		self.assertEqual(app.funding, 5)
+		self.assertEqual(app.prestige, 7)
+
+		app = Labyrinth(1, 1, testScenarioSetup)
+		app.map["Gulf States"].alignment = "Neutral"
+		app.map["Gulf States"].governance = 3
+		app.map["Gulf States"].sleeperCells = 0
+		app.map["Gulf States"].activeCells = 2
+		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].besieged = 0
+		app.map["Gulf States"].regimeChange = 1
+		app.map["Gulf States"].aid = 1
+		app.executeJihad("Gulf States", [3,4])
+		self.assertEqual(app.map["Gulf States"].governance, 3) # gov still 3
+		self.assertEqual(app.map["Gulf States"].sleeperCells, 0) 
+		self.assertEqual(app.map["Gulf States"].activeCells, 1)
+		self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
+		self.assertEqual(app.map["Gulf States"].aid, 1) # still there
+		self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
+		self.assertEqual(app.map["Gulf States"].alignment, "Neutral") # need three fails to move alingment
+		self.assertEqual(app.funding, 5)
+		self.assertEqual(app.prestige, 7)
+
+		app = Labyrinth(1, 1, testScenarioSetup)
+		app.map["Gulf States"].alignment = "Neutral"
+		app.map["Gulf States"].governance = 3
+		app.map["Gulf States"].sleeperCells = 0
+		app.map["Gulf States"].activeCells = 2
+		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].besieged = 0
+		app.map["Gulf States"].regimeChange = 1
+		app.map["Gulf States"].aid = 1
+		app.executeJihad("Gulf States", [4,4])
+		self.assertEqual(app.map["Gulf States"].governance, 3) # gov still 3
+		self.assertEqual(app.map["Gulf States"].sleeperCells, 0) 
+		self.assertEqual(app.map["Gulf States"].activeCells, 0)
+		self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
+		self.assertEqual(app.map["Gulf States"].aid, 1) # still there
+		self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
+		self.assertEqual(app.map["Gulf States"].alignment, "Neutral") # need three fails to move alingment
+		self.assertEqual(app.funding, 5)
+		self.assertEqual(app.prestige, 7)
+
+	def testJihadOneSleeperOneActiveCells(self):
+		app = Labyrinth(1, 1, testScenarioSetup)
+		app.map["Gulf States"].alignment = "Neutral"
+		app.map["Gulf States"].governance = 3
+		app.map["Gulf States"].sleeperCells = 1
+		app.map["Gulf States"].activeCells = 1
+		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].besieged = 0
+		app.map["Gulf States"].regimeChange = 1
+		app.map["Gulf States"].aid = 1
+		app.executeJihad("Gulf States", [3])
+		self.assertEqual(app.map["Gulf States"].governance, 3) # gov still 3
+		self.assertEqual(app.map["Gulf States"].sleeperCells, 1) 
+		self.assertEqual(app.map["Gulf States"].activeCells, 1)
+		self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
+		self.assertEqual(app.map["Gulf States"].aid, 1) # still there
+		self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
+		self.assertEqual(app.map["Gulf States"].alignment, "Neutral") # need three fails to move alingment
+		self.assertEqual(app.funding, 5)
+		self.assertEqual(app.prestige, 7)
+
+		app = Labyrinth(1, 1, testScenarioSetup)
+		app.map["Gulf States"].alignment = "Neutral"
+		app.map["Gulf States"].governance = 3
+		app.map["Gulf States"].sleeperCells = 1
+		app.map["Gulf States"].activeCells = 1
+		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].besieged = 0
+		app.map["Gulf States"].regimeChange = 1
+		app.map["Gulf States"].aid = 1
+		app.executeJihad("Gulf States", [4])
+		self.assertEqual(app.map["Gulf States"].governance, 3) # gov still 3
+		self.assertEqual(app.map["Gulf States"].sleeperCells, 1)
+		self.assertEqual(app.map["Gulf States"].activeCells, 0)
+		self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
+		self.assertEqual(app.map["Gulf States"].aid, 1) # still there
+		self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
+		self.assertEqual(app.map["Gulf States"].alignment, "Neutral") # need three fails to move alingment
+		self.assertEqual(app.funding, 5)
+		self.assertEqual(app.prestige, 7)
+
+		app = Labyrinth(1, 1, testScenarioSetup)
+		app.map["Gulf States"].alignment = "Neutral"
+		app.map["Gulf States"].governance = 3
+		app.map["Gulf States"].sleeperCells = 1
+		app.map["Gulf States"].activeCells = 1
+		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].besieged = 0
+		app.map["Gulf States"].regimeChange = 1
+		app.map["Gulf States"].aid = 1
+		app.executeJihad("Gulf States", [3,3])
+		self.assertEqual(app.map["Gulf States"].governance, 3) # gov still 3
+		self.assertEqual(app.map["Gulf States"].sleeperCells, 1) 
+		self.assertEqual(app.map["Gulf States"].activeCells, 1)
+		self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
+		self.assertEqual(app.map["Gulf States"].aid, 1) # still there
+		self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
+		self.assertEqual(app.map["Gulf States"].alignment, "Neutral") # need three fails to move alingment
+		self.assertEqual(app.funding, 5)
+		self.assertEqual(app.prestige, 7)
+
+		app = Labyrinth(1, 1, testScenarioSetup)
+		app.map["Gulf States"].alignment = "Neutral"
+		app.map["Gulf States"].governance = 3
+		app.map["Gulf States"].sleeperCells = 1
+		app.map["Gulf States"].activeCells = 1
+		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].besieged = 0
+		app.map["Gulf States"].regimeChange = 1
+		app.map["Gulf States"].aid = 1
+		app.executeJihad("Gulf States", [3,4])
+		self.assertEqual(app.map["Gulf States"].governance, 3) # gov still 3
+		self.assertEqual(app.map["Gulf States"].sleeperCells, 1) 
+		self.assertEqual(app.map["Gulf States"].activeCells, 0)
+		self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
+		self.assertEqual(app.map["Gulf States"].aid, 1) # still there
+		self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
+		self.assertEqual(app.map["Gulf States"].alignment, "Neutral") # need three fails to move alingment
+		self.assertEqual(app.funding, 5)
+		self.assertEqual(app.prestige, 7)
+
+		app = Labyrinth(1, 1, testScenarioSetup)
+		app.map["Gulf States"].alignment = "Neutral"
+		app.map["Gulf States"].governance = 3
+		app.map["Gulf States"].sleeperCells = 1
+		app.map["Gulf States"].activeCells = 1
+		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].besieged = 0
+		app.map["Gulf States"].regimeChange = 1
+		app.map["Gulf States"].aid = 1
+		app.executeJihad("Gulf States", [4,4])
+		self.assertEqual(app.map["Gulf States"].governance, 3) # gov still 3
+		self.assertEqual(app.map["Gulf States"].sleeperCells, 0) 
+		self.assertEqual(app.map["Gulf States"].activeCells, 0)
+		self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
+		self.assertEqual(app.map["Gulf States"].aid, 1) # still there
+		self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
+		self.assertEqual(app.map["Gulf States"].alignment, "Neutral") # need three fails to move alingment
+		self.assertEqual(app.funding, 5)
+		self.assertEqual(app.prestige, 7)
+
+	def testJihadThreeSleeperCells(self):
+		app = Labyrinth(1, 1, testScenarioSetup)
+		app.map["Gulf States"].alignment = "Neutral"
+		app.map["Gulf States"].governance = 3
+		app.map["Gulf States"].sleeperCells = 3
+		app.map["Gulf States"].activeCells = 0
+		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].besieged = 0
+		app.map["Gulf States"].regimeChange = 1
+		app.map["Gulf States"].aid = 1
+		app.executeJihad("Gulf States", [3])
+		self.assertEqual(app.map["Gulf States"].governance, 3) # gov still 3
+		self.assertEqual(app.map["Gulf States"].sleeperCells, 2) 
+		self.assertEqual(app.map["Gulf States"].activeCells, 1) 
+		self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
+		self.assertEqual(app.map["Gulf States"].aid, 1) # still there
+		self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
+		self.assertEqual(app.map["Gulf States"].alignment, "Neutral") # need three fails to move alingment
+		self.assertEqual(app.funding, 5)
+		self.assertEqual(app.prestige, 7)
+
+		app = Labyrinth(1, 1, testScenarioSetup)
+		app.map["Gulf States"].alignment = "Neutral"
+		app.map["Gulf States"].governance = 3
+		app.map["Gulf States"].sleeperCells = 3
+		app.map["Gulf States"].activeCells = 0
+		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].besieged = 0
+		app.map["Gulf States"].regimeChange = 1
+		app.map["Gulf States"].aid = 1
+		app.executeJihad("Gulf States", [4])
+		self.assertEqual(app.map["Gulf States"].governance, 3) # gov still 3
+		self.assertEqual(app.map["Gulf States"].sleeperCells, 2)
+		self.assertEqual(app.map["Gulf States"].activeCells, 0)
+		self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
+		self.assertEqual(app.map["Gulf States"].aid, 1) # still there
+		self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
+		self.assertEqual(app.map["Gulf States"].alignment, "Neutral") # need three fails to move alingment
+		self.assertEqual(app.funding, 5)
+		self.assertEqual(app.prestige, 7)
+
+		app = Labyrinth(1, 1, testScenarioSetup)
+		app.map["Gulf States"].alignment = "Neutral"
+		app.map["Gulf States"].governance = 3
+		app.map["Gulf States"].sleeperCells = 3
+		app.map["Gulf States"].activeCells = 0
+		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].besieged = 0
+		app.map["Gulf States"].regimeChange = 1
+		app.map["Gulf States"].aid = 1
+		app.executeJihad("Gulf States", [3,3])
+		self.assertEqual(app.map["Gulf States"].governance, 3) # gov still 3
+		self.assertEqual(app.map["Gulf States"].sleeperCells, 1) 
+		self.assertEqual(app.map["Gulf States"].activeCells, 2)
+		self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
+		self.assertEqual(app.map["Gulf States"].aid, 1) # still there
+		self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
+		self.assertEqual(app.map["Gulf States"].alignment, "Neutral") # need three fails to move alingment
+		self.assertEqual(app.funding, 5)
+		self.assertEqual(app.prestige, 7)
+
+		app = Labyrinth(1, 1, testScenarioSetup)
+		app.map["Gulf States"].alignment = "Neutral"
+		app.map["Gulf States"].governance = 3
+		app.map["Gulf States"].sleeperCells = 3
+		app.map["Gulf States"].activeCells = 0
+		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].besieged = 0
+		app.map["Gulf States"].regimeChange = 1
+		app.map["Gulf States"].aid = 1
+		app.executeJihad("Gulf States", [3,4])
+		self.assertEqual(app.map["Gulf States"].governance, 3) # gov still 3
+		self.assertEqual(app.map["Gulf States"].sleeperCells, 1) 
+		self.assertEqual(app.map["Gulf States"].activeCells, 1)
+		self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
+		self.assertEqual(app.map["Gulf States"].aid, 1) # still there
+		self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
+		self.assertEqual(app.map["Gulf States"].alignment, "Neutral") # need three fails to move alingment
+		self.assertEqual(app.funding, 5)
+		self.assertEqual(app.prestige, 7)
+
+		app = Labyrinth(1, 1, testScenarioSetup)
+		app.map["Gulf States"].alignment = "Neutral"
+		app.map["Gulf States"].governance = 3
+		app.map["Gulf States"].sleeperCells = 3
+		app.map["Gulf States"].activeCells = 0
+		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].besieged = 0
+		app.map["Gulf States"].regimeChange = 1
+		app.map["Gulf States"].aid = 1
+		app.executeJihad("Gulf States", [4,4])
+		self.assertEqual(app.map["Gulf States"].governance, 3) # gov still 3
+		self.assertEqual(app.map["Gulf States"].sleeperCells, 1) 
+		self.assertEqual(app.map["Gulf States"].activeCells, 0)
+		self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
+		self.assertEqual(app.map["Gulf States"].aid, 1) # still there
+		self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
+		self.assertEqual(app.map["Gulf States"].alignment, "Neutral") # need three fails to move alingment
+		self.assertEqual(app.funding, 5)
+		self.assertEqual(app.prestige, 7)
+
+		app = Labyrinth(1, 1, testScenarioSetup)
+		app.map["Gulf States"].alignment = "Neutral"
+		app.map["Gulf States"].governance = 3
+		app.map["Gulf States"].sleeperCells = 3
+		app.map["Gulf States"].activeCells = 0
+		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].besieged = 0
+		app.map["Gulf States"].regimeChange = 1
+		app.map["Gulf States"].aid = 1
+		app.executeJihad("Gulf States", [3,3,3])
+		self.assertEqual(app.map["Gulf States"].governance, 3) # gov still 3
+		self.assertEqual(app.map["Gulf States"].sleeperCells, 0) 
+		self.assertEqual(app.map["Gulf States"].activeCells, 3)
+		self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
+		self.assertEqual(app.map["Gulf States"].aid, 1) # still there
+		self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
+		self.assertEqual(app.map["Gulf States"].alignment, "Neutral") # need three fails to move alingment
+		self.assertEqual(app.funding, 5)
+		self.assertEqual(app.prestige, 7)
+
+		app = Labyrinth(1, 1, testScenarioSetup)
+		app.map["Gulf States"].alignment = "Neutral"
+		app.map["Gulf States"].governance = 3
+		app.map["Gulf States"].sleeperCells = 3
+		app.map["Gulf States"].activeCells = 0
+		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].besieged = 0
+		app.map["Gulf States"].regimeChange = 1
+		app.map["Gulf States"].aid = 1
+		app.executeJihad("Gulf States", [3,3,4])
+		self.assertEqual(app.map["Gulf States"].governance, 3) # gov still 3
+		self.assertEqual(app.map["Gulf States"].sleeperCells, 0) 
+		self.assertEqual(app.map["Gulf States"].activeCells, 2)
+		self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
+		self.assertEqual(app.map["Gulf States"].aid, 1) # still there
+		self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
+		self.assertEqual(app.map["Gulf States"].alignment, "Neutral") # need three fails to move alingment
+		self.assertEqual(app.funding, 5)
+		self.assertEqual(app.prestige, 7)
+
+		app = Labyrinth(1, 1, testScenarioSetup)
+		app.map["Gulf States"].alignment = "Neutral"
+		app.map["Gulf States"].governance = 3
+		app.map["Gulf States"].sleeperCells = 3
+		app.map["Gulf States"].activeCells = 0
+		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].besieged = 0
+		app.map["Gulf States"].regimeChange = 1
+		app.map["Gulf States"].aid = 1
+		app.executeJihad("Gulf States", [3,4,4])
+		self.assertEqual(app.map["Gulf States"].governance, 3) # gov still 3
+		self.assertEqual(app.map["Gulf States"].sleeperCells, 0) 
+		self.assertEqual(app.map["Gulf States"].activeCells, 1)
+		self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
+		self.assertEqual(app.map["Gulf States"].aid, 1) # still there
+		self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
+		self.assertEqual(app.map["Gulf States"].alignment, "Neutral") # need three fails to move alingment
+		self.assertEqual(app.funding, 5)
+		self.assertEqual(app.prestige, 7)
+
+		app = Labyrinth(1, 1, testScenarioSetup)
+		app.map["Gulf States"].alignment = "Neutral"
+		app.map["Gulf States"].governance = 3
+		app.map["Gulf States"].sleeperCells = 3
+		app.map["Gulf States"].activeCells = 0
+		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].besieged = 0
+		app.map["Gulf States"].regimeChange = 1
+		app.map["Gulf States"].aid = 1
+		app.executeJihad("Gulf States", [4,4,4])
+		self.assertEqual(app.map["Gulf States"].governance, 3) # gov still 3
+		self.assertEqual(app.map["Gulf States"].sleeperCells, 0) 
+		self.assertEqual(app.map["Gulf States"].activeCells, 0)
+		self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
+		self.assertEqual(app.map["Gulf States"].aid, 1) # still there
+		self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
+		self.assertEqual(app.map["Gulf States"].alignment, "Neutral") # need three fails to move alingment
+		self.assertEqual(app.funding, 5)
+		self.assertEqual(app.prestige, 7)
+
+	def testJihadTwoSleeperOneActiveCells(self):
+		app = Labyrinth(1, 1, testScenarioSetup)
+		app.map["Gulf States"].alignment = "Neutral"
+		app.map["Gulf States"].governance = 3
+		app.map["Gulf States"].sleeperCells = 2
+		app.map["Gulf States"].activeCells = 1
+		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].besieged = 0
+		app.map["Gulf States"].regimeChange = 1
+		app.map["Gulf States"].aid = 1
+		app.executeJihad("Gulf States", [3])
+		self.assertEqual(app.map["Gulf States"].governance, 3) # gov still 3
+		self.assertEqual(app.map["Gulf States"].sleeperCells, 2) 
+		self.assertEqual(app.map["Gulf States"].activeCells, 1) 
+		self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
+		self.assertEqual(app.map["Gulf States"].aid, 1) # still there
+		self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
+		self.assertEqual(app.map["Gulf States"].alignment, "Neutral") # need three fails to move alingment
+		self.assertEqual(app.funding, 5)
+		self.assertEqual(app.prestige, 7)
+
+		app = Labyrinth(1, 1, testScenarioSetup)
+		app.map["Gulf States"].alignment = "Neutral"
+		app.map["Gulf States"].governance = 3
+		app.map["Gulf States"].sleeperCells = 2
+		app.map["Gulf States"].activeCells = 1
+		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].besieged = 0
+		app.map["Gulf States"].regimeChange = 1
+		app.map["Gulf States"].aid = 1
+		app.executeJihad("Gulf States", [4])
+		self.assertEqual(app.map["Gulf States"].governance, 3) # gov still 3
+		self.assertEqual(app.map["Gulf States"].sleeperCells, 2)
+		self.assertEqual(app.map["Gulf States"].activeCells, 0)
+		self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
+		self.assertEqual(app.map["Gulf States"].aid, 1) # still there
+		self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
+		self.assertEqual(app.map["Gulf States"].alignment, "Neutral") # need three fails to move alingment
+		self.assertEqual(app.funding, 5)
+		self.assertEqual(app.prestige, 7)
+
+		app = Labyrinth(1, 1, testScenarioSetup)
+		app.map["Gulf States"].alignment = "Neutral"
+		app.map["Gulf States"].governance = 3
+		app.map["Gulf States"].sleeperCells = 2
+		app.map["Gulf States"].activeCells = 1
+		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].besieged = 0
+		app.map["Gulf States"].regimeChange = 1
+		app.map["Gulf States"].aid = 1
+		app.executeJihad("Gulf States", [3,3])
+		self.assertEqual(app.map["Gulf States"].governance, 3) # gov still 3
+		self.assertEqual(app.map["Gulf States"].sleeperCells, 1) 
+		self.assertEqual(app.map["Gulf States"].activeCells, 2)
+		self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
+		self.assertEqual(app.map["Gulf States"].aid, 1) # still there
+		self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
+		self.assertEqual(app.map["Gulf States"].alignment, "Neutral") # need three fails to move alingment
+		self.assertEqual(app.funding, 5)
+		self.assertEqual(app.prestige, 7)
+
+		app = Labyrinth(1, 1, testScenarioSetup)
+		app.map["Gulf States"].alignment = "Neutral"
+		app.map["Gulf States"].governance = 3
+		app.map["Gulf States"].sleeperCells = 2
+		app.map["Gulf States"].activeCells = 1
+		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].besieged = 0
+		app.map["Gulf States"].regimeChange = 1
+		app.map["Gulf States"].aid = 1
+		app.executeJihad("Gulf States", [3,4])
+		self.assertEqual(app.map["Gulf States"].governance, 3) # gov still 3
+		self.assertEqual(app.map["Gulf States"].sleeperCells, 1) 
+		self.assertEqual(app.map["Gulf States"].activeCells, 1)
+		self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
+		self.assertEqual(app.map["Gulf States"].aid, 1) # still there
+		self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
+		self.assertEqual(app.map["Gulf States"].alignment, "Neutral") # need three fails to move alingment
+		self.assertEqual(app.funding, 5)
+		self.assertEqual(app.prestige, 7)
+
+		app = Labyrinth(1, 1, testScenarioSetup)
+		app.map["Gulf States"].alignment = "Neutral"
+		app.map["Gulf States"].governance = 3
+		app.map["Gulf States"].sleeperCells = 2
+		app.map["Gulf States"].activeCells = 1
+		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].besieged = 0
+		app.map["Gulf States"].regimeChange = 1
+		app.map["Gulf States"].aid = 1
+		app.executeJihad("Gulf States", [4,4])
+		self.assertEqual(app.map["Gulf States"].governance, 3) # gov still 3
+		self.assertEqual(app.map["Gulf States"].sleeperCells, 1) 
+		self.assertEqual(app.map["Gulf States"].activeCells, 0)
+		self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
+		self.assertEqual(app.map["Gulf States"].aid, 1) # still there
+		self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
+		self.assertEqual(app.map["Gulf States"].alignment, "Neutral") # need three fails to move alingment
+		self.assertEqual(app.funding, 5)
+		self.assertEqual(app.prestige, 7)
+
+		app = Labyrinth(1, 1, testScenarioSetup)
+		app.map["Gulf States"].alignment = "Neutral"
+		app.map["Gulf States"].governance = 3
+		app.map["Gulf States"].sleeperCells = 2
+		app.map["Gulf States"].activeCells = 1
+		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].besieged = 0
+		app.map["Gulf States"].regimeChange = 1
+		app.map["Gulf States"].aid = 1
+		app.executeJihad("Gulf States", [3,3,3])
+		self.assertEqual(app.map["Gulf States"].governance, 3) # gov still 3
+		self.assertEqual(app.map["Gulf States"].sleeperCells, 0) 
+		self.assertEqual(app.map["Gulf States"].activeCells, 3)
+		self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
+		self.assertEqual(app.map["Gulf States"].aid, 1) # still there
+		self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
+		self.assertEqual(app.map["Gulf States"].alignment, "Neutral") # need three fails to move alingment
+		self.assertEqual(app.funding, 5)
+		self.assertEqual(app.prestige, 7)
+
+		app = Labyrinth(1, 1, testScenarioSetup)
+		app.map["Gulf States"].alignment = "Neutral"
+		app.map["Gulf States"].governance = 3
+		app.map["Gulf States"].sleeperCells = 2
+		app.map["Gulf States"].activeCells = 1
+		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].besieged = 0
+		app.map["Gulf States"].regimeChange = 1
+		app.map["Gulf States"].aid = 1
+		app.executeJihad("Gulf States", [3,3,4])
+		self.assertEqual(app.map["Gulf States"].governance, 3) # gov still 3
+		self.assertEqual(app.map["Gulf States"].sleeperCells, 0) 
+		self.assertEqual(app.map["Gulf States"].activeCells, 2)
+		self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
+		self.assertEqual(app.map["Gulf States"].aid, 1) # still there
+		self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
+		self.assertEqual(app.map["Gulf States"].alignment, "Neutral") # need three fails to move alingment
+		self.assertEqual(app.funding, 5)
+		self.assertEqual(app.prestige, 7)
+
+		app = Labyrinth(1, 1, testScenarioSetup)
+		app.map["Gulf States"].alignment = "Neutral"
+		app.map["Gulf States"].governance = 3
+		app.map["Gulf States"].sleeperCells = 2
+		app.map["Gulf States"].activeCells = 1
+		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].besieged = 0
+		app.map["Gulf States"].regimeChange = 1
+		app.map["Gulf States"].aid = 1
+		app.executeJihad("Gulf States", [3,4,4])
+		self.assertEqual(app.map["Gulf States"].governance, 3) # gov still 3
+		self.assertEqual(app.map["Gulf States"].sleeperCells, 0) 
+		self.assertEqual(app.map["Gulf States"].activeCells, 1)
+		self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
+		self.assertEqual(app.map["Gulf States"].aid, 1) # still there
+		self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
+		self.assertEqual(app.map["Gulf States"].alignment, "Neutral") # need three fails to move alingment
+		self.assertEqual(app.funding, 5)
+		self.assertEqual(app.prestige, 7)
+
+		app = Labyrinth(1, 1, testScenarioSetup)
+		app.map["Gulf States"].alignment = "Neutral"
+		app.map["Gulf States"].governance = 3
+		app.map["Gulf States"].sleeperCells = 2
+		app.map["Gulf States"].activeCells = 1
+		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].besieged = 0
+		app.map["Gulf States"].regimeChange = 1
+		app.map["Gulf States"].aid = 1
+		app.executeJihad("Gulf States", [4,4,4])
+		self.assertEqual(app.map["Gulf States"].governance, 3) # gov still 3
+		self.assertEqual(app.map["Gulf States"].sleeperCells, 0) 
+		self.assertEqual(app.map["Gulf States"].activeCells, 0)
+		self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
+		self.assertEqual(app.map["Gulf States"].aid, 1) # still there
+		self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
+		self.assertEqual(app.map["Gulf States"].alignment, "Neutral") # need three fails to move alingment
+		self.assertEqual(app.funding, 5)
+		self.assertEqual(app.prestige, 7)
+
+	def testJihadOneSleeperTwoActiveCells(self):
+		app = Labyrinth(1, 1, testScenarioSetup)
+		app.map["Gulf States"].alignment = "Neutral"
+		app.map["Gulf States"].governance = 3
+		app.map["Gulf States"].sleeperCells = 1
+		app.map["Gulf States"].activeCells = 2
+		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].besieged = 0
+		app.map["Gulf States"].regimeChange = 1
+		app.map["Gulf States"].aid = 1
+		app.executeJihad("Gulf States", [3])
+		self.assertEqual(app.map["Gulf States"].governance, 3) # gov still 3
+		self.assertEqual(app.map["Gulf States"].sleeperCells, 1) 
+		self.assertEqual(app.map["Gulf States"].activeCells, 2) 
+		self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
+		self.assertEqual(app.map["Gulf States"].aid, 1) # still there
+		self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
+		self.assertEqual(app.map["Gulf States"].alignment, "Neutral") # need three fails to move alingment
+		self.assertEqual(app.funding, 5)
+		self.assertEqual(app.prestige, 7)
+
+		app = Labyrinth(1, 1, testScenarioSetup)
+		app.map["Gulf States"].alignment = "Neutral"
+		app.map["Gulf States"].governance = 3
+		app.map["Gulf States"].sleeperCells = 1
+		app.map["Gulf States"].activeCells = 2
+		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].besieged = 0
+		app.map["Gulf States"].regimeChange = 1
+		app.map["Gulf States"].aid = 1
+		app.executeJihad("Gulf States", [4])
+		self.assertEqual(app.map["Gulf States"].governance, 3) # gov still 3
+		self.assertEqual(app.map["Gulf States"].sleeperCells, 1)
+		self.assertEqual(app.map["Gulf States"].activeCells, 1)
+		self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
+		self.assertEqual(app.map["Gulf States"].aid, 1) # still there
+		self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
+		self.assertEqual(app.map["Gulf States"].alignment, "Neutral") # need three fails to move alingment
+		self.assertEqual(app.funding, 5)
+		self.assertEqual(app.prestige, 7)
+
+		app = Labyrinth(1, 1, testScenarioSetup)
+		app.map["Gulf States"].alignment = "Neutral"
+		app.map["Gulf States"].governance = 3
+		app.map["Gulf States"].sleeperCells = 1
+		app.map["Gulf States"].activeCells = 2
+		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].besieged = 0
+		app.map["Gulf States"].regimeChange = 1
+		app.map["Gulf States"].aid = 1
+		app.executeJihad("Gulf States", [3,3])
+		self.assertEqual(app.map["Gulf States"].governance, 3) # gov still 3
+		self.assertEqual(app.map["Gulf States"].sleeperCells, 1) 
+		self.assertEqual(app.map["Gulf States"].activeCells, 2)
+		self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
+		self.assertEqual(app.map["Gulf States"].aid, 1) # still there
+		self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
+		self.assertEqual(app.map["Gulf States"].alignment, "Neutral") # need three fails to move alingment
+		self.assertEqual(app.funding, 5)
+		self.assertEqual(app.prestige, 7)
+
+		app = Labyrinth(1, 1, testScenarioSetup)
+		app.map["Gulf States"].alignment = "Neutral"
+		app.map["Gulf States"].governance = 3
+		app.map["Gulf States"].sleeperCells = 1
+		app.map["Gulf States"].activeCells = 2
+		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].besieged = 0
+		app.map["Gulf States"].regimeChange = 1
+		app.map["Gulf States"].aid = 1
+		app.executeJihad("Gulf States", [3,4])
+		self.assertEqual(app.map["Gulf States"].governance, 3) # gov still 3
+		self.assertEqual(app.map["Gulf States"].sleeperCells, 1) 
+		self.assertEqual(app.map["Gulf States"].activeCells, 1)
+		self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
+		self.assertEqual(app.map["Gulf States"].aid, 1) # still there
+		self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
+		self.assertEqual(app.map["Gulf States"].alignment, "Neutral") # need three fails to move alingment
+		self.assertEqual(app.funding, 5)
+		self.assertEqual(app.prestige, 7)
+
+		app = Labyrinth(1, 1, testScenarioSetup)
+		app.map["Gulf States"].alignment = "Neutral"
+		app.map["Gulf States"].governance = 3
+		app.map["Gulf States"].sleeperCells = 1
+		app.map["Gulf States"].activeCells = 2
+		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].besieged = 0
+		app.map["Gulf States"].regimeChange = 1
+		app.map["Gulf States"].aid = 1
+		app.executeJihad("Gulf States", [4,4])
+		self.assertEqual(app.map["Gulf States"].governance, 3) # gov still 3
+		self.assertEqual(app.map["Gulf States"].sleeperCells, 1) 
+		self.assertEqual(app.map["Gulf States"].activeCells, 0)
+		self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
+		self.assertEqual(app.map["Gulf States"].aid, 1) # still there
+		self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
+		self.assertEqual(app.map["Gulf States"].alignment, "Neutral") # need three fails to move alingment
+		self.assertEqual(app.funding, 5)
+		self.assertEqual(app.prestige, 7)
+
+		app = Labyrinth(1, 1, testScenarioSetup)
+		app.map["Gulf States"].alignment = "Neutral"
+		app.map["Gulf States"].governance = 3
+		app.map["Gulf States"].sleeperCells = 1
+		app.map["Gulf States"].activeCells = 2
+		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].besieged = 0
+		app.map["Gulf States"].regimeChange = 1
+		app.map["Gulf States"].aid = 1
+		app.executeJihad("Gulf States", [3,3,3])
+		self.assertEqual(app.map["Gulf States"].governance, 3) # gov still 3
+		self.assertEqual(app.map["Gulf States"].sleeperCells, 0) 
+		self.assertEqual(app.map["Gulf States"].activeCells, 3)
+		self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
+		self.assertEqual(app.map["Gulf States"].aid, 1) # still there
+		self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
+		self.assertEqual(app.map["Gulf States"].alignment, "Neutral") # need three fails to move alingment
+		self.assertEqual(app.funding, 5)
+		self.assertEqual(app.prestige, 7)
+
+		app = Labyrinth(1, 1, testScenarioSetup)
+		app.map["Gulf States"].alignment = "Neutral"
+		app.map["Gulf States"].governance = 3
+		app.map["Gulf States"].sleeperCells = 1
+		app.map["Gulf States"].activeCells = 2
+		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].besieged = 0
+		app.map["Gulf States"].regimeChange = 1
+		app.map["Gulf States"].aid = 1
+		app.executeJihad("Gulf States", [3,3,4])
+		self.assertEqual(app.map["Gulf States"].governance, 3) # gov still 3
+		self.assertEqual(app.map["Gulf States"].sleeperCells, 0) 
+		self.assertEqual(app.map["Gulf States"].activeCells, 2)
+		self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
+		self.assertEqual(app.map["Gulf States"].aid, 1) # still there
+		self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
+		self.assertEqual(app.map["Gulf States"].alignment, "Neutral") # need three fails to move alingment
+		self.assertEqual(app.funding, 5)
+		self.assertEqual(app.prestige, 7)
+
+		app = Labyrinth(1, 1, testScenarioSetup)
+		app.map["Gulf States"].alignment = "Neutral"
+		app.map["Gulf States"].governance = 3
+		app.map["Gulf States"].sleeperCells = 1
+		app.map["Gulf States"].activeCells = 2
+		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].besieged = 0
+		app.map["Gulf States"].regimeChange = 1
+		app.map["Gulf States"].aid = 1
+		app.executeJihad("Gulf States", [3,4,4])
+		self.assertEqual(app.map["Gulf States"].governance, 3) # gov still 3
+		self.assertEqual(app.map["Gulf States"].sleeperCells, 0) 
+		self.assertEqual(app.map["Gulf States"].activeCells, 1)
+		self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
+		self.assertEqual(app.map["Gulf States"].aid, 1) # still there
+		self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
+		self.assertEqual(app.map["Gulf States"].alignment, "Neutral") # need three fails to move alingment
+		self.assertEqual(app.funding, 5)
+		self.assertEqual(app.prestige, 7)
+
+		app = Labyrinth(1, 1, testScenarioSetup)
+		app.map["Gulf States"].alignment = "Neutral"
+		app.map["Gulf States"].governance = 3
+		app.map["Gulf States"].sleeperCells = 1
+		app.map["Gulf States"].activeCells = 2
+		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].besieged = 0
+		app.map["Gulf States"].regimeChange = 1
+		app.map["Gulf States"].aid = 1
+		app.executeJihad("Gulf States", [4,4,4])
+		self.assertEqual(app.map["Gulf States"].governance, 3) # gov still 3
+		self.assertEqual(app.map["Gulf States"].sleeperCells, 0) 
+		self.assertEqual(app.map["Gulf States"].activeCells, 0)
+		self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
+		self.assertEqual(app.map["Gulf States"].aid, 1) # still there
+		self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
+		self.assertEqual(app.map["Gulf States"].alignment, "Neutral") # need three fails to move alingment
+		self.assertEqual(app.funding, 5)
+		self.assertEqual(app.prestige, 7)
+
+	def testJihadThreeActiveCells(self):
+		app = Labyrinth(1, 1, testScenarioSetup)
+		app.map["Gulf States"].alignment = "Neutral"
+		app.map["Gulf States"].governance = 3
+		app.map["Gulf States"].sleeperCells = 0
+		app.map["Gulf States"].activeCells = 3
+		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].besieged = 0
+		app.map["Gulf States"].regimeChange = 1
+		app.map["Gulf States"].aid = 1
+		app.executeJihad("Gulf States", [3])
+		self.assertEqual(app.map["Gulf States"].governance, 3) # gov still 3
+		self.assertEqual(app.map["Gulf States"].sleeperCells, 0) 
+		self.assertEqual(app.map["Gulf States"].activeCells, 3) 
+		self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
+		self.assertEqual(app.map["Gulf States"].aid, 1) # still there
+		self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
+		self.assertEqual(app.map["Gulf States"].alignment, "Neutral") # need three fails to move alingment
+		self.assertEqual(app.funding, 5)
+		self.assertEqual(app.prestige, 7)
+
+		app = Labyrinth(1, 1, testScenarioSetup)
+		app.map["Gulf States"].alignment = "Neutral"
+		app.map["Gulf States"].governance = 3
+		app.map["Gulf States"].sleeperCells = 0
+		app.map["Gulf States"].activeCells = 3
+		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].besieged = 0
+		app.map["Gulf States"].regimeChange = 1
+		app.map["Gulf States"].aid = 1
+		app.executeJihad("Gulf States", [4])
+		self.assertEqual(app.map["Gulf States"].governance, 3) # gov still 3
+		self.assertEqual(app.map["Gulf States"].sleeperCells, 0)
+		self.assertEqual(app.map["Gulf States"].activeCells, 2)
+		self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
+		self.assertEqual(app.map["Gulf States"].aid, 1) # still there
+		self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
+		self.assertEqual(app.map["Gulf States"].alignment, "Neutral") # need three fails to move alingment
+		self.assertEqual(app.funding, 5)
+		self.assertEqual(app.prestige, 7)
+
+		app = Labyrinth(1, 1, testScenarioSetup)
+		app.map["Gulf States"].alignment = "Neutral"
+		app.map["Gulf States"].governance = 3
+		app.map["Gulf States"].sleeperCells = 0
+		app.map["Gulf States"].activeCells = 3
+		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].besieged = 0
+		app.map["Gulf States"].regimeChange = 1
+		app.map["Gulf States"].aid = 1
+		app.executeJihad("Gulf States", [3,3])
+		self.assertEqual(app.map["Gulf States"].governance, 3) # gov still 3
+		self.assertEqual(app.map["Gulf States"].sleeperCells, 0) 
+		self.assertEqual(app.map["Gulf States"].activeCells, 3)
+		self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
+		self.assertEqual(app.map["Gulf States"].aid, 1) # still there
+		self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
+		self.assertEqual(app.map["Gulf States"].alignment, "Neutral") # need three fails to move alingment
+		self.assertEqual(app.funding, 5)
+		self.assertEqual(app.prestige, 7)
+
+		app = Labyrinth(1, 1, testScenarioSetup)
+		app.map["Gulf States"].alignment = "Neutral"
+		app.map["Gulf States"].governance = 3
+		app.map["Gulf States"].sleeperCells = 0
+		app.map["Gulf States"].activeCells = 3
+		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].besieged = 0
+		app.map["Gulf States"].regimeChange = 1
+		app.map["Gulf States"].aid = 1
+		app.executeJihad("Gulf States", [3,4])
+		self.assertEqual(app.map["Gulf States"].governance, 3) # gov still 3
+		self.assertEqual(app.map["Gulf States"].sleeperCells, 0) 
+		self.assertEqual(app.map["Gulf States"].activeCells, 2)
+		self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
+		self.assertEqual(app.map["Gulf States"].aid, 1) # still there
+		self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
+		self.assertEqual(app.map["Gulf States"].alignment, "Neutral") # need three fails to move alingment
+		self.assertEqual(app.funding, 5)
+		self.assertEqual(app.prestige, 7)
+
+		app = Labyrinth(1, 1, testScenarioSetup)
+		app.map["Gulf States"].alignment = "Neutral"
+		app.map["Gulf States"].governance = 3
+		app.map["Gulf States"].sleeperCells = 0
+		app.map["Gulf States"].activeCells = 3
+		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].besieged = 0
+		app.map["Gulf States"].regimeChange = 1
+		app.map["Gulf States"].aid = 1
+		app.executeJihad("Gulf States", [4,4])
+		self.assertEqual(app.map["Gulf States"].governance, 3) # gov still 3
+		self.assertEqual(app.map["Gulf States"].sleeperCells, 0) 
+		self.assertEqual(app.map["Gulf States"].activeCells, 1)
+		self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
+		self.assertEqual(app.map["Gulf States"].aid, 1) # still there
+		self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
+		self.assertEqual(app.map["Gulf States"].alignment, "Neutral") # need three fails to move alingment
+		self.assertEqual(app.funding, 5)
+		self.assertEqual(app.prestige, 7)
+
+		app = Labyrinth(1, 1, testScenarioSetup)
+		app.map["Gulf States"].alignment = "Neutral"
+		app.map["Gulf States"].governance = 3
+		app.map["Gulf States"].sleeperCells = 0
+		app.map["Gulf States"].activeCells = 3
+		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].besieged = 0
+		app.map["Gulf States"].regimeChange = 1
+		app.map["Gulf States"].aid = 1
+		app.executeJihad("Gulf States", [3,3,3])
+		self.assertEqual(app.map["Gulf States"].governance, 3) # gov still 3
+		self.assertEqual(app.map["Gulf States"].sleeperCells, 0) 
+		self.assertEqual(app.map["Gulf States"].activeCells, 3)
+		self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
+		self.assertEqual(app.map["Gulf States"].aid, 1) # still there
+		self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
+		self.assertEqual(app.map["Gulf States"].alignment, "Neutral") # need three fails to move alingment
+		self.assertEqual(app.funding, 5)
+		self.assertEqual(app.prestige, 7)
+
+		app = Labyrinth(1, 1, testScenarioSetup)
+		app.map["Gulf States"].alignment = "Neutral"
+		app.map["Gulf States"].governance = 3
+		app.map["Gulf States"].sleeperCells = 0
+		app.map["Gulf States"].activeCells = 3
+		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].besieged = 0
+		app.map["Gulf States"].regimeChange = 1
+		app.map["Gulf States"].aid = 1
+		app.executeJihad("Gulf States", [3,3,4])
+		self.assertEqual(app.map["Gulf States"].governance, 3) # gov still 3
+		self.assertEqual(app.map["Gulf States"].sleeperCells, 0) 
+		self.assertEqual(app.map["Gulf States"].activeCells, 2)
+		self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
+		self.assertEqual(app.map["Gulf States"].aid, 1) # still there
+		self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
+		self.assertEqual(app.map["Gulf States"].alignment, "Neutral") # need three fails to move alingment
+		self.assertEqual(app.funding, 5)
+		self.assertEqual(app.prestige, 7)
+
+		app = Labyrinth(1, 1, testScenarioSetup)
+		app.map["Gulf States"].alignment = "Neutral"
+		app.map["Gulf States"].governance = 3
+		app.map["Gulf States"].sleeperCells = 0
+		app.map["Gulf States"].activeCells = 3
+		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].besieged = 0
+		app.map["Gulf States"].regimeChange = 1
+		app.map["Gulf States"].aid = 1
+		app.executeJihad("Gulf States", [3,4,4])
+		self.assertEqual(app.map["Gulf States"].governance, 3) # gov still 3
+		self.assertEqual(app.map["Gulf States"].sleeperCells, 0) 
+		self.assertEqual(app.map["Gulf States"].activeCells, 1)
+		self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
+		self.assertEqual(app.map["Gulf States"].aid, 1) # still there
+		self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
+		self.assertEqual(app.map["Gulf States"].alignment, "Neutral") # need three fails to move alingment
+		self.assertEqual(app.funding, 5)
+		self.assertEqual(app.prestige, 7)
+
+		app = Labyrinth(1, 1, testScenarioSetup)
+		app.map["Gulf States"].alignment = "Neutral"
+		app.map["Gulf States"].governance = 3
+		app.map["Gulf States"].sleeperCells = 0
+		app.map["Gulf States"].activeCells = 3
+		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].besieged = 0
+		app.map["Gulf States"].regimeChange = 1
+		app.map["Gulf States"].aid = 1
+		app.executeJihad("Gulf States", [4,4,4])
+		self.assertEqual(app.map["Gulf States"].governance, 3) # gov still 3
+		self.assertEqual(app.map["Gulf States"].sleeperCells, 0) 
+		self.assertEqual(app.map["Gulf States"].activeCells, 0)
+		self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
+		self.assertEqual(app.map["Gulf States"].aid, 1) # still there
+		self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
+		self.assertEqual(app.map["Gulf States"].alignment, "Neutral") # need three fails to move alingment
+		self.assertEqual(app.funding, 5)
+		self.assertEqual(app.prestige, 7)
 
 if __name__ == "__main__":
 	unittest.main()   
