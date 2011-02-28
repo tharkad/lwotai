@@ -385,10 +385,10 @@ class Labyrinth(cmd.Cmd):
 			self.map["Pakistan"].alignment = "Ally"
 			self.map["Pakistan"].troops = 2
 			self.map["Pakistan"].activeCells = 4
-			self.map["Gulf States"].governance = 2
+			self.map["Gulf States"].governance = 3
 			self.map["Gulf States"].alignment = "Ally"
 			self.map["Gulf States"].troops = 2
-			self.map["Gulf States"].sleeperCells = 3
+			self.map["Gulf States"].sleeperCells = 10
 			self.map["Gulf States"].activeCells = 4
 			self.map["Pakistan"].governance = 2
 			self.map["Pakistan"].alignment = "Neutral"
@@ -726,50 +726,63 @@ class Labyrinth(cmd.Cmd):
 				failures += 1
 		isMajorJihad = country in self.majorJihadPossible(len(rollList))
 		if isMajorJihad: # all cells go active
-			self.outputToHistory("* Major Jihad attempt in %s" % country) 
+			self.outputToHistory("* Major Jihad attempt in %s" % country, False) 
 			sleepers = self.map[country].sleeperCells
 			self.map[country].sleeperCells = 0
 			self.map[country].activeCells += sleepers
+			self.outputToHistory("All cells go Active", False)
 			if failures == 3 and self.map[country].governance == 3:
-				self.outputToHistory("Major Jihad Failure") 
+				self.outputToHistory("Major Jihad Failure", False) 
 				self.map[country].besieged = 1
-				self.outputToHistory("Besieged Regime") 
+				self.outputToHistory("Besieged Regime", False) 
 				if self.map[country].alignment == "Adversary":
 					self.map[country].alignment = "Neutral"
 				elif self.map[country].alignment == "Neutral":
 					self.map[country].alignment = "Ally"
-				self.outputToHistory("Alignment %s" % self.map[country].alignment)
+				self.outputToHistory("Alignment %s" % self.map[country].alignment, False)
 		else: # a cell is active for each roll
-			self.outputToHistory("* Minor Jihad attempt in %s" % country) 
+			self.outputToHistory("* Minor Jihad attempt in %s" % country, False) 
 			for i in range(len(rollList) - self.map[country].activeCells):
+				self.outputToHistory("Cell goes Active", False)
 				self.map[country].sleeperCells -= 1
 				self.map[country].activeCells += 1
+		self.outputToHistory("%d Successes rolled, %d Failures rolled" % (successes, failures), False)
 		while successes > 0 and self.map[country].governance < 3:
 			self.map[country].governance += 1
 			successes -= 1
+			self.outputToHistory("Governance to %s" % self.map[country].govStr(), False)
 		if isMajorJihad and ((successes >= 2) or ((self.map[country].besieged > 0) and (successes >= 1))) : # Major Jihad
-			self.outputToHistory("Islamic Revolution in %s" % country) 
+			self.outputToHistory("Islamic Revolution in %s" % country, False) 
 			self.map[country].governance = 4
+			self.outputToHistory("Governance to Islamic Rule", False) 
 			self.map[country].alignment = "Adversary"
+			self.outputToHistory("Alingment to Adversary", False) 
 			self.map[country].regimeChange = 0
 			self.map[country].besieged = 0
 			self.map[country].aid = 0
 			self.funding = min(9, self.funding + self.map[country].resources)
+			self.outputToHistory("%d added to Funding" % self.funding, False) 
 			if self.map[country].troops > 0:
 				self.prestige = 1
+				self.outputToHistory("Troops present to US Prestige now 1", False) 
 		for i in range(failures):
 			if self.map[country].activeCells > 0:
 				self.map[country].activeCells -= 1
+				self.outputToHistory("Active cell Removed to Funding Track", False)
 			else:
 				self.map[country].sleeperCells -= 1		
-		self.outputToHistory(self.map[country].countryStr()) 
+				self.outputToHistory("Sleeper cell Removed to Funding Track", False)
+		self.outputToHistory(self.map[country].countryStr(), False) 
+		print ""
 		
 	def handleJihad(self, country, ops):
+		'''Returns number of unused Ops'''
 		cells = self.map[country].sleeperCells + self.map[country].activeCells
 		rollList = []
 		for i in range(min(cells, ops)):
 			rollList.append(random.randint(1,6))
 		self.executeJihad(country, rollList)
+		return ops - len(rollList)
 		
 	def majorJihadPossible(self, ops):
 		'''Return list of countries where regime change is possible.'''
@@ -867,18 +880,20 @@ class Labyrinth(cmd.Cmd):
 
 	def aiFlowChartMajorJihad(self, cardNum):
 		print "DEBUG: Major Jihad success possible? [10]"
-		country = self.majorJihadChoice(self.deck[str(cardNum)])
+		country = self.majorJihadChoice(self.deck[str(cardNum)].ops)
 		if country:
 			print "DEBUG: YES"
 			print "DEBUG: Major Jihad [11]"
-			self.handleJihad(country)
+			unusedOps = self.handleJihad(country, self.deck[str(cardNum)].ops)
+			print "DEBUG: [][]self.radicalization(unusedOps)"
 		else:
 			print "DEBUG: NO"
 			print "DEBUG: Jihad possible in Good/Fair? [12]"
-			country = self.minorJihadPossibleInGoodFair():
+			country = self.minorJihadPossibleInGoodFair()
 			if country:
 				print "DEBUG: YES"
-				self.handleJihad(country)
+				unusedOps = self.handleJihad(country)
+				print "DEBUG: [][]self.radicalization(unusedOps)"
 			else:
 				print "DEBUG: NO"
 				print "DEBUG: Cells Available? [14]"
