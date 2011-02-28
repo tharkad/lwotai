@@ -716,14 +716,63 @@ class Labyrinth(cmd.Cmd):
 			self.outputToHistory(self.map[moveTo].countryStr(), False)
 		self.outputToHistory("US Prestige %d" % self.prestige)
 		
-	def executeMajorJihad(self, country, rollList):
-		pass
+	def executeJihad(self, country, rollList):
+		successes = 0
+		failures = 0
+		for roll in rollList:
+			if roll <= self.map[country].governance:
+				successes += 1
+			else:
+				failures += 1
+		isMajorJihad = country in self.majorJihadPossible(len(rollList))
+		if isMajorJihad: # all cells go active
+			self.outputToHistory("* Major Jihad attempt in %s" % country) 
+			sleepers = self.map[country].sleeperCells
+			self.map[country].sleeperCells = 0
+			self.map[country].activeCells += sleepers
+			if failures == 3 and self.map[country].governance == 3:
+				self.outputToHistory("Major Jihad Failure") 
+				self.map[country].besieged = 1
+				self.outputToHistory("Besieged Regime") 
+				if self.map[country].alignment == "Adversary":
+					self.map[country].alignment = "Neutral"
+				elif self.map[country].alignment == "Neutral":
+					self.map[country].alignment = "Ally"
+				self.outputToHistory("Alignment %s" % self.map[country].alignment)
+		else: # a cell is active for each roll
+			self.outputToHistory("* Minor Jihad attempt in %s" % country) 
+			for i in range(len(rollList) - self.map[country].activeCells):
+				self.map[country].sleeperCells -= 1
+				self.map[country].activeCells += 1
+		while successes > 0 and self.map[country].governance < 3:
+			self.map[country].governance += 1
+			successes -= 1
+		if isMajorJihad and ((successes >= 2) or ((self.map[country].besieged > 0) and (successes >= 1))) : # Major Jihad
+			self.outputToHistory("Islamic Revolution in %s" % country) 
+			self.map[country].governance = 4
+			self.map[country].alignment = "Adversary"
+			self.map[country].regimeChange = 0
+			self.map[country].besieged = 0
+			self.map[country].aid = 0
+			self.funding = min(9, self.funding + self.map[country].resources)
+			if self.map[country].troops > 0:
+				self.prestige = 1
+		for i in range(failures):
+			if self.map[country].activeCells > 0:
+				self.map[country].activeCells -= 1
+			else:
+				self.map[country].sleeperCells -= 1		
+		self.outputToHistory(self.map[country].countryStr()) 
 		
-	def handleMajorJihad(self, country, cardNum):
-		print "Major Jihad in", country
+	def handleJihad(self, country, ops):
+		cells = self.map[country].sleeperCells + self.map[country].activeCells
+		rollList = []
+		for i in range(min(cells, ops)):
+			rollList.append(random.randint(1,6))
+		self.executeJihad(country, rollList)
 		
-	def majorJihadPossible(self, cardNum):
-		'''Return AI choice country'''
+	def majorJihadPossible(self, ops):
+		'''Return list of countries where regime change is possible.'''
 		possible = []
 		plusCellsNeeded = 5
 		if self.ideology >= 3:
@@ -736,8 +785,13 @@ class Labyrinth(cmd.Cmd):
 						need += 3 - self.map[country].governance
 						if self.map[country].besieged:
 							need -= 1
-						if self.deck[str(cardNum)].ops >= need:
+						if ops >= need:
 							possible.append(country)
+		return possible
+				
+	def majorJihadChoice(self, ops):
+		'''Return AI choice country.'''
+		possible = self.majorJihadPossible(ops)
 		if possible == []:
 			return False
 		else:
@@ -813,17 +867,18 @@ class Labyrinth(cmd.Cmd):
 
 	def aiFlowChartMajorJihad(self, cardNum):
 		print "DEBUG: Major Jihad success possible? [10]"
-		country = self.majorJihadPossible()
+		country = self.majorJihadChoice(self.deck[str(cardNum)])
 		if country:
 			print "DEBUG: YES"
 			print "DEBUG: Major Jihad [11]"
-			self.handleMajorJihad(country)
+			self.handleJihad(country)
 		else:
 			print "DEBUG: NO"
 			print "DEBUG: Jihad possible in Good/Fair? [12]"
-			if self.minorJihadPossibleInGoodFair():
+			country = self.minorJihadPossibleInGoodFair():
+			if country:
 				print "DEBUG: YES"
-				print "DEBUG: [][]self.doMinorJihad() [13]"
+				self.handleJihad(country)
 			else:
 				print "DEBUG: NO"
 				print "DEBUG: Cells Available? [14]"
