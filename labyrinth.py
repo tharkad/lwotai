@@ -761,10 +761,10 @@ class Labyrinth(cmd.Cmd):
 			self.map[country].besieged = 0
 			self.map[country].aid = 0
 			self.funding = min(9, self.funding + self.map[country].resources)
-			self.outputToHistory("%d added to Funding" % self.funding, False) 
+			self.outputToHistory("Funding now %d" % self.funding, False) 
 			if self.map[country].troops > 0:
 				self.prestige = 1
-				self.outputToHistory("Troops present to US Prestige now 1", False) 
+				self.outputToHistory("Troops present so US Prestige now 1", False) 
 		for i in range(failures):
 			if self.map[country].activeCells > 0:
 				self.map[country].activeCells -= 1
@@ -784,6 +784,13 @@ class Labyrinth(cmd.Cmd):
 		self.executeJihad(country, rollList)
 		return ops - len(rollList)
 		
+	def handleMinorJihad(self, countryList, ops):
+		opsRemaining = ops
+		for countryData in countryList:
+			self.handleJihad(countryData[0], countryData[1])
+			opsRemaining -= countryData[1]
+		return opsRemaining
+
 	def majorJihadPossible(self, ops):
 		'''Return list of countries where regime change is possible.'''
 		possible = []
@@ -821,9 +828,43 @@ class Labyrinth(cmd.Cmd):
 						newPossible.append(country)
 				return random.choice(newPossible)
 
-	def minorJihadPossibleInGoodFair(self):
-		return False
-		
+	def minorJihadInGoodFairChoice(self, ops):
+		possible = []
+		for country in self.map:
+			if (self.map[country].type == "Shia-Mix" or self.map[country].type == "Suni") and (self.map[country].governance <= 2) and (self.map[country].sleeperCells > 0 or self.map[country].activeCells > 0):
+				possible.append(country)
+		if len(possible) == 0:
+			return False
+		else:
+			countryScores = {}
+			for country in possible:
+				if self.map[country].governance == 1:
+					countryScores[country] = 2000000
+				else:
+					countryScores[country] = 1000000
+				if country == "Pakistan":
+					countryScores[country] += 100000
+				if self.map[country].aid > 0:
+					countryScores[country] += 10000
+				if self.map[country].besieged > 0:
+					countryScores[country] += 1000
+				countryScores[country] += (self.map[country].resources * 100)
+				countryScores[country] += random.randint(1,99)
+			countryOrder = []
+			for country in countryScores:
+				countryOrder.append((countryScores[country], (self.map[country].sleeperCells + self.map[country].activeCells), country))
+			countryOrder.sort()
+			countryOrder.reverse()
+			returnList = []
+			opsRemaining = ops
+			for countryData in countryOrder:
+				rolls = min(opsRemaining, countryData[1])
+				returnList.append((countryData[2], rolls))
+				opsRemaining -= rolls
+				if opsRemaining <= 0:
+					break
+			return returnList
+				
 	def cellsAvailable(self):
 		return False
 		
@@ -885,15 +926,15 @@ class Labyrinth(cmd.Cmd):
 			print "DEBUG: YES"
 			print "DEBUG: Major Jihad [11]"
 			unusedOps = self.handleJihad(country, self.deck[str(cardNum)].ops)
-			print "DEBUG: [][]self.radicalization(unusedOps)"
+			print "DEBUG: [][]self.radicalization(%d)" % unusedOps
 		else:
 			print "DEBUG: NO"
 			print "DEBUG: Jihad possible in Good/Fair? [12]"
-			country = self.minorJihadPossibleInGoodFair()
-			if country:
+			countryList = self.minorJihadInGoodFairChoice(self.deck[str(cardNum)].ops)
+			if countryList:
 				print "DEBUG: YES"
-				unusedOps = self.handleJihad(country)
-				print "DEBUG: [][]self.radicalization(unusedOps)"
+				unusedOps = self.handleMinorJihad(countryList, self.deck[str(cardNum)].ops)
+				print "DEBUG: [][]self.radicalization(%d)" % unusedOps
 			else:
 				print "DEBUG: NO"
 				print "DEBUG: Cells Available? [14]"

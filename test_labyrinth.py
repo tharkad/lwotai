@@ -65,6 +65,43 @@ def test2ScenarioSetup(self):
 	self.map["Somalia"].besieged = 1
 	self.map["United States"].posture = "Hard"
 
+def test3ScenarioSetup(self):
+	self.prestige = 7
+	self.troops = 9
+	self.funding = 5
+	self.cells = 11
+	self.map["Libya"].governance = 3
+	self.map["Libya"].alignment = "Adversary"
+	self.map["Syria"].governance = 2
+	self.map["Syria"].alignment = "Adversary"
+	self.map["Iraq"].governance = 3
+	self.map["Iraq"].alignment = "Adversary"
+	self.map["Iraq"].plots = 2	
+	self.map["Saudi Arabia"].governance = 3
+	self.map["Saudi Arabia"].alignment = "Ally"
+	self.map["Saudi Arabia"].troops = 2
+	self.map["Pakistan"].governance = 2
+	self.map["Pakistan"].alignment = "Neutral"
+	self.map["Pakistan"].troops = 2
+	self.map["Pakistan"].activeCells = 4
+	self.map["Gulf States"].governance = 2
+	self.map["Gulf States"].alignment = "Ally"
+	self.map["Gulf States"].troops = 4
+	self.map["Gulf States"].sleeperCells = 1
+	self.map["Gulf States"].activeCells = 4
+	self.map["Afghanistan"].governance = 4
+	self.map["Afghanistan"].alignment = "Adversary"
+	self.map["Afghanistan"].sleeperCells = 4
+	self.map["Somalia"].besieged = 1
+	self.map["United States"].posture = "Hard"
+	self.map["France"].posture = "Hard"
+	self.map["France"].cadre = 1
+	self.map["Spain"].posture = "Soft"
+	self.map["Spain"].sleeperCells = 1
+	self.map["Germany"].posture = "Hard"
+	self.map["Germany"].activeCells = 1
+	self.map["Germany"].sleeperCells = 1
+
 class Map(unittest.TestCase):
 	'''Map'''
 		
@@ -792,8 +829,7 @@ class handleJihad(unittest.TestCase):
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
 		opsLeft = app.handleJihad("Gulf States", 3)
-		self.assertEqual(opsLeft, 0)
-		
+		self.assertEqual(opsLeft, 0)	
 		
 class executeJihad(unittest.TestCase):
 	'''Execute Major Jihad'''
@@ -4305,6 +4341,383 @@ class executeJihad(unittest.TestCase):
 		self.assertEqual(app.map["Gulf States"].alignment, "Neutral") # need three fails to move alingment
 		self.assertEqual(app.funding, 5)
 		self.assertEqual(app.prestige, 7)
+
+class minorJihadChoice(unittest.TestCase):
+	'''Test minorJihadInGoodFairChoice'''
+
+	def testMinorJihadOneCellOneOps(self):
+# one cell in each country, one ops case	
+
+		app = Labyrinth(1, 1, test3ScenarioSetup)
+	# only Islamic rule has cells	
+		app.map["Gulf States"].activeCells = 0
+		app.map["Gulf States"].sleeperCells = 0
+		app.map["Pakistan"].activeCells = 0
+		self.assertEqual(app.minorJihadInGoodFairChoice(1), False)
+	# fair governance
+		app.map["Gulf States"].governance = 2
+		app.map["Gulf States"].activeCells = 1
+		self.assertEqual(app.minorJihadInGoodFairChoice(1), [("Gulf States",1)])
+	# good governance
+		app.map["Saudi Arabia"].governance = 1
+		app.map["Saudi Arabia"].activeCells = 1
+		self.assertEqual(app.minorJihadInGoodFairChoice(1), [("Saudi Arabia",1)])
+	# 2 good governance
+		app.map["Gulf States"].governance = 1
+		for i in range(10):
+			retVal = app.minorJihadInGoodFairChoice(1)
+			self.assertTrue((retVal == [("Gulf States",1)]) or (retVal == [("Saudi Arabia",1)]))
+	# 2 good governance but Jordan has less resources	
+		app.map["Saudi Arabia"].governance = 3
+		app.map["Jordan"].governance = 1
+		app.map["Jordan"].activeCells = 1
+		self.assertEqual(app.minorJihadInGoodFairChoice(1), [("Gulf States",1)])
+	# but the other is besieged
+		app.map["Jordan"].besieged = 1
+		self.assertEqual(app.minorJihadInGoodFairChoice(1), [("Jordan",1)])
+	# but the other has aid
+		app.map["Gulf States"].aid = 1
+		self.assertEqual(app.minorJihadInGoodFairChoice(1), [("Gulf States",1)])
+	# but yet another is Pakistan	
+		app.map["Pakistan"].governance = 1
+		app.map["Pakistan"].activeCells = 1
+		self.assertEqual(app.minorJihadInGoodFairChoice(1), [("Pakistan",1)])
+	# but Pakistan does not win against good if it is fair
+		app.map["Pakistan"].governance = 2
+		self.assertEqual(app.minorJihadInGoodFairChoice(1), [("Gulf States",1)])
+
+	def testMinorJihadOneCellTwoOps(self):
+# one cell in each country, two ops case	
+
+		app = Labyrinth(1, 1, test3ScenarioSetup)
+	# only Islamic rule has cells	
+		app.map["Gulf States"].activeCells = 0
+		app.map["Gulf States"].sleeperCells = 0
+		app.map["Pakistan"].activeCells = 0
+		self.assertEqual(app.minorJihadInGoodFairChoice(2), False)
+	# fair governance
+		app.map["Gulf States"].governance = 2
+		app.map["Gulf States"].activeCells = 1
+		self.assertEqual(app.minorJihadInGoodFairChoice(2), [("Gulf States",1)])
+	# good governance
+		app.map["Saudi Arabia"].governance = 1
+		app.map["Saudi Arabia"].activeCells = 1
+		self.assertEqual(app.minorJihadInGoodFairChoice(2), [("Saudi Arabia",1),("Gulf States",1)])
+	# 2 good governance
+		app.map["Gulf States"].governance = 1
+		retVal = app.minorJihadInGoodFairChoice(2)
+		self.assertTrue((("Gulf States",1) in retVal) and (("Saudi Arabia",1) in retVal) and len(retVal) == 2)
+	# 2 good governance but Jordan has less resources	
+		app.map["Saudi Arabia"].governance = 3
+		app.map["Jordan"].governance = 1
+		app.map["Jordan"].activeCells = 1
+		self.assertEqual(app.minorJihadInGoodFairChoice(2), [("Gulf States",1),("Jordan",1)])
+	# but the other is besieged
+		app.map["Jordan"].besieged = 1
+		self.assertEqual(app.minorJihadInGoodFairChoice(2), [("Jordan",1),("Gulf States",1)])
+	# but the other has aid
+		app.map["Gulf States"].aid = 1
+		self.assertEqual(app.minorJihadInGoodFairChoice(2), [("Gulf States",1),("Jordan",1)])
+	# but yet another is Pakistan	
+		app.map["Pakistan"].governance = 1
+		app.map["Pakistan"].activeCells = 1
+		self.assertEqual(app.minorJihadInGoodFairChoice(2), [("Pakistan",1),("Gulf States",1)])
+	# but Pakistan does not win against good if it is fair
+		app.map["Pakistan"].governance = 2
+		self.assertEqual(app.minorJihadInGoodFairChoice(2), [("Gulf States",1),("Jordan",1)])
+
+	def testMinorJihadOneCellThreeOps(self):
+# one cell in each country, three ops case	
+
+		app = Labyrinth(1, 1, test3ScenarioSetup)
+	# only Islamic rule has cells	
+		app.map["Gulf States"].activeCells = 0
+		app.map["Gulf States"].sleeperCells = 0
+		app.map["Pakistan"].activeCells = 0
+		self.assertEqual(app.minorJihadInGoodFairChoice(3), False)
+	# fair governance
+		app.map["Gulf States"].governance = 2
+		app.map["Gulf States"].activeCells = 1
+		self.assertEqual(app.minorJihadInGoodFairChoice(3), [("Gulf States",1)])
+	# good governance
+		app.map["Saudi Arabia"].governance = 1
+		app.map["Saudi Arabia"].activeCells = 1
+		self.assertEqual(app.minorJihadInGoodFairChoice(3), [("Saudi Arabia",1),("Gulf States",1)])
+	# 2 good governance
+		app.map["Gulf States"].governance = 1
+		self.assertTrue((("Gulf States",1) in app.minorJihadInGoodFairChoice(3)) and (("Saudi Arabia",1) in app.minorJihadInGoodFairChoice(3)) and len(app.minorJihadInGoodFairChoice(3)) == 2)
+	# 2 good governance but Jordan has less resources	
+		app.map["Saudi Arabia"].governance = 3
+		app.map["Jordan"].governance = 1
+		app.map["Jordan"].activeCells = 1
+		self.assertEqual(app.minorJihadInGoodFairChoice(3), [("Gulf States",1),("Jordan",1)])
+	# but the other is besieged
+		app.map["Jordan"].besieged = 1
+		self.assertEqual(app.minorJihadInGoodFairChoice(3), [("Jordan",1),("Gulf States",1)])
+	# but the other has aid
+		app.map["Gulf States"].aid = 1
+		self.assertEqual(app.minorJihadInGoodFairChoice(3), [("Gulf States",1),("Jordan",1)])
+	# but yet another is Pakistan	
+		app.map["Pakistan"].governance = 1
+		app.map["Pakistan"].activeCells = 1
+		self.assertEqual(app.minorJihadInGoodFairChoice(3), [("Pakistan",1),("Gulf States",1),("Jordan",1)])
+	# but Pakistan does not win against good if it is fair
+		app.map["Pakistan"].governance = 2
+		self.assertEqual(app.minorJihadInGoodFairChoice(3), [("Gulf States",1),("Jordan",1),("Pakistan",1)])
+
+	def testMinorJihadTwoCellOneOps(self):
+# two cells in each country, one ops case	
+
+		app = Labyrinth(1, 1, test3ScenarioSetup)
+	# only Islamic rule has cells	
+		app.map["Gulf States"].activeCells = 0
+		app.map["Gulf States"].sleeperCells = 0
+		app.map["Pakistan"].activeCells = 0
+		self.assertEqual(app.minorJihadInGoodFairChoice(1), False)
+	# fair governance
+		app.map["Gulf States"].governance = 2
+		app.map["Gulf States"].activeCells = 2
+		self.assertEqual(app.minorJihadInGoodFairChoice(1), [("Gulf States",1)])
+	# good governance
+		app.map["Saudi Arabia"].governance = 1
+		app.map["Saudi Arabia"].activeCells = 2
+		self.assertEqual(app.minorJihadInGoodFairChoice(1), [("Saudi Arabia",1)])
+	# 2 good governance
+		app.map["Gulf States"].governance = 1
+		for i in range(10):
+			retVal = app.minorJihadInGoodFairChoice(1)
+			self.assertTrue(retVal == [("Gulf States",1)] or retVal == [("Saudi Arabia",1)])
+	# 2 good governance but Jordan has less resources	
+		app.map["Saudi Arabia"].governance = 3
+		app.map["Jordan"].governance = 1
+		app.map["Jordan"].activeCells = 2
+		self.assertEqual(app.minorJihadInGoodFairChoice(1), [("Gulf States",1)])
+	# but the other is besieged
+		app.map["Jordan"].besieged = 1
+		self.assertEqual(app.minorJihadInGoodFairChoice(1), [("Jordan",1)])
+	# but the other has aid
+		app.map["Gulf States"].aid = 1
+		self.assertEqual(app.minorJihadInGoodFairChoice(1), [("Gulf States",1)])
+	# but yet another is Pakistan	
+		app.map["Pakistan"].governance = 1
+		app.map["Pakistan"].activeCells = 2
+		self.assertEqual(app.minorJihadInGoodFairChoice(1), [("Pakistan",1)])
+	# but Pakistan does not win against good if it is fair
+		app.map["Pakistan"].governance = 2
+		self.assertEqual(app.minorJihadInGoodFairChoice(1), [("Gulf States",1)])
+
+	def testMinorJihadTwoCellTwoOps(self):
+# two cell in each country, two ops case	
+
+		app = Labyrinth(1, 1, test3ScenarioSetup)
+	# only Islamic rule has cells	
+		app.map["Gulf States"].activeCells = 0
+		app.map["Gulf States"].sleeperCells = 0
+		app.map["Pakistan"].activeCells = 0
+		self.assertEqual(app.minorJihadInGoodFairChoice(2), False)
+	# fair governance
+		app.map["Gulf States"].governance = 2
+		app.map["Gulf States"].activeCells = 2
+		self.assertEqual(app.minorJihadInGoodFairChoice(2), [("Gulf States",2)])
+	# good governance
+		app.map["Saudi Arabia"].governance = 1
+		app.map["Saudi Arabia"].activeCells = 2
+		self.assertEqual(app.minorJihadInGoodFairChoice(2), [("Saudi Arabia",2)])
+	# 2 good governance
+		app.map["Gulf States"].governance = 1
+		for i in range(10):
+			retVal = app.minorJihadInGoodFairChoice(2) 
+			self.assertTrue(retVal == [("Gulf States",2)] or retVal == [("Saudi Arabia",2)])
+	# 2 good governance but Jordan has less resources	
+		app.map["Saudi Arabia"].governance = 3
+		app.map["Jordan"].governance = 1
+		app.map["Jordan"].activeCells = 2
+		self.assertEqual(app.minorJihadInGoodFairChoice(2), [("Gulf States",2)])
+	# but the other is besieged
+		app.map["Jordan"].besieged = 1
+		self.assertEqual(app.minorJihadInGoodFairChoice(2), [("Jordan",2)])
+	# but the other has aid
+		app.map["Gulf States"].aid = 1
+		self.assertEqual(app.minorJihadInGoodFairChoice(2), [("Gulf States",2)])
+	# but yet another is Pakistan	
+		app.map["Pakistan"].governance = 1
+		app.map["Pakistan"].activeCells = 2
+		self.assertEqual(app.minorJihadInGoodFairChoice(2), [("Pakistan",2)])
+	# but Pakistan does not win against good if it is fair
+		app.map["Pakistan"].governance = 2
+		self.assertEqual(app.minorJihadInGoodFairChoice(2), [("Gulf States",2)])
+
+	def testMinorJihadTwoCellThreeOps(self):
+# two cell in each country, three ops case	
+
+		app = Labyrinth(1, 1, test3ScenarioSetup)
+	# only Islamic rule has cells	
+		app.map["Gulf States"].activeCells = 0
+		app.map["Gulf States"].sleeperCells = 0
+		app.map["Pakistan"].activeCells = 0
+		self.assertEqual(app.minorJihadInGoodFairChoice(3), False)
+	# fair governance
+		app.map["Gulf States"].governance = 2
+		app.map["Gulf States"].activeCells = 2
+		self.assertEqual(app.minorJihadInGoodFairChoice(3), [("Gulf States",2)])
+	# good governance
+		app.map["Saudi Arabia"].governance = 1
+		app.map["Saudi Arabia"].activeCells = 2
+		self.assertEqual(app.minorJihadInGoodFairChoice(3), [("Saudi Arabia",2),("Gulf States",1)])
+	# 2 good governance
+		app.map["Gulf States"].governance = 1
+		for i in range(10):
+			retVal = app.minorJihadInGoodFairChoice(3)
+			self.assertTrue(retVal == [("Saudi Arabia",2),("Gulf States",1)] or retVal == [("Gulf States",2),("Saudi Arabia",1)])
+	# 2 good governance but Jordan has less resources	
+		app.map["Saudi Arabia"].governance = 3
+		app.map["Jordan"].governance = 1
+		app.map["Jordan"].activeCells = 2
+		self.assertEqual(app.minorJihadInGoodFairChoice(3), [("Gulf States",2),("Jordan",1)])
+	# but the other is besieged
+		app.map["Jordan"].besieged = 1
+		self.assertEqual(app.minorJihadInGoodFairChoice(3), [("Jordan",2),("Gulf States",1)])
+	# but the other has aid
+		app.map["Gulf States"].aid = 1
+		self.assertEqual(app.minorJihadInGoodFairChoice(3), [("Gulf States",2),("Jordan",1)])
+	# but yet another is Pakistan	
+		app.map["Pakistan"].governance = 1
+		app.map["Pakistan"].activeCells = 2
+		self.assertEqual(app.minorJihadInGoodFairChoice(3), [("Pakistan",2),("Gulf States",1)])
+	# but Pakistan does not win against good if it is fair
+		app.map["Pakistan"].governance = 2
+		self.assertEqual(app.minorJihadInGoodFairChoice(3), [("Gulf States",2),("Jordan",1)])
+
+	def testMinorJihadThreeCellOneOps(self):
+# three cells in each country, one ops case	
+
+		app = Labyrinth(1, 1, test3ScenarioSetup)
+	# only Islamic rule has cells	
+		app.map["Gulf States"].activeCells = 0
+		app.map["Gulf States"].sleeperCells = 0
+		app.map["Pakistan"].activeCells = 0
+		self.assertEqual(app.minorJihadInGoodFairChoice(1), False)
+	# fair governance
+		app.map["Gulf States"].governance = 2
+		app.map["Gulf States"].activeCells = 3
+		self.assertEqual(app.minorJihadInGoodFairChoice(1), [("Gulf States",1)])
+	# good governance
+		app.map["Saudi Arabia"].governance = 1
+		app.map["Saudi Arabia"].activeCells = 3
+		self.assertEqual(app.minorJihadInGoodFairChoice(1), [("Saudi Arabia",1)])
+	# 2 good governance
+		app.map["Gulf States"].governance = 1
+		self.assertTrue(app.minorJihadInGoodFairChoice(1) in [[("Gulf States",1)],[("Saudi Arabia",1)]])
+		self.assertTrue(app.minorJihadInGoodFairChoice(1) in [[("Gulf States",1)],[("Saudi Arabia",1)]])
+		self.assertTrue(app.minorJihadInGoodFairChoice(1) in [[("Gulf States",1)],[("Saudi Arabia",1)]])
+		self.assertTrue(app.minorJihadInGoodFairChoice(1) in [[("Gulf States",1)],[("Saudi Arabia",1)]])
+		self.assertTrue(app.minorJihadInGoodFairChoice(1) in [[("Gulf States",1)],[("Saudi Arabia",1)]])
+		self.assertTrue(app.minorJihadInGoodFairChoice(1) in [[("Gulf States",1)],[("Saudi Arabia",1)]])
+		self.assertTrue(app.minorJihadInGoodFairChoice(1) in [[("Gulf States",1)],[("Saudi Arabia",1)]])
+		self.assertTrue(app.minorJihadInGoodFairChoice(1) in [[("Gulf States",1)],[("Saudi Arabia",1)]])
+		self.assertTrue(app.minorJihadInGoodFairChoice(1) in [[("Gulf States",1)],[("Saudi Arabia",1)]])
+		self.assertTrue(app.minorJihadInGoodFairChoice(1) in [[("Gulf States",1)],[("Saudi Arabia",1)]])
+	# 2 good governance but Jordan has less resources	
+		app.map["Saudi Arabia"].governance = 3
+		app.map["Jordan"].governance = 1
+		app.map["Jordan"].activeCells = 3
+		self.assertEqual(app.minorJihadInGoodFairChoice(1), [("Gulf States",1)])
+	# but the other is besieged
+		app.map["Jordan"].besieged = 1
+		self.assertEqual(app.minorJihadInGoodFairChoice(1), [("Jordan",1)])
+	# but the other has aid
+		app.map["Gulf States"].aid = 1
+		self.assertEqual(app.minorJihadInGoodFairChoice(1), [("Gulf States",1)])
+	# but yet another is Pakistan	
+		app.map["Pakistan"].governance = 1
+		app.map["Pakistan"].activeCells = 3
+		self.assertEqual(app.minorJihadInGoodFairChoice(1), [("Pakistan",1)])
+	# but Pakistan does not win against good if it is fair
+		app.map["Pakistan"].governance = 2
+		self.assertEqual(app.minorJihadInGoodFairChoice(1), [("Gulf States",1)])
+
+	def testMinorJihadThreeCellTwoOps(self):
+# three cell in each country, two ops case	
+
+		app = Labyrinth(1, 1, test3ScenarioSetup)
+	# only Islamic rule has cells	
+		app.map["Gulf States"].activeCells = 0
+		app.map["Gulf States"].sleeperCells = 0
+		app.map["Pakistan"].activeCells = 0
+		self.assertEqual(app.minorJihadInGoodFairChoice(2), False)
+	# fair governance
+		app.map["Gulf States"].governance = 2
+		app.map["Gulf States"].activeCells = 3
+		self.assertEqual(app.minorJihadInGoodFairChoice(2), [("Gulf States",2)])
+	# good governance
+		app.map["Saudi Arabia"].governance = 1
+		app.map["Saudi Arabia"].activeCells = 3
+		self.assertEqual(app.minorJihadInGoodFairChoice(2), [("Saudi Arabia",2)])
+	# 2 good governance
+		app.map["Gulf States"].governance = 1
+		for i in range(10):
+			retVal = app.minorJihadInGoodFairChoice(2)
+			self.assertTrue(retVal == [("Gulf States",2)] or retVal == [("Saudi Arabia",2)])
+	# 2 good governance but Jordan has less resources	
+		app.map["Saudi Arabia"].governance = 3
+		app.map["Jordan"].governance = 1
+		app.map["Jordan"].activeCells = 3
+		self.assertEqual(app.minorJihadInGoodFairChoice(2), [("Gulf States",2)])
+	# but the other is besieged
+		app.map["Jordan"].besieged = 1
+		self.assertEqual(app.minorJihadInGoodFairChoice(2), [("Jordan",2)])
+	# but the other has aid
+		app.map["Gulf States"].aid = 1
+		self.assertEqual(app.minorJihadInGoodFairChoice(2), [("Gulf States",2)])
+	# but yet another is Pakistan	
+		app.map["Pakistan"].governance = 1
+		app.map["Pakistan"].activeCells = 3
+		self.assertEqual(app.minorJihadInGoodFairChoice(2), [("Pakistan",2)])
+	# but Pakistan does not win against good if it is fair
+		app.map["Pakistan"].governance = 2
+		self.assertEqual(app.minorJihadInGoodFairChoice(2), [("Gulf States",2)])
+
+	def testMinorJihadThreeCellThreeOps(self):
+# three cell in each country, three ops case	
+
+		app = Labyrinth(1, 1, test3ScenarioSetup)
+	# only Islamic rule has cells	
+		app.map["Gulf States"].activeCells = 0
+		app.map["Gulf States"].sleeperCells = 0
+		app.map["Pakistan"].activeCells = 0
+		self.assertEqual(app.minorJihadInGoodFairChoice(3), False)
+	# fair governance
+		app.map["Gulf States"].governance = 2
+		app.map["Gulf States"].activeCells = 3
+		self.assertEqual(app.minorJihadInGoodFairChoice(3), [("Gulf States",3)])
+	# good governance
+		app.map["Saudi Arabia"].governance = 1
+		app.map["Saudi Arabia"].activeCells = 3
+		self.assertEqual(app.minorJihadInGoodFairChoice(3), [("Saudi Arabia",3)])
+	# 2 good governance
+		app.map["Gulf States"].governance = 1
+		for i in range(10):
+			retVal = app.minorJihadInGoodFairChoice(3)
+			self.assertTrue((retVal == [("Saudi Arabia",3)]) or (retVal == [("Gulf States",3)]))
+	# 2 good governance but Jordan has less resources	
+		app.map["Saudi Arabia"].governance = 3
+		app.map["Jordan"].governance = 1
+		app.map["Jordan"].activeCells = 3
+		self.assertEqual(app.minorJihadInGoodFairChoice(3), [("Gulf States",3)])
+	# but the other is besieged
+		app.map["Jordan"].besieged = 1
+		self.assertEqual(app.minorJihadInGoodFairChoice(3), [("Jordan",3)])
+	# but the other has aid
+		app.map["Gulf States"].aid = 1
+		self.assertEqual(app.minorJihadInGoodFairChoice(3), [("Gulf States",3)])
+	# but yet another is Pakistan	
+		app.map["Pakistan"].governance = 1
+		app.map["Pakistan"].activeCells = 3
+		self.assertEqual(app.minorJihadInGoodFairChoice(3), [("Pakistan",3)])
+	# but Pakistan does not win against good if it is fair
+		app.map["Pakistan"].governance = 2
+		self.assertEqual(app.minorJihadInGoodFairChoice(3), [("Gulf States",3)])
+
 
 if __name__ == "__main__":
 	unittest.main()   
