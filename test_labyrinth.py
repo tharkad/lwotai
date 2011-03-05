@@ -101,6 +101,12 @@ def test3ScenarioSetup(self):
 	self.map["Germany"].posture = "Hard"
 	self.map["Germany"].activeCells = 1
 	self.map["Germany"].sleeperCells = 1
+	
+def testBlankScenarioSetup(self):
+	self.prestige = 7
+	self.troops = 9
+	self.funding = 5
+	self.cells = 11
 
 class Map(unittest.TestCase):
 	'''Map'''
@@ -4717,7 +4723,355 @@ class minorJihadChoice(unittest.TestCase):
 	# but Pakistan does not win against good if it is fair
 		app.map["Pakistan"].governance = 2
 		self.assertEqual(app.minorJihadInGoodFairChoice(3), [("Gulf States",3)])
+		
+class recruit(unittest.TestCase):
+	'''Test Recruiting'''
+	
+	def testRecruit(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		self.assertFalse(app.recruitChoice())
+		app.map["Gulf States"].governance = 1
+		app.map["Gulf States"].activeCells = 1
+		self.assertEqual(app.recruitChoice(), "Gulf States")
+		app.map["Gulf States"].activeCells = 0
+		app.map["Gulf States"].cadre = 1
+		self.assertEqual(app.recruitChoice(), "Gulf States")
+		app.map["Gulf States"].activeCells = 1
+		app.map["Gulf States"].cadre = 0
+		app.map["Iraq"].governance = 1
+		app.map["Iraq"].activeCells = 1
+		for i in range(10):
+			retVal = app.recruitChoice()
+			self.assertTrue(retVal in ["Iraq", "Gulf States"])
+		app.map["Iraq"].activeCells = 0
+		app.map["Iraq"].cadre = 1
+		self.assertEqual(app.recruitChoice(), "Gulf States")
+		app.map["Iraq"].troops = 2
+		self.assertEqual(app.recruitChoice(), "Iraq")
+		app.map["Gulf States"].besieged = 1
+		self.assertEqual(app.recruitChoice(), "Gulf States")
+		app.map["Russia"].sleeperCells = 1
+		self.assertEqual(app.recruitChoice(), "Russia")
+		app.map["Philippines"].sleeperCells = 1
+		self.assertEqual(app.recruitChoice(), "Philippines")
+		app.map["Iraq"].governance = 4
+		app.map["Iraq"].activeCells = 6
+		self.assertEqual(app.recruitChoice(), "Philippines")
+		app.map["Iraq"].activeCells = 5
+		self.assertEqual(app.recruitChoice(), "Iraq")
+		app.map["Gulf States"].regimeChange = 1
+		app.map["Gulf States"].activeCells = 1
+		app.map["Gulf States"].troops = 5
+		self.assertEqual(app.recruitChoice(), "Iraq")
+		app.map["Gulf States"].troops = 6
+		self.assertEqual(app.recruitChoice(), "Gulf States")
+		
+class numCellsAvaialbe(unittest.TestCase):
+	'''Test num cells available'''
+	
+	def testNumCellsAvaialable(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		self.funding = 9
+		self.cells = 15
+		self.assertTrue(app.numCellsAvailable(), 15)
+		self.cells = 14
+		self.assertTrue(app.numCellsAvailable(), 14)
+		self.cells = 13
+		self.assertTrue(app.numCellsAvailable(), 13)
+		self.cells = 12
+		self.assertTrue(app.numCellsAvailable(), 12)
+		self.cells = 11
+		self.assertTrue(app.numCellsAvailable(), 11)
+		self.cells = 10
+		self.assertTrue(app.numCellsAvailable(), 10)
+		self.cells = 9
+		self.assertTrue(app.numCellsAvailable(), 9)
+		self.cells = 8
+		self.assertTrue(app.numCellsAvailable(), 8)
+		self.cells = 7
+		self.assertTrue(app.numCellsAvailable(), 7)
+		self.cells = 6
+		self.assertTrue(app.numCellsAvailable(), 6)
+		self.cells = 5
+		self.assertTrue(app.numCellsAvailable(), 5)
+		self.cells = 4
+		self.assertTrue(app.numCellsAvailable(), 4)
+		self.cells = 3
+		self.assertTrue(app.numCellsAvailable(), 3)
+		self.cells = 2
+		self.assertTrue(app.numCellsAvailable(), 2)
+		self.cells = 1
+		self.assertTrue(app.numCellsAvailable(), 1)
+		
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		self.funding = 8
+		self.cells = 15
+		self.assertTrue(app.numCellsAvailable(), 15)
+		self.cells = 14
+		self.assertTrue(app.numCellsAvailable(), 14)
+		self.cells = 13
+		self.assertTrue(app.numCellsAvailable(), 13)
+		self.cells = 12
+		self.assertTrue(app.numCellsAvailable(), 12)
+		self.cells = 11
+		self.assertTrue(app.numCellsAvailable(), 11)
+		self.cells = 10
+		self.assertTrue(app.numCellsAvailable(), 10)
+		self.cells = 9
+		self.assertTrue(app.numCellsAvailable(), 9)
+		self.cells = 8
+		self.assertTrue(app.numCellsAvailable(), 8)
+		self.cells = 7
+		self.assertTrue(app.numCellsAvailable(), 7)
+		self.cells = 6
+		self.assertTrue(app.numCellsAvailable(), 6)
+		self.cells = 5
+		self.assertTrue(app.numCellsAvailable(), 5)
+		self.cells = 4
+		self.assertTrue(app.numCellsAvailable(), 4)
+		self.cells = 3
+		self.assertTrue(app.numCellsAvailable(), 3)
+		self.cells = 2
+		self.assertTrue(app.numCellsAvailable(), 2)
+		self.cells = 1
+		self.assertTrue(app.numCellsAvailable(), 1)
+		
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		self.funding = 7
+		self.cells = 15
+		self.assertTrue(app.numCellsAvailable(), 15)
+		self.cells = 14
+		self.assertTrue(app.numCellsAvailable(), 14)
+		self.cells = 13
+		self.assertTrue(app.numCellsAvailable(), 13)
+		self.cells = 12
+		self.assertTrue(app.numCellsAvailable(), 12)
+		self.cells = 11
+		self.assertTrue(app.numCellsAvailable(), 11)
+		self.cells = 10
+		self.assertTrue(app.numCellsAvailable(), 10)
+		self.cells = 9
+		self.assertTrue(app.numCellsAvailable(), 9)
+		self.cells = 8
+		self.assertTrue(app.numCellsAvailable(), 8)
+		self.cells = 7
+		self.assertTrue(app.numCellsAvailable(), 7)
+		self.cells = 6
+		self.assertTrue(app.numCellsAvailable(), 6)
+		self.cells = 5
+		self.assertTrue(app.numCellsAvailable(), 5)
+		self.cells = 4
+		self.assertTrue(app.numCellsAvailable(), 4)
+		self.cells = 3
+		self.assertTrue(app.numCellsAvailable(), 3)
+		self.cells = 2
+		self.assertTrue(app.numCellsAvailable(), 2)
+		self.cells = 1
+		self.assertTrue(app.numCellsAvailable(), 1)
+		
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		self.funding = 6
+		self.cells = 15
+		self.assertTrue(app.numCellsAvailable(), 10)
+		self.cells = 14
+		self.assertTrue(app.numCellsAvailable(), 9)
+		self.cells = 13
+		self.assertTrue(app.numCellsAvailable(), 8)
+		self.cells = 12
+		self.assertTrue(app.numCellsAvailable(), 7)
+		self.cells = 11
+		self.assertTrue(app.numCellsAvailable(), 6)
+		self.cells = 10
+		self.assertTrue(app.numCellsAvailable(), 5)
+		self.cells = 9
+		self.assertTrue(app.numCellsAvailable(), 4)
+		self.cells = 8
+		self.assertTrue(app.numCellsAvailable(), 3)
+		self.cells = 7
+		self.assertTrue(app.numCellsAvailable(), 2)
+		self.cells = 6
+		self.assertTrue(app.numCellsAvailable(), 1)
+		self.cells = 5
+		self.assertTrue(app.numCellsAvailable(), 0)
+		self.cells = 4
+		self.assertTrue(app.numCellsAvailable(), 0)
+		self.cells = 3
+		self.assertTrue(app.numCellsAvailable(), 0)
+		self.cells = 2
+		self.assertTrue(app.numCellsAvailable(), 0)
+		self.cells = 1
+		self.assertTrue(app.numCellsAvailable(), 0)
 
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		self.funding = 5
+		self.cells = 15
+		self.assertTrue(app.numCellsAvailable(), 10)
+		self.cells = 14
+		self.assertTrue(app.numCellsAvailable(), 9)
+		self.cells = 13
+		self.assertTrue(app.numCellsAvailable(), 8)
+		self.cells = 12
+		self.assertTrue(app.numCellsAvailable(), 7)
+		self.cells = 11
+		self.assertTrue(app.numCellsAvailable(), 6)
+		self.cells = 10
+		self.assertTrue(app.numCellsAvailable(), 5)
+		self.cells = 9
+		self.assertTrue(app.numCellsAvailable(), 4)
+		self.cells = 8
+		self.assertTrue(app.numCellsAvailable(), 3)
+		self.cells = 7
+		self.assertTrue(app.numCellsAvailable(), 2)
+		self.cells = 6
+		self.assertTrue(app.numCellsAvailable(), 1)
+		self.cells = 5
+		self.assertTrue(app.numCellsAvailable(), 0)
+		self.cells = 4
+		self.assertTrue(app.numCellsAvailable(), 0)
+		self.cells = 3
+		self.assertTrue(app.numCellsAvailable(), 0)
+		self.cells = 2
+		self.assertTrue(app.numCellsAvailable(), 0)
+		self.cells = 1
+		self.assertTrue(app.numCellsAvailable(), 0)
+
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		self.funding = 4
+		self.cells = 15
+		self.assertTrue(app.numCellsAvailable(), 10)
+		self.cells = 14
+		self.assertTrue(app.numCellsAvailable(), 9)
+		self.cells = 13
+		self.assertTrue(app.numCellsAvailable(), 8)
+		self.cells = 12
+		self.assertTrue(app.numCellsAvailable(), 7)
+		self.cells = 11
+		self.assertTrue(app.numCellsAvailable(), 6)
+		self.cells = 10
+		self.assertTrue(app.numCellsAvailable(), 5)
+		self.cells = 9
+		self.assertTrue(app.numCellsAvailable(), 4)
+		self.cells = 8
+		self.assertTrue(app.numCellsAvailable(), 3)
+		self.cells = 7
+		self.assertTrue(app.numCellsAvailable(), 2)
+		self.cells = 6
+		self.assertTrue(app.numCellsAvailable(), 1)
+		self.cells = 5
+		self.assertTrue(app.numCellsAvailable(), 0)
+		self.cells = 4
+		self.assertTrue(app.numCellsAvailable(), 0)
+		self.cells = 3
+		self.assertTrue(app.numCellsAvailable(), 0)
+		self.cells = 2
+		self.assertTrue(app.numCellsAvailable(), 0)
+		self.cells = 1
+		self.assertTrue(app.numCellsAvailable(), 0)
+
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		self.funding = 3
+		self.cells = 15
+		self.assertTrue(app.numCellsAvailable(), 5)
+		self.cells = 14
+		self.assertTrue(app.numCellsAvailable(), 4)
+		self.cells = 13
+		self.assertTrue(app.numCellsAvailable(), 3)
+		self.cells = 12
+		self.assertTrue(app.numCellsAvailable(), 2)
+		self.cells = 11
+		self.assertTrue(app.numCellsAvailable(), 1)
+		self.cells = 10
+		self.assertTrue(app.numCellsAvailable(), 0)
+		self.cells = 9
+		self.assertTrue(app.numCellsAvailable(), 0)
+		self.cells = 8
+		self.assertTrue(app.numCellsAvailable(), 0)
+		self.cells = 7
+		self.assertTrue(app.numCellsAvailable(), 0)
+		self.cells = 6
+		self.assertTrue(app.numCellsAvailable(), 0)
+		self.cells = 5
+		self.assertTrue(app.numCellsAvailable(), 0)
+		self.cells = 4
+		self.assertTrue(app.numCellsAvailable(), 0)
+		self.cells = 3
+		self.assertTrue(app.numCellsAvailable(), 0)
+		self.cells = 2
+		self.assertTrue(app.numCellsAvailable(), 0)
+		self.cells = 1
+		self.assertTrue(app.numCellsAvailable(), 0)
+		
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		self.funding = 2
+		self.cells = 15
+		self.assertTrue(app.numCellsAvailable(), 5)
+		self.cells = 14
+		self.assertTrue(app.numCellsAvailable(), 4)
+		self.cells = 13
+		self.assertTrue(app.numCellsAvailable(), 3)
+		self.cells = 12
+		self.assertTrue(app.numCellsAvailable(), 2)
+		self.cells = 11
+		self.assertTrue(app.numCellsAvailable(), 1)
+		self.cells = 10
+		self.assertTrue(app.numCellsAvailable(), 0)
+		self.cells = 9
+		self.assertTrue(app.numCellsAvailable(), 0)
+		self.cells = 8
+		self.assertTrue(app.numCellsAvailable(), 0)
+		self.cells = 7
+		self.assertTrue(app.numCellsAvailable(), 0)
+		self.cells = 6
+		self.assertTrue(app.numCellsAvailable(), 0)
+		self.cells = 5
+		self.assertTrue(app.numCellsAvailable(), 0)
+		self.cells = 4
+		self.assertTrue(app.numCellsAvailable(), 0)
+		self.cells = 3
+		self.assertTrue(app.numCellsAvailable(), 0)
+		self.cells = 2
+		self.assertTrue(app.numCellsAvailable(), 0)
+		self.cells = 1
+		self.assertTrue(app.numCellsAvailable(), 0)
+		
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		self.funding = 1
+		self.cells = 15
+		self.assertTrue(app.numCellsAvailable(), 5)
+		self.cells = 14
+		self.assertTrue(app.numCellsAvailable(), 4)
+		self.cells = 13
+		self.assertTrue(app.numCellsAvailable(), 3)
+		self.cells = 12
+		self.assertTrue(app.numCellsAvailable(), 2)
+		self.cells = 11
+		self.assertTrue(app.numCellsAvailable(), 1)
+		self.cells = 10
+		self.assertTrue(app.numCellsAvailable(), 0)
+		self.cells = 9
+		self.assertTrue(app.numCellsAvailable(), 0)
+		self.cells = 8
+		self.assertTrue(app.numCellsAvailable(), 0)
+		self.cells = 7
+		self.assertTrue(app.numCellsAvailable(), 0)
+		self.cells = 6
+		self.assertTrue(app.numCellsAvailable(), 0)
+		self.cells = 5
+		self.assertTrue(app.numCellsAvailable(), 0)
+		self.cells = 4
+		self.assertTrue(app.numCellsAvailable(), 0)
+		self.cells = 3
+		self.assertTrue(app.numCellsAvailable(), 0)
+		self.cells = 2
+		self.assertTrue(app.numCellsAvailable(), 0)
+		self.cells = 1
+		self.assertTrue(app.numCellsAvailable(), 0)
+		
+		
+		
+	
+		
+		
 
 if __name__ == "__main__":
 	unittest.main()   

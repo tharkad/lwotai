@@ -636,6 +636,14 @@ class Labyrinth(cmd.Cmd):
 		#print "DEBUG: w/adj good:%d" % modRoll
 		return modRoll
 		
+	def numCellsAvailable(self):
+		retVal = self.cells
+		if self.funding <= 3:
+			retVal -= 10
+		elif self.funding <= 6:
+			retVal -= 5
+		return retVal
+		
 	def handleMuslimWoI(self, roll, country):
 		if roll <= 3:
 			self.outputToHistory("* WoI in %s failed." % country)
@@ -692,6 +700,51 @@ class Labyrinth(cmd.Cmd):
 		else:
 			self.outputToHistory("%d Troops in %s" % (self.map[moveFrom].troops, moveFrom), False)
 		self.outputToHistory("US Prestige %d" % self.prestige)
+		
+	def handleRecruit(self, ops):
+		country = self.recruitChoice()
+		if not country:
+			self.outputToHistory("* No countries qualify to Recruit.", True)
+			return ops
+		else:
+			cells = self.numCellsAvailable()
+			if cells <= 0:
+				self.outputToHistory("* No cells available to Recruit.", True)
+				return ops
+			else:
+				cellsToRecruit = min(ops, cells)
+				if self.map[country].regimeChange:
+					self.outputToHistory("* Recruit to Regime Change country automaticall successful.", False)
+					self.cells -= cellsToRecruit
+					self.map[country].sleeperCells += cellsToRecruit
+					self.map[country].cadre = 0
+					self.outputToHistory("%d sleeper cells recruited to %s." % (cellsToRecruit, country), False)
+					self.outputToHistory(self.map[country].countryStr(), True)
+					return (ops - cellsToRecruit)
+				else:
+					rolls = []
+					for i in range(cellsToRecruit):
+						rolls.append(random.randint(1,6))
+					rolls.sort()
+					successes = 0
+					failures = 0
+					if self.map[country].recruit > 0:
+						recVal = self.map[country].recruit
+					else:
+						recVal = self.map[country].governance
+					for i in range(cellsToRecruit):
+						if rolls[i] <= recVal:
+							successes += 1
+						else:
+							failures += 1
+					self.outputToHistory("* Recruit to %s." % country, False)
+					self.outputToHistory("%d Successes rolled, %d Failures rolled" % (successes, failures), False)
+					self.cells -= successes
+					self.map[country].sleeperCells += successes
+					self.map[country].cadre = 0
+					self.outputToHistory("%d sleeper cells recruited to %s." % (successes, country), False)
+					self.outputToHistory(self.map[country].countryStr(), True)
+					return (ops - cellsToRecruit)
 				
 	def handleWithdraw(self, moveFrom, moveTo, howMany, prestigeRolls):
 		if self.map["United States"].posture == "Hard":
@@ -864,10 +917,37 @@ class Labyrinth(cmd.Cmd):
 				if opsRemaining <= 0:
 					break
 			return returnList
-				
-	def cellsAvailable(self):
-		return False
-		
+			
+	def recruitChoice(self):
+		countryScores = {}
+		for country in self.map:
+			if (self.map[country].activeCells > 0) or (self.map[country].sleeperCells) > 0 or (self.map[country].cadre > 0):
+				countryScores[country] = 0
+				if (self.map[country].regimeChange > 0) and (self.map[country].troops - (self.map[country].activeCells + self.map[country].sleeperCells)) >= 5:
+					countryScores[country] += 100000000
+				elif ((self.map[country].governance == 4) and ((self.map[country].activeCells + self.map[country].sleeperCells) < (2 * self.map[country].resources))):
+					countryScores[country] += 10000000
+				elif (self.map[country].governance != 4) and (self.map[country].regimeChange <= 0):
+					if self.map[country].recruit > 0:
+						countryScores[country] += (self.map[country].recruit * 1000000)
+					else:
+						countryScores[country] += (self.map[country].governance * 1000000)
+		for country in countryScores:
+			if self.map[country].besieged > 0:
+				countryScores[country] += 100000
+			countryScores[country] += (1000 * (self.map[country].troops + self.map[country].activeCells + self.map[country].sleeperCells))
+			countryScores[country] += 100 * self.map[country].resources
+			countryScores[country] += random.randint(1,99)
+		countryOrder = []
+		for country in countryScores:
+			countryOrder.append((countryScores[country], (self.map[country].sleeperCells + self.map[country].activeCells), country))
+		countryOrder.sort()
+		countryOrder.reverse()
+		if countryOrder == []:
+			return False
+		else:
+			return countryOrder[0][2]
+						
 	def eventPutsCell(self, cardNum):
 		return False
 		
@@ -938,9 +1018,11 @@ class Labyrinth(cmd.Cmd):
 			else:
 				print "DEBUG: NO"
 				print "DEBUG: Cells Available? [14]"
-				if self.cellsAvailable():
+				if self.numCellsAvailable() > 0:
 					print "DEBUG: YES"
-					print "DEBUG: [][]self.recruit() [15]"
+					print "DEBUG: Recruit [15]"
+					unusedOps = self.handleRecruit(self.deck[str(cardNum)].ops)
+					print "DEBUG: [][]self.radicalization(%d)" % unusedOps
 				else:
 					print "DEBUG: NO"
 					print "DEBUG: [][]self.travel() [16]"
