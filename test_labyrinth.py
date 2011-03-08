@@ -5067,11 +5067,290 @@ class numCellsAvaialbe(unittest.TestCase):
 		self.cells = 1
 		self.assertTrue(app.numCellsAvailable(), 0)
 		
+class travel(unittest.TestCase):
+	'''Test Travel'''
+
+	def testTravelFirstBox(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+
+		app.map["Gulf States"].governance = 3
+		app.map["Gulf States"].besieged = 1
+		dest = app.travelDestinations(1)
+		self.assertEqual(dest,["Gulf States"])
+
+		app.map["Gulf States"].besieged = 0
+		app.map["Gulf States"].aid = 1
+		dest = app.travelDestinations(1)
+		self.assertEqual(dest,["Gulf States"])
+
+		app.map["Gulf States"].aid = 0
+		app.map["Gulf States"].regimeChange = 1
+		dest = app.travelDestinations(1)
+		self.assertEqual(dest,["Gulf States"])
+
+		app.map["Gulf States"].governance = 4
+		app.map["Afghanistan"].governance = 3
+		app.map["Afghanistan"].besieged = 1
+		dest = app.travelDestinations(1)
+		self.assertEqual(dest,["Afghanistan"])
+
+		app.map["Gulf States"].governance = 3
+		dest = app.travelDestinations(1)
+		self.assertEqual(dest,["Gulf States"])
+
+		app.map["Iraq"].governance = 3
+		app.map["Iraq"].aid = 1
+		iraqCount = 0
+		gulfCount = 0
+		for i in range(100):
+			dest = app.travelDestinations(1)
+			if dest == ["Gulf States"]:
+				gulfCount += 1
+			elif dest == ["Iraq"]:
+				iraqCount += 1
+			self.assertTrue(dest == ["Gulf States"] or dest == ["Iraq"])
+		self.assertTrue(iraqCount > 0)
+		self.assertTrue(gulfCount > 0)
+			
+		app.map["Pakistan"].governance = 3
+		app.map["Pakistan"].aid = 1
+		dest = app.travelDestinations(1)
+		self.assertEqual(dest,["Pakistan"])
 		
+	def testTravelSecondBox(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+
+		app.map["Afghanistan"].governance = 3
+		app.map["Afghanistan"].troops = 1
+		app.map["Afghanistan"].sleeperCells = 4
+		dest = app.travelDestinations(1)
+		self.assertEqual(dest,["Afghanistan"])
+
+		app.map["Gulf States"].governance = 3
+		app.map["Gulf States"].besieged = 1
+		dest = app.travelDestinations(1)
+		self.assertEqual(dest,["Gulf States"])
+
+		dest = app.travelDestinations(2)
+		self.assertEqual(dest,["Gulf States","Afghanistan"])
 		
+	def testTravelThirdBox(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+
+		app.map["Jordan"].governance = 2
+		app.map["Iraq"].governance = 3
+		app.map["Iraq"].sleeperCells = 1
+		dest = app.travelDestinations(1)
+		self.assertEqual(dest,["Jordan"])
+
+		app.map["Gulf States"].governance = 2
+		dest = app.travelDestinations(1)
+		self.assertEqual(dest,["Gulf States"])
+		
+		app.map["Gulf States"].governance = 3		
+		app.map["Algeria/Tunisia"].governance = 2
+		dest = app.travelDestinations(1)
+		self.assertEqual(dest,["Jordan"])
+		
+		app.map["Germany"].sleeperCells = 1
+		dest = app.travelDestinations(1)
+		self.assertEqual(dest,["Algeria/Tunisia"])
+		
+	def testTravelForthBox(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		
+		app.map["United States"].posture = "Hard"
+		
+		app.map["Canada"].posture = "Hard"
+		app.map["United Kingdom"].posture = "Hard"
+		app.map["Serbia"].posture = "Hard"
+		app.map["India"].posture = "Hard"
+		app.map["Scandinavia"].posture = "Hard"
+		app.map["Eastern Europe"].posture = "Hard"
+		app.map["Benelux"].posture = "Hard"
+		app.map["Germany"].posture = "Hard"
+		app.map["France"].posture = "Hard"
+		app.map["Italy"].posture = "Hard"
+		app.map["Spain"].posture = "Hard"
+		app.map["Russia"].posture = "Hard"
+		app.map["Caucasus"].posture = "Hard"
+		app.map["China"].posture = "Hard"
+		app.map["Kenya/Tanzania"].posture = "Hard"
+		app.map["Thailand"].posture = "Hard"
+		#app.map["Philippines"]
+		dest = app.travelDestinations(1)
+		self.assertEqual(dest,["Philippines"])
 	
+	def testTravelMultiple(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		dest = app.travelDestinations(3)
 		
+		app.map["Gulf States"].governance = 3
+		app.map["Gulf States"].besieged = 1
+		dest = app.travelDestinations(1)
+		self.assertEqual(dest,["Gulf States"])
 		
+		app.map["Afghanistan"].governance = 3
+		app.map["Afghanistan"].troops = 1
+		app.map["Afghanistan"].sleeperCells = 4
+		dest = app.travelDestinations(2)
+		self.assertEqual(dest,["Gulf States", "Afghanistan"])
+
+		app.map["Jordan"].governance = 2
+		app.map["Iraq"].governance = 3
+		app.map["Iraq"].sleeperCells = 1
+		dest = app.travelDestinations(3)
+		self.assertEqual(dest,["Gulf States", "Afghanistan", "Jordan"])
+
+		app.map["United States"].posture = "Hard"
+		
+		app.map["Canada"].posture = "Hard"
+		app.map["United Kingdom"].posture = "Hard"
+		app.map["Serbia"].posture = "Hard"
+		app.map["India"].posture = "Hard"
+		app.map["Scandinavia"].posture = "Hard"
+		app.map["Eastern Europe"].posture = "Hard"
+		app.map["Benelux"].posture = "Hard"
+		app.map["Germany"].posture = "Hard"
+		app.map["France"].posture = "Hard"
+		app.map["Italy"].posture = "Hard"
+		app.map["Spain"].posture = "Hard"
+		app.map["Russia"].posture = "Hard"
+		app.map["Caucasus"].posture = "Hard"
+		app.map["China"].posture = "Hard"
+		app.map["Kenya/Tanzania"].posture = "Hard"
+		app.map["Thailand"].posture = "Hard"
+		#app.map["Philippines"]
+		dest = app.travelDestinations(3)
+		self.assertEqual(dest,["Gulf States", "Afghanistan", "Jordan"])
+
+		app.map["Gulf States"].governance = 4
+		dest = app.travelDestinations(3)
+		self.assertEqual(dest,["Afghanistan", "Jordan", "Philippines"])
+		
+		app.map["Kenya/Tanzania"].posture = ""
+		phCount = 0
+		ktCount = 0
+		for i in range(100):
+			dest = app.travelDestinations(3)
+			if dest == ["Afghanistan", "Jordan", "Philippines"]:
+				phCount += 1
+			elif dest == ["Afghanistan", "Jordan", "Kenya/Tanzania"]:
+				ktCount += 1
+			self.assertTrue(dest == ["Afghanistan", "Jordan", "Philippines"] or dest == ["Afghanistan", "Jordan", "Kenya/Tanzania"])
+		self.assertTrue(phCount > 0)
+		self.assertTrue(ktCount > 0)
+
+		app.map["United States"].posture = "Soft"
+		app.map["China"].posture = "Soft"
+		dest = app.travelDestinations(3)
+		self.assertEqual(dest,["Afghanistan", "Jordan", "China"])
+		
+		app.map["Benelux"].posture = "Soft"
+		chinaCount = 0
+		beneluxCount = 0
+		for i in range(100):
+			dest = app.travelDestinations(3)
+			if dest == ["Afghanistan", "Jordan", "China"]:
+				chinaCount += 1
+			elif dest == ["Afghanistan", "Jordan", "Benelux"]:
+				beneluxCount += 1
+			self.assertTrue(dest == ["Afghanistan", "Jordan", "China"] or dest == ["Afghanistan", "Jordan", "Benelux"])
+		self.assertTrue(chinaCount > 0)
+		self.assertTrue(beneluxCount > 0)
+		
+	def testTravelFrom(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+
+		app.map["Gulf States"].governance = 3
+		app.map["Gulf States"].besieged = 1
+		dest = app.travelDestinations(1)
+		self.assertEqual(dest,["Gulf States"])
+		
+		app.map["Lebanon"].governance = 2
+		app.map["Lebanon"].activeCells = 1
+		sources = app.travelSources(dest, 1)
+		self.assertEqual(sources,["Lebanon"])
+
+		app.map["Iraq"].governance = 2
+		app.map["Iraq"].activeCells = 1
+		sources = app.travelSources(dest, 1)
+		self.assertEqual(sources,["Iraq"])
+		
+		app.map["Egypt"].governance = 2
+		app.map["Egypt"].activeCells = 1
+		app.map["Egypt"].regimeChange = 1
+		app.map["Egypt"].troops = 2
+		sources = app.travelSources(dest, 1)
+		self.assertEqual(sources,["Iraq"])
+		app.map["Egypt"].activeCells = 3
+		sources = app.travelSources(dest, 1)
+		self.assertEqual(sources,["Egypt"])
+		
+		app.map["Yemen"].governance = 4
+		app.map["Yemen"].activeCells = 3
+		app.map["Yemen"].troops = 2
+		sources = app.travelSources(dest, 3)
+		self.assertEqual(sources,["Egypt"])
+		sources = app.travelSources(dest, 2)
+		self.assertEqual(sources,["Yemen"])
+		
+	#multi	
+
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		
+		app.map["Gulf States"].governance = 3
+		app.map["Gulf States"].besieged = 1
+		
+		app.map["Afghanistan"].governance = 3
+		app.map["Afghanistan"].troops = 1
+		app.map["Afghanistan"].sleeperCells = 4
+
+		app.map["Jordan"].governance = 2
+		app.map["Iraq"].governance = 3
+		app.map["Iraq"].sleeperCells = 1
+		dest = app.travelDestinations(3)
+		self.assertEqual(dest,["Gulf States", "Afghanistan", "Jordan"])
+
+		app.map["Lebanon"].governance = 2
+		app.map["Lebanon"].activeCells = 1
+
+		app.map["Iraq"].governance = 2
+		app.map["Iraq"].activeCells = 1
+		
+		app.map["Egypt"].governance = 2
+		app.map["Egypt"].regimeChange = 1
+		app.map["Egypt"].troops = 2
+		app.map["Egypt"].activeCells = 3
+		
+		app.map["Yemen"].governance = 4
+		app.map["Yemen"].activeCells = 4
+		app.map["Yemen"].troops = 2
+		sources = app.travelSources(dest, 3)
+		self.assertEqual(sources,["Yemen", "Egypt", "Iraq"])
+		
+		app.map["Yemen"].activeCells = 5
+		sources = app.travelSources(dest, 3)
+		self.assertEqual(sources,["Yemen", "Yemen", "Egypt"])
+
+		app.map["Yemen"].activeCells = 6
+		sources = app.travelSources(dest, 3)
+		self.assertEqual(sources,["Yemen", "Yemen", "Yemen"])
+
+		app.map["Yemen"].activeCells = 4
+		sources = app.travelSources(dest, 3)
+		app.map["Egypt"].activeCells = 4
+		sources = app.travelSources(dest, 3)
+		self.assertEqual(sources,["Yemen", "Egypt", "Egypt"])
+
+		app.map["Iraq"].governance = 2
+		app.map["Iraq"].regimeChange = 1
+		app.map["Iraq"].troops = 2
+		app.map["Iraq"].activeCells = 4
+		app.map["Egypt"].activeCells = 0
+		app.map["Egypt"].sleeperCells = 4
+		sources = app.travelSources(dest, 3)
+		self.assertEqual(sources,["Yemen", "Iraq", "Iraq"])
 
 if __name__ == "__main__":
 	unittest.main()   

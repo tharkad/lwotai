@@ -41,6 +41,7 @@ class Country:
 		self.cadre = 0
 		self.plots = 0
 		self.links = []
+		self.schengenLink = False
 		
 	def govStr(self):
 		if self.governance == 1:
@@ -127,8 +128,8 @@ class Labyrinth(cmd.Cmd):
 		if setupFuntion:
 			setupFuntion(self)
 		else:
-			#self.scenarioSetup()
-			self.testScenarioSetup()
+			self.scenarioSetup()
+			#self.testScenarioSetup()
 		self.history = []
 		self.prompt = "Command: "
 		self.outputToHistory("Game Start")
@@ -136,7 +137,24 @@ class Labyrinth(cmd.Cmd):
 		self.outputToHistory(self.phase)
 		self.deck = {}
 		self.deckSetup()
-
+		
+	def postcmd(self, stop, line):
+	# Cells test
+		cellCount = 0
+		for country in self.map:
+			cellCount += self.map[country].sleeperCells
+			cellCount += self.map[country].activeCells
+		cellCount += self.cells
+		if cellCount != 15:
+			print "CELL COUNT %d" % cellCount
+	# Troops test
+		troopCount = 0
+		for country in self.map:
+			troopCount += self.map[country].troops
+		troopCount += self.troops
+		if troopCount != 15:
+			print "TROOP COUNT %d" % troopCount
+			
 	def mapSetup(self):
 		self.map["Canada"] = Country("Canada", "Non-Muslim", "", "", 1, False, 0, 0, 0, 0, False, 0)
 		self.map["United States"] = Country("United States", "Non-Muslim", "Hard", "", 1, False, 0, 0, 0, 0, False, 0)
@@ -701,51 +719,6 @@ class Labyrinth(cmd.Cmd):
 			self.outputToHistory("%d Troops in %s" % (self.map[moveFrom].troops, moveFrom), False)
 		self.outputToHistory("US Prestige %d" % self.prestige)
 		
-	def handleRecruit(self, ops):
-		country = self.recruitChoice()
-		if not country:
-			self.outputToHistory("* No countries qualify to Recruit.", True)
-			return ops
-		else:
-			cells = self.numCellsAvailable()
-			if cells <= 0:
-				self.outputToHistory("* No cells available to Recruit.", True)
-				return ops
-			else:
-				cellsToRecruit = min(ops, cells)
-				if self.map[country].regimeChange:
-					self.outputToHistory("* Recruit to Regime Change country automaticall successful.", False)
-					self.cells -= cellsToRecruit
-					self.map[country].sleeperCells += cellsToRecruit
-					self.map[country].cadre = 0
-					self.outputToHistory("%d sleeper cells recruited to %s." % (cellsToRecruit, country), False)
-					self.outputToHistory(self.map[country].countryStr(), True)
-					return (ops - cellsToRecruit)
-				else:
-					rolls = []
-					for i in range(cellsToRecruit):
-						rolls.append(random.randint(1,6))
-					rolls.sort()
-					successes = 0
-					failures = 0
-					if self.map[country].recruit > 0:
-						recVal = self.map[country].recruit
-					else:
-						recVal = self.map[country].governance
-					for i in range(cellsToRecruit):
-						if rolls[i] <= recVal:
-							successes += 1
-						else:
-							failures += 1
-					self.outputToHistory("* Recruit to %s." % country, False)
-					self.outputToHistory("%d Successes rolled, %d Failures rolled" % (successes, failures), False)
-					self.cells -= successes
-					self.map[country].sleeperCells += successes
-					self.map[country].cadre = 0
-					self.outputToHistory("%d sleeper cells recruited to %s." % (successes, country), False)
-					self.outputToHistory(self.map[country].countryStr(), True)
-					return (ops - cellsToRecruit)
-				
 	def handleWithdraw(self, moveFrom, moveTo, howMany, prestigeRolls):
 		if self.map["United States"].posture == "Hard":
 			return
@@ -822,9 +795,11 @@ class Labyrinth(cmd.Cmd):
 			if self.map[country].activeCells > 0:
 				self.map[country].activeCells -= 1
 				self.outputToHistory("Active cell Removed to Funding Track", False)
+				self.cells += 1
 			else:
 				self.map[country].sleeperCells -= 1		
 				self.outputToHistory("Sleeper cell Removed to Funding Track", False)
+				self.cells += 1
 		self.outputToHistory(self.map[country].countryStr(), False) 
 		print ""
 		
@@ -844,12 +819,16 @@ class Labyrinth(cmd.Cmd):
 			opsRemaining -= countryData[1]
 		return opsRemaining
 
-	def majorJihadPossible(self, ops):
-		'''Return list of countries where regime change is possible.'''
-		possible = []
+	def extraCellsNeededForMajorJihad(self):
 		plusCellsNeeded = 5
 		if self.ideology >= 3:
 			plusCellsNeeded = 3
+		return plusCellsNeeded
+
+	def majorJihadPossible(self, ops):
+		'''Return list of countries where regime change is possible.'''
+		possible = []
+		plusCellsNeeded = self.extraCellsNeededForMajorJihad()
 		for country in self.map:
 			if self.map[country].type == "Suni" or self.map[country].type == "Shia-Mix":
 				if self.map[country].governance != 4:
@@ -884,7 +863,7 @@ class Labyrinth(cmd.Cmd):
 	def minorJihadInGoodFairChoice(self, ops):
 		possible = []
 		for country in self.map:
-			if (self.map[country].type == "Shia-Mix" or self.map[country].type == "Suni") and (self.map[country].governance <= 2) and (self.map[country].sleeperCells > 0 or self.map[country].activeCells > 0):
+			if (self.map[country].type == "Shia-Mix" or self.map[country].type == "Suni") and (self.map[country].governance == 1 or self.map[country].governance == 2) and (self.map[country].sleeperCells > 0 or self.map[country].activeCells > 0):
 				possible.append(country)
 		if len(possible) == 0:
 			return False
@@ -947,6 +926,304 @@ class Labyrinth(cmd.Cmd):
 			return False
 		else:
 			return countryOrder[0][2]
+			
+	def handleRecruit(self, ops):
+		country = self.recruitChoice()
+		if not country:
+			self.outputToHistory("* No countries qualify to Recruit.", True)
+			return ops
+		else:
+			cells = self.numCellsAvailable()
+			if cells <= 0:
+				self.outputToHistory("* No cells available to Recruit.", True)
+				return ops
+			else:
+				cellsToRecruit = min(ops, cells)
+				if self.map[country].regimeChange:
+					self.outputToHistory("* Recruit to Regime Change country automaticall successful.", False)
+					self.cells -= cellsToRecruit
+					self.map[country].sleeperCells += cellsToRecruit
+					self.map[country].cadre = 0
+					self.outputToHistory("%d sleeper cells recruited to %s." % (cellsToRecruit, country), False)
+					self.outputToHistory(self.map[country].countryStr(), True)
+					return (ops - cellsToRecruit)
+				else:
+					rolls = []
+					for i in range(cellsToRecruit):
+						rolls.append(random.randint(1,6))
+					rolls.sort()
+					successes = 0
+					failures = 0
+					if self.map[country].recruit > 0:
+						recVal = self.map[country].recruit
+					else:
+						recVal = self.map[country].governance
+					for i in range(cellsToRecruit):
+						if rolls[i] <= recVal:
+							successes += 1
+						else:
+							failures += 1
+					self.outputToHistory("* Recruit to %s." % country, False)
+					self.outputToHistory("%d Successes rolled, %d Failures rolled" % (successes, failures), False)
+					self.cells -= successes
+					self.map[country].sleeperCells += successes
+					self.map[country].cadre = 0
+					self.outputToHistory("%d sleeper cells recruited to %s." % (successes, country), False)
+					self.outputToHistory(self.map[country].countryStr(), True)
+					return (ops - cellsToRecruit)
+				
+	def adjacentCountryHasCell(self, targetCountry):
+		for adjacent in self.map[targetCountry].links:
+			if (adjacent.sleeperCells > 0) or (adjacent.activeCells > 0):
+				return True
+		if self.map[targetCountry].schengenLink:
+			for country in self.map:
+				if self.map[country].schengen:
+					if ((self.map[country].sleeperCells > 0) or (self.map[country].activeCells > 0)):
+						return True
+		return False
+		
+	def travelDestinationChooseBasedOnPriority(self, countryList):
+		for country in countryList:
+			if country == "Pakistan":
+				return country
+		maxResources = 0
+		for country in countryList:
+			if self.map[country].resources > maxResources:
+				maxResources = self.map[country].resources
+		maxdests = []
+		for country in countryList:
+			if self.map[country].resources == maxResources:
+				maxdests.append(country)
+		return random.choice(maxdests)
+			
+	def travelDestinations(self, ops):
+		dests = []
+	# A non-Islamist Rule country with Regime Change, Besieged Regime, or Aid, if any
+		subdests = []
+		for country in self.map:
+			if (self.map[country].governance != 4) and ((self.map[country].besieged > 0) or (self.map[country].regimeChange > 0) or (self.map[country].aid > 0)):
+				subdests.append(country)
+		if len(subdests) == 1:
+			dests.append(subdests[0])
+		elif len(subdests) > 1:
+			dests.append(self.travelDestinationChooseBasedOnPriority(subdests))
+		if len(dests) == ops:
+			return dests
+			
+	# A Poor country where Major Jihad would be possible if two (or fewer) cells were added.
+		subdests = []
+		for country in self.map:
+			if (self.map[country].governance == 3) and (((self.map[country].sleeperCells + self.map[country].activeCells + 2) - self.map[country].troops) >= self.extraCellsNeededForMajorJihad()):
+				subdests.append(country)
+		if len(subdests) == 1:
+			dests.append(subdests[0])
+		elif len(subdests) > 1:
+			dests.append(self.travelDestinationChooseBasedOnPriority(subdests))
+		if len(dests) == ops:
+			return dests
+			
+	# A Good or Fair Muslim country with at least one cell adjacent.
+		subdests = []
+		for country in self.map:
+			if ((self.map[country].governance == 1) or (self.map[country].governance == 2)) and ((self.map[country].type == "Suni") or (self.map[country].type == "Shia-Mix")):
+				if self.adjacentCountryHasCell(country):
+					subdests.append(country)
+		if len(subdests) == 1:
+			dests.append(subdests[0])
+		elif len(subdests) > 1:
+			dests.append(self.travelDestinationChooseBasedOnPriority(subdests))
+		if len(dests) == ops:
+			return dests
+	
+	# An unmarked non-Muslim country if US Posture is Hard, or a Soft non-Muslim country if US Posture is Soft.
+		subdests = []
+		if self.map["United States"].posture == "Hard":
+			for country in self.map:
+				if self.map[country].type == "Non-Muslim" and self.map[country].posture == "":
+					subdests.append(country)
+		else:
+			for country in self.map:
+				if country != "United States" and self.map[country].type == "Non-Muslim" and self.map[country].posture == "Soft":
+					subdests.append(country)
+		if len(subdests) == 1:
+			dests.append(subdests[0])
+		elif len(subdests) > 1:
+			dests.append(random.choice(subdests))
+		if len(dests) == ops:
+			return dests
+			
+	# Random
+		while len(dests) < ops:
+			dests.append(random.choice(self.map.keys()))		
+		return dests
+	
+	def travelSourceChooseBasedOnPriority(self, countryList, i, destinations):
+		subPossibles = []
+		for country in countryList:
+			if self.map[country].activeCells > 0:
+				subPossibles.append(country)
+		if len(subPossibles) == 1:
+			return subPossibles[0]
+		elif len(subPossibles) > 1:
+			return random.choice(subPossibles)
+		else:
+			subPossibles = []
+			for country in countryList:
+				notAnotherDest = True
+				for j in range(len(destinations)):
+					if (i != j) and (country == destinations[j]):
+						subPossibles.append(country)
+		if len(subPossibles) == 1:
+			return subPossibles[0]
+		elif len(subPossibles) > 1:
+			return random.choice(subPossibles)
+		else:
+			return random.choice(countryList)
+			
+	def travelSourceBoxOne(self, i, destinations, sources, ops):
+		possibles = []
+		for country in self.map:
+			if self.map[country].governance == 4:
+				numTimesIsSource = 0
+				for source in sources:
+					if source == country:
+						numTimesIsSource += 1
+				if ((self.map[country].sleeperCells + self.map[country].activeCells) - numTimesIsSource) > ops:
+					possibles.append(country)
+		if len(possibles) == 0:
+			return False
+		if len(possibles) == 1:
+			return possibles[0]
+		else:
+			return self.travelSourceChooseBasedOnPriority(possibles, i, destinations)
+	
+	def travelSourceBoxTwo(self, i, destinations, sources):
+		possibles = []
+		for country in self.map:
+			if self.map[country].regimeChange > 0:
+				numTimesIsSource = 0
+				for source in sources:
+					if source == country:
+						numTimesIsSource += 1
+				if ((self.map[country].sleeperCells + self.map[country].activeCells) - numTimesIsSource) > self.map[country].troops:
+					possibles.append(country)
+		if len(possibles) == 0:
+			return False
+		if len(possibles) == 1:
+			return possibles[0]
+		else:
+			return self.travelSourceChooseBasedOnPriority(possibles, i, destinations)					
+
+	def travelSourceBoxThree(self, i, destinations, sources):
+		possibles = []
+		for adjacent in self.map[destinations[i]].links:
+			numTimesIsSource = 0
+			for source in sources:
+				if source == adjacent.name:
+					numTimesIsSource += 1
+			if ((adjacent.sleeperCells + adjacent.activeCells) - numTimesIsSource) > 0:
+				possibles.append(adjacent.name)
+		if len(possibles) == 0:
+			return False
+		if len(possibles) == 1:
+			return possibles[0]
+		else:
+			return self.travelSourceChooseBasedOnPriority(possibles, i, destinations)					
+
+	def travelSourceBoxFour(self, i, destinations, sources):
+		possibles = []
+		for country in self.map:
+			numTimesIsSource = 0
+			for source in sources:
+				if source == country:
+					numTimesIsSource += 1
+			if ((self.map[country].sleeperCells + self.map[country].activeCells) - numTimesIsSource) > 0:
+				possibles.append(country)
+		if len(possibles) == 0:
+			return False
+		if len(possibles) == 1:
+			return possibles[0]
+		else:
+			return self.travelSourceChooseBasedOnPriority(possibles, i, destinations)					
+
+	def travelSources(self, destinations, ops):
+		sources = []
+		for i in range(len(destinations)):
+			source = self.travelSourceBoxOne(i, destinations, sources, ops)
+			if source:
+				sources.append(source)
+			else:
+				source = self.travelSourceBoxTwo(i, destinations, sources)
+				if source:
+					sources.append(source)
+				else:
+					source = self.travelSourceBoxThree(i, destinations, sources)
+					if source:
+						sources.append(source)
+					else:
+						source = self.travelSourceBoxFour(i, destinations, sources)
+						if source:
+							sources.append(source)
+		return sources
+	
+	def handleTravel(self, ops):
+		destinations = self.travelDestinations(ops)
+		sources = self.travelSources(destinations, ops)
+		self.outputToHistory("* Cells Travel", False)
+		for i in range(len(sources)):
+			self.outputToHistory("->Travel from %s to %s." % (sources[i], destinations[i]), False)
+			success = False
+			displayStr = "BLAH!!"
+			if sources[i] == destinations[i]:
+				success = True
+				displayStr = ("Travel within country automatically successful.")
+			else:
+				for adjacent in self.map[sources[i]].links:
+					if adjacent.name == destinations[i]:
+						success = True
+						displayStr = ("Travel to adjacent country automatically successful.")
+						break
+				if not success:
+					roll = random.randint(1,6)
+					if roll <= self.map[destinations[i]].governance:
+						success = True
+						displayStr = ("Travel roll successful.")
+					else:
+						displayStr = ("Travel roll failed.")
+			self.outputToHistory(displayStr, True)
+		# Country testing if necessary		
+			if self.map[destinations[i]].type == "Non-Muslim" and self.map[destinations[i]].posture == "":
+				testRoll = random.randint(1,6)
+				if testRoll <= 4:
+					self.map[destinations[i]].posture = "Soft"
+				else:
+					self.map[destinations[i]].posture = "Hard"
+				self.outputToHistory("%s tested, posture %s" % (self.map[destinations[i]].name, self.map[destinations[i]].posture), False)
+			elif self.map[destinations[i]].governance == 0:
+				testRoll = random.randint(1,6)
+				if testRoll <= 4:
+					self.map[destinations[i]].governance = 3
+				else:
+					self.map[destinations[i]].governance = 2
+				self.map[destinations[i]].alignment = "Neutral"
+				self.outputToHistory("%s tested, governance %s" % (self.map[destinations[i]].name, self.map[destinations[i]].govStr()), False)
+			if success:
+				if self.map[sources[i]].activeCells > 0:
+					self.map[sources[i]].activeCells -= 1
+				else:
+					self.map[sources[i]].sleeperCells -= 1
+				self.map[destinations[i]].sleeperCells += 1
+				self.outputToHistory(self.map[sources[i]].countryStr(), False)
+				self.outputToHistory(self.map[destinations[i]].countryStr(), True)
+			else:
+				if self.map[sources[i]].activeCells > 0:
+					self.map[sources[i]].activeCells -= 1
+				else:
+					self.map[sources[i]].sleeperCells -= 1
+				self.cells += 1
+				self.outputToHistory(self.map[sources[i]].countryStr(), True)				
+		return ops - len(sources)
 						
 	def eventPutsCell(self, cardNum):
 		return False
@@ -1025,7 +1302,9 @@ class Labyrinth(cmd.Cmd):
 					print "DEBUG: [][]self.radicalization(%d)" % unusedOps
 				else:
 					print "DEBUG: NO"
-					print "DEBUG: [][]self.travel() [16]"
+					print "DEBUG: Travel [16]"
+					unusedOps = self.handleTravel(self.deck[str(cardNum)].ops)
+					print "DEBUG: [][]self.radicalization(%d)" % unusedOps
 					
 	def listCountriesWithTroops(self, needed = None):
 		print ""
