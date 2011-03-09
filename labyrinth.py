@@ -155,6 +155,16 @@ class Labyrinth(cmd.Cmd):
 		if troopCount != 15:
 			print "TROOP COUNT %d" % troopCount
 			
+	def debugPrint(self, str):
+		return
+		print str
+		
+	def outputToHistory(self, output, lineFeed = True):
+		print output
+		if lineFeed:
+			print ""
+		self.history.append(output)
+		
 	def mapSetup(self):
 		self.map["Canada"] = Country("Canada", "Non-Muslim", "", "", 1, False, 0, 0, 0, 0, False, 0)
 		self.map["United States"] = Country("United States", "Non-Muslim", "Hard", "", 1, False, 0, 0, 0, 0, False, 0)
@@ -997,19 +1007,20 @@ class Labyrinth(cmd.Cmd):
 				maxdests.append(country)
 		return random.choice(maxdests)
 			
-	def travelDestinations(self, ops):
+	def travelDestinations(self, ops, isRadicalization = False):
 		dests = []
 	# A non-Islamist Rule country with Regime Change, Besieged Regime, or Aid, if any
-		subdests = []
-		for country in self.map:
-			if (self.map[country].governance != 4) and ((self.map[country].besieged > 0) or (self.map[country].regimeChange > 0) or (self.map[country].aid > 0)):
-				subdests.append(country)
-		if len(subdests) == 1:
-			dests.append(subdests[0])
-		elif len(subdests) > 1:
-			dests.append(self.travelDestinationChooseBasedOnPriority(subdests))
-		if len(dests) == ops:
-			return dests
+		if not isRadicalization:
+			subdests = []
+			for country in self.map:
+				if (self.map[country].governance != 4) and ((self.map[country].besieged > 0) or (self.map[country].regimeChange > 0) or (self.map[country].aid > 0)):
+					subdests.append(country)
+			if len(subdests) == 1:
+				dests.append(subdests[0])
+			elif len(subdests) > 1:
+				dests.append(self.travelDestinationChooseBasedOnPriority(subdests))
+			if len(dests) == ops:
+				return dests
 			
 	# A Poor country where Major Jihad would be possible if two (or fewer) cells were added.
 		subdests = []
@@ -1166,11 +1177,30 @@ class Labyrinth(cmd.Cmd):
 						if source:
 							sources.append(source)
 		return sources
+		
+	def testCountry(self, country):
+		# Country testing if necessary		
+		if self.map[country].type == "Non-Muslim" and self.map[country].posture == "":
+			testRoll = random.randint(1,6)
+			if testRoll <= 4:
+				self.map[country].posture = "Soft"
+			else:
+				self.map[country].posture = "Hard"
+			self.outputToHistory("%s tested, posture %s" % (self.map[country].name, self.map[country].posture), False)
+		elif self.map[country].governance == 0:
+			testRoll = random.randint(1,6)
+			if testRoll <= 4:
+				self.map[country].governance = 3
+			else:
+				self.map[country].governance = 2
+			self.map[country].alignment = "Neutral"
+			self.outputToHistory("%s tested, governance %s" % (self.map[country].name, self.map[country].govStr()), False)
 	
-	def handleTravel(self, ops):
-		destinations = self.travelDestinations(ops)
+	def handleTravel(self, ops, isRadicalization = False):
+		destinations = self.travelDestinations(ops, isRadicalization)
 		sources = self.travelSources(destinations, ops)
-		self.outputToHistory("* Cells Travel", False)
+		if not isRadicalization:
+			self.outputToHistory("* Cells Travel", False)
 		for i in range(len(sources)):
 			self.outputToHistory("->Travel from %s to %s." % (sources[i], destinations[i]), False)
 			success = False
@@ -1192,22 +1222,7 @@ class Labyrinth(cmd.Cmd):
 					else:
 						displayStr = ("Travel roll failed.")
 			self.outputToHistory(displayStr, True)
-		# Country testing if necessary		
-			if self.map[destinations[i]].type == "Non-Muslim" and self.map[destinations[i]].posture == "":
-				testRoll = random.randint(1,6)
-				if testRoll <= 4:
-					self.map[destinations[i]].posture = "Soft"
-				else:
-					self.map[destinations[i]].posture = "Hard"
-				self.outputToHistory("%s tested, posture %s" % (self.map[destinations[i]].name, self.map[destinations[i]].posture), False)
-			elif self.map[destinations[i]].governance == 0:
-				testRoll = random.randint(1,6)
-				if testRoll <= 4:
-					self.map[destinations[i]].governance = 3
-				else:
-					self.map[destinations[i]].governance = 2
-				self.map[destinations[i]].alignment = "Neutral"
-				self.outputToHistory("%s tested, governance %s" % (self.map[destinations[i]].name, self.map[destinations[i]].govStr()), False)
+			self.testCountry(destinations[i])
 			if success:
 				if self.map[sources[i]].activeCells > 0:
 					self.map[sources[i]].activeCells -= 1
@@ -1224,6 +1239,55 @@ class Labyrinth(cmd.Cmd):
 				self.cells += 1
 				self.outputToHistory(self.map[sources[i]].countryStr(), True)				
 		return ops - len(sources)
+		
+	def handleRadicalization(self, ops):
+		self.outputToHistory("* Radicaliztion with %d ops." % ops, False)
+		opsRemaining = ops
+	# First box
+		if opsRemaining > 0:
+			if self.cells > 0:
+				country = random.choice(self.map.keys())
+				self.map[country].sleeperCells += 1
+				self.cells -= 1
+				self.outputToHistory("--> Cell placed in %s." % country, True)
+				self.testCountry(country)
+				self.outputToHistory(self.map[country].countryStr(), True)
+				opsRemaining -= 1
+	# Second box
+		if opsRemaining > 0:
+			if self.cells < 15:
+				self.handleTravel(1, True)
+				opsRemaining -= 1
+	# Third box
+		if opsRemaining > 0:
+			if self.funding < 9:
+				possibles = []
+				for country in self.map:
+					if self.map[country].governance != 4:
+						if (self.map[country].sleeperCells + self.map[country].activeCells) > 0:
+							possibles.append(country)
+				if len(possibles) > 0:
+					location = random.choice(possibles)
+					self.outputToHistory("--> Plot placed in %s." % country, True)
+					if self.map[location].activeCells == 0:
+						self.map[location].activeCells += 1
+						self.map[location].sleeperCells -= 1
+					opsRemaining -= 1
+	# Fourth box
+		while opsRemaining > 0:
+			possibles = []
+			for country in self.map:
+				if (self.map[country].type == "Shia-Mix" or self.map[country].type == "Suni") and (self.map[country].governance == 1 or self.map[country].governance == 2):
+					possibles.append(country)
+			if len(possibles) == 0:
+				self.outputToHistory("--> No remaining Good or Fair countries.", False)
+				break
+			else:
+				location = random.choice(possibles)
+				self.map[location].governance += 1
+				self.outputToHistory("--> Governance in %s worsens to %s." % (location, self.map[location].govStr()), False)
+				self.outputToHistory(self.map[country].countryStr(), True)
+				opsRemaining -= 1
 						
 	def eventPutsCell(self, cardNum):
 		return False
@@ -1237,74 +1301,83 @@ class Labyrinth(cmd.Cmd):
 		return False
 		
 	def aiFlowChartTop(self, cardNum):
-		print "DEBUG: START"
-		print "DEBUG: Playble Non-US event? [1]"
+		self.debugPrint("DEBUG: START")
+		self.debugPrint("DEBUG: Playble Non-US event? [1]")
 		if self.playableNonUSEvent(cardNum):
-			print "DEBUG: YES"
-			print "Event Recruits or places cell? [2]"
+			self.debugPrint("DEBUG: YES")
+			self.debugPrint("Event Recruits or places cell? [2]")
 			if self.eventPutsCell(cardNum):
-				print "DEBUG: YES"
-				print "Track has cell? [3]"
+				self.debugPrint("DEBUG: YES")
+				self.debugPrint("Track has cell? [3]")
 				if self.cells > 0:
-					print "DEBUG: YES"
+					self.debugPrint("DEBUG: YES")
 					self.aiFlowChardPlayEvent(cardNum)
 				else:
-					print "DEBUG: NO"
-					print "DEBUG: [][]self.radicalization() [4]"
+					self.debugPrint("DEBUG: NO")
+					self.debugPrint("DEBUG: Radicalization [4]")
+					self.handleRadicalization(self.deck[str(cardNum)].ops)
 			else:
-				print "DEBUG: NO"
+				self.debugPrint("DEBUG: NO")
 				self.aiFlowChardPlayEvent(cardNum)
 		else:
-			print "DEBUG: NO"
-			print "DEBUG: Playble US event? [7]"
+			self.debugPrint("DEBUG: NO")
+			self.debugPrint("DEBUG: Playble US event? [7]")
 			if self.playableUSEvent(cardNum):
-				print "DEBUG: YES"
-				print "DEBUG: Plot Here [5]"
-				print "DEBUG: END"
+				self.debugPrint("DEBUG: YES")
+				self.debugPrint("DEBUG: Plot Here [5]")
+				self.debugPrint("DEBUG: END")
 			else:
-				print "DEBUG: NO"
+				self.debugPrint("DEBUG: NO")
 				self.aiFlowChartMajorJihad(cardNum)
 
 	def aiFlowChardPlayEvent(self, cardNum):
-		print "Play Event [6]"
+		self.debugPrint("Play Event [6]")
 		self.deck[str(cardNum)].playEvent("Jihadist")
-		print "Unassociated Event? [8]"
+		self.debugPrint("Unassociated Event? [8]")
 		if self.deck[str(cardNum)].type == "Unassociated":
-			print "DEBUG: YES"
+			self.debugPrint("DEBUG: YES")
 			self.aiFlowChartMajorJihad(cardNum)
 		else:
-			print "DEBUG: NO"
-			print "end [9]"
+			self.debugPrint("DEBUG: NO")
+			self.debugPrint("end [9]")
 
 	def aiFlowChartMajorJihad(self, cardNum):
-		print "DEBUG: Major Jihad success possible? [10]"
+		self.debugPrint("DEBUG: Major Jihad success possible? [10]")
 		country = self.majorJihadChoice(self.deck[str(cardNum)].ops)
 		if country:
-			print "DEBUG: YES"
-			print "DEBUG: Major Jihad [11]"
+			self.debugPrint("DEBUG: YES")
+			self.debugPrint("DEBUG: Major Jihad [11]")
 			unusedOps = self.handleJihad(country, self.deck[str(cardNum)].ops)
-			print "DEBUG: [][]self.radicalization(%d)" % unusedOps
+			if unusedOps > 0:
+				self.debugPrint("DEBUG: Radicalization with remaining %d ops" % unusedOps)
+				self.handleRadicalization(unusedOps)
 		else:
-			print "DEBUG: NO"
-			print "DEBUG: Jihad possible in Good/Fair? [12]"
+			self.debugPrint("DEBUG: NO")
+			self.debugPrint("DEBUG: Jihad possible in Good/Fair? [12]")
 			countryList = self.minorJihadInGoodFairChoice(self.deck[str(cardNum)].ops)
 			if countryList:
-				print "DEBUG: YES"
+				self.debugPrint("DEBUG: YES")
 				unusedOps = self.handleMinorJihad(countryList, self.deck[str(cardNum)].ops)
-				print "DEBUG: [][]self.radicalization(%d)" % unusedOps
+				if unusedOps > 0:
+					self.debugPrint("DEBUG: Radicalization with remaining %d ops" % unusedOps)
+					self.handleRadicalization(unusedOps)
 			else:
-				print "DEBUG: NO"
-				print "DEBUG: Cells Available? [14]"
+				self.debugPrint("DEBUG: NO")
+				self.debugPrint("DEBUG: Cells Available? [14]")
 				if self.numCellsAvailable() > 0:
-					print "DEBUG: YES"
-					print "DEBUG: Recruit [15]"
+					self.debugPrint("DEBUG: YES")
+					self.debugPrint("DEBUG: Recruit [15]")
 					unusedOps = self.handleRecruit(self.deck[str(cardNum)].ops)
-					print "DEBUG: [][]self.radicalization(%d)" % unusedOps
+					if unusedOps > 0:
+						self.debugPrint("DEBUG: Radicalization with remaining %d ops" % unusedOps)
+						self.handleRadicalization(unusedOps)
 				else:
-					print "DEBUG: NO"
-					print "DEBUG: Travel [16]"
+					self.debugPrint("DEBUG: NO")
+					self.debugPrint("DEBUG: Travel [16]")
 					unusedOps = self.handleTravel(self.deck[str(cardNum)].ops)
-					print "DEBUG: [][]self.radicalization(%d)" % unusedOps
+					if unusedOps > 0:
+						self.debugPrint("DEBUG: Radicalization with remaining %d ops" % unusedOps)
+						self.handleRadicalization(unusedOps)
 					
 	def listCountriesWithTroops(self, needed = None):
 		print ""
