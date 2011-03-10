@@ -78,7 +78,7 @@ class Card:
 	type = ""
 	ops = 0
 	
-	def __init__(self, theNumber, theName, theType, theOps):
+	def __init__(self, theNumber, theType, theName, theOps):
 		self.number = theNumber
 		self.name = theName
 		self.type = theType
@@ -133,8 +133,8 @@ class Labyrinth(cmd.Cmd):
 		self.history = []
 		self.prompt = "Command: "
 		self.outputToHistory("Game Start")
-		print "%d (Turn %s)" % (self.startYear + (self.turn - 1), self.turn)
-		self.outputToHistory(self.phase)
+		#print "%d (Turn %s)" % (self.startYear + (self.turn - 1), self.turn)
+		#self.outputToHistory(self.phase)
 		self.deck = {}
 		self.deckSetup()
 		
@@ -154,6 +154,11 @@ class Labyrinth(cmd.Cmd):
 		troopCount += self.troops
 		if troopCount != 15:
 			print "TROOP COUNT %d" % troopCount
+			
+	def emptyline(self):
+		#print "%d (Turn %s), %s" % (self.startYear + (self.turn - 1), self.turn, self.phase)
+		print "Enter help for a list of commands."
+		print ""
 			
 	def debugPrint(self, str):
 		return
@@ -1585,9 +1590,9 @@ class Labyrinth(cmd.Cmd):
 		print "Funding: %d" % self.funding
 		print "Cells Available: %d" % self.cells
 		print ""
-		print "DATE"
-		print "%d (Turn %s)" % (self.startYear + (self.turn - 1), self.turn)
-		print ""
+		#print "DATE"
+		#print "%d (Turn %s)" % (self.startYear + (self.turn - 1), self.turn)
+		#print ""
 		
 	def help_status(self):
 		print "Display game status."
@@ -2006,9 +2011,6 @@ class Labyrinth(cmd.Cmd):
 		self.help_withdraw()
 		
 	def do_j(self, rest):
-		if self.phase != "Jihadist Action Phase":
-			print "It is not the Jihadist Action Phase"
-			return
 		cardNum = None
 		try:
 			input = int(rest)
@@ -2022,10 +2024,66 @@ class Labyrinth(cmd.Cmd):
 			print "Enter j then the card number e.g. j 24"
 			print ""
 			return
+		self.outputToHistory("== Jihadist plays %s. ==" % self.deck[str(cardNum)].name, True)
 		self.aiFlowChartTop(cardNum)
 		
+	''' test with timing system
+	def do_j(self, rest):
+		if self.phase != "Jihadist Action Phase":
+			print "It is not the Jihadist Action Phase"
+			print ""
+			return
+		if rest == "p" or rest == "pass":
+			self.phase = "US Action Phase"
+			self.outputToHistory("== Jihadist player passes turn. ==", True)
+			return
+		cardNum = None
+		try:
+			input = int(rest)
+			if input < 1 or input > 120:
+				print "Enter j then the card number or pass e.g. j 24 or j pass"
+				print ""
+				return
+			else:
+				cardNum = input
+		except:
+			print "Enter j then the card number or pass e.g. j 24 or j pass"
+			print ""
+			return
+		self.jCard += 1
+		self.outputToHistory("== Jihadist plays %s. ==" % self.deck[str(cardNum)].name, True)
+		self.aiFlowChartTop(cardNum)
+		if self.jCard
+	'''	
+
 	def help_j(self):
 		print "Enter the number of the Jihadist card when it is their card play."
+
+	def do_u(self, rest):
+		cardNum = None
+		try:
+			input = int(rest)
+			if input < 1 or input > 120:
+				print "Enter u then the card number e.g. j 24"
+				print ""
+				return
+			else:
+				cardNum = input
+		except:
+			print "Enter u then the card number e.g. j 24"
+			print ""
+			return
+		self.outputToHistory("== US plays %s. ==" % self.deck[str(cardNum)].name, True)
+		# [][] ask about playing event here
+		
+	def help_u(self):
+		print "Enter the number of the US card when it is your card play."
+
+	def do_plot(self, rest):
+		self.outputToTest("* No unblocked plots to resolve.", True)
+		
+	def help_plot(self):
+		print "Use this command after the US Action Phase to resolve any unblocked plots."
 			
 def main():
 	print "Labyrinth: The War on Terror AI Player"
