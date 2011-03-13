@@ -5352,5 +5352,211 @@ class travel(unittest.TestCase):
 		sources = app.travelSources(dest, 3)
 		self.assertEqual(sources,["Yemen", "Iraq", "Iraq"])
 
+class resolvePlot(unittest.TestCase):
+	'''Resolve Plots'''
+	
+	def testResolveNonMuslimNonUSPlots(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		app.map["Germany"].plots = 1
+		app.resolvePlot("Germany", 1, 4, [], ["Spain", "Scandinavia"], [5,4], [])
+		self.assertEqual(app.funding, 7)
+		self.assertEqual(app.map["Germany"].posture, "Soft")
+		self.assertEqual(app.map["Spain"].posture, "Hard")
+		self.assertEqual(app.map["Scandinavia"].posture, "Soft")
+		self.assertEqual(app.prestige, 7)
+		self.assertEqual(app.map["Germany"].plots, 0)
+		
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		app.map["Germany"].plots = 2
+		app.resolvePlot("Germany", 1, 4, [], ["Spain", "Scandinavia"], [5,4], [])
+		self.assertEqual(app.funding, 7)
+		self.assertEqual(app.map["Germany"].posture, "Soft")
+		self.assertEqual(app.map["Spain"].posture, "Hard")
+		self.assertEqual(app.map["Scandinavia"].posture, "Soft")
+		self.assertEqual(app.prestige, 7)
+		self.assertEqual(app.map["Germany"].plots, 1)
+		
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		app.map["Germany"].plots = 1
+		app.resolvePlot("Germany", 2, 5, [], ["Spain", "Scandinavia"], [4,5], [])
+		self.assertEqual(app.funding, 9)
+		self.assertEqual(app.map["Germany"].posture, "Hard")
+		self.assertEqual(app.map["Spain"].posture, "Soft")
+		self.assertEqual(app.map["Scandinavia"].posture, "Hard")
+		self.assertEqual(app.prestige, 7)
+		self.assertEqual(app.map["Germany"].plots, 0)
+		
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		app.map["Canada"].plots = 1
+		app.resolvePlot("Canada", 2, 5, [], [], [], [])
+		self.assertEqual(app.funding, 9)
+		self.assertEqual(app.map["Canada"].posture, "Hard")
+		self.assertEqual(app.map["Spain"].posture, "")
+		self.assertEqual(app.map["Scandinavia"].posture, "")
+		self.assertEqual(app.prestige, 7)
+		self.assertEqual(app.map["Canada"].plots, 0)
+		
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		app.map["Russia"].plots = 1
+		app.resolvePlot("Russia", 2, 4, [], [], [], [])
+		self.assertEqual(app.funding, 7)
+		self.assertEqual(app.map["Russia"].posture, "Soft")
+		self.assertEqual(app.map["Spain"].posture, "")
+		self.assertEqual(app.map["Scandinavia"].posture, "")
+		self.assertEqual(app.prestige, 7)
+		self.assertEqual(app.map["Russia"].plots, 0)
+		
+		app = Labyrinth(1, "WMD", testBlankScenarioSetup)
+		app.map["Germany"].plots = 1
+		app.resolvePlot("Germany", 1, 4, [], ["Spain", "Scandinavia"], [5,4], [])
+		self.assertEqual(app.funding, 7)
+		self.assertEqual(app.map["Germany"].posture, "Soft")
+		self.assertEqual(app.map["Spain"].posture, "Hard")
+		self.assertEqual(app.map["Scandinavia"].posture, "Soft")
+		self.assertEqual(app.prestige, 7)
+		self.assertEqual(app.map["Germany"].plots, 0)
+		
+		app = Labyrinth(1, "WMD", testBlankScenarioSetup)
+		app.funding = 1
+		app.map["Germany"].plots = 1
+		app.resolvePlot("Germany", 3, 4, [], ["Spain", "Scandinavia"], [5,4], [])
+		self.assertEqual(app.funding, 7)
+		self.assertEqual(app.map["Germany"].posture, "Soft")
+		self.assertEqual(app.map["Spain"].posture, "Hard")
+		self.assertEqual(app.map["Scandinavia"].posture, "Soft")
+		self.assertEqual(app.prestige, 7)
+		self.assertEqual(app.map["Germany"].plots, 0)
+		
+	def testResolveMuslimIranPlots(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		app.map["Iraq"].governance = 2
+		app.map["Iraq"].aid = 1
+		app.map["Iraq"].plots = 1
+		app.resolvePlot("Iraq", 1, 0, [], [], [], [3])
+		self.assertEqual(app.funding, 6)
+		self.assertEqual(app.map["Iraq"].governance, 2)
+		self.assertEqual(app.map["Iraq"].aid, 1)
+		app.resolvePlot("Iraq", 1, 0, [], [], [], [2])
+		self.assertEqual(app.funding, 7)
+		self.assertEqual(app.map["Iraq"].governance, 3)
+		self.assertEqual(app.map["Iraq"].aid, 0)
+		self.assertEqual(app.prestige, 7)
+		self.assertEqual(app.map["Iraq"].plots, 0)
+		
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		app.map["Iraq"].governance = 1
+		app.map["Iraq"].aid = 1
+		app.map["Iraq"].plots = 1
+		app.resolvePlot("Iraq", 3, 0, [], [], [], [3,1,2])
+		self.assertEqual(app.funding, 7)
+		self.assertEqual(app.map["Iraq"].governance, 2)
+		self.assertEqual(app.map["Iraq"].aid, 0)
+		self.assertEqual(app.prestige, 7)
+		self.assertEqual(app.map["Iraq"].plots, 0)
+	
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		app.map["Iraq"].governance = 1
+		app.map["Iraq"].aid = 1
+		app.map["Iraq"].plots = 1
+		app.resolvePlot("Iraq", "WMD", 0, [], [], [], [3,1,2])
+		self.assertEqual(app.funding, 7)
+		self.assertEqual(app.map["Iraq"].governance, 2)
+		self.assertEqual(app.map["Iraq"].aid, 0)
+		self.assertEqual(app.prestige, 7)
+		self.assertEqual(app.map["Iraq"].plots, 0)
+	
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		app.map["Iraq"].governance = 3
+		app.map["Iraq"].aid = 0
+		app.map["Iraq"].plots = 1
+		app.resolvePlot("Iraq", 3, 0, [], [], [], [3,3,3])
+		self.assertEqual(app.funding, 6)
+		self.assertEqual(app.map["Iraq"].governance, 3)
+		self.assertEqual(app.map["Iraq"].aid, 0)
+		self.assertEqual(app.prestige, 7)
+		self.assertEqual(app.map["Iraq"].plots, 0)
+	
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		app.map["Iran"].plots = 1
+		app.resolvePlot("Iran", 3, 0, [], [], [], [3,3,3])
+		self.assertEqual(app.funding, 6)
+		self.assertEqual(app.map["Iran"].governance, 2)
+		self.assertEqual(app.map["Iran"].aid, 0)
+		self.assertEqual(app.prestige, 7)
+		self.assertEqual(app.map["Iran"].plots, 0)
+
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		app.map["Iraq"].governance = 3
+		app.map["Iraq"].aid = 0
+		app.map["Iraq"].plots = 1
+		app.map["Iraq"].troops = 1
+		app.resolvePlot("Iraq", 3, 0, [], [], [], [3,3,3])
+		self.assertEqual(app.funding, 6)
+		self.assertEqual(app.map["Iraq"].governance, 3)
+		self.assertEqual(app.map["Iraq"].aid, 0)
+		self.assertEqual(app.prestige, 6)
+		self.assertEqual(app.map["Iraq"].plots, 0)
+	
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		app.map["Iraq"].governance = 3
+		app.map["Iraq"].aid = 0
+		app.map["Iraq"].plots = 1
+		app.map["Iraq"].troops = 1
+		app.resolvePlot("Iraq", "WMD", 0, [], [], [], [3,3,3])
+		self.assertEqual(app.funding, 6)
+		self.assertEqual(app.map["Iraq"].governance, 3)
+		self.assertEqual(app.map["Iraq"].aid, 0)
+		self.assertEqual(app.prestige, 1)
+		self.assertEqual(app.map["Iraq"].plots, 0)
+	
+	def testResolveUSPlots(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		app.map["United States"].plots = 1
+		app.map["United States"].posture = "Hard"
+		app.resolvePlot("United States", 1, 4, [1,6,1], [], [], [])
+		self.assertEqual(app.funding, 9)
+		self.assertEqual(app.map["United States"].posture, "Soft")
+		self.assertEqual(app.prestige, 6)
+		self.assertEqual(app.map["United States"].plots, 0)
+		
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		app.map["United States"].plots = 1
+		app.map["United States"].posture = "Soft"
+		app.resolvePlot("United States", 2, 4, [5,6,1], [], [], [])
+		self.assertEqual(app.funding, 9)
+		self.assertEqual(app.map["United States"].posture, "Soft")
+		self.assertEqual(app.prestige, 8)
+		self.assertEqual(app.map["United States"].plots, 0)
+		
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		app.map["United States"].plots = 1
+		app.map["United States"].posture = "Soft"
+		app.resolvePlot("United States", 3, 5, [5,6,4], [], [], [])
+		self.assertEqual(app.funding, 9)
+		self.assertEqual(app.map["United States"].posture, "Hard")
+		self.assertEqual(app.prestige, 11)
+		self.assertEqual(app.map["United States"].plots, 0)
+		
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		self.assertFalse(app.gameOver)
+		app.map["United States"].plots = 1
+		app.map["United States"].posture = "Soft"
+		app.resolvePlot("United States", "WMD", 0, [], [], [], [])
+		self.assertEqual(app.map["United States"].plots, 0)
+		self.assertTrue(app.gameOver)
+
+class placePlots(unittest.TestCase):
+	'''Place Plots'''
+	
+	def testResolveNonMuslimNonUSPlots(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		unusedOps = app.handlePlot(1, True)
+		self.assertEqual(unusedOps, 1)
+		unusedOps = self.handlePlot(2, False)
+		self.assertEqual(unusedOps, 2)
+		unusedOps = self.handlePlot(3, True)
+		self.assertEqual(unusedOps, 3)
+	
+		
 if __name__ == "__main__":
 	unittest.main()   
