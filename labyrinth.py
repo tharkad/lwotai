@@ -87,6 +87,8 @@ class Card:
 		self.ops = theOps
 		
 	def playable(self, side):
+		#if self.type == "US" and side == "US":
+		#	return True
 		return False
 		
 	def playEvent(self, side):
@@ -109,6 +111,7 @@ class Labyrinth(cmd.Cmd):
 	uCard = 0
 	jCard = 0
 	phase = ""
+	markers = []
 	history = []
 	deck = {}
 	gameOver = False
@@ -131,9 +134,10 @@ class Labyrinth(cmd.Cmd):
 		if setupFuntion:
 			setupFuntion(self)
 		else:
-			#self.scenarioSetup()
-			self.testScenarioSetup()
+			self.scenarioSetup()
+			#self.testScenarioSetup()
 		self.history = []
+		self.markers = []
 		self.prompt = "Command: "
 		self.gameOver = False
 
@@ -1271,6 +1275,82 @@ class Labyrinth(cmd.Cmd):
 				self.map[country].governance = 2
 			self.map[country].alignment = "Neutral"
 			self.outputToHistory("%s tested, governance %s" % (self.map[country].name, self.map[country].govStr()), False)
+			
+	def getCountriesWithUSPostureByGovernance(self):
+		dict = {}
+		dict["Good"] = []
+		dict["Fair"] = []
+		dict["Poor"] = []
+		for country in self.map:
+			if (country != "United States") and (self.map[country].posture == self.map["United States"].posture):
+				if self.map[country].governance == 1:
+					dict["Good"].append(country)
+				elif self.map[country].governance == 2:
+					dict["Fair"].append(country)
+				elif self.map[country].governance == 3:
+					dict["Poor"].append(country)
+		return dict
+	
+	def getCountriesWithTroopsByGovernance(self):
+		dict = {}
+		dict["Good"] = []
+		dict["Fair"] = []
+		dict["Poor"] = []
+		for country in self.map:
+			if self.map[country].troops > 0:
+				if self.map[country].governance == 1:
+					dict["Good"].append(country)
+				elif self.map[country].governance == 2:
+					dict["Fair"].append(country)
+				elif self.map[country].governance == 3:
+					dict["Poor"].append(country)
+		return dict
+	
+	def getCountriesWithAidByGovernance(self):
+		dict = {}
+		dict["Good"] = []
+		dict["Fair"] = []
+		dict["Poor"] = []
+		for country in self.map:
+			if self.map[country].aid > 0:
+				print "AID", country
+				if self.map[country].governance == 1:
+					dict["Good"].append(country)
+				elif self.map[country].governance == 2:
+					dict["Fair"].append(country)
+				elif self.map[country].governance == 3:
+					dict["Poor"].append(country)
+		return dict
+	
+	def getNonMuslimCountriesByGovernance(self):
+		dict = {}
+		dict["Good"] = []
+		dict["Fair"] = []
+		dict["Poor"] = []
+		for country in self.map:
+			if (country != "United States") and (self.map[country].type == "Non-Muslim"):
+				if self.map[country].governance == 1:
+					dict["Good"].append(country)
+				elif self.map[country].governance == 2:
+					dict["Fair"].append(country)
+				elif self.map[country].governance == 3:
+					dict["Poor"].append(country)
+		return dict
+	
+	def getMuslimCountriesByGovernance(self):
+		dict = {}
+		dict["Good"] = []
+		dict["Fair"] = []
+		dict["Poor"] = []
+		for country in self.map:
+			if self.map[country].type != "Non-Muslim":
+				if self.map[country].governance == 1:
+					dict["Good"].append(country)
+				elif self.map[country].governance == 2:
+					dict["Fair"].append(country)
+				elif self.map[country].governance == 3:
+					dict["Poor"].append(country)
+		return dict
 	
 	def handleTravel(self, ops, isRadicalization = False):
 		destinations = self.travelDestinations(ops, isRadicalization)
@@ -1320,9 +1400,132 @@ class Labyrinth(cmd.Cmd):
 				self.outputToHistory(self.map[sources[i]].countryStr(), True)				
 		return ops - len(sources)
 		
-	def handlePlot(self, ops, isOps):
-		pass
+	def placePlots(self, country, rollPosition, plotRolls):
+		if (self.map[country].activeCells + self.map[country].sleeperCells) > 0:
+			opsRemaining = len(plotRolls) - rollPosition
+			cellsAvailable = self.map[country].activeCells + self.map[country].sleeperCells
+			plotsToPlace = min(cellsAvailable, opsRemaining)
+			self.outputToHistory("--> %s plot attempt(s) in %s." % (plotsToPlace, country), False)
+			successes = 0
+			failures = 0
+			for i in range(rollPosition, rollPosition + plotsToPlace):
+				if plotRolls[i] <= self.map[country].governance:
+					successes += 1
+				else:
+					failures += 1
+			self.outputToHistory("Plot rolls: %d Successes rolled, %d Failures rolled" % (successes, failures), False)
+			for i in range(plotsToPlace - self.map[country].activeCells):
+				self.outputToHistory("Cell goes Active", False)
+				self.map[country].sleeperCells -= 1
+				self.map[country].activeCells += 1
+			self.map[country].plots += successes
+			self.outputToHistory("%d Plot(s) placed in %s." % (successes, country), False)
+			self.outputToHistory(self.map[country].countryStr(), True)
+			rollPosition += plotsToPlace
+		return rollPosition
 		
+	def handlePlotPriorities(self, countriesDict, ops, rollPosition, plotRolls, isOps):
+		if isOps:
+			if len(countriesDict["Fair"]) > 0:
+				targets = countriesDict["Fair"]
+				random.shuffle(targets)
+				i = 0
+				while rollPosition < ops and i < len(targets):
+					rollPosition = self.placePlots(targets[i], rollPosition, plotRolls)
+					i += 1
+			if rollPosition == ops:
+				return rollPosition
+			if len(countriesDict["Good"]) > 0:
+				targets = countriesDict["Good"]
+				random.shuffle(targets)
+				i = 0
+				while rollPosition < ops and i < len(targets):
+					rollPosition = self.placePlots(targets[i], rollPosition, plotRolls)
+					i += 1
+			if rollPosition == ops:
+				return rollPosition
+		else:
+			if len(countriesDict["Good"]) > 0:
+				targets = countriesDict["Good"]
+				random.shuffle(targets)
+				i = 0
+				while rollPosition < ops and i < len(targets):
+					rollPosition = self.placePlots(targets[i], rollPosition, plotRolls)
+					i += 1
+			if rollPosition == ops:
+				return rollPosition
+			if len(countriesDict["Fair"]) > 0:
+				targets = countriesDict["Fair"]
+				random.shuffle(targets)
+				i = 0
+				while rollPosition < ops and i < len(targets):
+					rollPosition = self.placePlots(targets[i], rollPosition, plotRolls)
+					i += 1
+			if rollPosition == ops:
+				return rollPosition
+		if len(countriesDict["Poor"]) > 0:
+			targets = countriesDict["Poor"]
+			random.shuffle(targets)
+			i = 0
+			while rollPosition < ops and i < len(targets):
+				rollPosition = self.placePlots(targets[i], rollPosition, plotRolls)
+				i += 1
+		return rollPosition
+				
+	def executePlot(self, ops, isOps, plotRolls):
+		self.outputToHistory("* Jihadists Plotting", False)
+	# In US
+		self.debugPrint("DEBUG: In US")
+		rollPosition = self.placePlots("United States", 0, plotRolls)
+		if rollPosition == ops:
+			return 0
+		if self.prestige >= 4:
+	# Prestige high
+			self.debugPrint("DEBUG: Prestige high")
+			if ("Abu Sayyaf" in self.markers) and ((self.map["Philippines"].activeCells + self.map["Philippines"].sleeperCells) >= self.map["Philippines"].troops):
+	# In Philippines
+				self.debugPrint("DEBUG: Philippines")
+				rollPosition = self.placePlots("Philippines", rollPosition, plotRolls)
+				if rollPosition == ops:
+					return 0
+	# With troops
+			self.debugPrint("DEBUG: troops")
+			troopDict = self.getCountriesWithTroopsByGovernance()
+			rollPosition = self.handlePlotPriorities(troopDict, ops, rollPosition, plotRolls, isOps)
+			if rollPosition == ops:
+				return 0
+	# No GWOT Penalty
+		if self.gwotPenalty() >= 0:			
+			self.debugPrint("DEBUG: No GWOT Penalty")
+			postureDict = self.getCountriesWithUSPostureByGovernance()
+			rollPosition = self.handlePlotPriorities(postureDict, ops, rollPosition, plotRolls, isOps)
+			if rollPosition == ops:
+				return 0
+	# With aid
+		self.debugPrint("DEBUG: aid")
+		aidDict = self.getCountriesWithAidByGovernance()
+		rollPosition = self.handlePlotPriorities(aidDict, ops, rollPosition, plotRolls, isOps)
+		if rollPosition == ops:
+			return 0
+	# Funding < 9
+		if self.funding < 9:
+			self.debugPrint("DEBUG: Funding < 9")
+			nonMuslimDict = self.getNonMuslimCountriesByGovernance()
+			rollPosition = self.handlePlotPriorities(nonMuslimDict, ops, rollPosition, plotRolls, isOps)
+			if rollPosition == ops:
+				return 0
+			muslimDict = self.getMuslimCountriesByGovernance()
+			rollPosition = self.handlePlotPriorities(muslimDict, ops, rollPosition, plotRolls, isOps)
+			if rollPosition == ops:
+				return 0
+		return len(plotRolls) - rollPosition
+		
+	def handlePlot(self, ops, isOps):
+		plotRolls = []
+		for i in range(ops):
+			plotRolls.append(random.randint(1,6))
+		return self.executePlot(ops, isOps, plotRolls)
+						
 	def handleRadicalization(self, ops):
 		self.outputToHistory("* Radicaliztion with %d ops." % ops, False)
 		opsRemaining = ops
@@ -1461,8 +1664,8 @@ class Labyrinth(cmd.Cmd):
 		return False
 
 	def playableUSEvent(self, cardNum):
-		# self.deck[str(cardNum)].type == "US" and  self.deck[str(cardNum)].playable("US")
-		return False
+		return self.deck[str(cardNum)].type == "US" and  self.deck[str(cardNum)].playable("US")
+		#return False
 		
 	def aiFlowChartTop(self, cardNum):
 		self.debugPrint("DEBUG: START")
@@ -1475,26 +1678,30 @@ class Labyrinth(cmd.Cmd):
 				self.debugPrint("Track has cell? [3]")
 				if self.cells > 0:
 					self.debugPrint("DEBUG: YES")
-					self.aiFlowChardPlayEvent(cardNum)
+					self.aiFlowChartPlayEvent(cardNum)
 				else:
 					self.debugPrint("DEBUG: NO")
 					self.debugPrint("DEBUG: Radicalization [4]")
 					self.handleRadicalization(self.deck[str(cardNum)].ops)
 			else:
 				self.debugPrint("DEBUG: NO")
-				self.aiFlowChardPlayEvent(cardNum)
+				self.aiFlowChartPlayEvent(cardNum)
 		else:
 			self.debugPrint("DEBUG: NO")
 			self.debugPrint("DEBUG: Playble US event? [7]")
 			if self.playableUSEvent(cardNum):
 				self.debugPrint("DEBUG: YES")
 				self.debugPrint("DEBUG: Plot Here [5]")
+				unusedOps = self.handlePlot(self.deck[str(cardNum)].ops, True)
+				if unusedOps > 0:
+					self.debugPrint("DEBUG: Radicalization with remaining %d ops" % unusedOps)
+					self.handleRadicalization(unusedOps)
 				self.debugPrint("DEBUG: END")
 			else:
 				self.debugPrint("DEBUG: NO")
 				self.aiFlowChartMajorJihad(cardNum)
 
-	def aiFlowChardPlayEvent(self, cardNum):
+	def aiFlowChartPlayEvent(self, cardNum):
 		self.debugPrint("Play Event [6]")
 		self.deck[str(cardNum)].playEvent("Jihadist")
 		self.debugPrint("Unassociated Event? [8]")
