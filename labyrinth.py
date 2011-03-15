@@ -727,7 +727,7 @@ class Labyrinth(cmd.Cmd):
 			retVal -= 10
 		elif self.funding <= 6:
 			retVal -= 5
-		return retVal
+		return max(retVal, 0)
 		
 	def handleMuslimWoI(self, roll, country):
 		if roll <= 3:
@@ -999,11 +999,53 @@ class Labyrinth(cmd.Cmd):
 			return False
 		else:
 			return countryOrder[0][2]
-			
-	def handleRecruit(self, ops):
+	
+	def executeRecruit(self, country, ops, rolls):
+		self.outputToHistory("* Recruit to %s" % country)
 		cellsRequested = ops
 		if self.ideology >= 2:
 			cellsRequested = ops * 2
+		cells = self.numCellsAvailable()
+		cellsToRecruit = min(cellsRequested, cells)
+		if (self.map[country].regimeChange or self.map[country].governance == 4):
+			if self.map[country].regimeChange:
+				self.outputToHistory("Recruit to Islamic Rule country automatically successful.", False)
+			else:
+				self.outputToHistory("Recruit to Regime Change country automatically successful.", False)
+			self.cells -= cellsToRecruit
+			self.map[country].sleeperCells += cellsToRecruit
+			self.map[country].cadre = 0
+			self.outputToHistory("%d sleeper cells recruited to %s." % (cellsToRecruit, country), False)
+			self.outputToHistory(self.map[country].countryStr(), True)
+			if self.ideology >= 2:
+				return ops - ((cellsToRecruit / 2) + (cellsToRecruit % 2))
+			else:
+				return (ops - cellsToRecruit)
+		else:
+			opsRemaining = ops
+			i = 0
+			while self.numCellsAvailable() > 0 and opsRemaining > 0:
+				if self.map[country].recruit > 0:
+					recVal = self.map[country].recruit
+				else:
+					recVal = self.map[country].governance
+				if rolls[i] <= recVal:
+					if self.ideology >= 2:
+						cellsMoving = min(self.numCellsAvailable(), 2)
+					else:
+						cellsMoving = min(self.numCellsAvailable(), 1)
+					self.cells -= cellsMoving
+					self.map[country].sleeperCells += cellsMoving
+					self.map[country].cadre = 0
+					self.outputToHistory("Roll successful, %d sleeper cell(s) recruited." % cellsMoving, False)
+				else:
+					self.outputToHistory("Roll failed.", False)
+				opsRemaining -= 1
+				i += 1
+			self.outputToHistory(self.map[country].countryStr(), True)
+			return opsRemaining
+					
+	def handleRecruit(self, ops):
 		country = self.recruitChoice()
 		if not country:
 			self.outputToHistory("* No countries qualify to Recruit.", True)
@@ -1014,53 +1056,10 @@ class Labyrinth(cmd.Cmd):
 				self.outputToHistory("* No cells available to Recruit.", True)
 				return ops
 			else:
-				cellsToRecruit = min(cellsRequested, cells)
-				if self.map[country].regimeChange:
-					self.outputToHistory("* Recruit to Regime Change country automaticall successful.", False)
-					self.cells -= cellsToRecruit
-					self.map[country].sleeperCells += cellsToRecruit
-					self.map[country].cadre = 0
-					self.outputToHistory("%d sleeper cells recruited to %s." % (cellsToRecruit, country), False)
-					self.outputToHistory(self.map[country].countryStr(), True)
-					if self.ideology >= 2:
-						return ops - ((cellsToRecruit / 2) + (cellsToRecruit % 2))
-					else:
-						return (ops - cellsToRecruit)
-				else:
-					rolls = []
-					if self.ideology >= 2:
-						for i in range((cellsToRecruit / 2) + (cellsToRecruit % 2)):
-							rolls.append(random.randint(1,6))
-					else:
-						for i in range(cellsToRecruit):
-							rolls.append(random.randint(1,6))
-					rolls.sort()
-					successes = 0
-					failures = 0
-					if self.map[country].recruit > 0:
-						recVal = self.map[country].recruit
-					else:
-						recVal = self.map[country].governance
-					for i in range(len(rolls)):
-						if rolls[i] <= recVal:
-							successes += 1
-						else:
-							failures += 1
-					self.outputToHistory("* Recruit to %s." % country, False)
-					self.outputToHistory("%d Successes rolled, %d Failures rolled" % (successes, failures), False)
-					if self.ideology >= 2:
-						cellsMoving = min(cells, successes * 2)
-					else:
-						cellsMoving = successes
-					self.cells -= cellsMoving
-					self.map[country].sleeperCells += cellsMoving
-					self.map[country].cadre = 0
-					self.outputToHistory("%d sleeper cells recruited to %s." % (cellsMoving, country), False)
-					self.outputToHistory(self.map[country].countryStr(), True)
-					if self.ideology >= 2:
-						return ops - ((cellsToRecruit / 2) + (cellsToRecruit % 2))
-					else:
-						return (ops - cellsToRecruit)
+				rolls = []
+				for i in range(ops):
+					rolls.append(random.randint(1,6))
+				return self.executeRecruit(country, ops, rolls)
 				
 	def adjacentCountryHasCell(self, targetCountry):
 		for adjacent in self.map[targetCountry].links:
@@ -1568,12 +1567,12 @@ class Labyrinth(cmd.Cmd):
 				if (self.map[country].type == "Shia-Mix" or self.map[country].type == "Suni") and (self.map[country].governance == 1 or self.map[country].governance == 2):
 					possibles.append(country)
 			if len(possibles) == 0:
-				self.outputToHistory("--> No remaining Good or Fair countries.", False)
+				self.outputToHistory("--> No remaining Good or Fair countries.", True)
 				break
 			else:
 				location = random.choice(possibles)
 				self.map[location].governance += 1
-				self.outputToHistory("--> Governance in %s worsens to %s." % (location, self.map[location].govStr()), False)
+				self.outputToHistory("--> Governance in %s worsens to %s." % (location, self.map[location].govStr()), True)
 				self.outputToHistory(self.map[location].countryStr(), True)
 				opsRemaining -= 1
 						

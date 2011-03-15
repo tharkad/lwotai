@@ -4727,7 +4727,7 @@ class minorJihadChoice(unittest.TestCase):
 class recruit(unittest.TestCase):
 	'''Test Recruiting'''
 	
-	def testRecruit(self):
+	def testRecruitChoice(self):
 		app = Labyrinth(1, 1, testBlankScenarioSetup)
 		self.assertFalse(app.recruitChoice())
 		app.map["Gulf States"].governance = 1
@@ -4766,6 +4766,261 @@ class recruit(unittest.TestCase):
 		app.map["Gulf States"].troops = 6
 		self.assertEqual(app.recruitChoice(), "Gulf States")
 		
+	def testExecuteRecruit(self):
+	# Normal
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		app.cells = 15
+		unusedOps = app.executeRecruit("United States", 1, [1])
+		self.assertEqual(unusedOps, 0)
+		self.assertEqual(app.map["United States"].sleeperCells, 1)
+		self.assertEqual(app.cells, 14)
+		
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		app.cells = 15
+		unusedOps = app.executeRecruit("United States", 1, [2])
+		self.assertEqual(unusedOps, 0)
+		self.assertEqual(app.map["United States"].sleeperCells, 0)
+		self.assertEqual(app.cells, 15)
+
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		app.cells = 15
+		unusedOps = app.executeRecruit("United States", 2, [1,1])
+		self.assertEqual(unusedOps, 0)
+		self.assertEqual(app.map["United States"].sleeperCells, 2)
+		self.assertEqual(app.cells, 13)
+		
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		app.cells = 15
+		unusedOps = app.executeRecruit("United States", 2, [1,2])
+		self.assertEqual(unusedOps, 0)
+		self.assertEqual(app.map["United States"].sleeperCells, 1)
+		self.assertEqual(app.cells, 14)
+		
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		app.cells = 15
+		unusedOps = app.executeRecruit("United States", 2, [2,2])
+		self.assertEqual(unusedOps, 0)
+		self.assertEqual(app.map["United States"].sleeperCells, 0)
+		self.assertEqual(app.cells, 15)
+		
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		app.cells = 15
+		unusedOps = app.executeRecruit("United States", 3, [1,1,1])
+		self.assertEqual(unusedOps, 0)
+		self.assertEqual(app.map["United States"].sleeperCells, 3)
+		self.assertEqual(app.cells, 12)
+		
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		app.cells = 15
+		unusedOps = app.executeRecruit("United States", 3, [1,2,1])
+		self.assertEqual(unusedOps, 0)
+		self.assertEqual(app.map["United States"].sleeperCells, 2)
+		self.assertEqual(app.cells, 13)
+		
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		app.cells = 15
+		unusedOps = app.executeRecruit("United States", 3, [2,1,2])
+		self.assertEqual(unusedOps, 0)
+		self.assertEqual(app.map["United States"].sleeperCells, 1)
+		self.assertEqual(app.cells, 14)
+		
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		app.cells = 15
+		unusedOps = app.executeRecruit("United States", 3, [2,2,2])
+		self.assertEqual(unusedOps, 0)
+		self.assertEqual(app.map["United States"].sleeperCells, 0)
+		self.assertEqual(app.cells, 15)
+
+	# Attractive
+		app = Labyrinth(1, 2, testBlankScenarioSetup)
+		app.cells = 15
+		unusedOps = app.executeRecruit("United States", 1, [1])
+		self.assertEqual(unusedOps, 0)
+		self.assertEqual(app.map["United States"].sleeperCells, 2)
+		self.assertEqual(app.cells, 13)
+		
+		app = Labyrinth(1, 2, testBlankScenarioSetup)
+		app.cells = 15
+		unusedOps = app.executeRecruit("United States", 1, [2])
+		self.assertEqual(unusedOps, 0)
+		self.assertEqual(app.map["United States"].sleeperCells, 0)
+		self.assertEqual(app.cells, 15)
+
+		app = Labyrinth(1, 2, testBlankScenarioSetup)
+		app.cells = 15
+		unusedOps = app.executeRecruit("United States", 2, [1,1])
+		self.assertEqual(unusedOps, 0)
+		self.assertEqual(app.map["United States"].sleeperCells, 4)
+		self.assertEqual(app.cells, 11)
+		
+		app = Labyrinth(1, 2, testBlankScenarioSetup)
+		app.cells = 15
+		unusedOps = app.executeRecruit("United States", 2, [1,2])
+		self.assertEqual(unusedOps, 0)
+		self.assertEqual(app.map["United States"].sleeperCells, 2)
+		self.assertEqual(app.cells, 13)
+		
+		app = Labyrinth(1, 2, testBlankScenarioSetup)
+		app.cells = 15
+		unusedOps = app.executeRecruit("United States", 2, [2,2])
+		self.assertEqual(unusedOps, 0)
+		self.assertEqual(app.map["United States"].sleeperCells, 0)
+		self.assertEqual(app.cells, 15)
+		
+		app = Labyrinth(1, 2, testBlankScenarioSetup)
+		app.cells = 15
+		unusedOps = app.executeRecruit("United States", 3, [1,1,1])
+		self.assertEqual(unusedOps, 0)
+		self.assertEqual(app.map["United States"].sleeperCells, 6)
+		self.assertEqual(app.cells, 9)
+		
+		app = Labyrinth(1, 2, testBlankScenarioSetup)
+		app.cells = 15
+		unusedOps = app.executeRecruit("United States", 3, [1,2,1])
+		self.assertEqual(unusedOps, 0)
+		self.assertEqual(app.map["United States"].sleeperCells, 4)
+		self.assertEqual(app.cells, 11)
+		
+		app = Labyrinth(1, 2, testBlankScenarioSetup)
+		app.cells = 15
+		unusedOps = app.executeRecruit("United States", 3, [2,1,2])
+		self.assertEqual(unusedOps, 0)
+		self.assertEqual(app.map["United States"].sleeperCells, 2)
+		self.assertEqual(app.cells, 13)
+		
+		app = Labyrinth(1, 2, testBlankScenarioSetup)
+		app.cells = 15
+		unusedOps = app.executeRecruit("United States", 3, [2,2,2])
+		self.assertEqual(unusedOps, 0)
+		self.assertEqual(app.map["United States"].sleeperCells, 0)
+		self.assertEqual(app.cells, 15)
+		
+	# not enough cells		
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		app.cells = 1
+		app.funding = 9
+		unusedOps = app.executeRecruit("United States", 2, [1,1])
+		self.assertEqual(unusedOps, 1)
+		self.assertEqual(app.map["United States"].sleeperCells, 1)
+		self.assertEqual(app.cells, 0)
+		
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		app.cells = 2
+		app.funding = 9
+		unusedOps = app.executeRecruit("United States", 3, [2,2,1])
+		self.assertEqual(unusedOps, 0)
+		self.assertEqual(app.map["United States"].sleeperCells, 1)
+		self.assertEqual(app.cells, 1)
+		
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		app.cells = 2
+		app.funding = 9
+		unusedOps = app.executeRecruit("United States", 3, [1,2,1])
+		self.assertEqual(unusedOps, 0)
+		self.assertEqual(app.map["United States"].sleeperCells, 2)
+		self.assertEqual(app.cells, 0)
+		
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		app.cells = 2
+		app.funding = 9
+		unusedOps = app.executeRecruit("United States", 3, [1,1,2])
+		self.assertEqual(unusedOps, 1)
+		self.assertEqual(app.map["United States"].sleeperCells, 2)
+		self.assertEqual(app.cells, 0)
+		
+		app = Labyrinth(1, 2, testBlankScenarioSetup)
+		app.cells = 1
+		app.funding = 9
+		unusedOps = app.executeRecruit("United States", 2, [1,1])
+		self.assertEqual(unusedOps, 1)
+		self.assertEqual(app.map["United States"].sleeperCells, 1)
+		self.assertEqual(app.cells, 0)
+		
+		app = Labyrinth(1, 2, testBlankScenarioSetup)
+		app.cells = 2
+		app.funding = 9
+		unusedOps = app.executeRecruit("United States", 2, [1,1])
+		self.assertEqual(unusedOps, 1)
+		self.assertEqual(app.map["United States"].sleeperCells, 2)
+		self.assertEqual(app.cells, 0)
+		
+		app = Labyrinth(1, 2, testBlankScenarioSetup)
+		app.cells = 3
+		app.funding = 9
+		unusedOps = app.executeRecruit("United States", 2, [1,1])
+		self.assertEqual(unusedOps, 0)
+		self.assertEqual(app.map["United States"].sleeperCells, 3)
+		self.assertEqual(app.cells, 0)
+		
+		app = Labyrinth(1, 2, testBlankScenarioSetup)
+		app.cells = 3
+		app.funding = 9
+		unusedOps = app.executeRecruit("United States", 2, [2,1])
+		self.assertEqual(unusedOps, 0)
+		self.assertEqual(app.map["United States"].sleeperCells, 2)
+		self.assertEqual(app.cells, 1)
+		
+		app = Labyrinth(1, 2, testBlankScenarioSetup)
+		app.cells = 5
+		app.funding = 9
+		unusedOps = app.executeRecruit("United States", 2, [2,1])
+		self.assertEqual(unusedOps, 0)
+		self.assertEqual(app.map["United States"].sleeperCells, 2)
+		self.assertEqual(app.cells, 3)
+		
+		app = Labyrinth(1, 2, testBlankScenarioSetup)
+		app.cells = 5
+		app.funding = 9
+		unusedOps = app.executeRecruit("United States", 2, [1,1])
+		self.assertEqual(unusedOps, 0)
+		self.assertEqual(app.map["United States"].sleeperCells, 4)
+		self.assertEqual(app.cells, 1)
+		
+		app = Labyrinth(1, 2, testBlankScenarioSetup)
+		app.cells = 5
+		app.funding = 9
+		unusedOps = app.executeRecruit("United States", 3, [1,1,1])
+		self.assertEqual(unusedOps, 0)
+		self.assertEqual(app.map["United States"].sleeperCells, 5)
+		self.assertEqual(app.cells, 0)
+		
+		app = Labyrinth(1, 2, testBlankScenarioSetup)
+		app.cells = 4
+		app.funding = 9
+		unusedOps = app.executeRecruit("United States", 3, [1,1,1])
+		self.assertEqual(unusedOps, 1)
+		self.assertEqual(app.map["United States"].sleeperCells, 4)
+		self.assertEqual(app.cells, 0)
+
+	# IR RC
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		app.cells = 15
+		app.funding = 9
+		app.map["Iraq"].governance = 3
+		unusedOps = app.executeRecruit("Iraq", 1, [4])
+		self.assertEqual(unusedOps, 0)
+		self.assertEqual(app.map["Iraq"].sleeperCells, 0)
+		self.assertEqual(app.cells, 15)
+				
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		app.cells = 15
+		app.funding = 9
+		app.map["Iraq"].governance = 4
+		unusedOps = app.executeRecruit("Iraq", 1, [6])
+		self.assertEqual(unusedOps, 0)
+		self.assertEqual(app.map["Iraq"].sleeperCells, 1)
+		self.assertEqual(app.cells, 14)
+				
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		app.cells = 15
+		app.funding = 9
+		app.map["Iraq"].governance = 2
+		app.map["Iraq"].regimeChange = 1
+		unusedOps = app.executeRecruit("Iraq", 1, [6])
+		self.assertEqual(unusedOps, 0)
+		self.assertEqual(app.map["Iraq"].sleeperCells, 1)
+		self.assertEqual(app.cells, 14)
+				
 class numCellsAvaialbe(unittest.TestCase):
 	'''Test num cells available'''
 	
