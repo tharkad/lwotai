@@ -86,13 +86,35 @@ class Card:
 		self.type = theType
 		self.ops = theOps
 		
-	def playable(self, side):
-		#if self.type == "US" and side == "US":
-		#	return True
-		return False
+	def playable(self, side, app):
+		if self.type == "US" and side == "Jihadist":
+			return False
+		elif self.type == "Jihadist" and side == "US":
+			return False
+		else:
+			if self.number == 1: #Backlash
+				for country in app.map:
+					if (app.map[country].type != "Non-Muslim") and (app.map[country].plots > 0):
+						return True
+				return False
+			else:
+				return False
 		
-	def playEvent(self, side):
-		print "DEBUG: Event play not implemented"
+	def playEvent(self, side, app):
+		if self.type == "US" and side == "Jihadist":
+			return False
+		elif self.type == "Jihadist" and side == "US":
+			return False
+		else:
+			if self.number == 1: #Backlash
+				for country in app.map:
+					if (app.map[country].type != "Non-Muslim") and (app.map[country].plots > 0):
+						app.outputToHistory("Plot in Muslim country found. Select the plot. Backlash in play", True)
+						app.backlashInPlay = True
+						return True
+				return False
+			else:
+				return False
 		
 	def useForOpsStr(self):
 		return "== Card %s used for %d Ops. ==" % (self.number, self.name)
@@ -115,6 +137,7 @@ class Labyrinth(cmd.Cmd):
 	history = []
 	deck = {}
 	gameOver = False
+	backlashInPlay = False
 
 	def __init__(self, theScenario, theIdeology, setupFuntion = None):
 		cmd.Cmd.__init__(self)
@@ -140,6 +163,7 @@ class Labyrinth(cmd.Cmd):
 		self.markers = []
 		self.prompt = "Command: "
 		self.gameOver = False
+		self.backlashInPlay = False
 
 		if self.scenario == 1:
 			self.outputToHistory("Scenario: Let's Roll", False)
@@ -691,6 +715,38 @@ class Labyrinth(cmd.Cmd):
 		else:
 			return 0
 				
+	def getYesNoFromUser(self, prompt):
+		good = None
+		while not good:
+			try:
+				input = raw_input(prompt)
+				if input.lower() == "y" or input.lower() == "yes":
+					return True
+				elif input.lower() == "n" or input.lower() == "no":
+					return False
+				else:
+					print "Enter y or n."
+					print ""
+			except:
+				print "Enter y or n."
+				print ""
+
+	def getEventOrOpsFromUser(self, prompt):
+		good = None
+		while not good:
+			try:
+				input = raw_input(prompt)
+				if input.lower() == "e" or input.lower() == "event":
+					return "event"
+				elif input.lower() == "o" or input.lower() == "ops":
+					return "ops"
+				else:
+					print "Enter e or o."
+					print ""
+			except:
+				print "Enter e or o."
+				print ""
+		
 	def modifiedWoIRoll(self, baseRoll, country):
 		modRoll = baseRoll
 		#print "DEBUG: base roll:%d" % modRoll
@@ -1576,7 +1632,7 @@ class Labyrinth(cmd.Cmd):
 				self.outputToHistory(self.map[location].countryStr(), True)
 				opsRemaining -= 1
 						
-	def resolvePlot(self, country, plotType, postureRoll, usPrestigeRolls, schCountries, schPostureRolls, govRolls):
+	def resolvePlot(self, country, plotType, postureRoll, usPrestigeRolls, schCountries, schPostureRolls, govRolls, isBacklash = False):
 		self.outputToHistory("--> Resolve \"%s\" plot in %s" % (str(plotType), country), False)
 		if country == "United States":
 			if plotType == "WMD":
@@ -1596,12 +1652,23 @@ class Labyrinth(cmd.Cmd):
 					self.map["United States"].posture = "Hard"
 				self.outputToHistory("US Posture now %s" % self.map["United States"].posture, True)	
 		elif self.map[country].type != "Non-Muslim":
-			self.funding += 1
-			if self.map[country].governance == 1:
+			if not isBacklash:
 				self.funding += 1
-			if self.funding > 9:
-				self.funding = 9
-			self.outputToHistory("Jihadist Funding now %d" % self.funding, False)
+				if self.map[country].governance == 1:
+					self.funding += 1
+				if self.funding > 9:
+					self.funding = 9
+				self.outputToHistory("Jihadist Funding now %d" % self.funding, False)
+			else:
+				if plotType == "WMD":
+					self.funding = 1
+				else:
+					self.funding -= 1
+					if self.map[country].governance == 1:
+						self.funding -= 1
+					if self.funding < 1:
+						self.funding = 1
+				self.outputToHistory("BACKLASH: Jihadist Funding now %d" % self.funding, False)
 			if self.map[country].troops > 0:
 				if plotType == "WMD":
 					self.prestige = 1
@@ -1663,8 +1730,7 @@ class Labyrinth(cmd.Cmd):
 		return False
 
 	def playableUSEvent(self, cardNum):
-		return self.deck[str(cardNum)].type == "US" and  self.deck[str(cardNum)].playable("US")
-		#return False
+		return self.deck[str(cardNum)].type == "US" and  self.deck[str(cardNum)].playable("US", self)
 		
 	def aiFlowChartTop(self, cardNum):
 		self.debugPrint("DEBUG: START")
@@ -2451,8 +2517,28 @@ class Labyrinth(cmd.Cmd):
 			return
 		self.outputToHistory("", False)
 		self.outputToHistory("== US plays %s - %d Ops ==" % (self.deck[str(cardNum)].name, self.deck[str(cardNum)].ops), True)
-		# [][] ask about playing event here
-		
+		if self.deck[str(cardNum)].playable("US", self):
+			self.outputToHistory("Playable %s Event" % self.deck[str(cardNum)].type, False)
+			choice = self.getEventOrOpsFromUser("Play card for Event or Ops (enter e or o): ")
+			if choice == "event":
+				self.deck[str(cardNum)].playEvent("US", self)
+			elif choice == "ops":
+				print("%d Ops available.\nUse commands: alert, deploy, disrupt, reassessment, regime, or withdraw" % self.deck[str(cardNum)].ops, True)
+		else:
+			if self.deck[str(cardNum)].type == "Jihadist":
+				if self.deck[str(cardNum)].playable("Jihadist", self):
+					self.outputToHistory("Jihadist Event is playable.", False)
+					playEventFirst = self.getYesNoFromUser("Do you want to play the Jihadist event before using the Ops? (y/n): ")
+					if playEventFirst:
+						self.deck[str(cardNum)].playEvent("Jihadist", self)
+					else:
+						print "Use the Ops now then enter u <card #> again to play the event"
+					print("%d Ops available.\nUse commands: alert, deploy, disrupt, reassessment, regime, or withdraw" % self.deck[str(cardNum)].ops, True)
+					return
+		# Here if it's unplayable by either side.
+			self.outputToHistory("Unplayable %s Event" % self.deck[str(cardNum)].type, False)
+			self.outputToHistory("%d Ops available.\nUse commands: alert, deploy, disrupt, reassessment, regime, or withdraw" % self.deck[str(cardNum)].ops, True)
+					
 	def help_u(self):
 		print "Enter the number of the US card when it is your card play."
 
@@ -2464,6 +2550,9 @@ class Labyrinth(cmd.Cmd):
 				print ""
 				plotType = self.getPlotTypeFromUser("Enter Plot type from %s: " % country)
 				print ""
+				isBacklash = False
+				if self.backlashInPlay and (self.map[country].type != 'Non-Muslim'):
+					isBacklash = self.getYesNoFromUser("Was this plot selected with backlash (y/n): ")
 				postureRoll = 0
 				usPrestigeRolls = []
 				schCountries = []
@@ -2497,10 +2586,11 @@ class Labyrinth(cmd.Cmd):
 							schCountries[1] = random.choice(schChoices)
 						for i in range(2):
 							schPostureRolls.append(random.randint(1,6))
-				self.resolvePlot(country, plotType, postureRoll, usPrestigeRolls, schCountries, schPostureRolls, govRolls)
+				self.resolvePlot(country, plotType, postureRoll, usPrestigeRolls, schCountries, schPostureRolls, govRolls, isBacklash)
 		if not foundPlot:		
 			self.outputToHistory("", False)
 			self.outputToHistory("<< No unblocked plots to resolve >>", True)
+		self.backlashInPlay = False
 		
 	def help_plot(self):
 		print "Use this command after the US Action Phase to resolve any unblocked plots."

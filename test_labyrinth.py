@@ -5800,6 +5800,88 @@ class resolvePlot(unittest.TestCase):
 		self.assertEqual(app.map["United States"].plots, 0)
 		self.assertTrue(app.gameOver)
 
+	def testResolveMuslimIranPlotsWithBacklash(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		app.map["Iraq"].governance = 2
+		app.map["Iraq"].aid = 1
+		app.map["Iraq"].plots = 1
+		app.resolvePlot("Iraq", 1, 0, [], [], [], [3], True)
+		self.assertEqual(app.funding, 4)
+		self.assertEqual(app.map["Iraq"].governance, 2)
+		self.assertEqual(app.map["Iraq"].aid, 1)
+		app.resolvePlot("Iraq", 1, 0, [], [], [], [2], True)
+		self.assertEqual(app.funding, 3)
+		self.assertEqual(app.map["Iraq"].governance, 3)
+		self.assertEqual(app.map["Iraq"].aid, 0)
+		self.assertEqual(app.prestige, 7)
+		self.assertEqual(app.map["Iraq"].plots, 0)
+		
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		app.map["Iraq"].governance = 1
+		app.map["Iraq"].aid = 1
+		app.map["Iraq"].plots = 1
+		app.resolvePlot("Iraq", 3, 0, [], [], [], [3,1,2], True)
+		self.assertEqual(app.funding, 3)
+		self.assertEqual(app.map["Iraq"].governance, 2)
+		self.assertEqual(app.map["Iraq"].aid, 0)
+		self.assertEqual(app.prestige, 7)
+		self.assertEqual(app.map["Iraq"].plots, 0)
+	
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		app.map["Iraq"].governance = 1
+		app.map["Iraq"].aid = 1
+		app.map["Iraq"].plots = 1
+		app.resolvePlot("Iraq", "WMD", 0, [], [], [], [3,1,2], True)
+		self.assertEqual(app.funding, 1)
+		self.assertEqual(app.map["Iraq"].governance, 2)
+		self.assertEqual(app.map["Iraq"].aid, 0)
+		self.assertEqual(app.prestige, 7)
+		self.assertEqual(app.map["Iraq"].plots, 0)
+	
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		app.map["Iraq"].governance = 3
+		app.map["Iraq"].aid = 0
+		app.map["Iraq"].plots = 1
+		app.resolvePlot("Iraq", 3, 0, [], [], [], [3,3,3], True)
+		self.assertEqual(app.funding, 4)
+		self.assertEqual(app.map["Iraq"].governance, 3)
+		self.assertEqual(app.map["Iraq"].aid, 0)
+		self.assertEqual(app.prestige, 7)
+		self.assertEqual(app.map["Iraq"].plots, 0)
+	
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		app.map["Iran"].plots = 1
+		app.resolvePlot("Iran", 3, 0, [], [], [], [3,3,3], True)
+		self.assertEqual(app.funding, 4)
+		self.assertEqual(app.map["Iran"].governance, 2)
+		self.assertEqual(app.map["Iran"].aid, 0)
+		self.assertEqual(app.prestige, 7)
+		self.assertEqual(app.map["Iran"].plots, 0)
+
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		app.map["Iraq"].governance = 3
+		app.map["Iraq"].aid = 0
+		app.map["Iraq"].plots = 1
+		app.map["Iraq"].troops = 1
+		app.resolvePlot("Iraq", 3, 0, [], [], [], [3,3,3], True)
+		self.assertEqual(app.funding, 4)
+		self.assertEqual(app.map["Iraq"].governance, 3)
+		self.assertEqual(app.map["Iraq"].aid, 0)
+		self.assertEqual(app.prestige, 6)
+		self.assertEqual(app.map["Iraq"].plots, 0)
+	
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		app.map["Iraq"].governance = 3
+		app.map["Iraq"].aid = 0
+		app.map["Iraq"].plots = 1
+		app.map["Iraq"].troops = 1
+		app.resolvePlot("Iraq", "WMD", 0, [], [], [], [3,3,3], True)
+		self.assertEqual(app.funding, 1)
+		self.assertEqual(app.map["Iraq"].governance, 3)
+		self.assertEqual(app.map["Iraq"].aid, 0)
+		self.assertEqual(app.prestige, 1)
+		self.assertEqual(app.map["Iraq"].plots, 0)
+
 class placePlots(unittest.TestCase):
 	'''Place Plots'''
 	
@@ -6107,6 +6189,33 @@ class placePlots(unittest.TestCase):
 		self.assertEqual(unusedOps, 0)
 		self.assertEqual(app.map["Iraq"].plots, 1)
 		self.assertEqual(app.map["Gulf States"].plots, 0)
+		
+
+class card1(unittest.TestCase):
+	'''Backlash'''
+	
+	def testPlayable(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		self.assertFalse(app.deck["1"].playable("US", app))
+		app.map["Canada"].plots = 1
+		self.assertFalse(app.deck["1"].playable("US", app))
+		app.map["Iraq"].plots = 1
+		self.assertTrue(app.deck["1"].playable("US", app))
+		
+	def testEvent(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		self.assertFalse(app.backlashInPlay)
+		app.deck["1"].playEvent("US", app)
+		self.assertFalse(app.backlashInPlay)
+		app.map["United States"].plots = 1
+		app.deck["1"].playEvent("US", app)
+		self.assertFalse(app.backlashInPlay)
+		app.map["Iraq"].plots = 1
+		app.deck["1"].playEvent("US", app)
+		self.assertTrue(app.backlashInPlay)
+		
+		
+		
 		
 if __name__ == "__main__":
 	unittest.main()   
