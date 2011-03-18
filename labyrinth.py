@@ -97,6 +97,8 @@ class Card:
 					if (app.map[country].type != "Non-Muslim") and (app.map[country].plots > 0):
 						return True
 				return False
+			elif self.number == 2: #Biometrics
+				return True
 			else:
 				return False
 		
@@ -113,6 +115,9 @@ class Card:
 						app.backlashInPlay = True
 						return True
 				return False
+			elif self.number == 2: #Biometrics
+				app.lapsing.append("Biometrics")
+				return True
 			else:
 				return False
 		
@@ -134,6 +139,7 @@ class Labyrinth(cmd.Cmd):
 	jCard = 0
 	phase = ""
 	markers = []
+	lapsing = []
 	history = []
 	deck = {}
 	gameOver = False
@@ -161,6 +167,7 @@ class Labyrinth(cmd.Cmd):
 			#self.testScenarioSetup()
 		self.history = []
 		self.markers = []
+		self.lapsing = []
 		self.prompt = "Command: "
 		self.gameOver = False
 		self.backlashInPlay = False
@@ -1117,6 +1124,17 @@ class Labyrinth(cmd.Cmd):
 					rolls.append(random.randint(1,6))
 				return self.executeRecruit(country, ops, rolls)
 				
+	def isAdjacent(self, here, there):
+		if self.map[here] in self.map[there].links:
+			return True
+		if self.map[here].schengen and self.map[there].schengen:
+			return True
+		if self.map[here].schengenLink and self.map[there].schengen:
+			return True
+		if self.map[here].schengen and self.map[there].schengenLink:
+			return True
+		return False
+				
 	def adjacentCountryHasCell(self, targetCountry):
 		for adjacent in self.map[targetCountry].links:
 			if (adjacent.sleeperCells > 0) or (adjacent.activeCells > 0):
@@ -1149,6 +1167,8 @@ class Labyrinth(cmd.Cmd):
 			subdests = []
 			for country in self.map:
 				if (self.map[country].governance != 4) and ((self.map[country].besieged > 0) or (self.map[country].regimeChange > 0) or (self.map[country].aid > 0)):
+					if ("Biometrics" in self.lapsing) and (not self.adjacentCountryHasCell(country)):
+						continue
 					subdests.append(country)
 			if len(subdests) == 1:
 				dests.append(subdests[0])
@@ -1161,6 +1181,8 @@ class Labyrinth(cmd.Cmd):
 		subdests = []
 		for country in self.map:
 			if (self.map[country].governance == 3) and (((self.map[country].sleeperCells + self.map[country].activeCells + 2) - self.map[country].troops) >= self.extraCellsNeededForMajorJihad()):
+				if (not isRadicalization) and ("Biometrics" in self.lapsing) and (not self.adjacentCountryHasCell(country)):
+					continue
 				subdests.append(country)
 		if len(subdests) == 1:
 			dests.append(subdests[0])
@@ -1174,6 +1196,8 @@ class Labyrinth(cmd.Cmd):
 		for country in self.map:
 			if ((self.map[country].governance == 1) or (self.map[country].governance == 2)) and ((self.map[country].type == "Suni") or (self.map[country].type == "Shia-Mix")):
 				if self.adjacentCountryHasCell(country):
+					if (not isRadicalization) and ("Biometrics" in self.lapsing) and (not self.adjacentCountryHasCell(country)):
+						continue
 					subdests.append(country)
 		if len(subdests) == 1:
 			dests.append(subdests[0])
@@ -1187,10 +1211,14 @@ class Labyrinth(cmd.Cmd):
 		if self.map["United States"].posture == "Hard":
 			for country in self.map:
 				if self.map[country].type == "Non-Muslim" and self.map[country].posture == "":
+					if (not isRadicalization) and ("Biometrics" in self.lapsing) and (not self.adjacentCountryHasCell(country)):
+						continue
 					subdests.append(country)
 		else:
 			for country in self.map:
 				if country != "United States" and self.map[country].type == "Non-Muslim" and self.map[country].posture == "Soft":
+					if (not isRadicalization) and ("Biometrics" in self.lapsing) and (not self.adjacentCountryHasCell(country)):
+						continue
 					subdests.append(country)
 		if len(subdests) == 1:
 			dests.append(subdests[0])
@@ -1200,8 +1228,18 @@ class Labyrinth(cmd.Cmd):
 			return dests
 			
 	# Random
-		while len(dests) < ops:
-			dests.append(random.choice(self.map.keys()))		
+		if (not isRadicalization) and ("Biometrics" in self.lapsing):
+			subdests = []
+			for country in self.map:
+				if self.adjacentCountryHasCell(country):
+					subdests.append(country)
+			if len(subdests) > 0:
+				while len(dests) < ops:
+					dests.append(random.choice(subdests))		
+		else:
+			while len(dests) < ops:
+				dests.append(random.choice(self.map.keys()))		
+		
 		return dests
 	
 	def travelSourceChooseBasedOnPriority(self, countryList, i, destinations):
@@ -1227,7 +1265,7 @@ class Labyrinth(cmd.Cmd):
 		else:
 			return random.choice(countryList)
 			
-	def travelSourceBoxOne(self, i, destinations, sources, ops):
+	def travelSourceBoxOne(self, i, destinations, sources, ops, isRadicalization = False):
 		possibles = []
 		for country in self.map:
 			if self.map[country].governance == 4:
@@ -1236,6 +1274,8 @@ class Labyrinth(cmd.Cmd):
 					if source == country:
 						numTimesIsSource += 1
 				if ((self.map[country].sleeperCells + self.map[country].activeCells) - numTimesIsSource) > ops:
+					if (not isRadicalization) and ("Biometrics" in self.lapsing) and (not self.isAdjacent(country, destinations[i])):
+						continue
 					possibles.append(country)
 		if len(possibles) == 0:
 			return False
@@ -1244,7 +1284,7 @@ class Labyrinth(cmd.Cmd):
 		else:
 			return self.travelSourceChooseBasedOnPriority(possibles, i, destinations)
 	
-	def travelSourceBoxTwo(self, i, destinations, sources):
+	def travelSourceBoxTwo(self, i, destinations, sources, isRadicalization = False):
 		possibles = []
 		for country in self.map:
 			if self.map[country].regimeChange > 0:
@@ -1253,6 +1293,8 @@ class Labyrinth(cmd.Cmd):
 					if source == country:
 						numTimesIsSource += 1
 				if ((self.map[country].sleeperCells + self.map[country].activeCells) - numTimesIsSource) > self.map[country].troops:
+					if (not isRadicalization) and ("Biometrics" in self.lapsing) and (not self.isAdjacent(country, destinations[i])):
+						continue
 					possibles.append(country)
 		if len(possibles) == 0:
 			return False
@@ -1261,15 +1303,19 @@ class Labyrinth(cmd.Cmd):
 		else:
 			return self.travelSourceChooseBasedOnPriority(possibles, i, destinations)					
 
-	def travelSourceBoxThree(self, i, destinations, sources):
+	def travelSourceBoxThree(self, i, destinations, sources, isRadicalization = False):
 		possibles = []
-		for adjacent in self.map[destinations[i]].links:
-			numTimesIsSource = 0
-			for source in sources:
-				if source == adjacent.name:
-					numTimesIsSource += 1
-			if ((adjacent.sleeperCells + adjacent.activeCells) - numTimesIsSource) > 0:
-				possibles.append(adjacent.name)
+		for country in self.map:
+			if self.isAdjacent(destinations[i], country):
+				adjacent = self.map[country]
+				numTimesIsSource = 0
+				for source in sources:
+					if source == adjacent.name:
+						numTimesIsSource += 1
+				if ((adjacent.sleeperCells + adjacent.activeCells) - numTimesIsSource) > 0:
+					if (not isRadicalization) and ("Biometrics" in self.lapsing) and (not self.isAdjacent(country, destinations[i])):
+						continue
+					possibles.append(adjacent.name)
 		if len(possibles) == 0:
 			return False
 		if len(possibles) == 1:
@@ -1277,7 +1323,7 @@ class Labyrinth(cmd.Cmd):
 		else:
 			return self.travelSourceChooseBasedOnPriority(possibles, i, destinations)					
 
-	def travelSourceBoxFour(self, i, destinations, sources):
+	def travelSourceBoxFour(self, i, destinations, sources, isRadicalization = False):
 		possibles = []
 		for country in self.map:
 			numTimesIsSource = 0
@@ -1285,6 +1331,8 @@ class Labyrinth(cmd.Cmd):
 				if source == country:
 					numTimesIsSource += 1
 			if ((self.map[country].sleeperCells + self.map[country].activeCells) - numTimesIsSource) > 0:
+				if (not isRadicalization) and ("Biometrics" in self.lapsing) and (not self.isAdjacent(country, destinations[i])):
+					continue
 				possibles.append(country)
 		if len(possibles) == 0:
 			return False
@@ -1293,22 +1341,22 @@ class Labyrinth(cmd.Cmd):
 		else:
 			return self.travelSourceChooseBasedOnPriority(possibles, i, destinations)					
 
-	def travelSources(self, destinations, ops):
+	def travelSources(self, destinations, ops, isRadicalization = False):
 		sources = []
 		for i in range(len(destinations)):
-			source = self.travelSourceBoxOne(i, destinations, sources, ops)
+			source = self.travelSourceBoxOne(i, destinations, sources, ops, isRadicalization)
 			if source:
 				sources.append(source)
 			else:
-				source = self.travelSourceBoxTwo(i, destinations, sources)
+				source = self.travelSourceBoxTwo(i, destinations, sources, isRadicalization)
 				if source:
 					sources.append(source)
 				else:
-					source = self.travelSourceBoxThree(i, destinations, sources)
+					source = self.travelSourceBoxThree(i, destinations, sources, isRadicalization)
 					if source:
 						sources.append(source)
 					else:
-						source = self.travelSourceBoxFour(i, destinations, sources)
+						source = self.travelSourceBoxFour(i, destinations, sources, isRadicalization)
 						if source:
 							sources.append(source)
 		return sources
@@ -1409,7 +1457,7 @@ class Labyrinth(cmd.Cmd):
 	
 	def handleTravel(self, ops, isRadicalization = False):
 		destinations = self.travelDestinations(ops, isRadicalization)
-		sources = self.travelSources(destinations, ops)
+		sources = self.travelSources(destinations, ops, isRadicalization)
 		if not isRadicalization:
 			self.outputToHistory("* Cells Travel", False)
 		for i in range(len(sources)):
@@ -1424,12 +1472,18 @@ class Labyrinth(cmd.Cmd):
 					success = True
 					displayStr = ("Travel within country automatically successful.")
 				else:
-					for adjacent in self.map[sources[i]].links:
-						if adjacent.name == destinations[i]:
+					if self.isAdjacent(sources[i], destinations[i]): 
+						if not "Biometrics" in self.lapsing:
 							success = True
 							displayStr = ("Travel to adjacent country automatically successful.")
-							break
-					if not success:
+						else:
+							roll = random.randint(1,6)
+							if roll <= self.map[destinations[i]].governance:
+								success = True
+								displayStr = ("Travel roll needed due to Biometrics - roll successful.")
+							else:
+								displayStr = ("Travel roll needed due to Biometrics -  roll failed, cell to funding track.")
+					else:
 						roll = random.randint(1,6)
 						if roll <= self.map[destinations[i]].governance:
 							success = True
@@ -2623,6 +2677,9 @@ class Labyrinth(cmd.Cmd):
 			if self.prestige > 12:
 				self.prestige = 12
 			self.outputToHistory("GWOT World posture is 3 and matches US - US Prestige now %d" % self.prestige, False)
+		for event in self.lapsing:
+			self.outputToHistory("%s has Lapsed." % event, False)
+		self.lapsing = []
 		self.turn += 1
 		self.outputToHistory("", False)
 		self.outputToHistory("<< %d (Turn %s) >>" % (self.startYear + (self.turn - 1), self.turn), True)

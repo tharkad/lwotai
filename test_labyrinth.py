@@ -6190,7 +6190,18 @@ class placePlots(unittest.TestCase):
 		self.assertEqual(app.map["Iraq"].plots, 1)
 		self.assertEqual(app.map["Gulf States"].plots, 0)
 		
-
+class isAdjacent(unittest.TestCase):
+	'''Test isAdjacent'''
+	
+	def testIsAdjacent(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		self.assertTrue(app.isAdjacent("Iran","Iraq"))
+		self.assertTrue(app.isAdjacent("Germany","Spain"))
+		self.assertTrue(app.isAdjacent("Libya","Italy"))
+		self.assertTrue(app.isAdjacent("Benelux","Russia"))
+		self.assertTrue(app.isAdjacent("Lebanon","France"))
+		self.assertFalse(app.isAdjacent("United States","Lebanon"))
+		
 class card1(unittest.TestCase):
 	'''Backlash'''
 	
@@ -6214,7 +6225,69 @@ class card1(unittest.TestCase):
 		app.deck["1"].playEvent("US", app)
 		self.assertTrue(app.backlashInPlay)
 		
+class card2(unittest.TestCase):
+	'''Biometrics'''
+	
+	def testPlayable(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		self.assertTrue(app.deck["2"].playable("US", app))
 		
+	def testEvent(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		self.assertFalse("Biometrics" in app.lapsing)
+		app.deck["2"].playEvent("US", app)
+		self.assertTrue("Biometrics" in app.lapsing)
+		app.do_turn("")
+		self.assertFalse("Biometrics" in app.lapsing)
+		
+	def testTravelDestination(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		app.map["Gulf States"].governance = 3
+		app.map["Gulf States"].besieged = 1
+		dest = app.travelDestinations(1)
+		self.assertEqual(dest,["Gulf States"])
+		app.deck["2"].playEvent("US", app)
+		dest = app.travelDestinations(1)
+		self.assertTrue("Biometrics" in app.lapsing)
+		self.assertEqual(dest,[])
+		app.map["Iraq"].sleeperCells = 1
+		dest = app.travelDestinations(1)
+		self.assertEqual(dest,["Gulf States"])
+		
+	def testTravelSource(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		app.map["Gulf States"].governance = 3
+		app.map["Gulf States"].besieged = 1
+		dest = app.travelDestinations(1)
+		self.assertEqual(dest,["Gulf States"])
+		app.deck["2"].playEvent("US", app)
+		dest = app.travelDestinations(1)
+		self.assertEqual(dest,[])
+		app.map["Iraq"].sleeperCells = 1
+		dest = app.travelDestinations(1)
+		self.assertEqual(dest,["Gulf States"])
+		app.map["Sudan"].governance = 4		
+		app.map["Sudan"].sleeperCells = 4	
+		sources = app.travelSources(dest, 1)
+		self.assertEqual(sources,["Iraq"])
+		
+	def testTravelToGood(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		app.map["Gulf States"].governance = 1
+		app.map["Gulf States"].besieged = 1
+		dest = app.travelDestinations(1)
+		self.assertEqual(dest,["Gulf States"])
+		app.deck["2"].playEvent("US", app)
+		dest = app.travelDestinations(1)
+		self.assertEqual(dest,[])
+		app.map["Iraq"].sleeperCells = 1
+		dest = app.travelDestinations(1)
+		self.assertEqual(dest,["Gulf States"])
+		app.map["Sudan"].governance = 4		
+		app.map["Sudan"].sleeperCells = 4	
+		sources = app.travelSources(dest, 1)
+		self.assertEqual(sources,["Iraq"])
+		app.handleTravel(1)
 		
 		
 if __name__ == "__main__":
