@@ -6288,7 +6288,120 @@ class card2(unittest.TestCase):
 		sources = app.travelSources(dest, 1)
 		self.assertEqual(sources,["Iraq"])
 		app.handleTravel(1)
+
+class card3(unittest.TestCase):
+	'''CRT'''
+	
+	def testPlayable(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		self.assertFalse(app.deck["3"].playable("US", app))
+		app.do_reassessment("")
+		self.assertTrue(app.deck["3"].playable("US", app))
+
+	def testEvent(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		app.do_reassessment("")
+		self.assertFalse("CRT" in app.map["Russia"].markers)
+		self.assertFalse("CRT" in app.map["Central Asia"].markers)
+		app.map["Central Asia"].alignment = "Adversary"
+		app.deck["3"].playEvent("US", app)
+		self.assertTrue("CRT" in app.map["Russia"].markers)
+		self.assertFalse("CRT" in app.map["Central Asia"].markers)
 		
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		app.do_reassessment("")
+		self.assertFalse("CRT" in app.map["Russia"].markers)
+		self.assertFalse("CRT" in app.map["Central Asia"].markers)
+		app.map["Central Asia"].alignment = "Neutral"
+		app.deck["3"].playEvent("US", app)
+		self.assertTrue("CRT" in app.map["Russia"].markers)
+		self.assertTrue("CRT" in app.map["Central Asia"].markers)
+		print app.map["Russia"].countryStr()
+		self.assertTrue("Markers: CRT" in app.map["Russia"].countryStr())
+		self.assertTrue("Markers: CRT" in app.map["Central Asia"].countryStr())
 		
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		app.do_reassessment("")
+		self.assertFalse("CRT" in app.map["Russia"].markers)
+		self.assertFalse("CRT" in app.map["Central Asia"].markers)
+		app.map["Central Asia"].alignment = "Ally"
+		app.deck["3"].playEvent("US", app)
+		self.assertTrue("CRT" in app.map["Russia"].markers)
+		self.assertTrue("CRT" in app.map["Central Asia"].markers)
+
+class card4(unittest.TestCase):
+	'''Moro Talks'''
+	
+	def testPlayable(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		self.assertTrue(app.deck["4"].playable("US", app))
+
+	def testEvent(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		self.assertTrue(app.map["Philippines"].posture == "")
+		self.assertTrue(app.funding == 5)
+		app.deck["4"].playEvent("US", app)
+		self.assertTrue(app.map["Philippines"].posture == "Soft" or app.map["Philippines"].posture == "Hard")
+		self.assertTrue(app.funding == 4)
+
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		app.funding = 1
+		self.assertTrue(app.map["Philippines"].posture == "")
+		self.assertTrue(app.funding == 1)
+		app.deck["4"].playEvent("US", app)
+		self.assertTrue(app.map["Philippines"].posture == "Soft" or app.map["Philippines"].posture == "Hard")
+		self.assertTrue(app.funding == 1)
+
+class card5(unittest.TestCase):
+	'''NEST'''
+	
+	def testPlayable(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		self.assertTrue(app.deck["5"].playable("US", app))
+		
+	def testEvent(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		self.assertFalse("NEST" in app.markers)
+		app.deck["5"].playEvent("US", app)
+		self.assertTrue("NEST" in app.markers)
+		
+class card6and7(unittest.TestCase):
+	'''Sanctions'''
+	
+	def testPlayable(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		self.assertFalse(app.deck["6"].playable("US", app))
+		self.assertFalse(app.deck["7"].playable("US", app))
+		app.markers.append("Patriot Act")
+		self.assertTrue(app.deck["6"].playable("US", app))
+		self.assertTrue(app.deck["7"].playable("US", app))
+
+	def testEvent(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		app.markers.append("Patriot Act")
+		app.deck["6"].playEvent("US", app)
+		self.assertTrue(app.funding == 3)
+		
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		app.markers.append("Patriot Act")
+		app.deck["7"].playEvent("US", app)
+		self.assertTrue(app.funding == 3)
+
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		app.funding = 2
+		app.markers.append("Patriot Act")
+		app.deck["6"].playEvent("US", app)
+		self.assertTrue(app.funding == 1)
+		
+class card8and9and10(unittest.TestCase):
+	'''Special Forces'''
+	
+	def testPlayable(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		self.assertFalse(app.deck["8"].playable("US", app))
+		self.assertFalse(app.deck["9"].playable("US", app))
+		self.assertFalse(app.deck["10"].playable("US", app))
+				
+				
 if __name__ == "__main__":
 	unittest.main()   

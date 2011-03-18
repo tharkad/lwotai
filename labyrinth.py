@@ -15,6 +15,7 @@ class Country:
 	oil = False
 	resources = 0
 	links = []
+	markers = []
 	schengenLink = False
 	aid = 0
 	besiged = 0
@@ -41,6 +42,7 @@ class Country:
 		self.cadre = 0
 		self.plots = 0
 		self.links = []
+		self.markers = []
 		self.schengenLink = False
 		
 	def govStr(self):
@@ -64,12 +66,15 @@ class Country:
 			return "IR"
 		
 	def countryStr(self):
+		markersStr = ""
+		if self.markers != []:
+			markersStr = "\n   Markers: %s" % ", ".join(self.markers)
 		if self.type == "Shia-Mix" or self.type == "Suni":
-			return "%s, %s %s\n   Troops:%d Active:%d Sleeper:%d Cadre:%d Aid:%d Besieged:%d Reg Ch:%d Plots:%d" % (self.name, self.govStr(),self.alignment,self.troops,self.activeCells,self.sleeperCells, self.cadre, self.aid, self.besieged, self.regimeChange, self.plots)
+			return "%s, %s %s\n   Troops:%d Active:%d Sleeper:%d Cadre:%d Aid:%d Besieged:%d Reg Ch:%d Plots:%d %s" % (self.name, self.govStr(),self.alignment,self.troops,self.activeCells,self.sleeperCells, self.cadre, self.aid, self.besieged, self.regimeChange, self.plots, markersStr)
 		elif self.type == "Non-Muslim" and self.type != "United States":
-			return "%s - Posture:%s\n   Active:%d Sleeper:%d Cadre:%d Plots:%d" % (self.name,self.posture, self.activeCells,self.sleeperCells, self.cadre, self.plots)
+			return "%s - Posture:%s\n   Active:%d Sleeper:%d Cadre:%d Plots:%d %s" % (self.name,self.posture, self.activeCells,self.sleeperCells, self.cadre, self.plots, markersStr)
 		elif self.type == "Iran":
-			return "%s, %s\n   Active:%d Sleeper:%d Cadre:%d Plots:%d" % (self.name, self.govStr(),self.activeCells,self.sleeperCells, self.cadre, self.plots)
+			return "%s, %s\n   Active:%d Sleeper:%d Cadre:%d Plots:%d %s" % (self.name, self.govStr(),self.activeCells,self.sleeperCells, self.cadre, self.plots, markersStr)
 			
 	def printCountry(self):
 		print self.countryStr()
@@ -92,13 +97,23 @@ class Card:
 		elif self.type == "Jihadist" and side == "US":
 			return False
 		else:
-			if self.number == 1: #Backlash
+			if self.number == 1: # Backlash
 				for country in app.map:
 					if (app.map[country].type != "Non-Muslim") and (app.map[country].plots > 0):
 						return True
 				return False
-			elif self.number == 2: #Biometrics
+			elif self.number == 2: # Biometrics
 				return True
+			elif self.number == 3: # CRT
+				return app.map["United States"].posture == "Soft"
+			elif self.number == 2: # Biometrics
+				return True
+			elif self.number == 4: # Moro Talks
+				return True
+			elif self.number == 5: # NEST
+				return True
+			elif self.number == 6 or self.number == 7 : # Sanctions
+				return "Patriot Act" in app.markers
 			else:
 				return False
 		
@@ -108,16 +123,43 @@ class Card:
 		elif self.type == "Jihadist" and side == "US":
 			return False
 		else:
-			if self.number == 1: #Backlash
+			if self.number == 1: # Backlash
 				for country in app.map:
 					if (app.map[country].type != "Non-Muslim") and (app.map[country].plots > 0):
 						app.outputToHistory("Plot in Muslim country found. Select the plot. Backlash in play", True)
 						app.backlashInPlay = True
 						return True
 				return False
-			elif self.number == 2: #Biometrics
+			elif self.number == 2: # Biometrics
 				app.lapsing.append("Biometrics")
+				app.outputToHistory("Biometrics in play. This turn, travel to adjacent Good countries must roll to succeed and no non-adjacent travel.", True)
 				return True
+			elif self.number == 3: # CRT
+				app.map["Russia"].markers.append("CRT")
+				app.outputToHistory("CRT Maker added in Russia", True)
+				if (app.map["Central Asia"].alignment == "Ally") or (app.map["Central Asia"].alignment == "Neutral"):
+					app.map["Central Asia"].markers.append("CRT")
+					app.outputToHistory("CRT Maker added in Central Asia", True)
+				return True
+			elif self.number == 4: # Moro Talks
+				app.testCountry("Philippines")
+				app.funding -= 1
+				if app.funding < 1:
+					app.funding = 1
+				app.outputToHistory("Jihadist Funding now %d" % app.funding, True)
+				return True
+			elif self.number == 5: # Moro Talks
+				app.markers.append("NEST")
+				app.outputToHistory("NEST in play. If jihadists have WMD, all plots in the US placed face up.", True)
+				return True
+			elif self.number == 6 or self.number == 7 : # Sanctions
+				if "Patriot Act" in app.markers:
+					app.funding -= 2
+					if app.funding < 1:
+						app.funding = 1
+					app.outputToHistory("Jihadist Funding now %d" % app.funding, True)
+				else:
+					return False
 			else:
 				return False
 		
@@ -1529,6 +1571,8 @@ class Labyrinth(cmd.Cmd):
 				self.map[country].activeCells += 1
 			self.map[country].plots += successes
 			self.outputToHistory("%d Plot(s) placed in %s." % (successes, country), False)
+			if "NEST" in self.markers and country == "Unites States":
+				self.outputToHistory("NEST in play. If jihadists have WMD, all plots in the US placed face up.", False)
 			self.outputToHistory(self.map[country].countryStr(), True)
 			rollPosition += plotsToPlace
 		return rollPosition
@@ -2068,9 +2112,19 @@ class Labyrinth(cmd.Cmd):
 		print "Funding: %d" % self.funding
 		print "Cells Available: %d" % self.cells
 		print ""
-		#print "DATE"
-		#print "%d (Turn %s)" % (self.startYear + (self.turn - 1), self.turn)
-		#print ""
+		print "EVENTS"
+		if self.markers == []:
+			print "Marked: None"
+		else:
+			print "Marked: %s" % ", ".join(self.markers)
+		if self.lapsing == []:
+			print "Lapsing: None"
+		else:
+			print "Lapsing: %s" % ", ".join(self.lapsing)
+		print ""
+		print "DATE"
+		print "%d (Turn %s)" % (self.startYear + (self.turn - 1), self.turn)
+		print ""
 		
 	def help_status(self):
 		print "Display game status."
