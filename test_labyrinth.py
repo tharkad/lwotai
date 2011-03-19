@@ -6401,7 +6401,26 @@ class card8and9and10(unittest.TestCase):
 		self.assertFalse(app.deck["8"].playable("US", app))
 		self.assertFalse(app.deck["9"].playable("US", app))
 		self.assertFalse(app.deck["10"].playable("US", app))
-				
+		app.map["Iran"].sleeperCells = 1
+		self.assertFalse(app.deck["8"].playable("US", app))
+		self.assertFalse(app.deck["9"].playable("US", app))
+		self.assertFalse(app.deck["10"].playable("US", app))
+		app.map["Iran"].troops = 1
+		self.assertTrue(app.deck["8"].playable("US", app))
+		self.assertTrue(app.deck["9"].playable("US", app))
+		self.assertTrue(app.deck["10"].playable("US", app))
+		app.map["Iran"].troops = 0
+		app.map["Iraq"].troops = 1
+		self.assertTrue(app.deck["8"].playable("US", app))
+		self.assertTrue(app.deck["9"].playable("US", app))
+		self.assertTrue(app.deck["10"].playable("US", app))
+		
+	def testPlayEvent(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		app.listCountriesWithCellAndAdjacentTroops()
+		app.map["Iran"].sleeperCells = 1
+		app.map["Iraq"].troops = 1
+		app.listCountriesWithCellAndAdjacentTroops()
 				
 if __name__ == "__main__":
 	unittest.main()   

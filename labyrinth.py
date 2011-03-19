@@ -114,6 +114,14 @@ class Card:
 				return True
 			elif self.number == 6 or self.number == 7 : # Sanctions
 				return "Patriot Act" in app.markers
+			elif self.number == 8 or self.number == 9 or self.number == 10: # Special Forces
+				for country in app.map:
+					if app.map[country].sleeperCells + app.map[country].activeCells > 0:
+						for subCountry in app.map:
+							if country == subCountry or app.isAdjacent(subCountry, country):
+								if app.map[subCountry].troops > 0:
+									return True
+				return False
 			else:
 				return False
 		
@@ -152,7 +160,7 @@ class Card:
 				app.markers.append("NEST")
 				app.outputToHistory("NEST in play. If jihadists have WMD, all plots in the US placed face up.", True)
 				return True
-			elif self.number == 6 or self.number == 7 : # Sanctions
+			elif self.number == 6 or self.number == 7: # Sanctions
 				if "Patriot Act" in app.markers:
 					app.funding -= 2
 					if app.funding < 1:
@@ -160,6 +168,37 @@ class Card:
 					app.outputToHistory("Jihadist Funding now %d" % app.funding, True)
 				else:
 					return False
+			elif self.number == 8 or self.number == 9 or self.number == 10: # Special Forces
+				while True:
+					input = app.getCountryFromUser("Remove a cell from what country that has troops or is adjacent to a country with troops (? for list)?: ",  "XXX", app.listCountriesWithCellAndAdjacentTroops)	
+					if input == "":
+						print ""
+						return
+					else:
+						if app.map[input].sleeperCells + app.map[input].activeCells <= 0:
+							print "There are no cells in %s" % input
+							print ""
+						else:
+							foundTroops = False
+							for country in app.map:
+								if country == input or app.isAdjacent(input, country):
+									if app.map[country].troops > 0:
+										foundTroops = True
+										break
+							if not foundTroops:
+								print "Neither this or any adjacent country have troops."
+								print ""
+							else:
+								if app.map[input].sleeperCells > 0:
+									app.map[input].sleeperCells -= 1
+									app.cells += 1
+									app.outputToHistory("Sleeper Cell removed from %s." % input, False)
+								else:
+									app.map[input].activeCells -= 1
+									app.cells += 1
+									app.outputToHistory("Active Cell removed from %s." % input, False)
+								app.outputToHistory(app.map[input].countryStr(), True)
+								return True
 			else:
 				return False
 		
@@ -1989,12 +2028,28 @@ class Labyrinth(cmd.Cmd):
 	def listRegimeChangeCountries(self, na = None):
 		print ""
 		print "Regime Change Countries"
-		print "----------------------"
+		print "-----------------------"
 		for country in self.map:
 			if self.map[country].regimeChange > 0:
 				self.map[country].printCountry()
 		print ""
 		
+	def listCountriesWithCellAndAdjacentTroops(self, na = None):
+		print ""
+		print "Countries with Cells and with Troops or adjacent to Troops"
+		print "----------------------------------------------------------"
+		for country in self.map:
+			if self.map[country].sleeperCells + self.map[country].activeCells > 0:
+				if self.map[country].troops > 0:
+					self.map[country].printCountry()
+				else:
+					for subCountry in self.map:
+						if subCountry != country:
+							if self.map[subCountry].troops > 0 and self.isAdjacent(country, subCountry):
+								self.map[country].printCountry()
+								break
+		print ""
+
 	def do_status(self, rest):
 		goodRes = 0
 		islamRes = 0
