@@ -6421,6 +6421,66 @@ class card8and9and10(unittest.TestCase):
 		app.map["Iran"].sleeperCells = 1
 		app.map["Iraq"].troops = 1
 		app.listCountriesWithCellAndAdjacentTroops()
-				
+
+class card11(unittest.TestCase):
+	'''Abbas'''
+	
+	def testPlayable(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		self.assertTrue(app.deck["11"].playable("US", app))
+		app.troops = 4		
+		self.assertFalse(app.deck["11"].playable("US", app))
+		app.troops = 9
+		app.map["Lebanon"].governance = 4
+		self.assertFalse(app.deck["11"].playable("US", app))
+		app.map["Lebanon"].governance = 3
+		self.assertTrue(app.deck["11"].playable("US", app))
+
+	def testEvent(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		app.deck["11"].playEvent("US", app)
+		self.assertTrue(app.prestige == 8)
+		self.assertTrue(app.funding == 3)
+		self.assertTrue("Abbas" in app.markers)
+		app.map["Israel"].plots = 1
+		app.resolvePlot("Israel", 1, [1], [], [], [], [], False)
+		self.assertFalse("Abbas" in app.markers)
+
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		app.prestige = 12
+		app.funding = 2
+		app.deck["11"].playEvent("US", app)
+		self.assertTrue(app.prestige == 12)
+		self.assertTrue(app.funding == 1)
+
+class card12(unittest.TestCase):
+	'''Al-Azhar'''
+	
+	def testPlayable(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		self.assertTrue(app.deck["12"].playable("US", app))
+
+	def testEvent(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		self.assertTrue(app.map["Egypt"].governance == 0)
+		app.deck["12"].playEvent("US", app)
+		self.assertTrue(app.map["Egypt"].governance != 0)
+		self.assertTrue(app.funding == 1)
+		
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		self.assertTrue(app.map["Egypt"].governance == 0)
+		app.map["Pakistan"].governance = 4
+		app.deck["12"].playEvent("US", app)
+		self.assertTrue(app.map["Egypt"].governance != 0)
+		self.assertTrue(app.funding == 3)
+		
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		app.funding = 2
+		self.assertTrue(app.map["Egypt"].governance == 0)
+		app.deck["12"].playEvent("US", app)
+		self.assertTrue(app.map["Egypt"].governance != 0)
+		self.assertTrue(app.funding == 1)
+		
+		
 if __name__ == "__main__":
 	unittest.main()   

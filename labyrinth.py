@@ -122,6 +122,17 @@ class Card:
 								if app.map[subCountry].troops > 0:
 									return True
 				return False
+			elif self.number == 11: # Abbas
+				numIR = 0
+				for country in app.map:
+					if app.map[country].governance == 4:
+						numIR += 1
+				if app.troops >= 5 and numIR <= 0:
+					return True
+				else:
+					return False
+			elif self.number == 12: # Al-Azhar
+				return True
 			else:
 				return False
 		
@@ -199,6 +210,34 @@ class Card:
 									app.outputToHistory("Active Cell removed from %s." % input, False)
 								app.outputToHistory(app.map[input].countryStr(), True)
 								return True
+			elif self.number == 11: # Abbas
+				numIR = 0
+				for country in app.map:
+					if app.map[country].governance == 4:
+						numIR += 1
+				if app.troops >= 5 and numIR <= 0:
+					app.markers.append("Abbas")
+					app.prestige += 1
+					if app.prestige > 12:
+						app.prestige = 12
+					app.funding -= 2
+					if app.funding < 1:
+						app.funding = 1
+					return True
+				else:
+					return False
+			elif self.number == 12: # Al-Azhar
+				app.testCountry("Egypt")
+				numIR = 0
+				for country in app.map:
+					if app.map[country].governance == 4:
+						numIR += 1
+				app.funding -= 2
+				if numIR <= 0:
+					app.funding -= 2
+				if app.funding < 1:
+					app.funding = 1
+				return True
 			else:
 				return False
 		
@@ -1833,6 +1872,8 @@ class Labyrinth(cmd.Cmd):
 					successes -= 1
 					self.outputToHistory("Governance to %s" % self.map[country].govStr(), True)
 		elif self.map[country].type == "Non-Muslim":
+			if country == "Israel" and "Abbas" in self.markers:
+				self.markers.remove("Abbas")
 			if plotType == "WMD":
 				self.funding = 9
 			else:
