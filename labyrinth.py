@@ -123,10 +123,7 @@ class Card:
 									return True
 				return False
 			elif self.number == 11: # Abbas
-				numIR = 0
-				for country in app.map:
-					if app.map[country].governance == 4:
-						numIR += 1
+				numIR = app.numIslamicRuleCountries()
 				if app.troops >= 5 and numIR <= 0:
 					return True
 				else:
@@ -142,6 +139,16 @@ class Card:
 				return False
 			elif self.number == 15: # Ethiopia Strikes
 				return (app.map["Somalia"].governance == 4) or (app.map["Sudan"].governance == 4)
+			elif self.number == 16: # Euro-Islam
+				return True
+			elif self.number == 17: # FSB
+				return True
+			elif self.number == 18: # Intel Community
+				return True
+			elif self.number == 19: # Kemalist Republic
+				return True
+			elif self.number == 20: # King Abdullah
+				return True
 			else:
 				return False
 		
@@ -171,10 +178,7 @@ class Card:
 				return True
 			elif self.number == 4: # Moro Talks
 				app.testCountry("Philippines")
-				app.funding -= 1
-				if app.funding < 1:
-					app.funding = 1
-				app.outputToHistory("Jihadist Funding now %d" % app.funding, True)
+				app.changeFunding(-1)
 				return True
 			elif self.number == 5: # Moro Talks
 				app.markers.append("NEST")
@@ -182,10 +186,7 @@ class Card:
 				return True
 			elif self.number == 6 or self.number == 7: # Sanctions
 				if "Patriot Act" in app.markers:
-					app.funding -= 2
-					if app.funding < 1:
-						app.funding = 1
-					app.outputToHistory("Jihadist Funding now %d" % app.funding, True)
+					app.changeFunding(-2)
 				else:
 					return False
 			elif self.number == 8 or self.number == 9 or self.number == 10: # Special Forces
@@ -209,47 +210,26 @@ class Card:
 								print "Neither this or any adjacent country have troops."
 								print ""
 							else:
-								if app.map[input].sleeperCells > 0:
-									app.map[input].sleeperCells -= 1
-									app.cells += 1
-									app.outputToHistory("Sleeper Cell removed from %s." % input, False)
-								else:
-									app.map[input].activeCells -= 1
-									app.cells += 1
-									app.outputToHistory("Active Cell removed from %s." % input, False)
+								app.removeCell(input)
 								app.outputToHistory(app.map[input].countryStr(), True)
 								return True
 			elif self.number == 11: # Abbas
-				numIR = 0
-				for country in app.map:
-					if app.map[country].governance == 4:
-						numIR += 1
+				numIR = app.numIslamicRuleCountries()
 				if app.troops >= 5 and numIR <= 0:
 					app.markers.append("Abbas")
 					app.outputToHistory("Abbas in play.", False)
-					app.prestige += 1
-					if app.prestige > 12:
-						app.prestige = 12
-					app.outputToHistory("Prestige now %d" % app.prestige, False)
-					app.funding -= 2
-					if app.funding < 1:
-						app.funding = 1
-					app.outputToHistory("Jihadist Funding now %d" % app.funding, True)
+					app.changePrestige(1, False)
+					app.changeFunding(-2, True)
 					return True
 				else:
 					return False
 			elif self.number == 12: # Al-Azhar
 				app.testCountry("Egypt")
-				numIR = 0
-				for country in app.map:
-					if app.map[country].governance == 4:
-						numIR += 1
-				app.funding -= 2
+				numIR = app.numIslamicRuleCountries()
 				if numIR <= 0:
-					app.funding -= 2
-				if app.funding < 1:
-					app.funding = 1
-				app.outputToHistory("Jihadist Funding now %d" % app.funding, True)
+					app.changeFunding(-4, True)
+				else:
+					app.changeFunding(-2, True)
 				return True
 			elif self.number == 13: # Anbar Awakening
 				if (app.map["Iraq"].troops > 0) or (app.map["Syria"].troops > 0):
@@ -328,6 +308,55 @@ class Card:
 					print ""
 				else:
 					return False
+			elif self.number == 16: # Euro-Islam
+				posStr = app.getPostureFromUser("Select Benelux's Posture (hard or soft): ")
+				app.executeCardEuroIslam(posStr)
+			elif self.number == 17: # FSB
+				app.outputToHistory("Examine Jihadist hand for Loose Nukes, HEU, or Kazakh Strain.", False)
+				hasThem = app.getYesNoFromUser("Does the Jihadist hand have Loose Nukes, HEU, or Kazakh Strain? ")
+				if hasThem:
+					app.outputToHistory("Discard Loose Nukes, HEU, or Kazakh Strain from the Jihadist hand.", False)
+				else:
+					russiaCells = app.map["Russia"].sleeperCells + app.map["Russia"].activeCells
+					cenAsiaCells = app.map["Central Asia"].sleeperCells + app.map["Central Asia"].activeCells
+					if russiaCells > 0 or cenAsiaCells > 0:
+						if russiaCells == 0:
+							app.removeCell("Central Asia")
+							app.outputToHistory(app.map["Central Asia"].countryStr(), True)
+						elif cenAsiaCells == 0:
+							app.removeCell("Russia")
+							app.outputToHistory(app.map["Russia"].countryStr(), True)
+						else:
+							isRussia = app.getYesNoFromUser("There are cells in both Russia and Central Asia. Do you want to remove a cell in Russia? (y/n)")
+							if isRussia:
+								app.removeCell("Russia")
+								app.outputToHistory(app.map["Russia"].countryStr(), True)
+							else:
+								app.removeCell("Central Asia")
+								app.outputToHistory(app.map["Central Asia"].countryStr(), False)
+					else:
+						app.outputToHistory("There are no cells in Russia or Central Asia.", False)	
+				app.outputToHistory("Shuffle Jihadist hand.", True)
+				return True
+			elif self.number == 18: # Intel Community
+				app.outputToHistory("Examine Jihadist hand then shuffle it.", False)
+				app.outputToHistory("Conduct a 1-value operation (Use commands: alert, deploy, disrupt, reassessment, regime, or withdraw).", False)
+				app.outputToHistory("You may now interrupt this action phase to play another card (Use the u command).", True)
+				return True
+			elif self.number == 19: # Kemalist Republic
+				app.outputToHistory("Turkey now a Fair Ally.", False)
+				app.map["Turkey"].governance = 2
+				app.map["Turkey"].alignment = "Ally"
+				app.outputToHistory(app.map["Turkey"].countryStr(), True)
+				return True
+			elif self.number == 20: # King Abdullah
+				app.outputToHistory("Jordan now a Fair Ally.", False)
+				app.map["Jordan"].governance = 2
+				app.map["Jordan"].alignment = "Ally"
+				app.outputToHistory(app.map["Jordan"].countryStr(), True)
+				app.changePrestige(1)
+				app.changeFunding(-1)
+				return True
 			else:
 				return False
 		
@@ -406,7 +435,7 @@ class Labyrinth(cmd.Cmd):
 		
 		self.outputToHistory("Game Start")
 		self.outputToHistory("")
-		self.outputToHistory("<< %d (Turn %s) >>" % (self.startYear + (self.turn - 1), self.turn), True)
+		self.outputToHistory("[[ %d (Turn %s) ]]" % (self.startYear + (self.turn - 1), self.turn), True)
 		#self.outputToHistory(self.phase)
 		self.deck = {}
 		self.deckSetup()
@@ -909,29 +938,6 @@ class Labyrinth(cmd.Cmd):
 				print "Entry error"
 				print ""
 				
-	def gwotPenalty(self):
-		worldPos = 0
-		for country in self.map:
-			if self.map[country].type == "Non-Muslim" and self.map[country].name != "United States":
-				if self.map[country].posture == "Hard":
-					worldPos += 1
-				elif self.map[country].posture == "Soft":
-					worldPos -= 1
-		if worldPos > 0:
-			worldPosStr = "Hard"
-		elif worldPos < 0:
-			worldPosStr = "Soft"
-		else:
-			worldPosStr = "Even"
-		if worldPos > 3:
-			worldPos = 3
-		elif worldPos < -3:
-			worldPos = -3
-		if self.map["United States"].posture != worldPosStr:
-			return -(abs(worldPos))
-		else:
-			return 0
-				
 	def getYesNoFromUser(self, prompt):
 		good = None
 		while not good:
@@ -946,6 +952,22 @@ class Labyrinth(cmd.Cmd):
 					print ""
 			except:
 				print "Enter y or n."
+				print ""
+
+	def getPostureFromUser(self, prompt):
+		good = None
+		while not good:
+			try:
+				input = raw_input(prompt)
+				if input.lower() == "h" or input.lower() == "hard":
+					return "Hard"
+				elif input.lower() == "s" or input.lower() == "soft":
+					return "Soft"
+				else:
+					print "Enter h or s."
+					print ""
+			except:
+				print "Enter h or s."
 				print ""
 
 	def getEventOrOpsFromUser(self, prompt):
@@ -994,6 +1016,55 @@ class Labyrinth(cmd.Cmd):
 		#print "DEBUG: w/adj good:%d" % modRoll
 		return modRoll
 		
+	def gwotPenalty(self):
+		worldPos = 0
+		for country in self.map:
+			if self.map[country].type == "Non-Muslim" and self.map[country].name != "United States":
+				if self.map[country].posture == "Hard":
+					worldPos += 1
+				elif self.map[country].posture == "Soft":
+					worldPos -= 1
+		if worldPos > 0:
+			worldPosStr = "Hard"
+		elif worldPos < 0:
+			worldPosStr = "Soft"
+		else:
+			worldPosStr = "Even"
+		if worldPos > 3:
+			worldPos = 3
+		elif worldPos < -3:
+			worldPos = -3
+		if self.map["United States"].posture != worldPosStr:
+			return -(abs(worldPos))
+		else:
+			return 0
+			
+	def changePrestige(self, delta, lineFeed = True):
+		self.prestige += delta
+		if self.prestige < 1:
+			self.prestige = 1
+		elif self.prestige > 12:
+			self.prestige = 12
+		self.outputToHistory("Prestige now %d" % self.prestige, lineFeed)
+				
+	def changeFunding(self, delta, lineFeed = True):
+		self.funding += delta
+		if self.funding < 1:
+			self.funding = 1
+		elif self.funding > 9:
+			self.funding = 9
+		self.outputToHistory("Jihadist Funding now %d" % self.funding, lineFeed)
+				
+	def removeCell(self, country):
+		if self.map[country].sleeperCells > 0:
+			self.map[country].sleeperCells -= 1
+			self.cells += 1
+			self.outputToHistory("Sleeper Cell removed from %s." % country, False)
+		else:
+			self.map[country].activeCells -= 1
+			self.cells += 1
+			self.outputToHistory("Active Cell removed from %s." % country, False)
+			
 	def numCellsAvailable(self):
 		retVal = self.cells
 		if self.funding <= 3:
@@ -1002,6 +1073,13 @@ class Labyrinth(cmd.Cmd):
 			retVal -= 5
 		return max(retVal, 0)
 		
+	def numIslamicRuleCountries(self):
+		numIR = 0
+		for country in self.map:
+			if self.map[country].governance == 4:
+				numIR += 1
+		return numIR
+
 	def handleMuslimWoI(self, roll, country):
 		if roll <= 3:
 			self.outputToHistory("* WoI in %s failed." % country)
@@ -2083,6 +2161,15 @@ class Labyrinth(cmd.Cmd):
 						self.debugPrint("DEBUG: Radicalization with remaining %d ops" % unusedOps)
 						self.handleRadicalization(unusedOps)
 					
+	def executeCardEuroIslam(self, posStr):
+		self.map["Benelux"].posture = posStr
+		if self.numIslamicRuleCountries() == 0:
+			self.funding -= 1
+			if self.funding < 1:
+				self.funding = 1
+			self.outputToHistory("Jihadist Funding now %d" % self.funding, False)
+		self.outputToHistory(self.map["Benelux"].countryStr(), True)
+		
 	def listCountriesWithTroops(self, needed = None):
 		print ""
 		print "Contries with Troops"
@@ -2892,7 +2979,7 @@ class Labyrinth(cmd.Cmd):
 				self.resolvePlot(country, plotType, postureRoll, usPrestigeRolls, schCountries, schPostureRolls, govRolls, isBacklash)
 		if not foundPlot:		
 			self.outputToHistory("", False)
-			self.outputToHistory("<< No unblocked plots to resolve >>", True)
+			self.outputToHistory("[[ No unblocked plots to resolve ]]", True)
 		self.backlashInPlay = False
 		
 	def help_plot(self):
@@ -2931,7 +3018,7 @@ class Labyrinth(cmd.Cmd):
 		self.lapsing = []
 		self.turn += 1
 		self.outputToHistory("", False)
-		self.outputToHistory("<< %d (Turn %s) >>" % (self.startYear + (self.turn - 1), self.turn), True)
+		self.outputToHistory("[[ %d (Turn %s) ]]" % (self.startYear + (self.turn - 1), self.turn), True)
 		
 	def help_plot(self):
 		print "Use this command at the end of the turn."
@@ -2949,9 +3036,10 @@ def main():
 			print "(2) You Can Call Me Al"
 			print "(3) Anaconda"
 			print "(4) Mission Accomplished"
+			print "(5) Arab Street Rising"
 			input = raw_input("Enter choice: ")
 			input = int(input)
-			if input >= 1 and input <= 4:
+			if input >= 1 and input <= 5:
 				scenario = input
 				print ""
 			else:
