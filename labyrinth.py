@@ -133,6 +133,13 @@ class Card:
 					return False
 			elif self.number == 12: # Al-Azhar
 				return True
+			elif self.number == 13: # Anbar Awakening
+				return (app.map["Iraq"].troops > 0) or (app.map["Syria"].troops > 0)
+			elif self.number == 14: # Covert Action
+				for country in app.map:
+					if app.map[country].alignment == "Adversary":
+						return True
+				return False
 			else:
 				return False
 		
@@ -217,12 +224,15 @@ class Card:
 						numIR += 1
 				if app.troops >= 5 and numIR <= 0:
 					app.markers.append("Abbas")
+					app.outputToHistory("Abbas in play.", False)
 					app.prestige += 1
 					if app.prestige > 12:
 						app.prestige = 12
+					app.outputToHistory("Prestige now %d" % app.prestige, False)
 					app.funding -= 2
 					if app.funding < 1:
 						app.funding = 1
+					app.outputToHistory("Jihadist Funding now %d" % app.funding, True)
 					return True
 				else:
 					return False
@@ -237,7 +247,58 @@ class Card:
 					app.funding -= 2
 				if app.funding < 1:
 					app.funding = 1
+				app.outputToHistory("Jihadist Funding now %d" % app.funding, True)
 				return True
+			elif self.number == 13: # Anbar Awakening
+				if (app.map["Iraq"].troops > 0) or (app.map["Syria"].troops > 0):
+					app.markers.append("Anbar Awakening")
+					app.outputToHistory("Anbar Awakening in play.", False)
+					if app.map["Iraq"].troops == 0:
+						app.map["Syria"].aid = 1
+						app.outputToHistory("Aid in Syria.", False)
+					elif app.map["Syria"].troops == 0:
+						app.map["Iraq"].aid = 1
+						app.outputToHistory("Aid in Iraq.", False)
+					else:
+						print "There are troops in both Iraq and Syria."
+						if app.getYesNoFromUser("Do you want to add the Aid to Iraq (y or n): "):
+							app.map["Iraq"].aid = 1
+							app.outputToHistory("Aid in Iraq.", False)
+						else:
+							app.map["Syria"].aid = 1
+							app.outputToHistory("Aid in Syria.", False)
+					print ""
+				else:
+					return False
+			elif self.number == 14: # Covert Action
+				targetCountry = ""
+				numAdv = 0
+				for country in app.map:
+					if app.map[country].alignment == "Adversary":
+						targetCountry = country
+						numAdv += 1
+				if numAdv == 0:
+					return False
+				elif numAdv > 1:					
+					while True:
+						input = app.getCountryFromUser("Choose an Adversary country to attempt Covert Action (? for list)?: ",  "XXX", app.listAdversaryCountries)	
+						if input == "":
+							print ""
+							return
+						else:
+							if app.map[input].alignment != "Adversary":
+								print "%s is not an Adversary." % input
+								print ""
+							else:
+								targetCountry = input
+								break
+				actionRoll = app.getRollFromUser("Enter Covert Action roll or r to have program roll: ")
+				if actionRoll >= 4:
+					app.map[targetCountry].alignment = "Neutral"
+					app.outputToHistory("Covert Action successful, %s now Neutral." % targetCountry, False)
+					app.outputToHistory(app.map[input].countryStr(), True)
+				else:
+					app.outputToHistory("Covert Action fails.", True)
 			else:
 				return False
 		
@@ -2089,6 +2150,15 @@ class Labyrinth(cmd.Cmd):
 							if self.map[subCountry].troops > 0 and self.isAdjacent(country, subCountry):
 								self.map[country].printCountry()
 								break
+		print ""
+
+	def listAdversaryCountries(self, na = None):
+		print ""
+		print "Adversary Countries"
+		print "----------------------------------------------------------"
+		for country in self.map:
+			if self.map[country].alignment == "Adversary":
+				self.map[country].printCountry()
 		print ""
 
 	def do_status(self, rest):

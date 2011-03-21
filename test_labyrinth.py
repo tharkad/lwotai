@@ -6481,6 +6481,48 @@ class card12(unittest.TestCase):
 		self.assertTrue(app.map["Egypt"].governance != 0)
 		self.assertTrue(app.funding == 1)
 		
+class card13(unittest.TestCase):
+	'''Anbar Awakening'''
+	
+	def testPlayable(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		self.assertFalse(app.deck["13"].playable("US", app))
+		app.map["Iraq"].troops = 1
+		self.assertTrue(app.deck["13"].playable("US", app))
+		app.map["Iraq"].troops = 0
+		app.map["Syria"].troops = 1
+		self.assertTrue(app.deck["13"].playable("US", app))
+		app.map["Syria"].troops = 0
+		self.assertFalse(app.deck["13"].playable("US", app))
+
+	def testEvent(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		app.map["Iraq"].troops = 1
+		app.deck["13"].playEvent("US", app)
+		self.assertTrue(app.map["Iraq"].aid > 0)
+		self.assertTrue("Anbar Awakening" in app.markers)
 		
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		app.map["Syria"].troops = 1
+		app.deck["13"].playEvent("US", app)
+		self.assertTrue(app.map["Syria"].aid > 0)
+		self.assertTrue("Anbar Awakening" in app.markers)
+						
+class card14(unittest.TestCase):
+	'''Covert Action'''
+	
+	def testPlayable(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		self.assertFalse(app.deck["14"].playable("US", app))
+		app.map["Iraq"].alignment = "Adversary"
+		self.assertTrue(app.deck["14"].playable("US", app))
+
+	def testEvent(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		app.listAdversaryCountries()
+		app.map["Iran"].alignment = "Adversary"
+		app.map["Iraq"].alignment = "Adversary"
+		app.listAdversaryCountries()
+
 if __name__ == "__main__":
 	unittest.main()   
