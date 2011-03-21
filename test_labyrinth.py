@@ -6524,5 +6524,33 @@ class card14(unittest.TestCase):
 		app.map["Iraq"].alignment = "Adversary"
 		app.listAdversaryCountries()
 
+class card15(unittest.TestCase):
+	'''Ethiopia Strikes'''
+	
+	def testPlayable(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		self.assertFalse(app.deck["15"].playable("US", app))
+		app.map["Somalia"].governance = 4
+		self.assertTrue(app.deck["15"].playable("US", app))
+		app.map["Somalia"].governance = 3
+		self.assertFalse(app.deck["15"].playable("US", app))
+		app.map["Sudan"].governance = 4
+		self.assertTrue(app.deck["15"].playable("US", app))
+
+	def testEvent(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		app.map["Somalia"].governance = 4
+		app.map["Somalia"].alignment = "Adversary"
+		app.deck["15"].playEvent("US", app)
+		self.assertTrue(app.map["Somalia"].governance == 3)
+		self.assertTrue(app.map["Somalia"].alignment == "Neutral")
+		
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		app.map["Sudan"].governance = 4
+		app.map["Sudan"].alignment = "Adversary"
+		app.deck["15"].playEvent("US", app)
+		self.assertTrue(app.map["Sudan"].governance == 3)
+		self.assertTrue(app.map["Sudan"].alignment == "Neutral")
+		
 if __name__ == "__main__":
 	unittest.main()   

@@ -140,6 +140,8 @@ class Card:
 					if app.map[country].alignment == "Adversary":
 						return True
 				return False
+			elif self.number == 15: # Ethiopia Strikes
+				return (app.map["Somalia"].governance == 4) or (app.map["Sudan"].governance == 4)
 			else:
 				return False
 		
@@ -299,6 +301,33 @@ class Card:
 					app.outputToHistory(app.map[input].countryStr(), True)
 				else:
 					app.outputToHistory("Covert Action fails.", True)
+			elif self.number == 15: # Ethiopia Strikes
+				if (app.map["Somalia"].governance == 4) or (app.map["Sudan"].governance == 4):
+					if app.map["Somalia"].governance != 4:
+						app.map["Sudan"].governance = 3
+						app.map["Sudan"].alignment = "Neutral"
+						app.outputToHistory("Sudan now Poor Neutral.", False)
+						app.outputToHistory(app.map["Sudan"].countryStr(), True)
+					elif app.map["Sudan"].governance != 4:
+						app.map["Somalia"].governance = 3
+						app.map["Somalia"].alignment = "Neutral"
+						app.outputToHistory("Somalia now Poor Neutral.", False)
+						app.outputToHistory(app.map["Somalia"].countryStr(), True)
+					else:
+						print "Both Somalia and Sudan are under Islamic Rule."
+						if app.getYesNoFromUser("Do you want Somalia to be set to Poor Neutral (y or n): "):
+							app.map["Somalia"].governance = 3
+							app.map["Somalia"].alignment = "Neutral"
+							app.outputToHistory("Somalia now Poor Neutral.", False)
+							app.outputToHistory(app.map["Somalia"].countryStr(), True)
+						else:
+							app.map["Sudan"].governance = 3
+							app.map["Sudan"].alignment = "Neutral"
+							app.outputToHistory("Sudan now Poor Neutral.", False)
+							app.outputToHistory(app.map["Sudan"].countryStr(), True)
+					print ""
+				else:
+					return False
 			else:
 				return False
 		
