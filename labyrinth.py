@@ -184,6 +184,8 @@ class Card:
 				return True
 			elif self.number == 27: # Saddam Captured
 				return app.map["Iraq"].troops > 0
+			elif self.number == 28: # Sharia
+				return app.numBesieged() > 0
 			else:
 				return False
 		
@@ -298,7 +300,7 @@ class Card:
 					return False
 				elif numAdv > 1:					
 					while True:
-						input = app.getCountryFromUser("Choose an Adversary country to attempt Covert Action (? for list)?: ",  "XXX", app.listAdversaryCountries)	
+						input = app.getCountryFromUser("Choose an Adversary country to attempt Covert Action (? for list): ",  "XXX", app.listAdversaryCountries)	
 						if input == "":
 							print ""
 							return
@@ -465,6 +467,32 @@ class Card:
 				app.outputToHistory("Aid added in Iraq", False)
 				app.changePrestige(1)
 				app.outputToHistory(app.map["Iraq"].countryStr(), True)
+			elif self.number == 28: # Sharia
+				numBesieged = app.numBesieged()
+				target = ""
+				if numBesieged <= 0:
+					return False
+				elif numBesieged == 1:
+					for country in app.map:
+						if app.map[country].besieged > 0:
+							target = country
+							break
+				else:
+					while True:
+						input = app.getCountryFromUser("Choose a country with a Besieged Regime marker to remove (? for list): ",  "XXX", app.listBesiegedCountries)	
+						if input == "":
+							print ""
+							return
+						else:
+							if app.map[input].besieged <= 0:
+								print "%s is not a Besieged Regime." % input
+								print ""
+							else:
+								target = input
+								break
+				app.map[target].besieged = 0
+				app.outputToHistory("%s is no longer a Besieged Regime." % target, False)
+				app.outputToHistory(app.map["Iraq"].countryStr(), True)				
 			else:
 				return False
 		
@@ -1199,6 +1227,13 @@ class Labyrinth(cmd.Cmd):
 			if self.map[country].governance == 4:
 				numIR += 1
 		return numIR
+		
+	def numBesieged(self):
+		numBesieged = 0
+		for country in self.map:
+			if self.map[country].besieged > 0:
+				numBesieged += 1
+		return numBesieged
 
 	def handleMuslimWoI(self, roll, country):
 		if roll <= 3:
@@ -2423,6 +2458,15 @@ class Labyrinth(cmd.Cmd):
 			if self.map[country].sleeperCells + self.map[country].activeCells > 0:
 				if self.map[country].type == "Shia-Mix" or self.map[country].type == "Suni":
 					self.map[country].printCountry()
+		print ""
+
+	def listBesiegedCountries(self, na = None):
+		print ""
+		print "Besieged Regimes"
+		print "----------------------------------------------------------"
+		for country in self.map:
+			if self.map[country].besieged > 0:
+				self.map[country].printCountry()
 		print ""
 
 	def do_status(self, rest):

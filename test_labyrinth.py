@@ -6784,5 +6784,26 @@ class card27(unittest.TestCase):
 		self.assertTrue("Saddam Captured" in app.markers)
 		self.assertTrue(app.map["Iraq"].aid == 1)
 		
+class card28(unittest.TestCase):
+	'''Sharia'''
+	
+	def testPlayable(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		self.assertFalse(app.deck["28"].playable("US", app))
+		app.map["Iraq"].besieged = 1
+		self.assertTrue(app.deck["28"].playable("US", app))
+		
+	def testEvent(self):
+ 		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		app.map["Iraq"].besieged = 1
+		app.deck["28"].playEvent("US", app)
+		self.assertTrue(app.map["Iraq"].besieged == 0)
+		
+ 		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		app.map["Iraq"].besieged = 1
+		app.map["Pakistan"].besieged = 1
+		#app.deck["28"].playEvent("US", app)
+		
+		
 if __name__ == "__main__":
 	unittest.main()   
