@@ -165,6 +165,25 @@ class Card:
 				targetCells += app.map["Lebanon"].sleeperCells
 				targetCells += app.map["Lebanon"].activeCells
 				return targetCells > 0
+			elif self.number == 23 or self.number == 24 or self.number == 25: # Predator
+				numMuslimCellCountries = 0
+				for country in app.map:
+					if app.map[country].sleeperCells + app.map[country].activeCells > 0:
+						if app.map[country].type == "Suni" or app.map[country].type == "Shia-Mix":
+							numMuslimCellCountries += 1
+				return numMuslimCellCountries > 0
+			elif self.number == 26: # Quartet
+				if not "Abbas" in app.markers:
+					return False
+				if app.troops <= 4:
+					return False
+				for country in app.map:
+					if app.isAdjacent(country, "Israel"):
+						if app.map[country].governance == 4:
+							return False
+				return True
+			elif self.number == 27: # Saddam Captured
+				return app.map["Iraq"].troops > 0
 			else:
 				return False
 		
@@ -405,6 +424,47 @@ class Card:
 				app.removeAllCellsFromCountry("Jordan")
 				app.removeAllCellsFromCountry("Lebanon")
 				app.outputToHistory("", False)
+			elif self.number == 23 or self.number == 24 or self.number == 25: # Predator
+				while True:
+					input = app.getCountryFromUser("Choose non-Iran Muslim Country to remove a cell from (? for list): ", "XXX", app.listMuslimCountriesWithCells)
+					if input == "":
+						print ""
+						return
+					else:
+						if app.map[input].activeCells + app.map[input].sleeperCells == 0:
+							print "%s has no cells." % input
+							print ""
+						elif app.map[input].type == "Iran":
+							print "Iran is not allowed."
+							print ""
+						elif app.map[input].type == "Non-Muslim":
+							print "Choose a Muslim country."
+							print ""
+						else:
+							app.removeCell(input)
+							app.outputToHistory(app.map[input].countryStr(), True)
+							return True
+			elif self.number == 26: # Quartet
+				if not "Abbas" in app.markers:
+					return False
+				if app.troops <= 4:
+					return False
+				for country in app.map:
+					if app.isAdjacent(country, "Israel"):
+						if app.map[country].governance == 4:
+							return False
+				app.changePrestige(2)
+				app.changeFunding(-3)
+				app.outputToHistory("", False)
+				return True
+			elif self.number == 27: # Saddam Captured
+				if app.map["Iraq"].troops == 0:
+					return False
+				app.markers.append("Saddam Captured")
+				app.map["Iraq"].aid = 1
+				app.outputToHistory("Aid added in Iraq", False)
+				app.changePrestige(1)
+				app.outputToHistory(app.map["Iraq"].countryStr(), True)
 			else:
 				return False
 		
@@ -2352,6 +2412,16 @@ class Labyrinth(cmd.Cmd):
 		for country in self.map:
 			if self.map[country].plots > 0:
 				if self.map[country].alignment == "Ally" or self.map[country].governance == 1:
+					self.map[country].printCountry()
+		print ""
+
+	def listMuslimCountriesWithCells(self, na = None):
+		print ""
+		print "Muslim Countries with Cells"
+		print "----------------------------------------------------------"
+		for country in self.map:
+			if self.map[country].sleeperCells + self.map[country].activeCells > 0:
+				if self.map[country].type == "Shia-Mix" or self.map[country].type == "Suni":
 					self.map[country].printCountry()
 		print ""
 

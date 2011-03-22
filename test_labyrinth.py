@@ -6710,6 +6710,79 @@ class card22(unittest.TestCase):
 		self.assertTrue(app.map["Lebanon"].activeCells == 0)
 		self.assertTrue(app.map["Iraq"].sleeperCells == 2)
 
+class card23and24and25(unittest.TestCase):
+	'''Predator'''
+	
+	def testPlayable(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		self.assertFalse(app.deck["23"].playable("US", app))
+		app.map["Israel"].sleeperCells = 1
+		self.assertFalse(app.deck["23"].playable("US", app))
+		app.map["Iran"].sleeperCells = 1
+		self.assertFalse(app.deck["23"].playable("US", app))
+		app.map["Jordan"].sleeperCells = 1
+		self.assertTrue(app.deck["23"].playable("US", app))
+		
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		self.assertFalse(app.deck["24"].playable("US", app))
+		app.map["Israel"].sleeperCells = 1
+		self.assertFalse(app.deck["24"].playable("US", app))
+		app.map["Iran"].sleeperCells = 1
+		self.assertFalse(app.deck["24"].playable("US", app))
+		app.map["Jordan"].sleeperCells = 1
+		self.assertTrue(app.deck["24"].playable("US", app))
+		
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		self.assertFalse(app.deck["25"].playable("US", app))
+		app.map["Israel"].sleeperCells = 1
+		self.assertFalse(app.deck["25"].playable("US", app))
+		app.map["Iran"].sleeperCells = 1
+		self.assertFalse(app.deck["25"].playable("US", app))
+		app.map["Jordan"].sleeperCells = 1
+		self.assertTrue(app.deck["25"].playable("US", app))
+		
+	def testEvent(self):
+ 		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		app.map["Iraq"].sleeperCells = 2
+#		app.deck["25"].playEvent("US", app)
+
+class card26(unittest.TestCase):
+	'''Quartet'''
+	
+	def testPlayable(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		self.assertFalse(app.deck["26"].playable("US", app))
+		app.markers.append("Abbas")
+		self.assertTrue(app.deck["26"].playable("US", app))
+		app.troops = 4
+		self.assertFalse(app.deck["26"].playable("US", app))
+		app.troops = 5
+		self.assertTrue(app.deck["26"].playable("US", app))
+		app.map["Egypt"].governance = 4
+		self.assertFalse(app.deck["26"].playable("US", app))	
+		
+	def testEvent(self):
+ 		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		app.markers.append("Abbas")
+		app.deck["26"].playEvent("US", app)
+		self.assertTrue(app.prestige == 9)
+		self.assertTrue(app.funding == 2)
+ 		
+class card27(unittest.TestCase):
+	'''Saddam Captured'''
+	
+	def testPlayable(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		self.assertFalse(app.deck["27"].playable("US", app))
+		app.map["Iraq"].troops = 1
+		self.assertTrue(app.deck["27"].playable("US", app))
+		
+	def testEvent(self):
+ 		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		app.map["Iraq"].troops = 1
+		app.deck["27"].playEvent("US", app)
+		self.assertTrue("Saddam Captured" in app.markers)
+		self.assertTrue(app.map["Iraq"].aid == 1)
 		
 if __name__ == "__main__":
 	unittest.main()   
