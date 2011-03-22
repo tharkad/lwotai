@@ -149,6 +149,22 @@ class Card:
 				return True
 			elif self.number == 20: # King Abdullah
 				return True
+			elif self.number == 21: # Let's Roll
+				allyGoodPlotCountries = 0
+				for country in app.map:
+					if app.map[country].plots > 0:
+						if app.map[country].alignment == "Ally" or app.map[country].governance == 1:
+							allyGoodPlotCountries += 1
+				return allyGoodPlotCountries > 0
+			elif self.number == 22: # Mossad and Shin Bet
+				targetCells = 0
+				targetCells += app.map["Israel"].sleeperCells
+				targetCells += app.map["Israel"].activeCells
+				targetCells += app.map["Jordan"].sleeperCells
+				targetCells += app.map["Jordan"].activeCells
+				targetCells += app.map["Lebanon"].sleeperCells
+				targetCells += app.map["Lebanon"].activeCells
+				return targetCells > 0
 			else:
 				return False
 		
@@ -357,6 +373,38 @@ class Card:
 				app.changePrestige(1)
 				app.changeFunding(-1)
 				return True
+			elif self.number == 21: # Let's Roll
+				while True:
+					plotCountry = app.getCountryFromUser("Choose an Ally or Good country to remove a plot from (? for list): ", "XXX", app.listGoodAllyPlotCountries)
+					if plotCountry == "":
+						print ""
+						return
+					else:
+						if app.map[plotCountry].governance != 1 and app.map[plotCountry].alignment != "Ally":
+							print "%s is not Good or an Ally." % plotCountry
+							print ""
+						elif app.map[plotCountry].plots <= 0:
+							print "%s has no plots." % plotCountry
+							print ""
+						else:
+							while True:
+								postureCountry = app.getCountryFromUser("Now choose a non-US country to set its Posture: ", "XXX", None)
+								if postureCountry == "":
+									print ""
+									return
+								else:
+									if postureCountry == "United States":
+										print "Choos a non-US country."
+										print ""
+									else:
+										postureStr = app.getPostureFromUser("What Posture should %s have (h or s)? " % postureCountry)
+										app.executeCardLetsRoll(plotCountry, postureCountry, postureStr)
+										return True
+			elif self.number == 22: # Mossad and Shin Bet
+				app.removeAllCellsFromCountry("Israel")
+				app.removeAllCellsFromCountry("Jordan")
+				app.removeAllCellsFromCountry("Lebanon")
+				app.outputToHistory("", False)
 			else:
 				return False
 		
@@ -865,7 +913,7 @@ class Labyrinth(cmd.Cmd):
 			input = raw_input(prompt)
 			if input == "":
 				return ""
-			elif input == "?":
+			elif input == "?" and helpFunction:
 				helpFunction(helpParameter)
 				continue
 			elif input == special:
@@ -1064,7 +1112,19 @@ class Labyrinth(cmd.Cmd):
 			self.map[country].activeCells -= 1
 			self.cells += 1
 			self.outputToHistory("Active Cell removed from %s." % country, False)
-			
+	
+	def removeAllCellsFromCountry(self, country):
+		if self.map[country].sleeperCells > 0:
+			numCells = self.map[country].sleeperCells
+			self.map[country].sleeperCells -= numCells
+			self.cells += numCells
+			self.outputToHistory("%d Sleeper Cell(s) removed from %s." % (numCells, country), False)
+		if self.map[country].activeCells > 0:
+			numCells = self.map[country].activeCells
+			self.map[country].activeCells -= numCells
+			self.cells += numCells
+			self.outputToHistory("%d Active Cell(s) removed from %s." % (numCells, country), False)
+	
 	def numCellsAvailable(self):
 		retVal = self.cells
 		if self.funding <= 3:
@@ -2170,6 +2230,14 @@ class Labyrinth(cmd.Cmd):
 			self.outputToHistory("Jihadist Funding now %d" % self.funding, False)
 		self.outputToHistory(self.map["Benelux"].countryStr(), True)
 		
+	def executeCardLetsRoll(self, plotCountry, postureCountry, postureStr):
+		self.map[plotCountry].plots = max(0, self.map[plotCountry].plots - 1)
+		self.outputToHistory("Plot removed from %s." % plotCountry, False)
+		self.map[postureCountry].posture = postureStr
+		self.outputToHistory("%s Posture now %s." % (postureCountry, postureStr), False)
+		self.outputToHistory(self.map[plotCountry].countryStr(), False)
+		self.outputToHistory(self.map[postureCountry].countryStr(), True)
+		
 	def listCountriesWithTroops(self, needed = None):
 		print ""
 		print "Contries with Troops"
@@ -2275,6 +2343,16 @@ class Labyrinth(cmd.Cmd):
 		for country in self.map:
 			if self.map[country].alignment == "Adversary":
 				self.map[country].printCountry()
+		print ""
+		
+	def listGoodAllyPlotCountries(self, na = None):
+		print ""
+		print "Ally or Good Countries with Plots"
+		print "----------------------------------------------------------"
+		for country in self.map:
+			if self.map[country].plots > 0:
+				if self.map[country].alignment == "Ally" or self.map[country].governance == 1:
+					self.map[country].printCountry()
 		print ""
 
 	def do_status(self, rest):

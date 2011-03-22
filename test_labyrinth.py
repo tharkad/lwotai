@@ -6645,6 +6645,71 @@ class card20(unittest.TestCase):
 		self.assertTrue(app.map["Jordan"].alignment == "Ally")
 		self.assertTrue(app.funding == 1)
 		self.assertTrue(app.prestige == 12)
+
+class card21(unittest.TestCase):
+	'''Let's Roll'''
+	
+	def testPlayable(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		self.assertFalse(app.deck["21"].playable("US", app))
+		app.map["Canada"].plots = 1
+		self.assertTrue(app.deck["21"].playable("US", app))
+		app.map["Canada"].plots = 0
+		self.assertFalse(app.deck["21"].playable("US", app))
+		app.map["Saudi Arabia"].governance = 2
+		app.map["Saudi Arabia"].plots = 1
+		self.assertFalse(app.deck["21"].playable("US", app))
+		app.map["Saudi Arabia"].governance = 1
+		self.assertTrue(app.deck["21"].playable("US", app))
+
+	def testEvent(self):
+ 		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		app.map["Canada"].plots = 1
+		app.map["Spain"].posture = "Soft"
+		app.executeCardLetsRoll("Canada", "Spain", "Hard")
+		self.assertTrue(app.map["Canada"].plots == 0)
+		self.assertTrue(app.map["Spain"].posture == "Hard")
+
+ 		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		app.map["Canada"].plots = 1
+		app.map["Spain"].posture = "Soft"
+# 		app.deck["21"].playEvent("US", app)
+
+class card22(unittest.TestCase):
+	'''Mossad and Shin Bet'''
+	
+	def testPlayable(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		self.assertFalse(app.deck["22"].playable("US", app))
+		app.map["Israel"].sleeperCells = 1
+		self.assertTrue(app.deck["22"].playable("US", app))
+		
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		self.assertFalse(app.deck["22"].playable("US", app))
+		app.map["Jordan"].sleeperCells = 1
+		self.assertTrue(app.deck["22"].playable("US", app))
+		
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		self.assertFalse(app.deck["22"].playable("US", app))
+		app.map["Lebanon"].sleeperCells = 1
+		self.assertTrue(app.deck["22"].playable("US", app))
+		
+	def testEvent(self):
+ 		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		app.map["Israel"].sleeperCells = 1
+		app.map["Israel"].activeCells = 4
+		app.map["Jordan"].activeCells = 3
+		app.map["Lebanon"].sleeperCells = 2
+		app.map["Iraq"].sleeperCells = 2
+		app.deck["22"].playEvent("US", app)
+		self.assertTrue(app.map["Israel"].sleeperCells == 0)
+		self.assertTrue(app.map["Israel"].activeCells == 0)
+		self.assertTrue(app.map["Jordan"].sleeperCells == 0)
+		self.assertTrue(app.map["Jordan"].activeCells == 0)
+		self.assertTrue(app.map["Lebanon"].sleeperCells == 0)
+		self.assertTrue(app.map["Lebanon"].activeCells == 0)
+		self.assertTrue(app.map["Iraq"].sleeperCells == 2)
+
 		
 if __name__ == "__main__":
 	unittest.main()   
