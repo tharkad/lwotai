@@ -186,6 +186,11 @@ class Card:
 				return app.map["Iraq"].troops > 0
 			elif self.number == 28: # Sharia
 				return app.numBesieged() > 0
+			elif self.number == 29: # Tony Blair
+				return True
+			elif self.number == 30: # UN Nation Building
+				numRC = app.numRegimeChange()
+				return (numRC > 0) and ("Vieira de Mello Slain" not in app.markers)
 			else:
 				return False
 		
@@ -492,7 +497,63 @@ class Card:
 								break
 				app.map[target].besieged = 0
 				app.outputToHistory("%s is no longer a Besieged Regime." % target, False)
-				app.outputToHistory(app.map["Iraq"].countryStr(), True)				
+				app.outputToHistory(app.map[target].countryStr(), True)				
+			elif self.number == 29: # Tony Blair
+				app.map["United Kingdom"].posture = app.map["United States"].posture
+				app.outputToHistory("United Kingdom posture now %s" % app.map["United Kingdom"].posture, False)
+				print "You may roll War of Ideas in up to 3 Schengen countries."
+				for i in range(3):
+					target = ""
+					finishedPicking = False
+					while not target:
+						input = app.getCountryFromUser("Choose Schengen country to make a WOI roll (done to stop rolling) (? for list)?: ",  "done", app.listSchengenCountries)
+						if input == "":
+							print ""
+							return
+						elif input == "done":
+							finishedPicking = True
+							break
+						else:
+							if not app.map[input].schengen:
+								print "%s is not a Schengen country." % input
+								print ""
+								return
+							else:
+								target = input
+								postureRoll = app.getRollFromUser("Enter Posture Roll or r to have program roll: ")
+								app.executeNonMuslimWOI(target, postureRoll)
+					if finishedPicking:
+						break
+				app.outputToHistory("", False)
+				return True
+			elif self.number == 30: # UN Nation Building
+				numRC = app.numRegimeChange()
+				if (numRC <= 0) or ("Vieira de Mello Slain" in app.markers):
+					return False
+				target = ""
+				if numRC == 1:
+					for country in app.map:
+						if app.map[country].regimeChange > 0:
+							target = country
+							break
+				else:
+					while True:
+						input = app.getCountryFromUser("Choose a Regime Change country (? for list): ",  "XXX", app.listRegimeChangeCountries)	
+						if input == "":
+							print ""
+							return
+						else:
+							if app.map[input].regimeChange <= 0:
+								print "%s is not a Regime Change country." % input
+								print ""
+							else:
+								target = input
+								break
+				app.map[target].aid = 1
+				app.outputToHistory("Aid added to %s." % target, False)
+				woiRoll = app.getRollFromUser("Enter WOI Roll or r to have program roll: ")
+				modRoll = app.modifiedWoIRoll(woiRoll, target, False)
+				app.handleMuslimWoI(modRoll, target)				
 			else:
 				return False
 		
@@ -1122,7 +1183,7 @@ class Labyrinth(cmd.Cmd):
 				print "Enter e or o."
 				print ""
 		
-	def modifiedWoIRoll(self, baseRoll, country):
+	def modifiedWoIRoll(self, baseRoll, country, useGWOTPenalty = True):
 		modRoll = baseRoll
 		#print "DEBUG: base roll:%d" % modRoll
 		
@@ -1138,7 +1199,8 @@ class Labyrinth(cmd.Cmd):
 			modRoll -= 1
 		#print "DEBUG: w/to good mod:%d" % modRoll
 		
-		modRoll += self.gwotPenalty()
+		if useGWOTPenalty:
+			modRoll += self.gwotPenalty()
 		#print "DEBUG: w/GWOT penalty:%d" % modRoll
 		
 		if self.map[country].aid > 0:
@@ -1234,6 +1296,13 @@ class Labyrinth(cmd.Cmd):
 			if self.map[country].besieged > 0:
 				numBesieged += 1
 		return numBesieged
+
+	def numRegimeChange(self):
+		numRC = 0
+		for country in self.map:
+			if self.map[country].regimeChange > 0:
+				numRC += 1
+		return numRC
 
 	def handleMuslimWoI(self, roll, country):
 		if roll <= 3:
@@ -2315,7 +2384,19 @@ class Labyrinth(cmd.Cmd):
 					if unusedOps > 0:
 						self.debugPrint("DEBUG: Radicalization with remaining %d ops" % unusedOps)
 						self.handleRadicalization(unusedOps)
-					
+						
+	def executeNonMuslimWOI(self, country, postureRoll):
+		if postureRoll > 4:
+			self.map[country].posture = "Hard"
+			self.outputToHistory("* War of Ideas in %s - Posture Hard" % country, False)
+			if self.map["United States"].posture == "Hard":
+				self.changePrestige(1)
+		else:
+			self.map[country].posture = "Soft"
+			self.outputToHistory("* War of Ideas in %s - Posture Soft" % country, False)
+			if self.map["United States"].posture == "Soft":
+				self.changePrestige(1)
+				
 	def executeCardEuroIslam(self, posStr):
 		self.map["Benelux"].posture = posStr
 		if self.numIslamicRuleCountries() == 0:
@@ -2434,7 +2515,7 @@ class Labyrinth(cmd.Cmd):
 	def listAdversaryCountries(self, na = None):
 		print ""
 		print "Adversary Countries"
-		print "----------------------------------------------------------"
+		print "-------------------"
 		for country in self.map:
 			if self.map[country].alignment == "Adversary":
 				self.map[country].printCountry()
@@ -2443,7 +2524,7 @@ class Labyrinth(cmd.Cmd):
 	def listGoodAllyPlotCountries(self, na = None):
 		print ""
 		print "Ally or Good Countries with Plots"
-		print "----------------------------------------------------------"
+		print "---------------------------------"
 		for country in self.map:
 			if self.map[country].plots > 0:
 				if self.map[country].alignment == "Ally" or self.map[country].governance == 1:
@@ -2453,7 +2534,7 @@ class Labyrinth(cmd.Cmd):
 	def listMuslimCountriesWithCells(self, na = None):
 		print ""
 		print "Muslim Countries with Cells"
-		print "----------------------------------------------------------"
+		print "---------------------------"
 		for country in self.map:
 			if self.map[country].sleeperCells + self.map[country].activeCells > 0:
 				if self.map[country].type == "Shia-Mix" or self.map[country].type == "Suni":
@@ -2463,9 +2544,27 @@ class Labyrinth(cmd.Cmd):
 	def listBesiegedCountries(self, na = None):
 		print ""
 		print "Besieged Regimes"
-		print "----------------------------------------------------------"
+		print "----------------"
 		for country in self.map:
 			if self.map[country].besieged > 0:
+				self.map[country].printCountry()
+		print ""
+
+	def listRegimeChangeCountries(self, na = None):
+		print ""
+		print "Regime Change Countries"
+		print "-----------------------"
+		for country in self.map:
+			if self.map[country].regimeChange > 0:
+				self.map[country].printCountry()
+		print ""
+
+	def listSchengenCountries(self, na = None):
+		print ""
+		print "Schengen Countries"
+		print "------------------"
+		for country in self.map:
+			if self.map[country].schengen > 0:
 				self.map[country].printCountry()
 		print ""
 
@@ -2847,7 +2946,7 @@ class Labyrinth(cmd.Cmd):
 					print ""
 			if self.map[where].type == "Non-Muslim" and input != "United States": # Non-Muslim
 				postureRoll = self.getRollFromUser("Enter Posture Roll or r to have program roll: ")
-				if postureRoll <= 4:
+				if postureRoll > 4:
 					self.map[where].posture = "Hard"
 					self.outputToHistory("* War of Ideas in %s - Posture Hard" % where)
 					if self.map["United States"].posture == "Hard":

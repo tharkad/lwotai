@@ -6804,6 +6804,52 @@ class card28(unittest.TestCase):
 		app.map["Pakistan"].besieged = 1
 		#app.deck["28"].playEvent("US", app)
 		
+class card29(unittest.TestCase):
+	'''Tony Blair'''
+	
+	def testPlayable(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		self.assertTrue(app.deck["29"].playable("US", app))
+		
+	def testEvent(self):
+ 		app = Labyrinth(1, 1, testBlankScenarioSetup)
+ 		app.map["United States"].posture = "Hard"
+		#app.deck["29"].playEvent("US", app)
+		#self.assertTrue(app.map["United Kingdom"].posture == "Hard")
+		
+ 		app = Labyrinth(1, 1, testBlankScenarioSetup)
+ 		app.map["United States"].posture = "Hard"
+		app.executeNonMuslimWOI("Spain", 4)
+		self.assertTrue(app.map["Spain"].posture == "Soft")
+		app.executeNonMuslimWOI("France", 5)
+		self.assertTrue(app.map["France"].posture == "Hard")
+		#app.deck["29"].playEvent("US", app)
+
+class card30(unittest.TestCase):
+	'''UN Nation Building'''
+	
+	def testPlayable(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		self.assertFalse(app.deck["30"].playable("US", app))
+		app.map["Iraq"].regimeChange = 1
+		self.assertTrue(app.deck["30"].playable("US", app))
+		app.markers.append("Vieira de Mello Slain")
+		self.assertFalse(app.deck["30"].playable("US", app))
+		
+	def testEvent(self):
+ 		app = Labyrinth(1, 1, testBlankScenarioSetup)
+#  		app.map["United States"].posture = "Hard"
+#  		app.map["Spain"].posture = "Soft"
+#  		app.map["France"].posture = "Soft"
+#  		app.map["Germany"].posture = "Soft"
+#  		app.map["Canada"].posture = "Soft"
+# 		#app.map["Iraq"].regimeChange = 1
+# 		app.map["Pakistan"].regimeChange = 1
+# 		app.map["Pakistan"].governance = 3
+# 		app.map["Pakistan"].alignment = "Ally"
+# 		app.deck["30"].playEvent("US", app)
+# 		self.assertTrue(app.map["Pakistan"].aid == 1)
+
 		
 if __name__ == "__main__":
 	unittest.main()   
