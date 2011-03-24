@@ -217,6 +217,10 @@ class Card:
 					if countryObj.governance == 4:
 						return False
 				return True
+			elif self.number == 34: # Enhanced Measures
+				if "Leak-Enhanced Measures" in app.markers or app.map["United States"].posture == "Soft":
+					return False
+				return app.numDisruptable() > 0
 			else:
 				return False
 		
@@ -245,10 +249,12 @@ class Card:
 					app.outputToHistory("CRT Maker added in Central Asia", True)
 				return True
 			elif self.number == 4: # Moro Talks
+				app.markers.append("Moro Talks")
+				app.outputToHistory("Moro Talks in play.", False)
 				app.testCountry("Philippines")
 				app.changeFunding(-1)
 				return True
-			elif self.number == 5: # Moro Talks
+			elif self.number == 5: # NEST
 				app.markers.append("NEST")
 				app.outputToHistory("NEST in play. If jihadists have WMD, all plots in the US placed face up.", True)
 				return True
@@ -612,6 +618,8 @@ class Card:
 						if num > 0:
 							app.map[country].plots -= num
 							app.outputToHistory("%d Plots remove(d) from %s." % (num, country), False)
+				app.markers.append("Wiretapping")
+				app.outputToHistory("Wiretapping in Play.", True)
 			elif self.number == 32: # Back Channel
 				if app.map["United States"].posture == "Hard":
 					return False
@@ -644,12 +652,15 @@ class Card:
 				app.outputToHistory("No Jihads in Pakistan.", False)
 				app.outputToHistory(app.map["Pakistan"].countryStr(), True)
 				return True
+			elif self.number == 34: # Enhanced Measures
+				app.markers.append("Enhanced Measures")
+				app.outputToHistory("Enhanced Measures in Play.", False)
+				app.outputToHistory("Take a random card from the Jihadist hand.", False)
+				app.do_disrupt("")
+				app.outputToHistory("", False)
 			else:
 				return False
 		
-	def useForOpsStr(self):
-		return "== Card %s used for %d Ops. ==" % (self.number, self.name)
-
 class Labyrinth(cmd.Cmd):
 
 	map = {}
@@ -1401,6 +1412,14 @@ class Labyrinth(cmd.Cmd):
 				numAdv += 1
 		return numAdv
 		
+	def numDisruptable(self):
+		numDis = 0
+		for country in self.map:
+			if self.map[country].sleeperCells + self.map[country].activeCells > 0 or self.map[country].cadre > 0:
+				if self.map[country].troops > 0 or self.map[country].type == "Non-Muslim" or self.map[country].alignment == "Ally":
+					numDis += 1
+		return numDis
+		
 	def countryResources(self, country):
 		res = self.map[country].resources
 		if self.map[country].oil:
@@ -1496,6 +1515,101 @@ class Labyrinth(cmd.Cmd):
 			self.outputToHistory("%d Troops in %s" % (self.map[moveTo].troops, moveTo), False)
 			self.outputToHistory(self.map[moveTo].countryStr(), False)
 		self.outputToHistory("US Prestige %d" % self.prestige)
+		
+	def handleDisrupt(self, where):
+		numToDisrupt = 1
+		if self.map[where].troops >= 2 or self.map[where].posture == "Hard":
+			numToDisrupt = min(2, self.map[where].sleeperCells + self.map[where].activeCells)
+		if self.map[where].sleeperCells + self.map[where].activeCells <= 0 and self.map[where].cadre > 0:
+			self.outputToHistory("* Cadre removed in %s" % where)
+			self.map[where].cadre = 0
+		elif self.map[where].sleeperCells + self.map[where].activeCells <= numToDisrupt:
+			self.outputToHistory("* %d cell(s) disrupted in %s." % (self.map[where].sleeperCells + self.map[where].activeCells, where), False)
+			if self.map[where].sleeperCells > 0:
+				self.map[where].activeCells += self.map[where].sleeperCells
+				numToDisrupt -= self.map[where].sleeperCells
+				self.map[where].sleeperCells = 0
+			if numToDisrupt > 0:
+				self.map[where].activeCells -= numToDisrupt
+				self.cells += numToDisrupt
+				if self.map[where].activeCells < 0:
+					self.map[where].activeCells = 0
+				if self.cells > 15:
+					self.cells = 15
+			if self.map[where].sleeperCells + self.map[where].activeCells <= 0:
+				self.outputToHistory("Cadre added in %s." % where, False)
+				self.map[where].cadre = 1
+			if self.map[where].troops >= 2:
+				self.prestige += 1
+				if self.prestige > 12:
+					self.prestige = 12
+				self.outputToHistory("US Prestige now %d." % self.prestige, False)
+			self.outputToHistory(self.map[where].countryStr(), True)
+		else:
+			if self.map[where].activeCells == 0:
+				self.map[where].activeCells += numToDisrupt
+				self.map[where].sleeperCells -= numToDisrupt
+				self.outputToHistory("* %d cell(s) disrupted in %s." % (numToDisrupt, where), False)
+			elif self.map[where].sleeperCells == 0:
+				self.map[where].activeCells -= numToDisrupt
+				self.cells += numToDisrupt
+				self.outputToHistory("* %d cell(s) disrupted in %s." % (numToDisrupt, where), False)
+				if self.map[where].sleeperCells + self.map[where].activeCells <= 0:
+					self.outputToHistory("Cadre added in %s." % where, False)
+					self.map[where].cadre = 1
+			else:
+				if numToDisrupt == 1:
+					disStr = None
+					while not disStr:
+						input = raw_input("You can disrupt one cell. Enter a or s: ")
+						input = input.lower()
+						if input == "a" or input == "s":
+							disStr = input
+					if disStr == "a":
+						self.map[where].activeCells -= numToDisrupt
+						self.cells += numToDisrupt
+						self.outputToHistory("* %d cell(s) disrupted in %s." % (numToDisrupt, where))
+					else:
+						self.map[where].sleeperCells -= numToDisrupt
+						self.map[where].activeCells += numToDisrupt
+						self.outputToHistory("* %d cell(s) disrupted in %s." % (numToDisrupt, where))
+				else:
+					disStr = None
+					while not disStr:
+						if self.map[where].sleeperCells >= 2 and self.map[where].activeCells >= 2:
+							input = raw_input("You can disrupt two cells. Enter aa, as, or ss: ")
+							input = input.lower()
+							if input == "aa" or input == "as" or input == "sa" or input == "ss":
+								disStr = input
+						elif self.map[where].sleeperCells >= 2:
+							input = raw_input("You can disrupt two cells. Enter as, or ss: ")
+							input = input.lower()
+							if input == "as" or input == "sa" or input == "ss":
+								disStr = input
+						elif self.map[where].activeCells >= 2:
+							input = raw_input("You can disrupt two cells. Enter aa, or as: ")
+							input = input.lower()
+							if input == "as" or input == "sa" or input == "aa":
+								disStr = input
+					if input == "aa":
+						self.map[where].activeCells -= 2
+						self.cells += 2
+						self.outputToHistory("* %d cell(s) disrupted in %s." % (numToDisrupt, where))
+					elif input == "as" or input == "sa":
+						self.map[where].sleeperCells -= 1
+						self.cells += 1
+						self.outputToHistory("* %d cell(s) disrupted in %s." % (numToDisrupt, where))
+					else:
+						self.map[where].sleeperCells -= 2
+						self.map[where].activeCells += 2
+						self.outputToHistory("* %d cell(s) disrupted in %s." % (numToDisrupt, where))
+			if self.map[where].troops >= 2:
+				self.prestige += 1
+				if self.prestige > 12:
+					self.prestige = 12
+				self.outputToHistory("US Prestige now %d." % self.prestige, False)
+			self.outputToHistory(self.map[where].countryStr(), True)
+		
 		
 	def executeJihad(self, country, rollList):
 		successes = 0
@@ -2928,7 +3042,6 @@ class Labyrinth(cmd.Cmd):
 				if self.map[input].sleeperCells + self.map[input].activeCells <= 0 and self.map[input].cadre <= 0:
 					print "There are no cells or cadre in %s." % input
 					print ""
-					return
 				elif self.map[input].troops > 0 or self.map[input].type == "Non-Muslim" or self.map[input].alignment == "Ally":
 					#print "Disrupt in %s - %d Active Cells, %d Sleeper Cells" % (input, self.map[input].activeCells, self.map[input].sleeperCells)
 					print ""
@@ -2938,98 +3051,7 @@ class Labyrinth(cmd.Cmd):
 				else:
 					print "You can't disrupt there."
 					print ""
-		numToDisrupt = 1
-		if self.map[where].troops >= 2 or self.map[where].posture == "Hard":
-			numToDisrupt = min(2, self.map[where].sleeperCells + self.map[where].activeCells)
-		if self.map[where].sleeperCells + self.map[where].activeCells <= 0 and self.map[input].cadre > 0:
-			self.outputToHistory("* Cadre removed in %s" % where)
-			self.map[input].cadre = 0
-		elif self.map[where].sleeperCells + self.map[where].activeCells <= numToDisrupt:
-			self.outputToHistory("* %d cell(s) disrupted in %s." % (self.map[where].sleeperCells + self.map[where].activeCells, where), False)
-			if self.map[where].sleeperCells > 0:
-				self.map[where].activeCells += self.map[where].sleeperCells
-				numToDisrupt -= self.map[where].sleeperCells
-				self.map[where].sleeperCells = 0
-			if numToDisrupt > 0:
-				self.map[where].activeCells -= numToDisrupt
-				self.cells += numToDisrupt
-				if self.map[where].activeCells < 0:
-					self.map[where].activeCells = 0
-				if self.cells > 15:
-					self.cells = 15
-			if self.map[where].sleeperCells + self.map[where].activeCells <= 0:
-				self.outputToHistory("Cadre added in %s." % where, False)
-				self.map[where].cadre = 1
-			if self.map[where].troops >= 2:
-				self.prestige += 1
-				if self.prestige > 12:
-					self.prestige = 12
-				self.outputToHistory("US Prestige now %d." % self.prestige, False)
-			self.outputToHistory(self.map[where].countryStr(), True)
-		else:
-			if self.map[where].activeCells == 0:
-				self.map[where].activeCells += numToDisrupt
-				self.map[where].sleeperCells -= numToDisrupt
-				self.outputToHistory("* %d cell(s) disrupted in %s." % (numToDisrupt, where), False)
-			elif self.map[where].sleeperCells == 0:
-				self.map[where].activeCells -= numToDisrupt
-				self.cells += numToDisrupt
-				self.outputToHistory("* %d cell(s) disrupted in %s." % (numToDisrupt, where), False)
-				if self.map[where].sleeperCells + self.map[where].activeCells <= 0:
-					self.outputToHistory("Cadre added in %s." % where, False)
-					self.map[where].cadre = 1
-			else:
-				if numToDisrupt == 1:
-					disStr = None
-					while not disStr:
-						input = raw_input("You can disrupt one cell. Enter a or s: ")
-						input = input.lower()
-						if input == "a" or input == "s":
-							disStr = input
-					if disStr == "a":
-						self.map[where].activeCells -= numToDisrupt
-						self.cells += numToDisrupt
-						self.outputToHistory("* %d cell(s) disrupted in %s." % (numToDisrupt, where))
-					else:
-						self.map[where].sleeperCells -= numToDisrupt
-						self.map[where].activeCells += numToDisrupt
-						self.outputToHistory("* %d cell(s) disrupted in %s." % (numToDisrupt, where))
-				else:
-					disStr = None
-					while not disStr:
-						if self.map[where].sleeperCells >= 2 and self.map[where].activeCells >= 2:
-							input = raw_input("You can disrupt two cells. Enter aa, as, or ss: ")
-							input = input.lower()
-							if input == "aa" or input == "as" or input == "sa" or input == "ss":
-								disStr = input
-						elif self.map[where].sleeperCells >= 2:
-							input = raw_input("You can disrupt two cells. Enter as, or ss: ")
-							input = input.lower()
-							if input == "as" or input == "sa" or input == "ss":
-								disStr = input
-						elif self.map[where].activeCells >= 2:
-							input = raw_input("You can disrupt two cells. Enter aa, or as: ")
-							input = input.lower()
-							if input == "as" or input == "sa" or input == "aa":
-								disStr = input
-					if input == "aa":
-						self.map[where].activeCells -= 2
-						self.cells += 2
-						self.outputToHistory("* %d cell(s) disrupted in %s." % (numToDisrupt, where))
-					elif input == "as" or input == "sa":
-						self.map[where].sleeperCells -= 1
-						self.cells += 1
-						self.outputToHistory("* %d cell(s) disrupted in %s." % (numToDisrupt, where))
-					else:
-						self.map[where].sleeperCells -= 2
-						self.map[where].activeCells += 2
-						self.outputToHistory("* %d cell(s) disrupted in %s." % (numToDisrupt, where))
-			if self.map[where].troops >= 2:
-				self.prestige += 1
-				if self.prestige > 12:
-					self.prestige = 12
-				self.outputToHistory("US Prestige now %d." % self.prestige, False)
-			self.outputToHistory(self.map[where].countryStr(), True)
+		self.handleDisrupt(where)
 
 	def help_disrupt(self):
 		print "Disrupt Cells or Cadre."

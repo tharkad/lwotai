@@ -6362,6 +6362,7 @@ class card4(unittest.TestCase):
 		self.assertTrue(app.map["Philippines"].posture == "")
 		self.assertTrue(app.funding == 5)
 		app.deck["4"].playEvent("US", app)
+		self.assertTrue("Moro Talks" in app.markers)
 		self.assertTrue(app.map["Philippines"].posture == "Soft" or app.map["Philippines"].posture == "Hard")
 		self.assertTrue(app.funding == 4)
 
@@ -6946,6 +6947,7 @@ class card31(unittest.TestCase):
 		app.map["Canada"].cadre = 1
 		app.map["Canada"].plots = 1
 		app.deck["31"].playEvent("US", app)
+		self.assertTrue("Wiretapping" in app.markers)
 		self.assertTrue(app.map["United States"].sleeperCells == 0)
 		self.assertTrue(app.map["United States"].activeCells == 0)
 		self.assertTrue(app.map["United States"].cadre == 0)
@@ -7051,6 +7053,42 @@ class card33(unittest.TestCase):
 		self.assertEqual(app.majorJihadChoice(3), "Pakistan")
   		app.deck["33"].playEvent("US", app)
 		self.assertEqual(app.majorJihadPossible(3), ["Iraq"])
+
+class card34(unittest.TestCase):
+	'''Enhanced Measures'''
+	
+	def testPlayable(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		self.assertFalse(app.deck["34"].playable("US", app))
+		app.map["Iraq"].cadre = 1
+		app.map["Iraq"].governance = 3
+		app.map["Iraq"].alignment = "Neutral"
+		app.map["Iraq"].troops = 2
+		self.assertTrue(app.deck["34"].playable("US", app))
+		app.markers.append("Leak-Enhanced Measures")
+		self.assertFalse(app.deck["34"].playable("US", app))
+
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		app.map["United States"].posture = "Soft"
+		app.map["Iraq"].cadre = 1
+		app.map["Iraq"].governance = 3
+		app.map["Iraq"].alignment = "Neutral"
+		app.map["Iraq"].troops = 2
+		self.assertFalse(app.deck["34"].playable("US", app))
+		
+	def testEvent(self):
+ 		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		app.map["Iraq"].cadre = 1
+		app.map["Iraq"].governance = 3
+		app.map["Iraq"].alignment = "Neutral"
+		app.map["Iraq"].troops = 2
+		app.map["Pakistan"].cadre = 1
+		app.map["Pakistan"].governance = 3
+		app.map["Pakistan"].alignment = "Neutral"
+		app.map["Pakistan"].troops = 2
+ 		app.deck["34"].playEvent("US", app)
+		self.assertTrue("Enhanced Measures" in app.markers)
+ 		
 				
 if __name__ == "__main__":
 	unittest.main()   
