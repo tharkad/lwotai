@@ -6201,6 +6201,27 @@ class isAdjacent(unittest.TestCase):
 		self.assertTrue(app.isAdjacent("Benelux","Russia"))
 		self.assertTrue(app.isAdjacent("Lebanon","France"))
 		self.assertFalse(app.isAdjacent("United States","Lebanon"))
+
+class countryResources(unittest.TestCase):
+	'''Test countryResources'''
+	
+	def testCountryResources(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		self.assertTrue(app.countryResources("Iraq") == 3)
+		self.assertTrue(app.countryResources("Egypt") == 3)
+		self.assertTrue(app.countryResources("Syria") == 2)
+		self.assertTrue(app.countryResources("Lebanon") == 1)
+		app.lapsing.append("Oil Price Spike")
+		self.assertTrue(app.countryResources("Iraq") == 4)
+		self.assertTrue(app.countryResources("Egypt") == 3)
+		self.assertTrue(app.countryResources("Syria") == 2)
+		self.assertTrue(app.countryResources("Lebanon") == 1)
+		app.lapsing.append("Biometrics")
+		app.lapsing.append("Oil Price Spike")
+		self.assertTrue(app.countryResources("Iraq") == 5)
+		self.assertTrue(app.countryResources("Egypt") == 3)
+		self.assertTrue(app.countryResources("Syria") == 2)
+		self.assertTrue(app.countryResources("Lebanon") == 1)
 		
 class card1(unittest.TestCase):
 	'''Backlash'''
@@ -6825,7 +6846,7 @@ class card29(unittest.TestCase):
 		self.assertTrue(app.map["France"].posture == "Hard")
 		#app.deck["29"].playEvent("US", app)
 
-class card30(unittest.TestCase):
+class card31(unittest.TestCase):
 	'''UN Nation Building'''
 	
 	def testPlayable(self):
@@ -6849,6 +6870,122 @@ class card30(unittest.TestCase):
 # 		app.map["Pakistan"].alignment = "Ally"
 # 		app.deck["30"].playEvent("US", app)
 # 		self.assertTrue(app.map["Pakistan"].aid == 1)
+
+class card31(unittest.TestCase):
+	'''Wiretapping'''
+	
+	def testPlayable(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		self.assertFalse(app.deck["31"].playable("US", app))
+		app.map["United States"].sleeperCells = 1
+		self.assertTrue(app.deck["31"].playable("US", app))
+		
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		app.map["United States"].activeCells = 1
+		self.assertTrue(app.deck["31"].playable("US", app))
+		
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		app.map["United States"].cadre = 1
+		self.assertTrue(app.deck["31"].playable("US", app))
+		
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		app.map["United States"].plots = 1
+		self.assertTrue(app.deck["31"].playable("US", app))
+		
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		self.assertFalse(app.deck["31"].playable("US", app))
+		app.map["United Kingdom"].sleeperCells = 1
+		self.assertTrue(app.deck["31"].playable("US", app))
+		
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		app.map["United Kingdom"].activeCells = 1
+		self.assertTrue(app.deck["31"].playable("US", app))
+		
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		app.map["United Kingdom"].cadre = 1
+		self.assertTrue(app.deck["31"].playable("US", app))
+		
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		app.map["United Kingdom"].plots = 1
+		self.assertTrue(app.deck["31"].playable("US", app))
+		
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		self.assertFalse(app.deck["31"].playable("US", app))
+		app.map["Canada"].sleeperCells = 1
+		self.assertTrue(app.deck["31"].playable("US", app))
+		
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		app.map["Canada"].activeCells = 1
+		self.assertTrue(app.deck["31"].playable("US", app))
+		
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		app.map["Canada"].cadre = 1
+		self.assertTrue(app.deck["31"].playable("US", app))
+		
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		app.map["Canada"].plots = 1
+		self.assertTrue(app.deck["31"].playable("US", app))
+		
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		app.map["Canada"].plots = 1
+		app.markers.append("Leak-Wiretapping")
+		self.assertFalse(app.deck["31"].playable("US", app))
+		
+	def testEvent(self):
+ 		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		app.map["United States"].sleeperCells = 1
+		app.map["United States"].activeCells = 1
+		app.map["United States"].cadre = 1
+		app.map["United States"].plots = 1
+		app.map["United Kingdom"].sleeperCells = 1
+		app.map["United Kingdom"].activeCells = 1
+		app.map["United Kingdom"].cadre = 1
+		app.map["United Kingdom"].plots = 1
+		app.map["Canada"].sleeperCells = 1
+		app.map["Canada"].activeCells = 1
+		app.map["Canada"].cadre = 1
+		app.map["Canada"].plots = 1
+		app.deck["31"].playEvent("US", app)
+		self.assertTrue(app.map["United States"].sleeperCells == 0)
+		self.assertTrue(app.map["United States"].activeCells == 0)
+		self.assertTrue(app.map["United States"].cadre == 0)
+		self.assertTrue(app.map["United States"].plots == 0)
+		self.assertTrue(app.map["United Kingdom"].sleeperCells == 0)
+		self.assertTrue(app.map["United Kingdom"].activeCells == 0)
+		self.assertTrue(app.map["United Kingdom"].cadre == 0)
+		self.assertTrue(app.map["United Kingdom"].plots == 0)
+		self.assertTrue(app.map["Canada"].sleeperCells == 0)
+		self.assertTrue(app.map["Canada"].activeCells == 0)
+		self.assertTrue(app.map["Canada"].cadre == 0)
+		self.assertTrue(app.map["Canada"].plots == 0)
+
+class card32(unittest.TestCase):
+	'''Back Channel'''
+	
+	def testPlayable(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+ 		app.map["United States"].posture = "Hard"
+		self.assertFalse(app.deck["32"].playable("US", app))
+ 		app.map["United States"].posture = "Soft"
+		self.assertFalse(app.deck["32"].playable("US", app))
+
+#  		app.map["Iraq"].governance = 3
+#  		app.map["Iraq"].alignment = "Adversary"
+#  		app.map["Pakistan"].alignment = "Adversary"
+#  		print "Say yes"
+# 		self.assertTrue(app.deck["32"].playable("US", app))
+#  		print "Say no"
+# 		self.assertFalse(app.deck["32"].playable("US", app))
+ 		
+	def testEvent(self):
+ 		app = Labyrinth(1, 1, testBlankScenarioSetup)
+ 		app.map["United States"].posture = "Soft"
+ 		app.map["Iraq"].governance = 3
+ 		app.map["Iraq"].alignment = "Adversary"
+ 		app.map["Pakistan"].governance = 4
+ 		app.map["Pakistan"].alignment = "Adversary"
+		app.deck["32"].playable("US", app)
+		app.deck["32"].playEvent("US", app)
 
 		
 if __name__ == "__main__":
