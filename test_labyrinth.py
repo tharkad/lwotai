@@ -6984,9 +6984,73 @@ class card32(unittest.TestCase):
  		app.map["Iraq"].alignment = "Adversary"
  		app.map["Pakistan"].governance = 4
  		app.map["Pakistan"].alignment = "Adversary"
-		app.deck["32"].playable("US", app)
-		app.deck["32"].playEvent("US", app)
+# 		app.deck["32"].playable("US", app)
+# 		app.deck["32"].playEvent("US", app)
 
+class card33(unittest.TestCase):
+	'''Benazir Bhutto'''
+	
+	def testPlayable(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		self.assertTrue(app.deck["33"].playable("US", app))
+		app.markers.append("Bhutto Shot")
+		self.assertFalse(app.deck["33"].playable("US", app))
+
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		self.assertTrue(app.deck["33"].playable("US", app))
+ 		app.map["Pakistan"].governance = 4
+		self.assertFalse(app.deck["33"].playable("US", app))
+
+ 		app = Labyrinth(1, 1, testBlankScenarioSetup)
+ 		app.map["Afghanistan"].governance = 4
+		self.assertFalse(app.deck["33"].playable("US", app))
+
+ 		app = Labyrinth(1, 1, testBlankScenarioSetup)
+ 		app.map["India"].governance = 4
+		self.assertFalse(app.deck["33"].playable("US", app))
+
+ 		app = Labyrinth(1, 1, testBlankScenarioSetup)
+ 		app.map["Gulf States"].governance = 4
+		self.assertFalse(app.deck["33"].playable("US", app))
+
+ 		app = Labyrinth(1, 1, testBlankScenarioSetup)
+ 		app.map["Indonesia/Malaysia"].governance = 4
+		self.assertFalse(app.deck["33"].playable("US", app))
+
+	def testEvent(self):
+ 		app = Labyrinth(1, 1, testBlankScenarioSetup)
+ 		app.map["Pakistan"].governance = 3
+ 		app.deck["33"].playEvent("US", app)
+ 		self.assertTrue(app.map["Pakistan"].governance == 2)
+
+# no jihad in Pakistan
+		app = Labyrinth(1, 1, test3ScenarioSetup)
+		app.map["Gulf States"].activeCells = 0
+		app.map["Gulf States"].sleeperCells = 0
+		app.map["Pakistan"].activeCells = 0
+		self.assertEqual(app.minorJihadInGoodFairChoice(1), False)
+		app.map["Pakistan"].governance = 2
+		app.map["Pakistan"].activeCells = 1
+		self.assertEqual(app.minorJihadInGoodFairChoice(1), [("Pakistan",1)])
+  		app.deck["33"].playEvent("US", app)
+		self.assertEqual(app.minorJihadInGoodFairChoice(1), False)
+
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		self.assertEqual(app.majorJihadPossible(3), [])
+		app.map["Pakistan"].governance = 3
+		app.map["Pakistan"].activeCells = 5
+		self.assertEqual(app.majorJihadPossible(3), ["Pakistan"])
+  		app.deck["33"].playEvent("US", app)
+		self.assertEqual(app.majorJihadPossible(3), [])
 		
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		app.map["Pakistan"].governance = 3
+		app.map["Pakistan"].activeCells = 5
+		app.map["Iraq"].governance = 3
+		app.map["Iraq"].activeCells = 5
+		self.assertEqual(app.majorJihadChoice(3), "Pakistan")
+  		app.deck["33"].playEvent("US", app)
+		self.assertEqual(app.majorJihadPossible(3), ["Iraq"])
+				
 if __name__ == "__main__":
 	unittest.main()   

@@ -208,6 +208,15 @@ class Card:
 					return False
 				app.listAdversaryCountries()
 				return app.getYesNoFromUser("Do you have a card with a value that exactly matches an Adversary's Resources (y/n)? ")
+			elif self.number == 33: # Benazir Bhutto
+				if "Bhutto Shot" in app.markers:
+					return False
+				if app.map["Pakistan"].governance == 4:
+					return False
+				for countryObj in app.map["Pakistan"].links:
+					if countryObj.governance == 4:
+						return False
+				return True
 			else:
 				return False
 		
@@ -626,6 +635,15 @@ class Card:
 								app.outputToHistory("Aid added to %s." % input, False)
 								app.outputToHistory(app.map[input].countryStr(), True)
 								return True
+			elif self.number == 33: # Benazir Bhutto
+				app.markers.append("Benazir Bhutto")
+				app.outputToHistory("Benazir Bhutto in Play.", False)
+				if app.map["Pakistan"].governance == 3:
+					app.map["Pakistan"].governance = 2
+					app.outputToHistory("Pakistan now Fair governance.", False)
+				app.outputToHistory("No Jihads in Pakistan.", False)
+				app.outputToHistory(app.map["Pakistan"].countryStr(), True)
+				return True
 			else:
 				return False
 		
@@ -1568,6 +1586,8 @@ class Labyrinth(cmd.Cmd):
 		plusCellsNeeded = self.extraCellsNeededForMajorJihad()
 		for country in self.map:
 			if self.map[country].type == "Suni" or self.map[country].type == "Shia-Mix":
+				if "Benazir Bhutto" in self.markers and country == "Pakistan":
+					continue
 				if self.map[country].governance != 4:
 					if ((self.map[country].sleeperCells + self.map[country].activeCells) - self.map[country].troops) >= plusCellsNeeded:
 						need = 2
@@ -1601,6 +1621,8 @@ class Labyrinth(cmd.Cmd):
 		possible = []
 		for country in self.map:
 			if (self.map[country].type == "Shia-Mix" or self.map[country].type == "Suni") and (self.map[country].governance == 1 or self.map[country].governance == 2) and (self.map[country].sleeperCells > 0 or self.map[country].activeCells > 0):
+				if "Benazir Bhutto" in self.markers and country == "Pakistan":
+					continue
 				possible.append(country)
 		if len(possible) == 0:
 			return False
