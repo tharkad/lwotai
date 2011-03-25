@@ -125,7 +125,7 @@ class Card:
 									return True
 				return False
 			elif self.number == 11: # Abbas
-				numIR = app.numIslamicRuleCountries()
+				numIR = app.numIslamicRule()
 				if app.troops >= 5 and numIR <= 0:
 					return True
 				else:
@@ -221,6 +221,27 @@ class Card:
 				if "Leak-Enhanced Measures" in app.markers or app.map["United States"].posture == "Soft":
 					return False
 				return app.numDisruptable() > 0
+			elif self.number == 35: # Hajib
+				return app.numIslamicRule() == 0
+			elif self.number == 36: # Indo-Pakistani Talks
+				if app.map['Pakistan'].governance == 1 or app.map['Pakistan'].governance == 2:
+					return True
+				return False
+			elif self.number == 37: # Iraqi WMD
+				if app.map["United States"].posture == "Hard" and app.map["Iraq"].alignment == "Adversary":
+					return True
+				return False
+			elif self.number == 38: # Libyan Deal
+				if app.map["Libya"].governance == 3:
+					if app.map["Iraq"].alignment == "Ally" or app.map["Syria"].alignment == "Ally":
+						return True
+				return False
+			elif self.number == 39: # Libyan WMD
+				if app.map["United States"].posture == "Hard" and app.map["Libya"].alignment == "Adversary" and "Libyan Deal" not in app.markers:
+					return True
+				return False
+			elif self.number == 40: # Mass Turnout
+				return app.numRegimeChange() > 0
 			else:
 				return False
 		
@@ -288,7 +309,7 @@ class Card:
 								app.outputToHistory(app.map[input].countryStr(), True)
 								return True
 			elif self.number == 11: # Abbas
-				numIR = app.numIslamicRuleCountries()
+				numIR = app.numIslamicRule()
 				if app.troops >= 5 and numIR <= 0:
 					app.markers.append("Abbas")
 					app.outputToHistory("Abbas in play.", False)
@@ -299,7 +320,7 @@ class Card:
 					return False
 			elif self.number == 12: # Al-Azhar
 				app.testCountry("Egypt")
-				numIR = app.numIslamicRuleCountries()
+				numIR = app.numIslamicRule()
 				if numIR <= 0:
 					app.changeFunding(-4, True)
 				else:
@@ -658,6 +679,82 @@ class Card:
 				app.outputToHistory("Take a random card from the Jihadist hand.", False)
 				app.do_disrupt("")
 				app.outputToHistory("", False)
+			elif self.number == 35: # Hajib
+				app.testCountry("Turkey")
+				app.map["Turkey"].governance -= 1
+				app.outputToHistory("Turkey Governance now %s." % app.map["Turkey"].govStr(), False)
+				app.changeFunding(-2)
+				posStr = app.getPostureFromUser("Select Frances's Posture (hard or soft): ")
+				app.map["France"].posture = posStr
+				app.outputToHistory(app.map["Turkey"].countryStr(), False)
+				app.outputToHistory(app.map["France"].countryStr(), True)
+			elif self.number == 36: # Indo-Pakistani Talks
+				app.markers.append("Indo-Pakistani Talks")
+				app.outputToHistory("Indo-Pakistani Talks in Play.", False)
+				app.map['Pakistan'].alignment = "Ally"
+				app.outputToHistory("Pakistan now Ally", False)
+				posStr = app.getPostureFromUser("Select India's Posture (hard or soft): ")
+				app.map["India"].posture = posStr
+				app.outputToHistory(app.map["Pakistan"].countryStr(), False)
+				app.outputToHistory(app.map["India"].countryStr(), True)
+			elif self.number == 37: # Iraqi WMD
+				app.markers.append("Iraqi WMD")
+				app.outputToHistory("Iraqi WMD in Play.", False)
+				app.outputToHistory("Use this or a later card for Regime Change in Iraq at any Governance.", True)
+			elif self.number == 38: # Libyan Deal
+				app.markers.append("Libyan Deal")
+				app.outputToHistory("Libyan Deal in Play.", False)
+				app.map["Libya"].alignment == "Ally"
+				app.outputToHistory("Libya now Ally", False)
+				app.changePrestige(1)
+				print "Select the Posture of 2 Schengen countries."
+				for i in range(2):
+					target = ""
+					while not target:
+						input = app.getCountryFromUser("Choose Schengen country (? for list)?: ", "XXX", app.listSchengenCountries)
+						if input == "":
+							print ""
+						else:
+							if not app.map[input].schengen:
+								print "%s is not a Schengen country." % input
+								print ""
+								return
+							else:
+								target = input
+								posStr = app.getPostureFromUser("Select %s's Posture (hard or soft): " % target)
+								app.map[target].posture = posStr
+								app.outputToHistory(app.map[target].countryStr(), False)
+				app.outputToHistory("", False)				
+			elif self.number == 39: # Libyan WMD
+				app.markers.append("Libyan WMD")
+				app.outputToHistory("Libyan WMD in Play.", False)
+				app.outputToHistory("Use this or a later card for Regime Change in Libya at any Governance.", True)
+			elif self.number == 40: # Mass Turnout
+				numRC = app.numRegimeChange()
+				target = ""
+				if numRC <= 0:
+					return False
+				elif numRC == 1:
+					for country in app.map:
+						if app.map[country].regimeChange > 0:
+							target = country
+							break
+				else:
+					while True:
+						input = app.getCountryFromUser("Choose a Regime Change Country to improve governance (? for list): ",  "XXX", app.listRegimeChangeCountries)	
+						if input == "":
+							print ""
+							return
+						else:
+							if app.map[input].regimeChange <= 0:
+								print "%s is not a Regime Change country." % input
+								print ""
+							else:
+								target = input
+								break
+				app.improveGovernance(target)
+				app.outputToHistory("%s Governance improved." % target, False)
+				app.outputToHistory(app.map[target].countryStr(), True)				
 			else:
 				return False
 		
@@ -1376,6 +1473,14 @@ class Labyrinth(cmd.Cmd):
 			self.cells += numCells
 			self.outputToHistory("%d Active Cell(s) removed from %s." % (numCells, country), False)
 	
+	def improveGovernance(self, country):
+		self.map[country].governance -= 1
+		if self.map[country].governance <= 1:
+			self.map[country].governance = 1
+			self.map[country].regimeChange = 0
+			self.map[country].aid = 0
+			self.map[country].besieged = 0
+
 	def numCellsAvailable(self):
 		retVal = self.cells
 		if self.funding <= 3:
@@ -1384,7 +1489,7 @@ class Labyrinth(cmd.Cmd):
 			retVal -= 5
 		return max(retVal, 0)
 		
-	def numIslamicRuleCountries(self):
+	def numIslamicRule(self):
 		numIR = 0
 		for country in self.map:
 			if self.map[country].governance == 4:
@@ -1443,12 +1548,7 @@ class Labyrinth(cmd.Cmd):
 				self.outputToHistory("* WoI in %s succeeded - Alignment now Ally." % country, False)
 				self.outputToHistory(self.map[country].countryStr(), True)
 			elif self.map[country].alignment == "Ally":
-				self.map[country].governance -= 1
-				if self.map[country].governance <= 1:
-					self.map[country].governance = 1
-					self.map[country].regimeChange = 0
-					self.map[country].aid = 0
-					self.map[country].besieged = 0
+				self.improveGovernance(country)
 				self.outputToHistory("* WoI in %s succeeded - Governance now %s." % (country, self.map[country].govStr()), False)
 				self.outputToHistory(self.map[country].countryStr(), True)
 				
@@ -1492,6 +1592,12 @@ class Labyrinth(cmd.Cmd):
 		else:
 			self.outputToHistory("%d Troops in %s" % (self.map[moveFrom].troops, moveFrom), False)
 		self.outputToHistory("US Prestige %d" % self.prestige)
+		if where == "Iraq" and "Iraqi WMD" in self.markers:
+			self.markers.remove("Iraqi WMD")
+			self.outputToHistory("Iraqi WMD no longer in play.", True)
+		if where == "Libya" and "Libyan WMD" in self.markers:
+			self.markers.remove("Libyan WMD")
+			self.outputToHistory("Libyan WMD no longer in play.", True)
 		
 	def handleWithdraw(self, moveFrom, moveTo, howMany, prestigeRolls):
 		if self.map["United States"].posture == "Hard":
@@ -2491,6 +2597,10 @@ class Labyrinth(cmd.Cmd):
 		elif self.map[country].type == "Non-Muslim":
 			if country == "Israel" and "Abbas" in self.markers:
 				self.markers.remove("Abbas")
+				self.outputToHistory("Abbas no longer in play.", True)
+			if country == "India" and "Indo-Pakistani Talks" in self.markers:
+				self.markers.remove("Indo-Pakistani Talks")
+				self.outputToHistory("Indo-Pakistani Talks no longer in play.", True)
 			if plotType == "WMD":
 				self.funding = 9
 			else:
@@ -2625,7 +2735,7 @@ class Labyrinth(cmd.Cmd):
 				
 	def executeCardEuroIslam(self, posStr):
 		self.map["Benelux"].posture = posStr
-		if self.numIslamicRuleCountries() == 0:
+		if self.numIslamicRule() == 0:
 			self.funding -= 1
 			if self.funding < 1:
 				self.funding = 1
