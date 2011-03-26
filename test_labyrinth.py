@@ -1,4 +1,4 @@
-from labyrinth import Labyrinth 
+from labyrinth import Labyrinth
 import unittest
 
 def testScenarioSetup(self):
@@ -15,14 +15,14 @@ def testScenarioSetup(self):
 	self.map["Iraq"].plots = 2	
 	self.map["Saudi Arabia"].governance = 3
 	self.map["Saudi Arabia"].alignment = "Ally"
-	self.map["Saudi Arabia"].troops = 2
+	self.map["Saudi Arabia"].troopCubes = 2
 	self.map["Pakistan"].governance = 2
 	self.map["Pakistan"].alignment = "Neutral"
-	self.map["Pakistan"].troops = 2
+	self.map["Pakistan"].troopCubes = 2
 	self.map["Pakistan"].activeCells = 4
 	self.map["Gulf States"].governance = 2
 	self.map["Gulf States"].alignment = "Ally"
-	self.map["Gulf States"].troops = 4
+	self.map["Gulf States"].troopCubes = 4
 	self.map["Gulf States"].sleeperCells = 1
 	self.map["Gulf States"].activeCells = 4
 	self.map["Afghanistan"].governance = 4
@@ -45,21 +45,21 @@ def test2ScenarioSetup(self):
 	self.map["Iraq"].plots = 2	
 	self.map["Saudi Arabia"].governance = 3
 	self.map["Saudi Arabia"].alignment = "Ally"
-	self.map["Saudi Arabia"].troops = 2
+	self.map["Saudi Arabia"].troopCubes = 2
 	self.map["Pakistan"].governance = 2
 	self.map["Pakistan"].alignment = "Neutral"
-	self.map["Pakistan"].troops = 2
+	self.map["Pakistan"].troopCubes = 2
 	self.map["Pakistan"].activeCells = 4
 	self.map["Gulf States"].governance = 2
 	self.map["Gulf States"].alignment = "Ally"
-	self.map["Gulf States"].troops = 2
+	self.map["Gulf States"].troopCubes = 2
 	self.map["Gulf States"].sleeperCells = 1
 	self.map["Gulf States"].activeCells = 4
 	self.map["Afghanistan"].governance = 1
 	self.map["Afghanistan"].alignment = "Ally"
 	self.map["Afghanistan"].activeCells = 4
 	self.map["Afghanistan"].regimeChange = 1
-	self.map["Afghanistan"].troops = 6
+	self.map["Afghanistan"].troopCubes = 6
 	self.map["Afghanistan"].aid = 1
 	self.map["Afghanistan"].besieged = 0
 	self.map["Somalia"].besieged = 1
@@ -79,14 +79,14 @@ def test3ScenarioSetup(self):
 	self.map["Iraq"].plots = 2	
 	self.map["Saudi Arabia"].governance = 3
 	self.map["Saudi Arabia"].alignment = "Ally"
-	self.map["Saudi Arabia"].troops = 2
+	self.map["Saudi Arabia"].troopCubes = 2
 	self.map["Pakistan"].governance = 2
 	self.map["Pakistan"].alignment = "Neutral"
-	self.map["Pakistan"].troops = 2
+	self.map["Pakistan"].troopCubes = 2
 	self.map["Pakistan"].activeCells = 4
 	self.map["Gulf States"].governance = 2
 	self.map["Gulf States"].alignment = "Ally"
-	self.map["Gulf States"].troops = 4
+	self.map["Gulf States"].troopCubes = 4
 	self.map["Gulf States"].sleeperCells = 1
 	self.map["Gulf States"].activeCells = 4
 	self.map["Afghanistan"].governance = 4
@@ -400,7 +400,7 @@ class regimeChangeHandler(unittest.TestCase):
 		app.map["United States"].posture = "Soft"
 		self.assertEqual(app.map["Afghanistan"].governance, 4)
 		self.assertEqual(app.map["Afghanistan"].alignment, "Adversary")
-		self.assertEqual(app.map["Afghanistan"].troops, 0)
+		self.assertEqual(app.map["Afghanistan"].troops(), 0)
 		self.assertEqual(app.map["Afghanistan"].sleeperCells, 4)
 		self.assertEqual(app.map["Afghanistan"].activeCells, 0)
 		self.assertEqual(app.map["Afghanistan"].regimeChange, 0)
@@ -411,7 +411,7 @@ class regimeChangeHandler(unittest.TestCase):
 		app.handleRegimeChange("Afghanistan", "track", 6, govRoll, prestigeRolls)
 		self.assertEqual(app.map["Afghanistan"].governance, 4)
 		self.assertEqual(app.map["Afghanistan"].alignment, "Adversary")
-		self.assertEqual(app.map["Afghanistan"].troops, 0)
+		self.assertEqual(app.map["Afghanistan"].troops(), 0)
 		self.assertEqual(app.map["Afghanistan"].sleeperCells, 4)
 		self.assertEqual(app.map["Afghanistan"].activeCells, 0)
 		self.assertEqual(app.map["Afghanistan"].regimeChange, 0)
@@ -422,7 +422,7 @@ class regimeChangeHandler(unittest.TestCase):
 		app.map["United States"].posture = "Hard"
 		self.assertEqual(app.map["Afghanistan"].governance, 4)
 		self.assertEqual(app.map["Afghanistan"].alignment, "Adversary")
-		self.assertEqual(app.map["Afghanistan"].troops, 0)
+		self.assertEqual(app.map["Afghanistan"].troops(), 0)
 		self.assertEqual(app.map["Afghanistan"].sleeperCells, 4)
 		self.assertEqual(app.map["Afghanistan"].activeCells, 0)
 		self.assertEqual(app.map["Afghanistan"].regimeChange, 0)
@@ -433,7 +433,7 @@ class regimeChangeHandler(unittest.TestCase):
 		app.handleRegimeChange("Afghanistan", "track", 6, govRoll, prestigeRolls)
 		self.assertEqual(app.map["Afghanistan"].governance, 3)
 		self.assertEqual(app.map["Afghanistan"].alignment, "Ally")
-		self.assertEqual(app.map["Afghanistan"].troops, 6)
+		self.assertEqual(app.map["Afghanistan"].troops(), 6)
 		self.assertEqual(app.map["Afghanistan"].sleeperCells, 0)
 		self.assertEqual(app.map["Afghanistan"].activeCells, 4)
 		self.assertEqual(app.map["Afghanistan"].regimeChange, 1)
@@ -444,7 +444,7 @@ class regimeChangeHandler(unittest.TestCase):
 		app.map["United States"].posture = "Hard"
 		self.assertEqual(app.map["Afghanistan"].governance, 4)
 		self.assertEqual(app.map["Afghanistan"].alignment, "Adversary")
-		self.assertEqual(app.map["Afghanistan"].troops, 0)
+		self.assertEqual(app.map["Afghanistan"].troops(), 0)
 		self.assertEqual(app.map["Afghanistan"].sleeperCells, 4)
 		self.assertEqual(app.map["Afghanistan"].activeCells, 0)
 		self.assertEqual(app.map["Afghanistan"].regimeChange, 0)
@@ -455,7 +455,7 @@ class regimeChangeHandler(unittest.TestCase):
 		app.handleRegimeChange("Afghanistan", "track", 6, govRoll, prestigeRolls)
 		self.assertEqual(app.map["Afghanistan"].governance, 2)
 		self.assertEqual(app.map["Afghanistan"].alignment, "Ally")
-		self.assertEqual(app.map["Afghanistan"].troops, 6)
+		self.assertEqual(app.map["Afghanistan"].troops(), 6)
 		self.assertEqual(app.map["Afghanistan"].sleeperCells, 0)
 		self.assertEqual(app.map["Afghanistan"].activeCells, 4)
 		self.assertEqual(app.map["Afghanistan"].regimeChange, 1)
@@ -466,7 +466,7 @@ class regimeChangeHandler(unittest.TestCase):
 		app.map["United States"].posture = "Hard"
 		self.assertEqual(app.map["Afghanistan"].governance, 4)
 		self.assertEqual(app.map["Afghanistan"].alignment, "Adversary")
-		self.assertEqual(app.map["Afghanistan"].troops, 0)
+		self.assertEqual(app.map["Afghanistan"].troops(), 0)
 		self.assertEqual(app.map["Afghanistan"].sleeperCells, 4)
 		self.assertEqual(app.map["Afghanistan"].activeCells, 0)
 		self.assertEqual(app.map["Afghanistan"].regimeChange, 0)
@@ -477,7 +477,7 @@ class regimeChangeHandler(unittest.TestCase):
 		app.handleRegimeChange("Afghanistan", "track", 6, govRoll, prestigeRolls)
 		self.assertEqual(app.map["Afghanistan"].governance, 2)
 		self.assertEqual(app.map["Afghanistan"].alignment, "Ally")
-		self.assertEqual(app.map["Afghanistan"].troops, 6)
+		self.assertEqual(app.map["Afghanistan"].troops(), 6)
 		self.assertEqual(app.map["Afghanistan"].sleeperCells, 0)
 		self.assertEqual(app.map["Afghanistan"].activeCells, 4)
 		self.assertEqual(app.map["Afghanistan"].regimeChange, 1)
@@ -488,7 +488,7 @@ class regimeChangeHandler(unittest.TestCase):
 		app.map["United States"].posture = "Hard"
 		self.assertEqual(app.map["Afghanistan"].governance, 4)
 		self.assertEqual(app.map["Afghanistan"].alignment, "Adversary")
-		self.assertEqual(app.map["Afghanistan"].troops, 0)
+		self.assertEqual(app.map["Afghanistan"].troops(), 0)
 		self.assertEqual(app.map["Afghanistan"].sleeperCells, 4)
 		self.assertEqual(app.map["Afghanistan"].activeCells, 0)
 		self.assertEqual(app.map["Afghanistan"].regimeChange, 0)
@@ -499,7 +499,7 @@ class regimeChangeHandler(unittest.TestCase):
 		app.handleRegimeChange("Afghanistan", "track", 6, govRoll, prestigeRolls)
 		self.assertEqual(app.map["Afghanistan"].governance, 2)
 		self.assertEqual(app.map["Afghanistan"].alignment, "Ally")
-		self.assertEqual(app.map["Afghanistan"].troops, 6)
+		self.assertEqual(app.map["Afghanistan"].troops(), 6)
 		self.assertEqual(app.map["Afghanistan"].sleeperCells, 0)
 		self.assertEqual(app.map["Afghanistan"].activeCells, 4)
 		self.assertEqual(app.map["Afghanistan"].regimeChange, 1)
@@ -510,7 +510,7 @@ class regimeChangeHandler(unittest.TestCase):
 		app.map["United States"].posture = "Hard"
 		self.assertEqual(app.map["Afghanistan"].governance, 4)
 		self.assertEqual(app.map["Afghanistan"].alignment, "Adversary")
-		self.assertEqual(app.map["Afghanistan"].troops, 0)
+		self.assertEqual(app.map["Afghanistan"].troops(), 0)
 		self.assertEqual(app.map["Afghanistan"].sleeperCells, 4)
 		self.assertEqual(app.map["Afghanistan"].activeCells, 0)
 		self.assertEqual(app.map["Afghanistan"].regimeChange, 0)
@@ -521,7 +521,7 @@ class regimeChangeHandler(unittest.TestCase):
 		app.handleRegimeChange("Afghanistan", "track", 6, govRoll, prestigeRolls)
 		self.assertEqual(app.map["Afghanistan"].governance, 2)
 		self.assertEqual(app.map["Afghanistan"].alignment, "Ally")
-		self.assertEqual(app.map["Afghanistan"].troops, 6)
+		self.assertEqual(app.map["Afghanistan"].troops(), 6)
 		self.assertEqual(app.map["Afghanistan"].sleeperCells, 0)
 		self.assertEqual(app.map["Afghanistan"].activeCells, 4)
 		self.assertEqual(app.map["Afghanistan"].regimeChange, 1)
@@ -530,29 +530,29 @@ class regimeChangeHandler(unittest.TestCase):
 	
 		app = Labyrinth(1, 1, testScenarioSetup)
 		app.troops -= 8
-		app.map["Pakistan"].troops += 8
+		app.map["Pakistan"].changeTroops(8)
 		app.map["United States"].posture = "Hard"
 		self.assertEqual(app.map["Afghanistan"].governance, 4)
 		self.assertEqual(app.map["Afghanistan"].alignment, "Adversary")
-		self.assertEqual(app.map["Afghanistan"].troops, 0)
+		self.assertEqual(app.map["Afghanistan"].troops(), 0)
 		self.assertEqual(app.map["Afghanistan"].sleeperCells, 4)
 		self.assertEqual(app.map["Afghanistan"].activeCells, 0)
 		self.assertEqual(app.map["Afghanistan"].regimeChange, 0)
 		self.assertEqual(app.prestige, 7)
 		self.assertEqual(app.troops, 1)
-		self.assertEqual(app.map["Pakistan"].troops, 10)
+		self.assertEqual(app.map["Pakistan"].troops(), 10)
 		govRoll = 5
 		prestigeRolls = (6,6,5)
 		app.handleRegimeChange("Afghanistan", "Pakistan", 7, govRoll, prestigeRolls)
 		self.assertEqual(app.map["Afghanistan"].governance, 2)
 		self.assertEqual(app.map["Afghanistan"].alignment, "Ally")
-		self.assertEqual(app.map["Afghanistan"].troops, 7)
+		self.assertEqual(app.map["Afghanistan"].troops(), 7)
 		self.assertEqual(app.map["Afghanistan"].sleeperCells, 0)
 		self.assertEqual(app.map["Afghanistan"].activeCells, 4)
 		self.assertEqual(app.map["Afghanistan"].regimeChange, 1)
 		self.assertEqual(app.prestige, 12)
 		self.assertEqual(app.troops, 1)
-		self.assertEqual(app.map["Pakistan"].troops, 3)
+		self.assertEqual(app.map["Pakistan"].troops(), 3)
 
 class withdrawHandler(unittest.TestCase):
 	'''Test Withdraw'''
@@ -562,20 +562,20 @@ class withdrawHandler(unittest.TestCase):
 		app.map["United States"].posture = "Soft"	
 		self.assertEqual(app.map["Afghanistan"].governance, 1)
 		self.assertEqual(app.map["Afghanistan"].alignment, "Ally")
-		self.assertEqual(app.map["Afghanistan"].troops, 6)
+		self.assertEqual(app.map["Afghanistan"].troops(), 6)
 		self.assertEqual(app.map["Afghanistan"].aid, 1)
 		self.assertEqual(app.map["Afghanistan"].besieged, 0)
-		self.assertEqual(app.map["Saudi Arabia"].troops, 2)
+		self.assertEqual(app.map["Saudi Arabia"].troops(), 2)
 		self.assertEqual(app.prestige, 7)
 		self.assertEqual(app.troops, 3)
 		prestigeRolls = (5,2,5)
 		app.handleWithdraw("Afghanistan", "Saudi Arabia", 4, prestigeRolls)
 		self.assertEqual(app.map["Afghanistan"].governance, 1)
 		self.assertEqual(app.map["Afghanistan"].alignment, "Ally")
-		self.assertEqual(app.map["Afghanistan"].troops, 2)
+		self.assertEqual(app.map["Afghanistan"].troops(), 2)
 		self.assertEqual(app.map["Afghanistan"].aid, 0)
 		self.assertEqual(app.map["Afghanistan"].besieged, 1)
-		self.assertEqual(app.map["Saudi Arabia"].troops, 6)
+		self.assertEqual(app.map["Saudi Arabia"].troops(), 6)
 		self.assertEqual(app.prestige, 9)
 		self.assertEqual(app.troops, 3)
 
@@ -583,20 +583,20 @@ class withdrawHandler(unittest.TestCase):
 		app.map["United States"].posture = "Soft"	
 		self.assertEqual(app.map["Afghanistan"].governance, 1)
 		self.assertEqual(app.map["Afghanistan"].alignment, "Ally")
-		self.assertEqual(app.map["Afghanistan"].troops, 6)
+		self.assertEqual(app.map["Afghanistan"].troops(), 6)
 		self.assertEqual(app.map["Afghanistan"].aid, 1)
 		self.assertEqual(app.map["Afghanistan"].besieged, 0)
-		self.assertEqual(app.map["Saudi Arabia"].troops, 2)
+		self.assertEqual(app.map["Saudi Arabia"].troops(), 2)
 		self.assertEqual(app.prestige, 7)
 		self.assertEqual(app.troops, 3)
 		prestigeRolls = (2,3,5)
 		app.handleWithdraw("Afghanistan", "track", 5, prestigeRolls)
 		self.assertEqual(app.map["Afghanistan"].governance, 1)
 		self.assertEqual(app.map["Afghanistan"].alignment, "Ally")
-		self.assertEqual(app.map["Afghanistan"].troops, 1)
+		self.assertEqual(app.map["Afghanistan"].troops(), 1)
 		self.assertEqual(app.map["Afghanistan"].aid, 0)
 		self.assertEqual(app.map["Afghanistan"].besieged, 1)
-		self.assertEqual(app.map["Saudi Arabia"].troops, 2)
+		self.assertEqual(app.map["Saudi Arabia"].troops(), 2)
 		self.assertEqual(app.prestige, 4)
 		self.assertEqual(app.troops, 8)
 
@@ -619,7 +619,7 @@ class majorJihadChoice(unittest.TestCase):
 		app.map["Gulf States"].governance = 3
 		app.map["Gulf States"].sleeperCells = 5
 		app.map["Gulf States"].activeCells = 4
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		self.assertEqual(app.majorJihadChoice(3), "Gulf States")	# 3 Ops
 		self.assertEqual(app.majorJihadChoice(2), "Gulf States")	# 2 Ops
@@ -649,12 +649,12 @@ class majorJihadChoice(unittest.TestCase):
 		app.map["Gulf States"].governance = 3
 		app.map["Gulf States"].sleeperCells = 5
 		app.map["Gulf States"].activeCells = 4
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Afghanistan"].governance = 3
 		app.map["Afghanistan"].sleeperCells = 3
 		app.map["Afghanistan"].activeCells = 3
-		app.map["Afghanistan"].troops = 1
+		app.map["Afghanistan"].troopCubes = 1
 		app.map["Afghanistan"].besieged = 0
 
 		self.assertEqual(app.majorJihadChoice(3), "Gulf States")	# 3 Ops
@@ -664,7 +664,7 @@ class majorJihadChoice(unittest.TestCase):
 		app.map["Saudi Arabia"].governance = 3
 		app.map["Saudi Arabia"].sleeperCells = 5
 		app.map["Saudi Arabia"].activeCells = 4
-		app.map["Saudi Arabia"].troops = 4
+		app.map["Saudi Arabia"].troopCubes = 4
 		app.map["Saudi Arabia"].besieged = 0
 
 		self.assertTrue(app.majorJihadChoice(3) in ["Gulf States", "Saudi Arabia"])	# 3 Ops
@@ -681,7 +681,7 @@ class majorJihadChoice(unittest.TestCase):
 		app.map["Pakistan"].governance = 3
 		app.map["Pakistan"].sleeperCells = 5
 		app.map["Pakistan"].activeCells = 4
-		app.map["Pakistan"].troops = 4
+		app.map["Pakistan"].troopCubes = 4
 		app.map["Pakistan"].besieged = 0
 
 		self.assertEqual(app.majorJihadChoice(3), "Pakistan")	# 3 Ops
@@ -698,7 +698,7 @@ class handleJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 3
 		app.map["Gulf States"].sleeperCells = 5
 		app.map["Gulf States"].activeCells = 4
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -710,7 +710,7 @@ class handleJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 3
 		app.map["Gulf States"].sleeperCells = 5
 		app.map["Gulf States"].activeCells = 4
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -722,7 +722,7 @@ class handleJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 3
 		app.map["Gulf States"].sleeperCells = 5
 		app.map["Gulf States"].activeCells = 4
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -735,7 +735,7 @@ class handleJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 3
 		app.map["Gulf States"].sleeperCells = 0
 		app.map["Gulf States"].activeCells = 1
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -747,7 +747,7 @@ class handleJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 3
 		app.map["Gulf States"].sleeperCells = 0
 		app.map["Gulf States"].activeCells = 1
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -758,7 +758,7 @@ class handleJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 3
 		app.map["Gulf States"].sleeperCells = 0
 		app.map["Gulf States"].activeCells = 1
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -771,7 +771,7 @@ class handleJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 3
 		app.map["Gulf States"].sleeperCells = 0
 		app.map["Gulf States"].activeCells = 2
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -783,7 +783,7 @@ class handleJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 3
 		app.map["Gulf States"].sleeperCells = 0
 		app.map["Gulf States"].activeCells = 2
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -794,7 +794,7 @@ class handleJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 3
 		app.map["Gulf States"].sleeperCells = 0
 		app.map["Gulf States"].activeCells = 2
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -807,7 +807,7 @@ class handleJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 3
 		app.map["Gulf States"].sleeperCells = 1
 		app.map["Gulf States"].activeCells = 2
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -819,7 +819,7 @@ class handleJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 3
 		app.map["Gulf States"].sleeperCells = 1
 		app.map["Gulf States"].activeCells = 2
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -830,7 +830,7 @@ class handleJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 3
 		app.map["Gulf States"].sleeperCells = 1
 		app.map["Gulf States"].activeCells = 2
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -869,7 +869,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 3
 		app.map["Gulf States"].sleeperCells = 5
 		app.map["Gulf States"].activeCells = 4
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -889,7 +889,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 3
 		app.map["Gulf States"].sleeperCells = 5
 		app.map["Gulf States"].activeCells = 4
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -909,7 +909,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 3
 		app.map["Gulf States"].sleeperCells = 5
 		app.map["Gulf States"].activeCells = 4
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -929,7 +929,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 3
 		app.map["Gulf States"].sleeperCells = 5
 		app.map["Gulf States"].activeCells = 4
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -949,7 +949,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 3
 		app.map["Gulf States"].sleeperCells = 5
 		app.map["Gulf States"].activeCells = 4
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -969,7 +969,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 3
 		app.map["Gulf States"].sleeperCells = 5
 		app.map["Gulf States"].activeCells = 4
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -989,7 +989,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 3
 		app.map["Gulf States"].sleeperCells = 5
 		app.map["Gulf States"].activeCells = 4
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -1010,7 +1010,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 3
 		app.map["Gulf States"].sleeperCells = 5
 		app.map["Gulf States"].activeCells = 4
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -1031,7 +1031,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 3
 		app.map["Gulf States"].sleeperCells = 5
 		app.map["Gulf States"].activeCells = 4
-		app.map["Gulf States"].troops = 0
+		app.map["Gulf States"].troopCubes = 0
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -1052,7 +1052,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 3
 		app.map["Gulf States"].sleeperCells = 5
 		app.map["Gulf States"].activeCells = 4
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -1073,7 +1073,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 3
 		app.map["Gulf States"].sleeperCells = 5
 		app.map["Gulf States"].activeCells = 4
-		app.map["Gulf States"].troops = 0
+		app.map["Gulf States"].troopCubes = 0
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -1096,7 +1096,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 3
 		app.map["Gulf States"].sleeperCells = 5
 		app.map["Gulf States"].activeCells = 4
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 1
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -1116,7 +1116,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 3
 		app.map["Gulf States"].sleeperCells = 5
 		app.map["Gulf States"].activeCells = 4
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 1
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -1136,7 +1136,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 3
 		app.map["Gulf States"].sleeperCells = 5
 		app.map["Gulf States"].activeCells = 4
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 1
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -1156,7 +1156,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 3
 		app.map["Gulf States"].sleeperCells = 5
 		app.map["Gulf States"].activeCells = 4
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 1
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -1176,7 +1176,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 3
 		app.map["Gulf States"].sleeperCells = 5
 		app.map["Gulf States"].activeCells = 4
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 1
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -1196,7 +1196,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 3
 		app.map["Gulf States"].sleeperCells = 5
 		app.map["Gulf States"].activeCells = 4
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 1
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -1216,7 +1216,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 3
 		app.map["Gulf States"].sleeperCells = 5
 		app.map["Gulf States"].activeCells = 4
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 1
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -1236,7 +1236,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 3
 		app.map["Gulf States"].sleeperCells = 5
 		app.map["Gulf States"].activeCells = 4
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 1
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -1256,7 +1256,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 3
 		app.map["Gulf States"].sleeperCells = 5
 		app.map["Gulf States"].activeCells = 4
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 1
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -1279,7 +1279,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 2
 		app.map["Gulf States"].sleeperCells = 5
 		app.map["Gulf States"].activeCells = 4
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -1299,7 +1299,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 2
 		app.map["Gulf States"].sleeperCells = 5
 		app.map["Gulf States"].activeCells = 4
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -1319,7 +1319,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 2
 		app.map["Gulf States"].sleeperCells = 5
 		app.map["Gulf States"].activeCells = 4
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -1339,7 +1339,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 2
 		app.map["Gulf States"].sleeperCells = 5
 		app.map["Gulf States"].activeCells = 4
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -1359,7 +1359,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 2
 		app.map["Gulf States"].sleeperCells = 5
 		app.map["Gulf States"].activeCells = 4
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -1379,7 +1379,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 2
 		app.map["Gulf States"].sleeperCells = 5
 		app.map["Gulf States"].activeCells = 4
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -1399,7 +1399,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 2
 		app.map["Gulf States"].sleeperCells = 5
 		app.map["Gulf States"].activeCells = 4
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -1419,7 +1419,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 2
 		app.map["Gulf States"].sleeperCells = 5
 		app.map["Gulf States"].activeCells = 4
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -1440,7 +1440,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 2
 		app.map["Gulf States"].sleeperCells = 5
 		app.map["Gulf States"].activeCells = 4
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -1461,7 +1461,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 2
 		app.map["Gulf States"].sleeperCells = 5
 		app.map["Gulf States"].activeCells = 4
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -1482,7 +1482,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 2
 		app.map["Gulf States"].sleeperCells = 5
 		app.map["Gulf States"].activeCells = 4
-		app.map["Gulf States"].troops = 0
+		app.map["Gulf States"].troopCubes = 0
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -1506,7 +1506,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 2
 		app.map["Gulf States"].sleeperCells = 5
 		app.map["Gulf States"].activeCells = 4
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 1
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -1526,7 +1526,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 2
 		app.map["Gulf States"].sleeperCells = 5
 		app.map["Gulf States"].activeCells = 4
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 1
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -1546,7 +1546,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 2
 		app.map["Gulf States"].sleeperCells = 5
 		app.map["Gulf States"].activeCells = 4
-		app.map["Gulf States"].troops = 0
+		app.map["Gulf States"].troopCubes = 0
 		app.map["Gulf States"].besieged = 1
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -1566,7 +1566,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 2
 		app.map["Gulf States"].sleeperCells = 5
 		app.map["Gulf States"].activeCells = 4
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 1
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -1586,7 +1586,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 2
 		app.map["Gulf States"].sleeperCells = 5
 		app.map["Gulf States"].activeCells = 4
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 1
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -1606,7 +1606,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 2
 		app.map["Gulf States"].sleeperCells = 5
 		app.map["Gulf States"].activeCells = 4
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 1
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -1626,7 +1626,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 2
 		app.map["Gulf States"].sleeperCells = 5
 		app.map["Gulf States"].activeCells = 4
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 1
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -1646,7 +1646,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 2
 		app.map["Gulf States"].sleeperCells = 5
 		app.map["Gulf States"].activeCells = 4
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 1
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -1666,7 +1666,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 2
 		app.map["Gulf States"].sleeperCells = 5
 		app.map["Gulf States"].activeCells = 4
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 1
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -1689,7 +1689,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 1
 		app.map["Gulf States"].sleeperCells = 5
 		app.map["Gulf States"].activeCells = 4
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -1709,7 +1709,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 1
 		app.map["Gulf States"].sleeperCells = 5
 		app.map["Gulf States"].activeCells = 4
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -1729,7 +1729,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 1
 		app.map["Gulf States"].sleeperCells = 5
 		app.map["Gulf States"].activeCells = 4
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -1749,7 +1749,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 1
 		app.map["Gulf States"].sleeperCells = 5
 		app.map["Gulf States"].activeCells = 4
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -1769,7 +1769,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 1
 		app.map["Gulf States"].sleeperCells = 5
 		app.map["Gulf States"].activeCells = 4
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -1789,7 +1789,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 1
 		app.map["Gulf States"].sleeperCells = 5
 		app.map["Gulf States"].activeCells = 4
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -1809,7 +1809,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 1
 		app.map["Gulf States"].sleeperCells = 5
 		app.map["Gulf States"].activeCells = 4
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -1829,7 +1829,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 1
 		app.map["Gulf States"].sleeperCells = 5
 		app.map["Gulf States"].activeCells = 4
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -1849,7 +1849,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 1
 		app.map["Gulf States"].sleeperCells = 5
 		app.map["Gulf States"].activeCells = 4
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -1869,7 +1869,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 1
 		app.map["Gulf States"].sleeperCells = 5
 		app.map["Gulf States"].activeCells = 4
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -1893,7 +1893,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 1
 		app.map["Gulf States"].sleeperCells = 5
 		app.map["Gulf States"].activeCells = 4
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 1
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -1913,7 +1913,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 1
 		app.map["Gulf States"].sleeperCells = 5
 		app.map["Gulf States"].activeCells = 4
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 1
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -1933,7 +1933,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 1
 		app.map["Gulf States"].sleeperCells = 5
 		app.map["Gulf States"].activeCells = 4
-		app.map["Gulf States"].troops = 0
+		app.map["Gulf States"].troopCubes = 0
 		app.map["Gulf States"].besieged = 1
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -1953,7 +1953,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 1
 		app.map["Gulf States"].sleeperCells = 5
 		app.map["Gulf States"].activeCells = 4
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 1
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -1973,7 +1973,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 1
 		app.map["Gulf States"].sleeperCells = 5
 		app.map["Gulf States"].activeCells = 4
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 1
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -1993,7 +1993,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 1
 		app.map["Gulf States"].sleeperCells = 5
 		app.map["Gulf States"].activeCells = 4
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 1
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -2013,7 +2013,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 1
 		app.map["Gulf States"].sleeperCells = 5
 		app.map["Gulf States"].activeCells = 4
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 1
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -2033,7 +2033,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 1
 		app.map["Gulf States"].sleeperCells = 5
 		app.map["Gulf States"].activeCells = 4
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 1
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -2053,7 +2053,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 1
 		app.map["Gulf States"].sleeperCells = 5
 		app.map["Gulf States"].activeCells = 4
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 1
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -2079,7 +2079,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 3
 		app.map["Gulf States"].sleeperCells = 1
 		app.map["Gulf States"].activeCells = 3
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -2099,7 +2099,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 3
 		app.map["Gulf States"].sleeperCells = 1
 		app.map["Gulf States"].activeCells = 3
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -2119,7 +2119,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 3
 		app.map["Gulf States"].sleeperCells = 1
 		app.map["Gulf States"].activeCells = 3
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -2139,7 +2139,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 3
 		app.map["Gulf States"].sleeperCells = 1
 		app.map["Gulf States"].activeCells = 3
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -2159,7 +2159,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 3
 		app.map["Gulf States"].sleeperCells = 1
 		app.map["Gulf States"].activeCells = 3
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -2179,7 +2179,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 3
 		app.map["Gulf States"].sleeperCells = 1
 		app.map["Gulf States"].activeCells = 3
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -2199,7 +2199,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 3
 		app.map["Gulf States"].sleeperCells = 1
 		app.map["Gulf States"].activeCells = 3
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -2220,7 +2220,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 3
 		app.map["Gulf States"].sleeperCells = 1
 		app.map["Gulf States"].activeCells = 3
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -2241,7 +2241,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 3
 		app.map["Gulf States"].sleeperCells = 1
 		app.map["Gulf States"].activeCells = 3
-		app.map["Gulf States"].troops = 0
+		app.map["Gulf States"].troopCubes = 0
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -2262,7 +2262,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 3
 		app.map["Gulf States"].sleeperCells = 1
 		app.map["Gulf States"].activeCells = 3
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -2283,7 +2283,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 3
 		app.map["Gulf States"].sleeperCells = 1
 		app.map["Gulf States"].activeCells = 3
-		app.map["Gulf States"].troops = 0
+		app.map["Gulf States"].troopCubes = 0
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -2306,7 +2306,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 3
 		app.map["Gulf States"].sleeperCells = 1
 		app.map["Gulf States"].activeCells = 3
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 1
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -2326,7 +2326,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 3
 		app.map["Gulf States"].sleeperCells = 1
 		app.map["Gulf States"].activeCells = 3
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 1
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -2346,7 +2346,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 3
 		app.map["Gulf States"].sleeperCells = 1
 		app.map["Gulf States"].activeCells = 3
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 1
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -2366,7 +2366,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 3
 		app.map["Gulf States"].sleeperCells = 1
 		app.map["Gulf States"].activeCells = 3
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 1
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -2386,7 +2386,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 3
 		app.map["Gulf States"].sleeperCells = 1
 		app.map["Gulf States"].activeCells = 3
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 1
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -2406,7 +2406,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 3
 		app.map["Gulf States"].sleeperCells = 1
 		app.map["Gulf States"].activeCells = 3
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 1
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -2426,7 +2426,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 3
 		app.map["Gulf States"].sleeperCells = 1
 		app.map["Gulf States"].activeCells = 3
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 1
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -2446,7 +2446,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 3
 		app.map["Gulf States"].sleeperCells = 1
 		app.map["Gulf States"].activeCells = 3
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 1
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -2466,7 +2466,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 3
 		app.map["Gulf States"].sleeperCells = 1
 		app.map["Gulf States"].activeCells = 3
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 1
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -2489,7 +2489,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 2
 		app.map["Gulf States"].sleeperCells = 1
 		app.map["Gulf States"].activeCells = 3
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -2509,7 +2509,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 2
 		app.map["Gulf States"].sleeperCells = 1
 		app.map["Gulf States"].activeCells = 3
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -2529,7 +2529,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 2
 		app.map["Gulf States"].sleeperCells = 1
 		app.map["Gulf States"].activeCells = 3
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -2549,7 +2549,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 2
 		app.map["Gulf States"].sleeperCells = 1
 		app.map["Gulf States"].activeCells = 3
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -2569,7 +2569,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 2
 		app.map["Gulf States"].sleeperCells = 1
 		app.map["Gulf States"].activeCells = 3
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -2589,7 +2589,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 2
 		app.map["Gulf States"].sleeperCells = 1
 		app.map["Gulf States"].activeCells = 3
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -2609,7 +2609,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 2
 		app.map["Gulf States"].sleeperCells = 1
 		app.map["Gulf States"].activeCells = 3
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -2629,7 +2629,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 2
 		app.map["Gulf States"].sleeperCells = 1
 		app.map["Gulf States"].activeCells = 3
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -2650,7 +2650,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 2
 		app.map["Gulf States"].sleeperCells = 1
 		app.map["Gulf States"].activeCells = 3
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -2671,7 +2671,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 2
 		app.map["Gulf States"].sleeperCells = 1
 		app.map["Gulf States"].activeCells = 3
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -2692,7 +2692,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 2
 		app.map["Gulf States"].sleeperCells = 1
 		app.map["Gulf States"].activeCells = 3
-		app.map["Gulf States"].troops = 0
+		app.map["Gulf States"].troopCubes = 0
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -2716,7 +2716,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 2
 		app.map["Gulf States"].sleeperCells = 1
 		app.map["Gulf States"].activeCells = 3
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 1
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -2736,7 +2736,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 2
 		app.map["Gulf States"].sleeperCells = 1
 		app.map["Gulf States"].activeCells = 3
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 1
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -2756,7 +2756,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 2
 		app.map["Gulf States"].sleeperCells = 1
 		app.map["Gulf States"].activeCells = 3
-		app.map["Gulf States"].troops = 0
+		app.map["Gulf States"].troopCubes = 0
 		app.map["Gulf States"].besieged = 1
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -2776,7 +2776,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 2
 		app.map["Gulf States"].sleeperCells = 1
 		app.map["Gulf States"].activeCells = 3
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 1
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -2796,7 +2796,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 2
 		app.map["Gulf States"].sleeperCells = 1
 		app.map["Gulf States"].activeCells = 3
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 1
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -2816,7 +2816,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 2
 		app.map["Gulf States"].sleeperCells = 1
 		app.map["Gulf States"].activeCells = 3
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 1
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -2836,7 +2836,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 2
 		app.map["Gulf States"].sleeperCells = 1
 		app.map["Gulf States"].activeCells = 3
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 1
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -2856,7 +2856,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 2
 		app.map["Gulf States"].sleeperCells = 1
 		app.map["Gulf States"].activeCells = 3
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 1
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -2876,7 +2876,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 2
 		app.map["Gulf States"].sleeperCells = 1
 		app.map["Gulf States"].activeCells = 3
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 1
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -2899,7 +2899,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 1
 		app.map["Gulf States"].sleeperCells = 1
 		app.map["Gulf States"].activeCells = 3
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -2919,7 +2919,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 1
 		app.map["Gulf States"].sleeperCells = 1
 		app.map["Gulf States"].activeCells = 3
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -2939,7 +2939,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 1
 		app.map["Gulf States"].sleeperCells = 1
 		app.map["Gulf States"].activeCells = 3
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -2959,7 +2959,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 1
 		app.map["Gulf States"].sleeperCells = 1
 		app.map["Gulf States"].activeCells = 3
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -2979,7 +2979,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 1
 		app.map["Gulf States"].sleeperCells = 1
 		app.map["Gulf States"].activeCells = 3
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -2999,7 +2999,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 1
 		app.map["Gulf States"].sleeperCells = 1
 		app.map["Gulf States"].activeCells = 3
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -3019,7 +3019,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 1
 		app.map["Gulf States"].sleeperCells = 1
 		app.map["Gulf States"].activeCells = 3
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -3039,7 +3039,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 1
 		app.map["Gulf States"].sleeperCells = 1
 		app.map["Gulf States"].activeCells = 3
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -3059,7 +3059,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 1
 		app.map["Gulf States"].sleeperCells = 1
 		app.map["Gulf States"].activeCells = 3
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -3079,7 +3079,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 1
 		app.map["Gulf States"].sleeperCells = 1
 		app.map["Gulf States"].activeCells = 3
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -3103,7 +3103,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 1
 		app.map["Gulf States"].sleeperCells = 1
 		app.map["Gulf States"].activeCells = 3
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 1
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -3123,7 +3123,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 1
 		app.map["Gulf States"].sleeperCells = 1
 		app.map["Gulf States"].activeCells = 3
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 1
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -3143,7 +3143,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 1
 		app.map["Gulf States"].sleeperCells = 1
 		app.map["Gulf States"].activeCells = 3
-		app.map["Gulf States"].troops = 0
+		app.map["Gulf States"].troopCubes = 0
 		app.map["Gulf States"].besieged = 1
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -3163,7 +3163,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 1
 		app.map["Gulf States"].sleeperCells = 1
 		app.map["Gulf States"].activeCells = 3
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 1
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -3183,7 +3183,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 1
 		app.map["Gulf States"].sleeperCells = 1
 		app.map["Gulf States"].activeCells = 3
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 1
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -3203,7 +3203,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 1
 		app.map["Gulf States"].sleeperCells = 1
 		app.map["Gulf States"].activeCells = 3
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 1
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -3223,7 +3223,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 1
 		app.map["Gulf States"].sleeperCells = 1
 		app.map["Gulf States"].activeCells = 3
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 1
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -3243,7 +3243,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 1
 		app.map["Gulf States"].sleeperCells = 1
 		app.map["Gulf States"].activeCells = 3
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 1
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -3263,7 +3263,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 1
 		app.map["Gulf States"].sleeperCells = 1
 		app.map["Gulf States"].activeCells = 3
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 1
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -3286,7 +3286,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 3
 		app.map["Gulf States"].sleeperCells = 1
 		app.map["Gulf States"].activeCells = 0
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -3306,7 +3306,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 3
 		app.map["Gulf States"].sleeperCells = 1
 		app.map["Gulf States"].activeCells = 0
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -3327,7 +3327,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 3
 		app.map["Gulf States"].sleeperCells = 2
 		app.map["Gulf States"].activeCells = 0
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -3347,7 +3347,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 3
 		app.map["Gulf States"].sleeperCells = 2
 		app.map["Gulf States"].activeCells = 0
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -3367,7 +3367,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 3
 		app.map["Gulf States"].sleeperCells = 2
 		app.map["Gulf States"].activeCells = 0
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -3387,7 +3387,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 3
 		app.map["Gulf States"].sleeperCells = 2
 		app.map["Gulf States"].activeCells = 0
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -3407,7 +3407,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 3
 		app.map["Gulf States"].sleeperCells = 2
 		app.map["Gulf States"].activeCells = 0
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -3428,7 +3428,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 3
 		app.map["Gulf States"].sleeperCells = 0
 		app.map["Gulf States"].activeCells = 2
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -3448,7 +3448,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 3
 		app.map["Gulf States"].sleeperCells = 0
 		app.map["Gulf States"].activeCells = 2
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -3468,7 +3468,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 3
 		app.map["Gulf States"].sleeperCells = 0
 		app.map["Gulf States"].activeCells = 2
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -3488,7 +3488,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 3
 		app.map["Gulf States"].sleeperCells = 0
 		app.map["Gulf States"].activeCells = 2
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -3508,7 +3508,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 3
 		app.map["Gulf States"].sleeperCells = 0
 		app.map["Gulf States"].activeCells = 2
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -3529,7 +3529,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 3
 		app.map["Gulf States"].sleeperCells = 1
 		app.map["Gulf States"].activeCells = 1
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -3549,7 +3549,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 3
 		app.map["Gulf States"].sleeperCells = 1
 		app.map["Gulf States"].activeCells = 1
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -3569,7 +3569,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 3
 		app.map["Gulf States"].sleeperCells = 1
 		app.map["Gulf States"].activeCells = 1
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -3589,7 +3589,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 3
 		app.map["Gulf States"].sleeperCells = 1
 		app.map["Gulf States"].activeCells = 1
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -3609,7 +3609,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 3
 		app.map["Gulf States"].sleeperCells = 1
 		app.map["Gulf States"].activeCells = 1
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -3630,7 +3630,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 3
 		app.map["Gulf States"].sleeperCells = 3
 		app.map["Gulf States"].activeCells = 0
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -3650,7 +3650,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 3
 		app.map["Gulf States"].sleeperCells = 3
 		app.map["Gulf States"].activeCells = 0
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -3670,7 +3670,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 3
 		app.map["Gulf States"].sleeperCells = 3
 		app.map["Gulf States"].activeCells = 0
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -3690,7 +3690,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 3
 		app.map["Gulf States"].sleeperCells = 3
 		app.map["Gulf States"].activeCells = 0
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -3710,7 +3710,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 3
 		app.map["Gulf States"].sleeperCells = 3
 		app.map["Gulf States"].activeCells = 0
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -3730,7 +3730,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 3
 		app.map["Gulf States"].sleeperCells = 3
 		app.map["Gulf States"].activeCells = 0
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -3750,7 +3750,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 3
 		app.map["Gulf States"].sleeperCells = 3
 		app.map["Gulf States"].activeCells = 0
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -3770,7 +3770,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 3
 		app.map["Gulf States"].sleeperCells = 3
 		app.map["Gulf States"].activeCells = 0
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -3790,7 +3790,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 3
 		app.map["Gulf States"].sleeperCells = 3
 		app.map["Gulf States"].activeCells = 0
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -3811,7 +3811,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 3
 		app.map["Gulf States"].sleeperCells = 2
 		app.map["Gulf States"].activeCells = 1
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -3831,7 +3831,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 3
 		app.map["Gulf States"].sleeperCells = 2
 		app.map["Gulf States"].activeCells = 1
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -3851,7 +3851,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 3
 		app.map["Gulf States"].sleeperCells = 2
 		app.map["Gulf States"].activeCells = 1
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -3871,7 +3871,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 3
 		app.map["Gulf States"].sleeperCells = 2
 		app.map["Gulf States"].activeCells = 1
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -3891,7 +3891,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 3
 		app.map["Gulf States"].sleeperCells = 2
 		app.map["Gulf States"].activeCells = 1
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -3911,7 +3911,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 3
 		app.map["Gulf States"].sleeperCells = 2
 		app.map["Gulf States"].activeCells = 1
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -3931,7 +3931,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 3
 		app.map["Gulf States"].sleeperCells = 2
 		app.map["Gulf States"].activeCells = 1
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -3951,7 +3951,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 3
 		app.map["Gulf States"].sleeperCells = 2
 		app.map["Gulf States"].activeCells = 1
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -3971,7 +3971,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 3
 		app.map["Gulf States"].sleeperCells = 2
 		app.map["Gulf States"].activeCells = 1
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -3992,7 +3992,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 3
 		app.map["Gulf States"].sleeperCells = 1
 		app.map["Gulf States"].activeCells = 2
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -4012,7 +4012,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 3
 		app.map["Gulf States"].sleeperCells = 1
 		app.map["Gulf States"].activeCells = 2
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -4032,7 +4032,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 3
 		app.map["Gulf States"].sleeperCells = 1
 		app.map["Gulf States"].activeCells = 2
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -4052,7 +4052,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 3
 		app.map["Gulf States"].sleeperCells = 1
 		app.map["Gulf States"].activeCells = 2
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -4072,7 +4072,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 3
 		app.map["Gulf States"].sleeperCells = 1
 		app.map["Gulf States"].activeCells = 2
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -4092,7 +4092,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 3
 		app.map["Gulf States"].sleeperCells = 1
 		app.map["Gulf States"].activeCells = 2
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -4112,7 +4112,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 3
 		app.map["Gulf States"].sleeperCells = 1
 		app.map["Gulf States"].activeCells = 2
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -4132,7 +4132,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 3
 		app.map["Gulf States"].sleeperCells = 1
 		app.map["Gulf States"].activeCells = 2
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -4152,7 +4152,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 3
 		app.map["Gulf States"].sleeperCells = 1
 		app.map["Gulf States"].activeCells = 2
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -4173,7 +4173,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 3
 		app.map["Gulf States"].sleeperCells = 0
 		app.map["Gulf States"].activeCells = 3
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -4193,7 +4193,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 3
 		app.map["Gulf States"].sleeperCells = 0
 		app.map["Gulf States"].activeCells = 3
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -4213,7 +4213,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 3
 		app.map["Gulf States"].sleeperCells = 0
 		app.map["Gulf States"].activeCells = 3
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -4233,7 +4233,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 3
 		app.map["Gulf States"].sleeperCells = 0
 		app.map["Gulf States"].activeCells = 3
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -4253,7 +4253,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 3
 		app.map["Gulf States"].sleeperCells = 0
 		app.map["Gulf States"].activeCells = 3
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -4273,7 +4273,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 3
 		app.map["Gulf States"].sleeperCells = 0
 		app.map["Gulf States"].activeCells = 3
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -4293,7 +4293,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 3
 		app.map["Gulf States"].sleeperCells = 0
 		app.map["Gulf States"].activeCells = 3
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -4313,7 +4313,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 3
 		app.map["Gulf States"].sleeperCells = 0
 		app.map["Gulf States"].activeCells = 3
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -4333,7 +4333,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].governance = 3
 		app.map["Gulf States"].sleeperCells = 0
 		app.map["Gulf States"].activeCells = 3
-		app.map["Gulf States"].troops = 4
+		app.map["Gulf States"].troopCubes = 4
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
@@ -4746,7 +4746,7 @@ class recruit(unittest.TestCase):
 		app.map["Iraq"].activeCells = 0
 		app.map["Iraq"].cadre = 1
 		self.assertEqual(app.recruitChoice(), "Gulf States")
-		app.map["Iraq"].troops = 2
+		app.map["Iraq"].troopCubes = 2
 		self.assertEqual(app.recruitChoice(), "Iraq")
 		app.map["Gulf States"].besieged = 1
 		self.assertEqual(app.recruitChoice(), "Gulf States")
@@ -4761,9 +4761,9 @@ class recruit(unittest.TestCase):
 		self.assertEqual(app.recruitChoice(), "Iraq")
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].activeCells = 1
-		app.map["Gulf States"].troops = 5
+		app.map["Gulf States"].troopCubes = 5
 		self.assertEqual(app.recruitChoice(), "Iraq")
-		app.map["Gulf States"].troops = 6
+		app.map["Gulf States"].troopCubes = 6
 		self.assertEqual(app.recruitChoice(), "Gulf States")
 		
 	def testExecuteRecruit(self):
@@ -5376,7 +5376,7 @@ class travel(unittest.TestCase):
 		app = Labyrinth(1, 1, testBlankScenarioSetup)
 
 		app.map["Afghanistan"].governance = 3
-		app.map["Afghanistan"].troops = 1
+		app.map["Afghanistan"].troopCubes = 1
 		app.map["Afghanistan"].sleeperCells = 4
 		dest = app.travelDestinations(1)
 		self.assertEqual(dest,["Afghanistan"])
@@ -5446,7 +5446,7 @@ class travel(unittest.TestCase):
 		self.assertEqual(dest,["Gulf States"])
 		
 		app.map["Afghanistan"].governance = 3
-		app.map["Afghanistan"].troops = 1
+		app.map["Afghanistan"].troopCubes = 1
 		app.map["Afghanistan"].sleeperCells = 4
 		dest = app.travelDestinations(2)
 		self.assertEqual(dest,["Gulf States", "Afghanistan"])
@@ -5535,7 +5535,7 @@ class travel(unittest.TestCase):
 		app.map["Egypt"].governance = 2
 		app.map["Egypt"].activeCells = 1
 		app.map["Egypt"].regimeChange = 1
-		app.map["Egypt"].troops = 2
+		app.map["Egypt"].troopCubes = 2
 		sources = app.travelSources(dest, 1)
 		self.assertEqual(sources,["Iraq"])
 		app.map["Egypt"].activeCells = 3
@@ -5544,7 +5544,7 @@ class travel(unittest.TestCase):
 		
 		app.map["Yemen"].governance = 4
 		app.map["Yemen"].activeCells = 3
-		app.map["Yemen"].troops = 2
+		app.map["Yemen"].troopCubes = 2
 		sources = app.travelSources(dest, 3)
 		self.assertEqual(sources,["Egypt"])
 		sources = app.travelSources(dest, 2)
@@ -5558,7 +5558,7 @@ class travel(unittest.TestCase):
 		app.map["Gulf States"].besieged = 1
 		
 		app.map["Afghanistan"].governance = 3
-		app.map["Afghanistan"].troops = 1
+		app.map["Afghanistan"].troopCubes = 1
 		app.map["Afghanistan"].sleeperCells = 4
 
 		app.map["Jordan"].governance = 2
@@ -5575,12 +5575,12 @@ class travel(unittest.TestCase):
 		
 		app.map["Egypt"].governance = 2
 		app.map["Egypt"].regimeChange = 1
-		app.map["Egypt"].troops = 2
+		app.map["Egypt"].troopCubes = 2
 		app.map["Egypt"].activeCells = 3
 		
 		app.map["Yemen"].governance = 4
 		app.map["Yemen"].activeCells = 4
-		app.map["Yemen"].troops = 2
+		app.map["Yemen"].troopCubes = 2
 		sources = app.travelSources(dest, 3)
 		self.assertEqual(sources,["Yemen", "Egypt", "Iraq"])
 		
@@ -5600,7 +5600,7 @@ class travel(unittest.TestCase):
 
 		app.map["Iraq"].governance = 2
 		app.map["Iraq"].regimeChange = 1
-		app.map["Iraq"].troops = 2
+		app.map["Iraq"].troopCubes = 2
 		app.map["Iraq"].activeCells = 4
 		app.map["Egypt"].activeCells = 0
 		app.map["Egypt"].sleeperCells = 4
@@ -5744,7 +5744,7 @@ class resolvePlot(unittest.TestCase):
 		app.map["Iraq"].governance = 3
 		app.map["Iraq"].aid = 0
 		app.map["Iraq"].plots = 1
-		app.map["Iraq"].troops = 1
+		app.map["Iraq"].troopCubes = 1
 		app.resolvePlot("Iraq", 3, 0, [], [], [], [3,3,3])
 		self.assertEqual(app.funding, 6)
 		self.assertEqual(app.map["Iraq"].governance, 3)
@@ -5756,7 +5756,7 @@ class resolvePlot(unittest.TestCase):
 		app.map["Iraq"].governance = 3
 		app.map["Iraq"].aid = 0
 		app.map["Iraq"].plots = 1
-		app.map["Iraq"].troops = 1
+		app.map["Iraq"].troopCubes = 1
 		app.resolvePlot("Iraq", "WMD", 0, [], [], [], [3,3,3])
 		self.assertEqual(app.funding, 6)
 		self.assertEqual(app.map["Iraq"].governance, 3)
@@ -5862,7 +5862,7 @@ class resolvePlot(unittest.TestCase):
 		app.map["Iraq"].governance = 3
 		app.map["Iraq"].aid = 0
 		app.map["Iraq"].plots = 1
-		app.map["Iraq"].troops = 1
+		app.map["Iraq"].troopCubes = 1
 		app.resolvePlot("Iraq", 3, 0, [], [], [], [3,3,3], True)
 		self.assertEqual(app.funding, 4)
 		self.assertEqual(app.map["Iraq"].governance, 3)
@@ -5874,7 +5874,7 @@ class resolvePlot(unittest.TestCase):
 		app.map["Iraq"].governance = 3
 		app.map["Iraq"].aid = 0
 		app.map["Iraq"].plots = 1
-		app.map["Iraq"].troops = 1
+		app.map["Iraq"].troopCubes = 1
 		app.resolvePlot("Iraq", "WMD", 0, [], [], [], [3,3,3], True)
 		self.assertEqual(app.funding, 1)
 		self.assertEqual(app.map["Iraq"].governance, 3)
@@ -6139,9 +6139,9 @@ class placePlots(unittest.TestCase):
 		app.map["Iraq"].governance = 2
 		app.map["Iraq"].sleeperCells = 1
 		app.map["Iraq"].aid = 1
-		app.map["Iraq"].troops = 1
+		app.map["Iraq"].troopCubes = 1
 		app.map["Philippines"].sleeperCells = 1
-		app.map["Philippines"].troops = 1
+		app.map["Philippines"].troopCubes = 1
 		unusedOps = app.executePlot(1, True, [1])
 		self.assertEqual(unusedOps, 0)
 		self.assertEqual(app.map["Israel"].activeCells, 0)
@@ -6427,12 +6427,12 @@ class card8and9and10(unittest.TestCase):
 		self.assertFalse(app.deck["8"].playable("US", app))
 		self.assertFalse(app.deck["9"].playable("US", app))
 		self.assertFalse(app.deck["10"].playable("US", app))
-		app.map["Iran"].troops = 1
+		app.map["Iran"].troopCubes = 1
 		self.assertTrue(app.deck["8"].playable("US", app))
 		self.assertTrue(app.deck["9"].playable("US", app))
 		self.assertTrue(app.deck["10"].playable("US", app))
-		app.map["Iran"].troops = 0
-		app.map["Iraq"].troops = 1
+		app.map["Iran"].troopCubes = 0
+		app.map["Iraq"].troopCubes = 1
 		self.assertTrue(app.deck["8"].playable("US", app))
 		self.assertTrue(app.deck["9"].playable("US", app))
 		self.assertTrue(app.deck["10"].playable("US", app))
@@ -6441,7 +6441,7 @@ class card8and9and10(unittest.TestCase):
 		app = Labyrinth(1, 1, testBlankScenarioSetup)
 		app.listCountriesWithCellAndAdjacentTroops()
 		app.map["Iran"].sleeperCells = 1
-		app.map["Iraq"].troops = 1
+		app.map["Iraq"].troopCubes = 1
 		app.listCountriesWithCellAndAdjacentTroops()
 
 class card11(unittest.TestCase):
@@ -6509,23 +6509,23 @@ class card13(unittest.TestCase):
 	def testPlayable(self):
 		app = Labyrinth(1, 1, testBlankScenarioSetup)
 		self.assertFalse(app.deck["13"].playable("US", app))
-		app.map["Iraq"].troops = 1
+		app.map["Iraq"].troopCubes = 1
 		self.assertTrue(app.deck["13"].playable("US", app))
-		app.map["Iraq"].troops = 0
-		app.map["Syria"].troops = 1
+		app.map["Iraq"].troopCubes = 0
+		app.map["Syria"].troopCubes = 1
 		self.assertTrue(app.deck["13"].playable("US", app))
-		app.map["Syria"].troops = 0
+		app.map["Syria"].troopCubes = 0
 		self.assertFalse(app.deck["13"].playable("US", app))
 
 	def testEvent(self):
 		app = Labyrinth(1, 1, testBlankScenarioSetup)
-		app.map["Iraq"].troops = 1
+		app.map["Iraq"].troopCubes = 1
 		app.deck["13"].playEvent("US", app)
 		self.assertTrue(app.map["Iraq"].aid > 0)
 		self.assertTrue("Anbar Awakening" in app.markers)
 		
 		app = Labyrinth(1, 1, testBlankScenarioSetup)
-		app.map["Syria"].troops = 1
+		app.map["Syria"].troopCubes = 1
 		app.deck["13"].playEvent("US", app)
 		self.assertTrue(app.map["Syria"].aid > 0)
 		self.assertTrue("Anbar Awakening" in app.markers)
@@ -6796,12 +6796,12 @@ class card27(unittest.TestCase):
 	def testPlayable(self):
 		app = Labyrinth(1, 1, testBlankScenarioSetup)
 		self.assertFalse(app.deck["27"].playable("US", app))
-		app.map["Iraq"].troops = 1
+		app.map["Iraq"].troopCubes = 1
 		self.assertTrue(app.deck["27"].playable("US", app))
 		
 	def testEvent(self):
  		app = Labyrinth(1, 1, testBlankScenarioSetup)
-		app.map["Iraq"].troops = 1
+		app.map["Iraq"].troopCubes = 1
 		app.deck["27"].playEvent("US", app)
 		self.assertTrue("Saddam Captured" in app.markers)
 		self.assertTrue(app.map["Iraq"].aid == 1)
@@ -7063,7 +7063,7 @@ class card34(unittest.TestCase):
 		app.map["Iraq"].cadre = 1
 		app.map["Iraq"].governance = 3
 		app.map["Iraq"].alignment = "Neutral"
-		app.map["Iraq"].troops = 2
+		app.map["Iraq"].troopCubes = 2
 		self.assertTrue(app.deck["34"].playable("US", app))
 		app.markers.append("Leak-Enhanced Measures")
 		self.assertFalse(app.deck["34"].playable("US", app))
@@ -7073,7 +7073,7 @@ class card34(unittest.TestCase):
 		app.map["Iraq"].cadre = 1
 		app.map["Iraq"].governance = 3
 		app.map["Iraq"].alignment = "Neutral"
-		app.map["Iraq"].troops = 2
+		app.map["Iraq"].troopCubes = 2
 		self.assertFalse(app.deck["34"].playable("US", app))
 		
 	def testEvent(self):
@@ -7081,11 +7081,11 @@ class card34(unittest.TestCase):
 # 		app.map["Iraq"].cadre = 1
 # 		app.map["Iraq"].governance = 3
 # 		app.map["Iraq"].alignment = "Neutral"
-# 		app.map["Iraq"].troops = 2
+# 		app.map["Iraq"].troopCubes = 2
 # 		app.map["Pakistan"].cadre = 1
 # 		app.map["Pakistan"].governance = 3
 # 		app.map["Pakistan"].alignment = "Neutral"
-# 		app.map["Pakistan"].troops = 2
+# 		app.map["Pakistan"].troopCubes = 2
 #  		app.deck["34"].playEvent("US", app)
 # 		self.assertTrue("Enhanced Measures" in app.markers)
 		
