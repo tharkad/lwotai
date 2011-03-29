@@ -48,12 +48,18 @@ class Country:
 		self.schengenLink = False
 		
 	def troops(self):
-		return self.troopCubes
+		troopCount = self.troopCubes
+		if "NATO" in self.markers:
+			troopCount += 2
+		return troopCount
 		
 	def changeTroops(self, delta):
 		self.troopCubes += delta
-		if self.troopCubes <= 0:
-			self.troopCubes == 0
+		if self.troopCubes < 0:
+			if "NATO" in self.markers:
+				self.markers.remove("NATO")
+				self.app.outputToHistory("NATO removed from %s" % self.name, True)
+			self.troopCubes = 0
 		
 	def govStr(self):
 		if self.governance == 1:
@@ -250,6 +256,12 @@ class Card:
 				return False
 			elif self.number == 40: # Mass Turnout
 				return app.numRegimeChange() > 0
+			elif self.number == 41: # NATO
+				return (app.numRegimeChange() > 0) and (app.gwotPenalty() >= 0)
+			elif self.number == 42: # Pakistani Offensive
+				return (app.map["Pakistan"].alignment == "Ally") and ("FATA" in app.map["Pakistan"].markers)
+			elif self.number == 43: # Patriot Act
+				return True
 			else:
 				return False
 		
@@ -763,6 +775,40 @@ class Card:
 				app.improveGovernance(target)
 				app.outputToHistory("%s Governance improved." % target, False)
 				app.outputToHistory(app.map[target].countryStr(), True)				
+			elif self.number == 41: # NATO
+				numRC = app.numRegimeChange()
+				target = ""
+				if numRC <= 0:
+					return False
+				elif numRC == 1:
+					for country in app.map:
+						if app.map[country].regimeChange > 0:
+							target = country
+							break
+				else:
+					while True:
+						input = app.getCountryFromUser("Choose a Regime Change Country to land NATO troops (? for list): ",  "XXX", app.listRegimeChangeCountries)	
+						if input == "":
+							print ""
+							return
+						else:
+							if app.map[input].regimeChange <= 0:
+								print "%s is not a Regime Change country." % input
+								print ""
+							else:
+								target = input
+								break			
+				app.map[target].markers.append("NATO")
+				app.outputToHistory("NATO added in %s" % target, False)
+				app.map[target].aid = 1
+				app.outputToHistory("Aid added in %s" % target, False)
+				app.outputToHistory(app.map[target].countryStr(), True)				
+			elif self.number == 42: # Pakistani Offensive
+				if "FATA" in app.map["Pakistan"].markers:
+					app.map["Pakistan"].markers.remove("FATA")
+					app.outputToHistory("FATA removed from Pakistan", True)
+			elif self.number == 43: # Patriot Act
+				app.markers.append("Patriot Act")
 			else:
 				return False
 		
@@ -1976,6 +2022,12 @@ class Labyrinth(cmd.Cmd):
 				return self.executeRecruit(country, ops, rolls)
 				
 	def isAdjacent(self, here, there):
+		if "Patriot Act" in self.markers:
+			if here == "United States" or there == "United States":
+				if here == "Canada" or there == "Canada":
+					return True
+				else:
+					return False
 		if self.map[here] in self.map[there].links:
 			return True
 		if self.map[here].schengen and self.map[there].schengen:
@@ -1987,14 +2039,10 @@ class Labyrinth(cmd.Cmd):
 		return False
 				
 	def adjacentCountryHasCell(self, targetCountry):
-		for adjacent in self.map[targetCountry].links:
-			if (adjacent.sleeperCells > 0) or (adjacent.activeCells > 0):
-				return True
-		if self.map[targetCountry].schengenLink:
-			for country in self.map:
-				if self.map[country].schengen:
-					if ((self.map[country].sleeperCells > 0) or (self.map[country].activeCells > 0)):
-						return True
+		for country in self.map:
+			if self.isAdjacent(targetCountry, country):
+				if (self.map[country].sleeperCells > 0) or (self.map[country].activeCells > 0):
+					return True
 		return False
 		
 	def travelDestinationChooseBasedOnPriority(self, countryList):
