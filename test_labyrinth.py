@@ -7331,6 +7331,69 @@ class card43(unittest.TestCase):
    		for country in app.map:
    			if app.map[country].schengen:
    				self.assertFalse(app.isAdjacent("United States", country))
-				
+
+class card44(unittest.TestCase):
+	'''Renditions'''
+	
+	def testPlayable(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		self.assertTrue(app.deck["44"].playable("US", app))
+		app.map["United States"].posture = "Soft"
+		self.assertFalse(app.deck["44"].playable("US", app))
+		
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		self.assertTrue(app.deck["44"].playable("US", app))
+		app.markers.append("Leak-Renditions")
+		self.assertFalse(app.deck["44"].playable("US", app))
+
+	def testEvent(self):
+ 		app = Labyrinth(1, 1, testBlankScenarioSetup)
+# 		app.map["Iraq"].cadre = 1
+# 		app.map["Iraq"].governance = 3
+# 		app.map["Iraq"].alignment = "Neutral"
+# 		app.map["Iraq"].troopCubes = 2
+# 		app.map["Pakistan"].cadre = 1
+# 		app.map["Pakistan"].governance = 3
+# 		app.map["Pakistan"].alignment = "Neutral"
+# 		app.map["Pakistan"].troopCubes = 2
+ 		app.deck["44"].playEvent("US", app)
+		self.assertTrue("Renditions" in app.markers)
+	
+class card45(unittest.TestCase):
+	'''Safer Now'''
+	
+	def testPlayable(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		self.assertTrue(app.deck["45"].playable("US", app))
+ 		app.map["Iraq"].governance = 4
+ 		app.map["Iraq"].alignment = "Adversary"
+		self.assertFalse(app.deck["45"].playable("US", app))
+
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		self.assertTrue(app.deck["45"].playable("US", app))
+ 		app.map["Iraq"].governance = 1
+ 		app.map["Iraq"].alignment = "Ally"
+		self.assertTrue(app.deck["45"].playable("US", app))
+ 		app.map["Iraq"].cadre = 1
+		self.assertTrue(app.deck["45"].playable("US", app))
+ 		app.map["Iraq"].plots = 1
+		self.assertFalse(app.deck["45"].playable("US", app))
+ 		app.map["Iraq"].plots = 0
+ 		app.map["Iraq"].cadre = 0
+ 		app.map["Iraq"].sleeperCells = 1
+		self.assertFalse(app.deck["45"].playable("US", app))
+ 		app.map["Iraq"].sleeperCells = 0
+ 		app.map["Iraq"].activeCells = 1
+		self.assertFalse(app.deck["45"].playable("US", app))	
+
+	def testEvent(self):
+ 		app = Labyrinth(1, 1, testBlankScenarioSetup)
+#  		print "Enter 4 for posture role, Spain and Hard"
+#  		app.deck["45"].playEvent("US", app)
+# 		self.assertTrue(app.map["United States"].posture == "Soft")
+# 		self.assertTrue(app.prestige == 10)
+# 		self.assertTrue(app.map["Spain"].posture == "Hard")
+ 		
+
 if __name__ == "__main__":
 	unittest.main()   

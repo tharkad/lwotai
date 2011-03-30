@@ -262,6 +262,16 @@ class Card:
 				return (app.map["Pakistan"].alignment == "Ally") and ("FATA" in app.map["Pakistan"].markers)
 			elif self.number == 43: # Patriot Act
 				return True
+			elif self.number == 44: # Renditions
+				return (app.map["United States"].posture == "Hard") and ("Leak-Renditions" not in app.markers)
+			elif self.number == 45: # Safer Now
+				if app.numIslamicRule() > 0:
+					return False
+				for country in app.map:
+					if app.map[country].governance == 1:
+						if app.map[country].activeCells > 0 or app.map[country].sleeperCells > 0 or app.map[country].plots > 0:
+							return False
+				return True
 			else:
 				return False
 		
@@ -809,6 +819,37 @@ class Card:
 					app.outputToHistory("FATA removed from Pakistan", True)
 			elif self.number == 43: # Patriot Act
 				app.markers.append("Patriot Act")
+			elif self.number == 44: # Renditions
+				app.markers.append("Renditions")
+				app.outputToHistory("Renditions in Play.", False)
+				app.outputToHistory("Discard a random card from the Jihadist hand.", False)
+				if app.numDisruptable() > 0:
+					app.do_disrupt("")
+				app.outputToHistory("", False)
+			elif self.number == 45: # Safer Now
+				app.changePrestige(3)
+				postureRoll = app.getRollFromUser("Enter US Posture Roll or r to have program roll: ")
+				if postureRoll <= 4:
+					app.map["United States"].posture = "Soft"
+					app.outputToHistory("US Posture now Soft.", False)
+				else:
+					app.map["United States"].posture = "Hard"
+					app.outputToHistory("US Posture now Hard.", False)
+				while True:
+					postureCountry = app.getCountryFromUser("Now choose a non-US country to set its Posture: ", "XXX", None)
+					if postureCountry == "":
+						print ""
+					else:
+						if postureCountry == "United States":
+							print "Choos a non-US country."
+							print ""
+						else:
+							postureStr = app.getPostureFromUser("What Posture should %s have (h or s)? " % postureCountry)
+							app.outputToHistory("%s Posture now %s" % (postureCountry, postureStr), False)
+							app.map[postureCountry].posture = postureStr
+							app.outputToHistory(app.map["United States"].countryStr(), False)				
+							app.outputToHistory(app.map[postureCountry].countryStr(), True)	
+							return True
 			else:
 				return False
 		
