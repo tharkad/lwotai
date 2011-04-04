@@ -7678,6 +7678,114 @@ class card56(unittest.TestCase):
 		self.assertTrue("Vieira de Mello Slain" in app.markers)
 		self.assertTrue(app.prestige == 6)
 		
+class card57(unittest.TestCase):
+	'''Abu Sayyaf'''
+	
+	def testPlayable(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		self.assertTrue(app.deck["57"].playable("Jihadist", app))	
+		app.markers.append("Moro Talks")
+		self.assertFalse(app.deck["57"].playable("Jihadist", app))	
+		
+	def testPutsCell(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		self.assertFalse(app.deck["57"].putsCell(app))			
+
+	def testEvent(self):
+ 		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		app.deck["57"].playEvent("Jihadist", app)
+		self.assertTrue("Abu Sayyaf" in app.markers)
+		app.testCountry("Philippines")
+		app.map["Philippines"].sleeperCells = 3
+		app.placePlots("Philippines", 0, [1,5,1])
+		self.assertTrue(app.prestige == 5)
+		
+class card58(unittest.TestCase):
+	'''Al-Anbar'''
+	
+	def testPlayable(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		self.assertTrue(app.deck["58"].playable("Jihadist", app))	
+		app.markers.append("Anbar Awakening")
+		self.assertFalse(app.deck["58"].playable("Jihadist", app))	
+		
+	def testPutsCell(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		self.assertTrue(app.deck["58"].putsCell(app))			
+
+	def testEvent(self):
+ 		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		app.deck["58"].playEvent("Jihadist", app)
+		self.assertTrue("Al-Anbar" in app.markers)
+		self.assertTrue(app.map["Iraq"].sleeperCells == 1)
+		app.testCountry("Iraq")
+		app.map["Iraq"].sleeperCells = 3
+		app.map["Iraq"].troopCubes = 3
+		app.handleDisrupt("Iraq")
+		self.assertTrue(app.map["Iraq"].sleeperCells == 2)
+		self.assertTrue(app.map["Iraq"].activeCells == 1)
+		
+ 		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		app.deck["58"].playEvent("Jihadist", app)
+		self.assertTrue("Al-Anbar" in app.markers)
+		app.testCountry("Syria")
+		app.map["Syria"].sleeperCells = 3
+		app.map["Syria"].troopCubes = 3
+		app.handleDisrupt("Syria")
+		self.assertTrue(app.map["Syria"].sleeperCells == 2)
+		self.assertTrue(app.map["Syria"].activeCells == 1)
+		
+ 		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		app.deck["58"].playEvent("Jihadist", app)
+		self.assertTrue("Al-Anbar" in app.markers)
+		app.testCountry("Afghanistan")
+		app.map["Afghanistan"].sleeperCells = 3
+		app.map["Afghanistan"].troopCubes = 3
+		app.handleDisrupt("Afghanistan")
+		self.assertTrue(app.map["Afghanistan"].sleeperCells == 1)
+		self.assertTrue(app.map["Afghanistan"].activeCells == 2)
+
+ 		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		app.deck["58"].playEvent("Jihadist", app)
+		self.assertTrue("Al-Anbar" in app.markers)
+		app.testCountry("Iraq")
+		app.map["Iraq"].cadre = 1
+		app.map["Iraq"].troopCubes = 3
+		app.handleDisrupt("Iraq")
+		self.assertTrue(app.map["Iraq"].cadre == 1)
+				
+class card59(unittest.TestCase):
+	'''Amerithrax'''
+	
+	def testPlayable(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		self.assertTrue(app.deck["59"].playable("Jihadist", app))	
+		
+	def testPutsCell(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		self.assertFalse(app.deck["59"].putsCell(app))			
+
+	def testEvent(self):
+ 		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		app.deck["59"].playEvent("Jihadist", app)
+
+class card60(unittest.TestCase):
+	'''Bhutto Shot'''
+	
+	def testPlayable(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		self.assertFalse(app.deck["60"].playable("Jihadist", app))
+		app.map["Pakistan"].sleeperCells = 1
+		self.assertTrue(app.deck["60"].playable("Jihadist", app))
+		
+	def testPutsCell(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		self.assertFalse(app.deck["60"].putsCell(app))			
+
+	def testEvent(self):
+ 		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		app.deck["60"].playEvent("Jihadist", app)
+		self.assertTrue("Bhutto Shot" in app.markers)
 
 if __name__ == "__main__":
 	unittest.main()   

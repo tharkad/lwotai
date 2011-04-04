@@ -335,6 +335,14 @@ class Card:
 					if app.map[country].regimeChange > 0 and app.map[country].totalCells() > 0:
 						return True
 				return False
+			elif self.number == 57: # Abu Sayyaf
+				return "Moro Talks" not in app.markers
+			elif self.number == 58: # Al-Anbar
+				return "Anbar Awakening" not in app.markers
+			elif self.number == 59: # Amerithrax
+				return True
+			elif self.number == 60: # Bhutto Shot
+				return app.map["Pakistan"].totalCells() > 0
 			elif self.number == 66: # Adam Gadahn
 				return True
 		else: # Unassociated Events
@@ -360,6 +368,14 @@ class Card:
 		elif self.number == 55: # Uyghur Jihad
 			return True
 		elif self.number == 56: # Vieira de Mello Slain
+			return False
+		elif self.number == 57: # Abu Sayyaf
+			return False
+		elif self.number == 58: # Al-Anbar
+			return True
+		elif self.number == 59: # Amerithrax
+			return False
+		elif self.number == 60: # Bhutto Shot
 			return False
 		return False
 	
@@ -1038,7 +1054,22 @@ class Card:
 				app.markers.append("Vieira de Mello Slain")
 				app.outputToHistory("Vieira de Mello Slain in play.", False)
 				app.changePrestige(-1)
-												
+			elif self.number == 57: # Abu Sayyaf
+				app.markers.append("Abu Sayyaf")
+			elif self.number == 58: # Al-Anbar
+				app.markers.append("Al-Anbar")
+				app.outputToHistory("Al-Anbar in play.", False)
+				app.testCountry("Iraq")
+				if app.cells > 0:
+					app.map["Iraq"].sleeperCells += 1
+					app.cells -= 1
+					app.outputToHistory("Sleeper Cell placed in Iraq", False)
+			elif self.number == 59: # Amerithrax
+				app.outputToHistory("US side discards its highest-value US-associated event card, if it has any.", True)
+			elif self.number == 60: # Bhutto Shot
+				app.markers.append("Bhutto Shot")
+				app.outputToHistory("Bhutto Shot in play.", False)
+									
 class Labyrinth(cmd.Cmd):
 
 	map = {}
@@ -1940,11 +1971,14 @@ class Labyrinth(cmd.Cmd):
 		
 	def handleDisrupt(self, where):
 		numToDisrupt = 1
-		if self.map[where].troops() >= 2 or self.map[where].posture == "Hard":
+		if "Al-Anbar" in self.markers and (where == "Iraq" or where == "Syria"):
+			numToDisrupt = 1
+		elif self.map[where].troops() >= 2 or self.map[where].posture == "Hard":
 			numToDisrupt = min(2, self.map[where].totalCells(False))
 		if self.map[where].totalCells(False) <= 0 and self.map[where].cadre > 0:
-			self.outputToHistory("* Cadre removed in %s" % where)
-			self.map[where].cadre = 0
+			if "Al-Anbar" not in self.markers:
+				self.outputToHistory("* Cadre removed in %s" % where)
+				self.map[where].cadre = 0
 		elif self.map[where].totalCells(False) <= numToDisrupt:
 			self.outputToHistory("* %d cell(s) disrupted in %s." % (self.map[where].totalCells(False), where), False)
 			if self.map[where].sleeperCells > 0:
@@ -2692,6 +2726,9 @@ class Labyrinth(cmd.Cmd):
 				self.map[country].activeCells += 1
 			self.map[country].plots += successes
 			self.outputToHistory("%d Plot(s) placed in %s." % (successes, country), False)
+			if "Abu Sayyaf" in self.markers and country == "Philippines" and self.map[country].troops() <= self.map[country].totalCells():
+				self.outputToHistory("Prestige loss due to Abu Sayyaf.", False)
+				self.changePrestige(-successes)
 			if "NEST" in self.markers and country == "Unites States":
 				self.outputToHistory("NEST in play. If jihadists have WMD, all plots in the US placed face up.", False)
 			self.outputToHistory(self.map[country].countryStr(), True)
@@ -3083,12 +3120,12 @@ class Labyrinth(cmd.Cmd):
 				print "%s: %d" % (country, self.map[country].troops())
 		print ""
 
-	def listMuslimAllies(self, na = None):
+	def listDeployOptions(self, na = None):
 		print ""
-		print "Muslim Allies"
-		print "-------------"
+		print "Deploy Options"
+		print "--------------"
 		for country in self.map:
-			if self.map[country].alignment == "Ally":
+			if self.map[country].alignment == "Ally" or ("Abu Sayyaf" in self.markers and country == "Philippines"):
 				print "%s: %d troops" % (country, self.map[country].troops())
 		print ""
 
@@ -3412,7 +3449,7 @@ class Labyrinth(cmd.Cmd):
 					moveFrom = input
 		moveTo = None
 		while not moveTo:
-			input = self.getCountryFromUser("To what country (track for Troop Track)  (? for list)?: ",  "track", self.listMuslimAllies)	
+			input = self.getCountryFromUser("To what country (track for Troop Track)  (? for list)?: ",  "track", self.listDeployOptions)	
 			if input == "":
 				print ""
 				return
@@ -3664,7 +3701,7 @@ class Labyrinth(cmd.Cmd):
 					print ""
 		moveTo = None
 		while not moveTo:
-			input = self.getCountryFromUser("To what country (track for Troop Track)  (? for list)?: ",  "track", self.listMuslimAllies)	
+			input = self.getCountryFromUser("To what country (track for Troop Track)  (? for list)?: ",  "track", self.listDeployOptions)	
 			if input == "":
 				print ""
 				return
