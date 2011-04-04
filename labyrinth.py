@@ -295,6 +295,14 @@ class Card:
 				return True
 			elif self.number == 50: # Ansar al-Islam
 				return app.map["Iraq"].governance > 1
+			elif self.number == 51: # FREs
+				return app.map["Iraq"].troops() > 0
+			elif self.number == 52: # IDEs
+				for country in app.map:
+					if app.map[country].regimeChange > 0:
+						if (app.map[country].sleeperCells + app.map[country].activeCells) > 0:
+							return True
+				return False
 			elif self.number == 66: # Adam Gadahn
 				return True
 		else: # Unassociated Events
@@ -309,6 +317,10 @@ class Card:
 			return True
 		elif self.number == 50: # Ansar al-Islam
 			return True
+		elif self.number == 51: # FREs
+			return True
+		elif self.number == 52: # IDEs
+			return False
 		return False
 	
 	def playEvent(self, side, app):
@@ -940,6 +952,17 @@ class Card:
 				app.cells -= 1
 				app.outputToHistory("Sleeper Cell placed in %s" % target, False)
 				app.outputToHistory(app.map[target].countryStr(), True)
+			elif self.number == 51: # FREs
+				if "Saddam Captured" in app.markers:
+					cellsToMove = 2
+				else:
+					cellsToMove = 4					
+				cellsToMove = min(cellsToMove, app.cells)
+				app.map["Iraq"].sleeperCells += cellsToMove
+				app.cells -= cellsToMove
+				app.outputToHistory("%d Sleeper Cells added to Iraq" % cellsToMove)
+			elif self.number == 52: # IDEs
+				app.outputToHistory("US randomly discards one card.", True)
 								
 class Labyrinth(cmd.Cmd):
 

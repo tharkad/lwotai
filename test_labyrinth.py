@@ -7545,6 +7545,59 @@ class card50(unittest.TestCase):
 		app.map["Iraq"].governance = 2
  		self.assertTrue(app.map["Iraq"].sleeperCells == 1 or app.map["Iran"].sleeperCells == 1 )
 		
+class card51(unittest.TestCase):
+	'''FREs'''
+	
+	def testPlayable(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		self.assertFalse(app.deck["51"].playable("Jihadist", app))	
+		app.map["Iraq"].changeTroops(1)
+		self.assertTrue(app.deck["51"].playable("Jihadist", app))	
+
+	def testPutsCell(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		self.assertTrue(app.deck["51"].putsCell(app))			
+
+	def testEvent(self):
+ 		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		app.testCountry("Iraq")
+		app.map["Iraq"].changeTroops(1)
+ 		app.deck["51"].playEvent("Jihadist", app)
+ 		self.assertTrue(app.map["Iraq"].sleeperCells == 4)
+		
+ 		app = Labyrinth(1, 1, testBlankScenarioSetup)
+ 		app.markers.append("Saddam Captured")
+		app.testCountry("Iraq")
+		app.map["Iraq"].changeTroops(1)
+ 		app.deck["51"].playEvent("Jihadist", app)
+ 		self.assertTrue(app.map["Iraq"].sleeperCells == 2)
+		
+ 		app = Labyrinth(1, 1, testBlankScenarioSetup)
+ 		app.cells = 3
+		app.testCountry("Iraq")
+		app.map["Iraq"].changeTroops(1)
+ 		app.deck["51"].playEvent("Jihadist", app)
+ 		self.assertTrue(app.map["Iraq"].sleeperCells == 3)
+		
+class card52(unittest.TestCase):
+	'''IEDs'''
+	
+	def testPlayable(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		self.assertFalse(app.deck["52"].playable("Jihadist", app))	
+		app.testCountry("Iraq")
+		app.map["Iraq"].regimeChange = 1
+		app.map["Iraq"].sleeperCells = 1
+		self.assertTrue(app.deck["52"].playable("Jihadist", app))		
+
+	def testPutsCell(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		self.assertFalse(app.deck["52"].putsCell(app))			
+
+	def testEvent(self):
+ 		app = Labyrinth(1, 1, testBlankScenarioSetup)
+ 		app.deck["52"].playEvent("Jihadist", app)
+		
 
 if __name__ == "__main__":
 	unittest.main()   
