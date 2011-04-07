@@ -349,7 +349,18 @@ class Card:
 				return app.getYesNoFromUser("Did the US Disrupt during this or the last Action Phase? (y/n): ")
 			elif self.number == 62: # Ex-KGB
 				return True
-			elif self.number == 66: # Adam Gadahn
+			elif self.number == 63: # Gaza War
+				return True
+			elif self.number == 64: # Hariri Killed
+				return True
+			elif self.number == 65: # HEU
+				possibles = 0
+				if app.map["Russia"].totalCells() > 0 and "CTR" not in app.map["Russia"].markers:
+					possibles += 1
+				if app.map["Central Asia"].totalCells() > 0 and "CTR" not in app.map["Central Asia"].markers:
+					possibles += 1
+				return possibles > 0
+			elif self.number == 66: # Homegrown
 				return True
 		else: # Unassociated Events
 			if side == "Jihadist" and "The door of Itjihad was closed" in app.lapsing:
@@ -387,6 +398,14 @@ class Card:
 			return True
 		elif self.number == 62: # Ex-KGB
 			return False
+		elif self.number == 63: # Gaza War
+			return False
+		elif self.number == 64: # Hariri Killed
+			return False
+		elif self.number == 65: # HEU
+			return False
+		elif self.number == 66: # Homegrown
+			return True
 		return False
 	
 	def playEvent(self, side, app):
@@ -1127,6 +1146,36 @@ class Card:
 						elif app.map["Central Asia"].alignment == "Neutral":
 							app.map["Central Asia"].alignment = "Adversary"
 							app.outputToHistory("Central Asia now Adversary.", True)
+			elif self.number == 63: # Gaza War
+				app.changeFunding(1)
+				app.changePrestige(-1)
+				app.outputToHistory("US discards a random card.", True)
+			elif self.number == 64: # Hariri Killed
+				app.testCountry("Lebanon")
+				app.testCountry("Syria")
+				app.map["Syria"].alignment = "Adversary"
+				app.outputToHistory("Syria now Adversary.", False)
+				if app.map["Syria"].governance < 3:
+					app.worsenGovernance("Syria")
+					app.outputToHistory("Governance in Syria worsened.", False)
+					app.outputToHistory(app.map["Syria"].countryStr(), True)
+				app.outputToHistory(app.map["Lebanon"].countryStr(), True)
+			elif self.number == 65: # HEU
+				possibles = []
+				if app.map["Russia"].totalCells() > 0 and "CTR" not in app.map["Russia"].markers:
+					possibles.append("Russia")
+				if app.map["Central Asia"].totalCells() > 0 and "CTR" not in app.map["Central Asia"].markers:
+					possibles.append("Central Asia")
+				target = random.choice(possibles)
+				roll = random.randint(1,6)
+				app.executeCardHEU(target, roll)
+			elif self.number == 66: # Homegrown
+				app.testCountry("United Kingdom")
+				app.map["United Kingdom"].sleeperCells += 1
+				app.cells -= 1
+				app.outputToHistory("Sleeper Cell placed in United Kingdom", False)
+				app.outputToHistory(app.map["United Kingdom"].countryStr(), True)
+				
 
 class Labyrinth(cmd.Cmd):
 
@@ -1892,6 +1941,11 @@ class Labyrinth(cmd.Cmd):
 			self.map[country].regimeChange = 0
 			self.map[country].aid = 0
 			self.map[country].besieged = 0
+
+	def worsenGovernance(self, country):
+		self.map[country].governance += 1
+		if self.map[country].governance >= 4:
+			self.map[country].governance = 3
 
 	def numCellsAvailable(self):
 		retVal = self.cells
@@ -3171,6 +3225,12 @@ class Labyrinth(cmd.Cmd):
 		self.outputToHistory("%s Posture now %s." % (postureCountry, postureStr), False)
 		self.outputToHistory(self.map[plotCountry].countryStr(), False)
 		self.outputToHistory(self.map[postureCountry].countryStr(), True)
+
+	def executeCardHEU(self, country, roll):
+		if roll <= self.map[country].governance:
+			self.outputToHistory("Add a WMD to available Plots.", True)
+		else:
+			self.removeCell(country)
 		
 	def listCountriesWithTroops(self, needed = None):
 		print ""
