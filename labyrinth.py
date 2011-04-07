@@ -343,6 +343,12 @@ class Card:
 				return True
 			elif self.number == 60: # Bhutto Shot
 				return app.map["Pakistan"].totalCells() > 0
+			elif self.number == 61: # Detainee Release
+				if "GTMO" in app.markers or "Renditions" in app.markers:
+					return False
+				return app.getYesNoFromUser("Did the US Disrupt during this or the last Action Phase? (y/n): ")
+			elif self.number == 62: # Ex-KGB
+				return True
 			elif self.number == 66: # Adam Gadahn
 				return True
 		else: # Unassociated Events
@@ -376,6 +382,10 @@ class Card:
 		elif self.number == 59: # Amerithrax
 			return False
 		elif self.number == 60: # Bhutto Shot
+			return False
+		elif self.number == 61: # Detainee Release
+			return True
+		elif self.number == 62: # Ex-KGB
 			return False
 		return False
 	
@@ -1069,7 +1079,55 @@ class Card:
 			elif self.number == 60: # Bhutto Shot
 				app.markers.append("Bhutto Shot")
 				app.outputToHistory("Bhutto Shot in play.", False)
-									
+			elif self.number == 61: # Detainee Release
+				if app.cells > 0:
+					target = None
+					while not target:
+						input = app.getCountryFromUser("Choose a country where Disrupt occured this or last Action Phase: ",  "XXX", None)	
+						if input == "":
+							print ""
+							return
+						else:
+							target = input
+							break
+					app.testCountry(target)
+					app.map[target].sleeperCells += 1
+					app.cells -= 1
+					app.outputToHistory("Sleeper Cell placed in %s" % target, False)
+					app.outputToHistory(app.map[target].countryStr(), True)
+				app.outputToHistory("Draw a card for the Jihadist and put it on the top of their hand.", True)
+			elif self.number == 62: # Ex-KGB
+				if "CTR" in app.map["Russia"].markers:
+					app.map["Russia"].markers.remove("CTR")
+					app.outputToHistory("CTR removed from Russia.", True)
+				else:
+					targetCaucasus = False
+					if app.map["Caucasus"].posture == "" or app.map["Caucasus"].posture == app.map["United States"].posture:
+						if app.gwotPenalty() == 0:
+							cacPosture = app.map["Caucasus"].posture
+							if app.map["United States"].posture == "Hard":
+								app.map["Caucasus"].posture = "Soft"
+							else:
+								app.map["Caucasus"].posture = "Hard"
+							if app.gwotPenalty() < 0:
+								targetCaucasus = True
+							app.map["Caucasus"].posture = cacPosture
+					if targetCaucasus:
+						if app.map["United States"].posture == "Hard":
+							app.map["Caucasus"].posture = "Soft"
+						else:
+							app.map["Caucasus"].posture = "Hard"
+						app.outputToHistory("Caucasus posture now %s" % app.map["Caucasus"].posture, False)
+						app.outputToHistory(app.map["Caucasus"].countryStr(), True)
+					else:
+						app.testCountry("Central Asia")
+						if app.map["Central Asia"].alignment == "Ally":
+							app.map["Central Asia"].alignment = "Neutral"
+							app.outputToHistory("Central Asia now Neutral.", True)
+						elif app.map["Central Asia"].alignment == "Neutral":
+							app.map["Central Asia"].alignment = "Adversary"
+							app.outputToHistory("Central Asia now Adversary.", True)
+
 class Labyrinth(cmd.Cmd):
 
 	map = {}
@@ -1807,8 +1865,12 @@ class Labyrinth(cmd.Cmd):
 			self.map[country].activeCells -= 1
 			self.cells += 1
 			self.outputToHistory("Active Cell removed from %s." % country, False)
+		if self.map[country].totalCells() == 0:
+			self.outputToHistory("Cadre added in %s." % country, False)
+			self.map[country].cadre = 1
 	
 	def removeAllCellsFromCountry(self, country):
+		cellsToRemove = self.map[country].totalCells()
 		if self.map[country].sleeperCells > 0:
 			numCells = self.map[country].sleeperCells
 			self.map[country].sleeperCells -= numCells
@@ -1819,6 +1881,9 @@ class Labyrinth(cmd.Cmd):
 			self.map[country].activeCells -= numCells
 			self.cells += numCells
 			self.outputToHistory("%d Active Cell(s) removed from %s." % (numCells, country), False)
+		if cellsToRemove > 0:
+			self.outputToHistory("Cadre added in %s." % country, False)
+			self.map[country].cadre = 1
 	
 	def improveGovernance(self, country):
 		self.map[country].governance -= 1

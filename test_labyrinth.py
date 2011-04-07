@@ -7787,5 +7787,83 @@ class card60(unittest.TestCase):
 		app.deck["60"].playEvent("Jihadist", app)
 		self.assertTrue("Bhutto Shot" in app.markers)
 
+class card61(unittest.TestCase):
+	'''Detainee Release'''
+	
+	def testPlayable(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		app.markers.append("GTMO")
+		self.assertFalse(app.deck["61"].playable("Jihadist", app))
+
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		app.markers.append("Renditions")
+		self.assertFalse(app.deck["61"].playable("Jihadist", app))
+
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+# 		print "Say No"
+# 		self.assertFalse(app.deck["61"].playable("Jihadist", app))
+# 		print "Say Yes"
+# 		self.assertTrue(app.deck["61"].playable("Jihadist", app))
+		
+	def testPutsCell(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		self.assertTrue(app.deck["61"].putsCell(app))			
+
+	def testEvent(self):
+ 		app = Labyrinth(1, 1, testBlankScenarioSetup)
+# 		app.deck["61"].playEvent("Jihadist", app)
+
+class card62(unittest.TestCase):
+	'''Ex-KGB'''
+	
+	def testPlayable(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		self.assertTrue(app.deck["62"].playable("Jihadist", app))
+		
+	def testPutsCell(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		self.assertFalse(app.deck["62"].putsCell(app))			
+
+	def testEvent(self):
+ 		app = Labyrinth(1, 1, testBlankScenarioSetup)
+ 		app.map["Russia"].markers.append("CTR")
+ 		app.map["Caucasus"].posture = "Hard"
+ 		app.map["Spain"].posture = "Soft"
+ 		app.map["Germany"].posture = "Soft"
+		app.deck["62"].playEvent("Jihadist", app)
+		self.assertTrue("CTR" not in app.map["Russia"].markers)
+		self.assertTrue(app.map["Caucasus"].posture == "Hard")
+		self.assertTrue(app.map["Central Asia"].governance == 0)
+
+ 		app = Labyrinth(1, 1, testBlankScenarioSetup)
+ 		app.map["Caucasus"].posture = "Hard"
+ 		app.map["Spain"].posture = "Soft"
+ 		app.map["Germany"].posture = "Soft"
+		app.deck["62"].playEvent("Jihadist", app)
+		self.assertTrue("CTR" not in app.map["Russia"].markers)
+		self.assertTrue(app.map["Caucasus"].posture == "Soft")
+		self.assertTrue(app.map["Central Asia"].governance == 0)
+
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		app.map["Caucasus"].posture = "Hard"
+		app.map["Spain"].posture = "Hard"
+		app.deck["62"].playEvent("Jihadist", app)
+		self.assertTrue("CTR" not in app.map["Russia"].markers)
+		self.assertTrue(app.map["Caucasus"].posture == "Hard")
+		self.assertTrue(app.map["Central Asia"].governance != 0)
+		self.assertTrue(app.map["Central Asia"].alignment == "Adversary")
+
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		app.map["Caucasus"].posture = "Hard"
+		app.map["Spain"].posture = "Hard"
+		app.testCountry("Central Asia")
+		app.map["Central Asia"].alignment = "Ally"
+		app.deck["62"].playEvent("Jihadist", app)
+		self.assertTrue("CTR" not in app.map["Russia"].markers)
+		self.assertTrue(app.map["Caucasus"].posture == "Hard")
+		self.assertTrue(app.map["Central Asia"].governance != 0)
+		self.assertTrue(app.map["Central Asia"].alignment == "Neutral")
+
+
 if __name__ == "__main__":
 	unittest.main()   
