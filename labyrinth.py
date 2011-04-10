@@ -362,6 +362,18 @@ class Card:
 				return possibles > 0
 			elif self.number == 66: # Homegrown
 				return True
+			elif self.number == 67: # Islamic Jihad Union
+				return True
+			elif self.number == 68: # Jemaah Islamiya
+				return True
+			elif self.number == 69: # Kazakh Strain
+				return app.map["Central Asia"].totalCells() > 0 and "CTR" not in app.map["Central Asia"].markers
+			elif self.number == 70: # Lashkar-e-Tayyiba
+				return "Indo-Pakistani Talks" not in app.markers
+			elif self.number == 71: # Loose Nuke
+				return app.map["Russia"].totalCells() > 0 and "CTR" not in app.map["Russia"].markers
+			elif self.number == 72: # Opium
+				return app.map["Afghanistan"].totalCells() > 0
 		else: # Unassociated Events
 			if side == "Jihadist" and "The door of Itjihad was closed" in app.lapsing:
 				return False
@@ -405,6 +417,18 @@ class Card:
 		elif self.number == 65: # HEU
 			return False
 		elif self.number == 66: # Homegrown
+			return True
+		elif self.number == 67: # Islamic Jihad Union
+			return True
+		elif self.number == 68: # Jemaah Islamiya
+			return True
+		elif self.number == 69: # Kazakh Strain
+			return False
+		elif self.number == 70: # Lashkar-e-Tayyiba
+			return True
+		elif self.number == 71: # Loose Nuke
+			return False
+		elif self.number == 72: # Opium
 			return True
 		return False
 	
@@ -1175,7 +1199,52 @@ class Card:
 				app.cells -= 1
 				app.outputToHistory("Sleeper Cell placed in United Kingdom", False)
 				app.outputToHistory(app.map["United Kingdom"].countryStr(), True)
+			elif self.number == 67: # Islamic Jihad Union
+				app.testCountry("Central Asia")
+				app.map["Central Asia"].sleeperCells += 1
+				app.cells -= 1
+				app.outputToHistory("Sleeper Cell placed in Central Asia", False)
+				app.outputToHistory(app.map["Central Asia"].countryStr(), True)
+				if app.cells > 0:
+					app.testCountry("Afghanistan")
+					app.map["Afghanistan"].sleeperCells += 1
+					app.cells -= 1
+					app.outputToHistory("Sleeper Cell placed in Afghanistan", False)
+					app.outputToHistory(app.map["Afghanistan"].countryStr(), True)
+			elif self.number == 68: # Jemaah Islamiya
+				cellsToPlace = min(app.cells, 2)
+				app.testCountry("Indonesia/Malaysia")
+				app.map["Indonesia/Malaysia"].sleeperCells += cellsToPlace
+				app.cells -= cellsToPlace
+				app.outputToHistory("%d Sleeper Cell(s) placed in Indonesia/Malaysia" % cellsToPlace, True)
+			elif self.number == 69: # Kazakh Strain
+				roll = random.randint(1,6)
+				app.executeCardHEU("Central Asia", roll)
+			elif self.number == 70: # Lashkar-e-Tayyiba
+				app.testCountry("Pakistan")
+				app.map["Pakistan"].sleeperCells += 1
+				app.cells -= 1
+				app.outputToHistory("Sleeper Cell placed in Pakistan", False)
+				app.outputToHistory(app.map["Pakistan"].countryStr(), True)
+				if app.cells > 0:
+					app.testCountry("India")
+					app.map["India"].sleeperCells += 1
+					app.cells -= 1
+					app.outputToHistory("Sleeper Cell placed in India", False)
+					app.outputToHistory(app.map["India"].countryStr(), True)
+			elif self.number == 71: # Loose Nuke
+				roll = random.randint(1,6)
+				app.executeCardHEU("Russia", roll)
+			elif self.number == 72: # Opium
+				cellsToPlace = min(app.cells, 3)
+				if app.map["Afghanistan"].governance == 4:
+					cellsToPlace = app.cells
+				app.testCountry("Afghanistan")
+				app.map["Afghanistan"].sleeperCells += cellsToPlace
+				app.cells -= cellsToPlace
+				app.outputToHistory("%d Sleeper Cell(s) placed in Afghanistan" % cellsToPlace, True)
 				
+					
 
 class Labyrinth(cmd.Cmd):
 

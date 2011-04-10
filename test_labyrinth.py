@@ -7971,7 +7971,9 @@ class card65(unittest.TestCase):
 		app.executeCardHEU("Central Asia",4)
 		self.assertTrue(app.map["Central Asia"].sleeperCells == 0)
 
- 		app.deck["63"].playEvent("Jihadist", app)
+ 		app = Labyrinth(1, 1, testBlankScenarioSetup)
+ 		app.map["Russia"].sleeperCells = 1
+ 		app.deck["65"].playEvent("Jihadist", app)
 
 class card66(unittest.TestCase):
 	'''Homegrown'''
@@ -7989,6 +7991,172 @@ class card66(unittest.TestCase):
  		app.deck["66"].playEvent("Jihadist", app)
  		self.assertTrue(app.map["United Kingdom"].posture != "")
  		self.assertTrue(app.map["United Kingdom"].sleeperCells == 1)
+
+class card67(unittest.TestCase):
+	'''Islamic Jihad Union'''
+	
+	def testPlayable(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+ 		self.assertTrue(app.deck["67"].playable("Jihadist", app))
+		
+	def testPutsCell(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		self.assertTrue(app.deck["67"].putsCell(app))			
+
+	def testEvent(self):
+ 		app = Labyrinth(1, 1, testBlankScenarioSetup)
+ 		app.deck["67"].playEvent("Jihadist", app)
+ 		self.assertTrue(app.map["Central Asia"].sleeperCells == 1)
+ 		self.assertTrue(app.map["Afghanistan"].sleeperCells == 1)
+
+ 		app = Labyrinth(1, 1, testBlankScenarioSetup)
+ 		app.cells = 1
+ 		app.deck["67"].playEvent("Jihadist", app)
+ 		self.assertTrue(app.map["Central Asia"].sleeperCells == 1)
+ 		self.assertTrue(app.map["Afghanistan"].sleeperCells == 0)
+
+class card68(unittest.TestCase):
+	'''Jemaah Islamiya'''
+	
+	def testPlayable(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+ 		self.assertTrue(app.deck["68"].playable("Jihadist", app))
+		
+	def testPutsCell(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		self.assertTrue(app.deck["68"].putsCell(app))			
+
+	def testEvent(self):
+ 		app = Labyrinth(1, 1, testBlankScenarioSetup)
+ 		app.deck["68"].playEvent("Jihadist", app)
+ 		self.assertTrue(app.map["Indonesia/Malaysia"].sleeperCells == 2)
+
+ 		app = Labyrinth(1, 1, testBlankScenarioSetup)
+ 		app.cells = 1
+ 		app.deck["68"].playEvent("Jihadist", app)
+ 		self.assertTrue(app.map["Indonesia/Malaysia"].sleeperCells == 1)
+
+class card69(unittest.TestCase):
+	'''Kazakh Strain'''
+	
+	def testPlayable(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+ 		app.testCountry("Central Asia")
+  		app.map["Central Asia"].sleeperCells = 1
+ 		self.assertTrue(app.deck["69"].playable("Jihadist", app))
+ 		app.map["Central Asia"].markers.append("CTR")
+ 		self.assertFalse(app.deck["69"].playable("Jihadist", app))
+		
+	def testPutsCell(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		self.assertFalse(app.deck["69"].putsCell(app))			
+
+	def testEvent(self):
+ 		app = Labyrinth(1, 1, testBlankScenarioSetup)
+ 		app.testCountry("Central Asia")
+ 		app.map["Central Asia"].sleeperCells = 1
+		app.executeCardHEU("Central Asia",1)
+		self.assertTrue(app.map["Central Asia"].sleeperCells == 1)
+
+ 		app = Labyrinth(1, 1, testBlankScenarioSetup)
+ 		app.testCountry("Central Asia")
+ 		app.map["Central Asia"].sleeperCells = 1
+		app.executeCardHEU("Central Asia",4)
+		self.assertTrue(app.map["Central Asia"].sleeperCells == 0)
+
+ 		app.deck["69"].playEvent("Jihadist", app)
+
+class card70(unittest.TestCase):
+	'''Lashkar-e-Tayyiba'''
+	
+	def testPlayable(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+ 		self.assertTrue(app.deck["70"].playable("Jihadist", app))
+ 		app.markers.append("Indo-Pakistani Talks")
+ 		self.assertFalse(app.deck["70"].playable("Jihadist", app))
+
+	def testPutsCell(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		self.assertTrue(app.deck["70"].putsCell(app))			
+
+	def testEvent(self):
+ 		app = Labyrinth(1, 1, testBlankScenarioSetup)
+ 		app.deck["70"].playEvent("Jihadist", app)
+ 		self.assertTrue(app.map["Pakistan"].sleeperCells == 1)
+ 		self.assertTrue(app.map["India"].sleeperCells == 1)
+
+ 		app = Labyrinth(1, 1, testBlankScenarioSetup)
+ 		app.cells = 1
+ 		app.deck["70"].playEvent("Jihadist", app)
+ 		self.assertTrue(app.map["Pakistan"].sleeperCells == 1)
+ 		self.assertTrue(app.map["India"].sleeperCells == 0)
+
+class card71(unittest.TestCase):
+	'''Kazakh Strain'''
+	
+	def testPlayable(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+ 		app.testCountry("Russia")
+  		app.map["Russia"].sleeperCells = 1
+ 		self.assertTrue(app.deck["71"].playable("Jihadist", app))
+ 		app.map["Russia"].markers.append("CTR")
+ 		self.assertFalse(app.deck["71"].playable("Jihadist", app))
+		
+	def testPutsCell(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		self.assertFalse(app.deck["71"].putsCell(app))			
+
+	def testEvent(self):
+ 		app = Labyrinth(1, 1, testBlankScenarioSetup)
+ 		app.testCountry("Russia")
+ 		app.map["Russia"].sleeperCells = 1
+		app.executeCardHEU("Russia",1)
+		self.assertTrue(app.map["Russia"].sleeperCells == 1)
+
+ 		app = Labyrinth(1, 1, testBlankScenarioSetup)
+ 		app.testCountry("Russia")
+ 		app.map["Russia"].sleeperCells = 1
+		app.executeCardHEU("Russia",4)
+		self.assertTrue(app.map["Russia"].sleeperCells == 0)
+
+ 		app.deck["71"].playEvent("Jihadist", app)
+
+class card72(unittest.TestCase):
+	'''Opium'''
+	
+	def testPlayable(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+ 		self.assertFalse(app.deck["72"].playable("Jihadist", app))
+		app.map["Afghanistan"].sleeperCells = 1
+ 		self.assertTrue(app.deck["72"].playable("Jihadist", app))
+
+	def testPutsCell(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		self.assertTrue(app.deck["72"].putsCell(app))			
+
+	def testEvent(self):
+ 		app = Labyrinth(1, 1, testBlankScenarioSetup)
+ 		app.cells = 14
+ 		app.testCountry("Afghanistan")
+		app.map["Afghanistan"].sleeperCells = 1
+ 		app.deck["72"].playEvent("Jihadist", app)
+ 		self.assertTrue(app.map["Afghanistan"].sleeperCells == 4)
+
+ 		app = Labyrinth(1, 1, testBlankScenarioSetup)
+ 		app.cells = 14
+ 		app.testCountry("Afghanistan")
+		app.map["Afghanistan"].sleeperCells = 1
+		app.map["Afghanistan"].governance = 4
+ 		app.deck["72"].playEvent("Jihadist", app)
+ 		self.assertTrue(app.map["Afghanistan"].sleeperCells == 15)
+ 		
+ 		app = Labyrinth(1, 1, testBlankScenarioSetup)
+ 		app.cells = 2
+ 		app.testCountry("Afghanistan")
+		app.map["Afghanistan"].sleeperCells = 1
+ 		app.deck["72"].playEvent("Jihadist", app)
+ 		self.assertTrue(app.map["Afghanistan"].sleeperCells == 3)
+
 
 
 if __name__ == "__main__":
