@@ -380,6 +380,27 @@ class Card:
 				return True
 			elif self.number == 75: # Schroeder & Chirac
 				return app.map["United States"].posture == "Hard"
+			elif self.number == 76: # Abu Ghurayb
+				targetCountries = 0
+				for country in app.map:
+					if app.map[country].regimeChange > 0:
+						if (app.map[country].totalCells(True)) > 0:
+							targetCountries += 1
+				return targetCountries > 0
+			elif self.number == 77: # Al Jazeera
+				if app.map["Saudi Arabia"].troops() > 0:
+					return True
+				for country in app.map:
+					if app.isAdjacent("Saudi Arabia", country):
+						if app.map[country].troops() > 0:
+							return True
+				return False				
+			elif self.number == 78: # Axis of Evil
+				return True
+			elif self.number == 79: # Clean Operatives
+				return True
+			elif self.number == 80: # FATA
+				return True
 		else: # Unassociated Events
 			if side == "Jihadist" and "The door of Itjihad was closed" in app.lapsing:
 				return False
@@ -442,6 +463,16 @@ class Card:
 			return False
 		elif self.number == 75: # Schroeder & Chirac
 			return False
+		elif self.number == 76: # Abu Ghurayb
+			return False
+		elif self.number == 77: # Al Jazeera
+			return False
+		elif self.number == 78: # Axis of Evil
+			return False
+		elif self.number == 79: # Clean Operatives
+			return False
+		elif self.number == 80: # FATA
+			return True
 		return False
 	
 	def playEvent(self, side, app):
@@ -1269,7 +1300,50 @@ class Card:
 				app.map["France"].posture = "Soft"
 				app.outputToHistory("%s Posture now %s" % ("France", app.map["France"].posture), True)
 				app.changePrestige(-1)
-
+			elif self.number == 76: # Abu Ghurayb
+				app.outputToHistory("Draw 2 cards.", False)
+				app.changePrestige(-2)
+				allys = app.minorJihadInGoodFairChoice(1, True)
+				if not allys:
+					app.outputToHistory("No Allys to shift.", True)
+				else:
+					target = allys[0][0]
+					app.map[target].alignment = "Neutral"
+					app.outputToHistory("%s Alignment shifted to Neutral." % target, True)
+			elif self.number == 77: # Al Jazeera
+				choices = app.minorJihadInGoodFairChoice(1, False, True)
+				if not choices:
+					app.outputToHistory("No countries to shift.", True)
+				else:
+					target = choices[0][0]
+					if app.map[target].alignment == "Ally":
+						app.map[target].alignment = "Neutral"
+					elif app.map[target].alignment == "Neutral":	
+						app.map[target].alignment = "Adversary"
+					app.outputToHistory("%s Alignment shifted to %s." % (target, app.map[target].alignment), True)
+			elif self.number == 78: # Axis of Evil
+				app.outputToHistory("US discards any Iran, Hizballah, or Jaysh al-Mahdi cards from hand.", False)
+				if app.map["United States"].posture == "Soft":
+					app.map["United States"].posture = "Hard"
+					app.outputToHistory("US Posture now Hard.", False)
+				prestigeRolls = []
+				for i in range(3):
+					prestigeRolls.append(random.randint(1,6))
+				presMultiplier = 1
+				if prestigeRolls[0] <= 4:
+					presMultiplier = -1
+				app.changePrestige(min(prestigeRolls[1], prestigeRolls[2]) * presMultiplier)
+			elif self.number == 79: # Clean Operatives
+				app.handleTravel(2, False, False, True)
+			elif self.number == 80: # FATA
+				app.testCountry("Pakistan")
+				app.map["Pakistan"].markers.append("FATA")
+				app.outputToHistory("FATA Maker added in Pakistan", True)
+				app.map["Pakistan"].sleeperCells += 1
+				app.cells -= 1
+				app.outputToHistory("Sleeper Cell placed in Pakistan", False)
+				app.outputToHistory(app.map["Pakistan"].countryStr(), True)
+				
 class Labyrinth(cmd.Cmd):
 
 	map = {}
@@ -2143,7 +2217,7 @@ class Labyrinth(cmd.Cmd):
 		presMultiplier = 1
 		if prestigeRolls[0] <= 4:
 			presMultiplier = -1
-		self.prestige += (min(prestigeRolls[1], prestigeRolls[2]) * presMultiplier)
+		self.changePrestige(min(prestigeRolls[1], prestigeRolls[2]) * presMultiplier)
 		self.outputToHistory("* Regime Change in %s" % where, False)
 		self.outputToHistory(self.map[where].countryStr(), False)
 		if moveFrom == "track":
@@ -2171,7 +2245,7 @@ class Labyrinth(cmd.Cmd):
 		presMultiplier = 1
 		if prestigeRolls[0] <= 4:
 			presMultiplier = -1
-		self.prestige += (min(prestigeRolls[1], prestigeRolls[2]) * presMultiplier)
+		self.changePrestige(min(prestigeRolls[1], prestigeRolls[2]) * presMultiplier)
 		self.outputToHistory("* Withdraw troops from %s" % moveFrom, False)
 		self.outputToHistory(self.map[moveFrom].countryStr(), False)
 		if moveTo == "track":
@@ -2396,10 +2470,17 @@ class Labyrinth(cmd.Cmd):
 						newPossible.append(country)
 				return random.choice(newPossible)
 
-	def minorJihadInGoodFairChoice(self, ops):
+	def minorJihadInGoodFairChoice(self, ops, isAbuGhurayb = False, isAlJazeera = False):
 		possible = []
 		for country in self.map:
-			if (self.map[country].type == "Shia-Mix" or self.map[country].type == "Suni") and (self.map[country].governance == 1 or self.map[country].governance == 2) and (self.map[country].totalCells(True) > 0):
+			if isAbuGhurayb:
+				if self.map[country].alignment == "Ally" and self.map[country].governance != 4:
+					possible.append(country)
+			elif isAlJazeera:
+				if country == "Saudi Arabia" or self.isAdjacent(country, "Saudi Arabia"):
+					if self.map[country].troops() > 0:
+						possible.append(country)
+			elif (self.map[country].type == "Shia-Mix" or self.map[country].type == "Suni") and (self.map[country].governance == 1 or self.map[country].governance == 2) and (self.map[country].totalCells(True) > 0):
 				if "Benazir Bhutto" in self.markers and country == "Pakistan":
 					continue
 				possible.append(country)
@@ -2893,13 +2974,15 @@ class Labyrinth(cmd.Cmd):
 					dict["Poor"].append(country)
 		return dict
 	
-	def handleTravel(self, ops, isRadicalization = False, isSchengenVisas = False):
+	def handleTravel(self, ops, isRadicalization = False, isSchengenVisas = False, isCleanOperatives = False):
 		if isSchengenVisas:
 			destinations = self.travelDestinationsSchengenVisas()
+		elif isCleanOperatives:
+			destinations = ["United States", "United States"]
 		else:
 			destinations = self.travelDestinations(ops, isRadicalization)
 		sources = self.travelSources(destinations, ops, isRadicalization)
-		if not isRadicalization and not isSchengenVisas:
+		if not isRadicalization and not isSchengenVisas and not isCleanOperatives:
 			self.outputToHistory("* Cells Travel", False)
 		for i in range(len(sources)):
 			self.outputToHistory("->Travel from %s to %s." % (sources[i], destinations[i]), False)
@@ -2911,6 +2994,9 @@ class Labyrinth(cmd.Cmd):
 			elif isSchengenVisas:
 				success = True
 				displayStr = ("Travel by Schengen Visas is automatically successful.")
+			elif isCleanOperatives:
+				success = True
+				displayStr = ("Travel by Clean Operatives is automatically successful.")
 			else:
 				if sources[i] == destinations[i]:
 					success = True
@@ -3147,7 +3233,7 @@ class Labyrinth(cmd.Cmd):
 				presMultiplier = 1
 				if usPrestigeRolls[0] <= 4:
 					presMultiplier = -1
-				self.prestige += (min(usPrestigeRolls[1], usPrestigeRolls[2]) * presMultiplier)
+				self.changePrestige(min(usPrestigeRolls[1], usPrestigeRolls[2]) * presMultiplier)
 				self.outputToHistory("US Prestige now %d" % self.prestige, False)	
 				if postureRoll <= 4:
 					self.map["United States"].posture = "Soft"
@@ -3763,6 +3849,9 @@ class Labyrinth(cmd.Cmd):
 			else:
 				if self.map[input].sleeperCells + self.map[input].activeCells <= 0 and self.map[input].cadre <= 0:
 					print "There are no cells or cadre in %s." % input
+					print ""
+				elif "FATA" in self.map[input].markers and self.map[input].regimeChange == 0:
+					print "No disrupt allowed due to FATA."
 					print ""
 				elif self.map[input].troops() > 0 or self.map[input].type == "Non-Muslim" or self.map[input].alignment == "Ally":
 					#print "Disrupt in %s - %d Active Cells, %d Sleeper Cells" % (input, self.map[input].activeCells, self.map[input].sleeperCells)
