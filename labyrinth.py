@@ -374,6 +374,12 @@ class Card:
 				return app.map["Russia"].totalCells() > 0 and "CTR" not in app.map["Russia"].markers
 			elif self.number == 72: # Opium
 				return app.map["Afghanistan"].totalCells() > 0
+			elif self.number == 73: # Pirates
+				return app.map["Somalia"].governance == 4 or app.map["Yemen"].governance == 4
+			elif self.number == 74: # Schengen Visas
+				return True
+			elif self.number == 75: # Schroeder & Chirac
+				return app.map["United States"].posture == "Hard"
 		else: # Unassociated Events
 			if side == "Jihadist" and "The door of Itjihad was closed" in app.lapsing:
 				return False
@@ -430,6 +436,12 @@ class Card:
 			return False
 		elif self.number == 72: # Opium
 			return True
+		elif self.number == 73: # Pirates
+			return False
+		elif self.number == 74: # Schengen Visas
+			return False
+		elif self.number == 75: # Schroeder & Chirac
+			return False
 		return False
 	
 	def playEvent(self, side, app):
@@ -1243,8 +1255,20 @@ class Card:
 				app.map["Afghanistan"].sleeperCells += cellsToPlace
 				app.cells -= cellsToPlace
 				app.outputToHistory("%d Sleeper Cell(s) placed in Afghanistan" % cellsToPlace, True)
-				
-					
+			elif self.number == 73: # Pirates
+				app.markers.append("Pirates")
+				app.outputToHistory("Pirates in play.", False)
+			elif self.number == 74: # Schengen Visas
+				if app.cells == 15:
+					app.outputToHistory("No cells to travel.", False)
+					return
+				app.handleTravel(2, False, True)
+			elif self.number == 75: # Schroeder & Chirac
+				app.map["Germany"].posture = "Soft"
+				app.outputToHistory("%s Posture now %s" % ("Germany", app.map["Germany"].posture), True)
+				app.map["France"].posture = "Soft"
+				app.outputToHistory("%s Posture now %s" % ("France", app.map["France"].posture), True)
+				app.changePrestige(-1)
 
 class Labyrinth(cmd.Cmd):
 
@@ -1384,12 +1408,12 @@ class Labyrinth(cmd.Cmd):
 		self.map["France"] = Country(self, "France", "Non-Muslim", "", "", 1, True, 2, 0, 0, 0, False, 0)
 		self.map["Italy"] = Country(self, "Italy", "Non-Muslim", "", "", 1, True, 0, 0, 0, 0, False, 0)
 		self.map["Spain"] = Country(self, "Spain", "Non-Muslim", "", "", 1, True, 2, 0, 0, 0, False, 0)
-		self.map["Russia"] = Country(self, "Russia", "Non-Muslim", "", "", 2, True, 0, 0, 0, 0, False, 0)
-		self.map["Caucasus"] = Country(self, "Caucasus", "Non-Muslim", "", "", 2, True, 0, 0, 0, 0, False, 0)
-		self.map["China"] = Country(self, "China", "Non-Muslim", "", "", 2, True, 0, 0, 0, 0, False, 0)
-		self.map["Kenya/Tanzania"] = Country(self, "Kenya/Tanzania", "Non-Muslim", "", "", 2, True, 0, 0, 0, 0, False, 0)
-		self.map["Thailand"] = Country(self, "Thailand", "Non-Muslim", "", "", 2, True, 0, 0, 0, 0, False, 0)
-		self.map["Philippines"] = Country(self, "Philippines", "Non-Muslim", "", "", 2, True, 3, 0, 0, 0, False, 0)
+		self.map["Russia"] = Country(self, "Russia", "Non-Muslim", "", "", 2, False, 0, 0, 0, 0, False, 0)
+		self.map["Caucasus"] = Country(self, "Caucasus", "Non-Muslim", "", "", 2, False, 0, 0, 0, 0, False, 0)
+		self.map["China"] = Country(self, "China", "Non-Muslim", "", "", 2, False, 0, 0, 0, 0, False, 0)
+		self.map["Kenya/Tanzania"] = Country(self, "Kenya/Tanzania", "Non-Muslim", "", "", 2, False, 0, 0, 0, 0, False, 0)
+		self.map["Thailand"] = Country(self, "Thailand", "Non-Muslim", "", "", 2, False, 0, 0, 0, 0, False, 0)
+		self.map["Philippines"] = Country(self, "Philippines", "Non-Muslim", "", "", 2, False, 3, 0, 0, 0, False, 0)
 		self.map["Morocco"] = Country(self, "Morocco", "Suni", "", "", 0, False, 0, 0, 0, 0, False, 2)
 		self.map["Algeria/Tunisia"] = Country(self, "Algeria/Tunisia", "Suni", "", "", 0, False, 0, 0, 0, 0, True, 2)
 		self.map["Libya"] = Country(self, "Libya", "Suni", "", "", 0, False, 0, 0, 0, 0, True, 1)
@@ -2627,6 +2651,35 @@ class Labyrinth(cmd.Cmd):
 		
 		return dests
 	
+	def travelDestinationsSchengenVisas(self):
+		dests = []
+	# An unmarked non-Muslim country if US Posture is Hard, or a Soft non-Muslim country if US Posture is Soft.
+		subdests = []
+		if self.map["United States"].posture == "Hard":
+			for country in self.map:
+				if self.map[country].schengen and self.map[country].posture == "":
+					subdests.append(country)
+					print "SCHENGEN:", country
+		else:
+			for country in self.map:
+				if country != "United States" and self.map[country].schengen and self.map[country].posture == "Soft":
+					subdests.append(country)
+		if len(subdests) == 1:
+			dests.append(subdests[0])
+			dests.append(subdests[0])
+		elif len(subdests) > 1:
+			random.shuffle(subdests)
+			dests.append(subdests[0])
+			dests.append(subdests[1])
+		elif len(subdests) == 0:
+			for country in self.map:
+				if self.map[country].schengen:
+					subdests.append(country)
+			random.shuffle(subdests)
+			dests.append(subdests[0])
+			dests.append(subdests[1])
+		return dests
+	
 	def travelSourceChooseBasedOnPriority(self, countryList, i, destinations):
 		subPossibles = []
 		for country in countryList:
@@ -2840,10 +2893,13 @@ class Labyrinth(cmd.Cmd):
 					dict["Poor"].append(country)
 		return dict
 	
-	def handleTravel(self, ops, isRadicalization = False):
-		destinations = self.travelDestinations(ops, isRadicalization)
+	def handleTravel(self, ops, isRadicalization = False, isSchengenVisas = False):
+		if isSchengenVisas:
+			destinations = self.travelDestinationsSchengenVisas()
+		else:
+			destinations = self.travelDestinations(ops, isRadicalization)
 		sources = self.travelSources(destinations, ops, isRadicalization)
-		if not isRadicalization:
+		if not isRadicalization and not isSchengenVisas:
 			self.outputToHistory("* Cells Travel", False)
 		for i in range(len(sources)):
 			self.outputToHistory("->Travel from %s to %s." % (sources[i], destinations[i]), False)
@@ -2852,6 +2908,9 @@ class Labyrinth(cmd.Cmd):
 			if isRadicalization:
 				success = True
 				displayStr = ("Travel by Radicalization is automatically successful.")
+			elif isSchengenVisas:
+				success = True
+				displayStr = ("Travel by Schengen Visas is automatically successful.")
 			else:
 				if sources[i] == destinations[i]:
 					success = True
@@ -4077,10 +4136,13 @@ class Labyrinth(cmd.Cmd):
 
 	def do_turn(self, rest):
 		self.outputToHistory("* End of Turn.", False)
-		self.funding -= 1
-		if self.funding < 1:
-			self.funding = 1
-		self.outputToHistory("Jihadist Funding now %d" % self.funding, False)
+		if "Pirates" in self.markers and (self.map["Somalia"].governance == 4 or self.map["Yemen"].governance == 4):
+			self.outputToHistory("No funding drop due to Pirates.", False)
+		else:
+			self.funding -= 1
+			if self.funding < 1:
+				self.funding = 1
+			self.outputToHistory("Jihadist Funding now %d" % self.funding, False)
 		anyIR = False
 		for country in self.map:
 			if self.map[country].governance == 4:

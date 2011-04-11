@@ -8158,6 +8158,77 @@ class card72(unittest.TestCase):
  		self.assertTrue(app.map["Afghanistan"].sleeperCells == 3)
 
 
+class card73(unittest.TestCase):
+	'''Pirates'''
+	
+	def testPlayable(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+ 		self.assertFalse(app.deck["73"].playable("Jihadist", app))
+		app.map["Somalia"].governance = 4
+ 		self.assertTrue(app.deck["73"].playable("Jihadist", app))
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+ 		self.assertFalse(app.deck["73"].playable("Jihadist", app))
+		app.map["Yemen"].governance = 4
+ 		self.assertTrue(app.deck["73"].playable("Jihadist", app))
+
+	def testPutsCell(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		self.assertFalse(app.deck["73"].putsCell(app))			
+
+	def testEvent(self):
+ 		app = Labyrinth(1, 1, testBlankScenarioSetup)
+ 		app.deck["73"].playEvent("Jihadist", app)
+ 		self.assertTrue("Pirates" in app.markers)
+ 		app.do_turn("")
+ 		self.assertTrue(app.funding == 4)
+
+ 		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		app.map["Somalia"].governance = 4
+ 		app.deck["73"].playEvent("Jihadist", app)
+ 		app.do_turn("")
+ 		self.assertTrue(app.funding == 5)
+
+ 		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		app.map["Yemen"].governance = 4
+ 		app.deck["73"].playEvent("Jihadist", app)
+ 		app.do_turn("")
+ 		self.assertTrue(app.funding == 5)
+
+class card74(unittest.TestCase):
+	'''Schengen Visas'''
+	
+	def testPlayable(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+ 		self.assertTrue(app.deck["74"].playable("Jihadist", app))
+
+	def testPutsCell(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		self.assertFalse(app.deck["74"].putsCell(app))			
+
+	def testEvent(self):
+ 		app = Labyrinth(1, 1, testScenarioSetup)
+ 		app.deck["74"].playEvent("Jihadist", app)
+
+class card75(unittest.TestCase):
+	'''Schroeder & Chirac'''
+	
+	def testPlayable(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+ 		self.assertTrue(app.deck["75"].playable("Jihadist", app))
+ 		app.map["United States"].posture = "Soft"
+ 		self.assertFalse(app.deck["75"].playable("Jihadist", app))
+
+	def testPutsCell(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		self.assertFalse(app.deck["75"].putsCell(app))			
+
+	def testEvent(self):
+ 		app = Labyrinth(1, 1, testScenarioSetup)
+ 		app.deck["75"].playEvent("Jihadist", app)
+ 		self.assertTrue(app.map["Germany"].posture == "Soft")
+ 		self.assertTrue(app.map["France"].posture == "Soft")
+ 		self.assertTrue(app.prestige == 6)
+
 
 if __name__ == "__main__":
 	unittest.main()   
