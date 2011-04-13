@@ -401,6 +401,14 @@ class Card:
 				return True
 			elif self.number == 80: # FATA
 				return True
+			elif self.number == 81: # Foreign Fighters
+				return app.numRegimeChange() > 0
+			elif self.number == 82: # Jihadist Videos
+				return True
+			elif self.number == 83: # Kashmir
+				return "Indo-Pakistani Talks" not in app.markers
+			elif self.number == 84 or self.number == 85: # Leak
+				return ("Enhanced Measures" in app.markers) or ("Reditions" in app.markers) or ("Wiretapping" in app.markers)
 		else: # Unassociated Events
 			if side == "Jihadist" and "The door of Itjihad was closed" in app.lapsing:
 				return False
@@ -473,6 +481,14 @@ class Card:
 			return False
 		elif self.number == 80: # FATA
 			return True
+		elif self.number == 81: # Foreign Fighters
+			return True
+		elif self.number == 82: # Jihadist Videos
+			return True
+		elif self.number == 83: # Kashmir
+			return True
+		elif self.number == 84 or self.number == 85: # Leak
+			return False
 		return False
 	
 	def playEvent(self, side, app):
@@ -1343,6 +1359,75 @@ class Card:
 				app.cells -= 1
 				app.outputToHistory("Sleeper Cell placed in Pakistan", False)
 				app.outputToHistory(app.map["Pakistan"].countryStr(), True)
+			elif self.number == 81: # Foreign Fighters
+				possibles = []
+				for country in app.map:
+					if app.map[country].regimeChange > 0:
+						possibles.append(country)
+				if len(possibles) <= 0:
+					return False
+				target = random.choice(possibles)
+				cellsToPlace = min(app.cells, 5)
+				app.testCountry(target)
+				app.map[target].sleeperCells += cellsToPlace
+				app.cells -= cellsToPlace
+				app.outputToHistory("%d Sleeper Cell(s) placed in %s" % (cellsToPlace, target), False)
+				if app.map[target].aid > 0:
+					app.map[target].aid = 0
+					app.outputToHistory("Aid removed from %s" % target, False)
+				else:
+					app.map[target].besieged = 1
+					app.outputToHistory("%s no Besieged Regime" % target, False)
+				app.outputToHistory(app.map[target].countryStr(), True)
+			elif self.number == 82: # Jihadist Videos
+				cellsToPlace = min(3, app.cells)
+				possibles = []
+				for country in app.map:
+					if app.map[country].totalCells() == 0:
+						possibles.append(country)
+				random.shuffle(possibles)
+				for i in range(cellsToPlace):
+					rolls = []
+					rolls.append(random.randint(1,6))
+					app.testCountry(possibles[i])
+					app.executeRecruit(possibles[i], 1, rolls, False, True)
+			elif self.number == 83: # Kashmir
+				app.testCountry("Pakistan")
+				app.map["Pakistan"].sleeperCells += 1
+				app.cells -= 1
+				app.outputToHistory("Sleeper Cell placed in Pakistan", False)
+				if app.map["Pakistan"].alignment == "Ally":
+					app.map["Pakistan"].alignment = "Neutral"
+				elif app.map["Pakistan"].alignment == "Neutral":	
+					app.map["Pakistan"].alignment = "Adversary"
+				app.outputToHistory("%s Alignment shifted to %s." % ("Pakistan", app.map["Pakistan"].alignment), True)
+				app.outputToHistory(app.map["Pakistan"].countryStr(), True)
+			elif self.number == 84 or self.number == 85: # Leak
+				possibles = []
+				if "Enhanced Measures" in app.markers:
+					possibles.append("Enhanced Measures")
+				if "Reditions" in app.markers:
+					possibles.append("Reditions")
+				if "Wiretapping" in app.markers:
+					possibles.append("Wiretapping")
+				target = random.choice(possibles)
+				app.markers.remove(target)
+				app.markers.append("Leak-"+target)
+				app.outputToHistory("%s removed and can no longer be played." % target, False)	
+				usPrestigeRolls = []
+				for i in range(3):
+					usPrestigeRolls.append(random.randint(1,6))
+				postureRoll = random.randint(1,6)
+
+				presMultiplier = 1
+				if usPrestigeRolls[0] <= 4:
+					presMultiplier = -1
+				app.changePrestige(min(usPrestigeRolls[1], usPrestigeRolls[2]) * presMultiplier, False)
+				if postureRoll <= 4:
+					app.map["United States"].posture = "Soft"
+				else:
+					app.map["United States"].posture = "Hard"
+				app.outputToHistory("US Posture now %s" % app.map["United States"].posture, True)	
 				
 class Labyrinth(cmd.Cmd):
 
@@ -2546,7 +2631,7 @@ class Labyrinth(cmd.Cmd):
 		else:
 			return countryOrder[0][2]
 	
-	def executeRecruit(self, country, ops, rolls, recruitOverride = None):
+	def executeRecruit(self, country, ops, rolls, recruitOverride = None, isJihadistVideos = False):
 		self.outputToHistory("* Recruit to %s" % country)
 		cellsRequested = ops
 		if self.ideology >= 2:
@@ -2588,6 +2673,9 @@ class Labyrinth(cmd.Cmd):
 					self.outputToHistory("Roll successful, %d sleeper cell(s) recruited." % cellsMoving, False)
 				else:
 					self.outputToHistory("Roll failed.", False)
+					if isJihadistVideos:
+						self.map[country].cadre = 1
+						self.outputToHistory("Cadre added.", False)
 				opsRemaining -= 1
 				i += 1
 			self.outputToHistory(self.map[country].countryStr(), True)

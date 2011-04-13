@@ -8361,5 +8361,161 @@ class card80(unittest.TestCase):
  		self.assertTrue(app.map["Pakistan"].sleeperCells == 1)
  		self.assertTrue("FATA" in app.map["Pakistan"].markers)
 
+class card81(unittest.TestCase):
+	'''Foreign Fighters'''
+	
+	def testPlayable(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+ 		self.assertFalse(app.deck["81"].playable("Jihadist", app))
+ 		app.testCountry("Iraq")
+  		self.assertFalse(app.deck["81"].playable("Jihadist", app))
+		app.map["Iraq"].regimeChange = 1
+		self.assertTrue(app.deck["81"].playable("Jihadist", app))
+
+	def testPutsCell(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		self.assertTrue(app.deck["81"].putsCell(app))			
+
+	def testEvent(self):
+ 		app = Labyrinth(1, 1, testScenarioSetup)
+ 		app.testCountry("Iraq")
+ 		app.map["Iraq"].regimeChange = 1
+		app.deck["81"].playEvent("Jihadist", app)
+ 		self.assertTrue(app.map["Iraq"].sleeperCells == 5)
+ 		self.assertTrue(app.map["Iraq"].besieged == 1)
+ 		self.assertTrue(app.map["Iraq"].aid == 0)
+
+ 		app = Labyrinth(1, 1, testScenarioSetup)
+ 		app.testCountry("Iraq")
+ 		app.map["Iraq"].regimeChange = 1
+ 		app.map["Iraq"].aid = 1
+		app.deck["81"].playEvent("Jihadist", app)
+ 		self.assertTrue(app.map["Iraq"].sleeperCells == 5)
+ 		self.assertTrue(app.map["Iraq"].besieged == 0)
+ 		self.assertTrue(app.map["Iraq"].aid == 0)
+
+class card82(unittest.TestCase):
+	'''Jihadist Videos'''
+	
+	def testPlayable(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		self.assertTrue(app.deck["82"].playable("Jihadist", app))
+
+	def testPutsCell(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		self.assertTrue(app.deck["82"].putsCell(app))			
+
+	def testEvent(self):
+ 		app = Labyrinth(1, 1, testScenarioSetup)
+		app.deck["82"].playEvent("Jihadist", app)
+
+class card83(unittest.TestCase):
+	'''Kashmir'''
+	
+	def testPlayable(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		self.assertTrue(app.deck["83"].playable("Jihadist", app))
+		app.markers.append("Indo-Pakistani Talks")
+		self.assertFalse(app.deck["83"].playable("Jihadist", app))
+
+	def testPutsCell(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		self.assertTrue(app.deck["83"].putsCell(app))			
+
+	def testEvent(self):
+ 		app = Labyrinth(1, 1, testScenarioSetup)
+ 		app.testCountry("Pakistan")
+		app.deck["83"].playEvent("Jihadist", app)
+ 		self.assertTrue(app.map["Pakistan"].alignment == "Adversary")
+ 		self.assertTrue(app.map["Pakistan"].sleeperCells == 1)
+
+class card84(unittest.TestCase):
+	'''Leak'''
+	
+	def testPlayable(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		self.assertFalse(app.deck["84"].playable("Jihadist", app))
+		app.markers.append("Enhanced Measures")
+		self.assertTrue(app.deck["84"].playable("Jihadist", app))
+
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		self.assertFalse(app.deck["84"].playable("Jihadist", app))
+		app.markers.append("Reditions")
+		self.assertTrue(app.deck["84"].playable("Jihadist", app))
+
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		self.assertFalse(app.deck["84"].playable("Jihadist", app))
+		app.markers.append("Wiretapping")
+		self.assertTrue(app.deck["84"].playable("Jihadist", app))
+
+	def testPutsCell(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		self.assertFalse(app.deck["84"].putsCell(app))			
+
+	def testEvent(self):
+ 		app = Labyrinth(1, 1, testScenarioSetup)
+		app.markers.append("Enhanced Measures")
+		app.deck["84"].playEvent("Jihadist", app)
+ 		self.assertTrue("Leak-Enhanced Measures" in app.markers)
+ 		self.assertTrue("Enhanced Measures" not in app.markers)
+
+ 		app = Labyrinth(1, 1, testScenarioSetup)
+		app.markers.append("Reditions")
+		app.deck["84"].playEvent("Jihadist", app)
+ 		self.assertTrue("Leak-Reditions" in app.markers)
+ 		self.assertTrue("Reditions" not in app.markers)
+
+ 		app = Labyrinth(1, 1, testScenarioSetup)
+		app.markers.append("Wiretapping")
+		app.deck["84"].playEvent("Jihadist", app)
+ 		self.assertTrue("Leak-Wiretapping" in app.markers)
+ 		self.assertTrue("Wiretapping" not in app.markers)
+ 		self.assertTrue(app.prestige != 7)
+ 		
+class card85(unittest.TestCase):
+	'''Leak'''
+	
+	def testPlayable(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		self.assertFalse(app.deck["85"].playable("Jihadist", app))
+		app.markers.append("Enhanced Measures")
+		self.assertTrue(app.deck["85"].playable("Jihadist", app))
+
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		self.assertFalse(app.deck["85"].playable("Jihadist", app))
+		app.markers.append("Reditions")
+		self.assertTrue(app.deck["85"].playable("Jihadist", app))
+
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		self.assertFalse(app.deck["85"].playable("Jihadist", app))
+		app.markers.append("Wiretapping")
+		self.assertTrue(app.deck["85"].playable("Jihadist", app))
+
+	def testPutsCell(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		self.assertFalse(app.deck["85"].putsCell(app))			
+
+	def testEvent(self):
+ 		app = Labyrinth(1, 1, testScenarioSetup)
+		app.markers.append("Enhanced Measures")
+		app.deck["85"].playEvent("Jihadist", app)
+ 		self.assertTrue("Leak-Enhanced Measures" in app.markers)
+ 		self.assertTrue("Enhanced Measures" not in app.markers)
+
+ 		app = Labyrinth(1, 1, testScenarioSetup)
+		app.markers.append("Reditions")
+		app.deck["85"].playEvent("Jihadist", app)
+ 		self.assertTrue("Leak-Reditions" in app.markers)
+ 		self.assertTrue("Reditions" not in app.markers)
+
+ 		app = Labyrinth(1, 1, testScenarioSetup)
+		app.markers.append("Wiretapping")
+		app.deck["85"].playEvent("Jihadist", app)
+ 		self.assertTrue("Leak-Wiretapping" in app.markers)
+ 		self.assertTrue("Wiretapping" not in app.markers)
+ 		self.assertTrue(app.prestige != 7)
+ 		
+ 		
+
 if __name__ == "__main__":
 	unittest.main()   
