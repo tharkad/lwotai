@@ -409,6 +409,14 @@ class Card:
 				return "Indo-Pakistani Talks" not in app.markers
 			elif self.number == 84 or self.number == 85: # Leak
 				return ("Enhanced Measures" in app.markers) or ("Reditions" in app.markers) or ("Wiretapping" in app.markers)
+			elif self.number == 86: # Lebanon War
+				return True
+			elif self.number == 87 or self.number == 88 or self.number == 89: # Martyrdom Operation
+				for country in app.map:
+					if app.map[country].governance != 4:
+						if app.map[country].totalCells() > 0:
+							return True
+				return False
 		else: # Unassociated Events
 			if side == "Jihadist" and "The door of Itjihad was closed" in app.lapsing:
 				return False
@@ -488,6 +496,10 @@ class Card:
 		elif self.number == 83: # Kashmir
 			return True
 		elif self.number == 84 or self.number == 85: # Leak
+			return False
+		elif self.number == 86: # Lebanon War
+			return True
+		elif self.number == 87 or self.number == 88 or self.number == 89: # Martyrdom Operation
 			return False
 		return False
 	
@@ -1428,6 +1440,22 @@ class Card:
 				else:
 					app.map["United States"].posture = "Hard"
 				app.outputToHistory("US Posture now %s" % app.map["United States"].posture, True)	
+			elif self.number == 86: # Lebanon War
+				app.outputToHistory("US discards a random card.", False)	
+				app.changePrestige(-1, False)
+				possibles = []
+				for country in app.map:
+					if app.map[country].type == "Shia-Mix":
+						possibles.append(country)
+				target = random.choice(possibles)
+				app.testCountry(target)
+				app.map[target].sleeperCells += 1
+				app.cells -= 1
+				app.outputToHistory("%d Sleeper Cell placed in %s" % (1, target), False)
+				app.outputToHistory(app.map[target].countryStr(), True)				
+			elif self.number == 87 or self.number == 88 or self.number == 89: # Martyrdom Operation
+				app.executePlot(1, False, [], True)
+				
 				
 class Labyrinth(cmd.Cmd):
 
@@ -3127,43 +3155,49 @@ class Labyrinth(cmd.Cmd):
 				self.outputToHistory(self.map[sources[i]].countryStr(), True)				
 		return ops - len(sources)
 		
-	def placePlots(self, country, rollPosition, plotRolls):
+	def placePlots(self, country, rollPosition, plotRolls, isMartydomOperation = False):
 		if (self.map[country].totalCells(True)) > 0:
-			opsRemaining = len(plotRolls) - rollPosition
-			cellsAvailable = self.map[country].totalCells(True)
-			plotsToPlace = min(cellsAvailable, opsRemaining)
-			self.outputToHistory("--> %s plot attempt(s) in %s." % (plotsToPlace, country), False)
-			successes = 0
-			failures = 0
-			for i in range(rollPosition, rollPosition + plotsToPlace):
-				if plotRolls[i] <= self.map[country].governance:
-					successes += 1
-				else:
-					failures += 1
-			self.outputToHistory("Plot rolls: %d Successes rolled, %d Failures rolled" % (successes, failures), False)
-			for i in range(plotsToPlace - self.map[country].numActiveCells()):
-				self.outputToHistory("Cell goes Active", False)
-				self.map[country].sleeperCells -= 1
-				self.map[country].activeCells += 1
-			self.map[country].plots += successes
-			self.outputToHistory("%d Plot(s) placed in %s." % (successes, country), False)
-			if "Abu Sayyaf" in self.markers and country == "Philippines" and self.map[country].troops() <= self.map[country].totalCells():
-				self.outputToHistory("Prestige loss due to Abu Sayyaf.", False)
-				self.changePrestige(-successes)
-			if "NEST" in self.markers and country == "Unites States":
-				self.outputToHistory("NEST in play. If jihadists have WMD, all plots in the US placed face up.", False)
-			self.outputToHistory(self.map[country].countryStr(), True)
-			rollPosition += plotsToPlace
+			if isMartydomOperation:
+				self.removeCell(country)
+				self.outputToHistory("Place 2 available plots in %s." % country, False)
+				self.map[country].plots += 2
+				rollPosition = 1
+			else:
+				opsRemaining = len(plotRolls) - rollPosition
+				cellsAvailable = self.map[country].totalCells(True)
+				plotsToPlace = min(cellsAvailable, opsRemaining)
+				self.outputToHistory("--> %s plot attempt(s) in %s." % (plotsToPlace, country), False)
+				successes = 0
+				failures = 0
+				for i in range(rollPosition, rollPosition + plotsToPlace):
+					if plotRolls[i] <= self.map[country].governance:
+						successes += 1
+					else:
+						failures += 1
+				self.outputToHistory("Plot rolls: %d Successes rolled, %d Failures rolled" % (successes, failures), False)
+				for i in range(plotsToPlace - self.map[country].numActiveCells()):
+					self.outputToHistory("Cell goes Active", False)
+					self.map[country].sleeperCells -= 1
+					self.map[country].activeCells += 1
+				self.map[country].plots += successes
+				self.outputToHistory("%d Plot(s) placed in %s." % (successes, country), False)
+				if "Abu Sayyaf" in self.markers and country == "Philippines" and self.map[country].troops() <= self.map[country].totalCells():
+					self.outputToHistory("Prestige loss due to Abu Sayyaf.", False)
+					self.changePrestige(-successes)
+				if "NEST" in self.markers and country == "Unites States":
+					self.outputToHistory("NEST in play. If jihadists have WMD, all plots in the US placed face up.", False)
+				self.outputToHistory(self.map[country].countryStr(), True)
+				rollPosition += plotsToPlace
 		return rollPosition
 		
-	def handlePlotPriorities(self, countriesDict, ops, rollPosition, plotRolls, isOps):
+	def handlePlotPriorities(self, countriesDict, ops, rollPosition, plotRolls, isOps, isMartydomOperation = False):
 		if isOps:
 			if len(countriesDict["Fair"]) > 0:
 				targets = countriesDict["Fair"]
 				random.shuffle(targets)
 				i = 0
 				while rollPosition < ops and i < len(targets):
-					rollPosition = self.placePlots(targets[i], rollPosition, plotRolls)
+					rollPosition = self.placePlots(targets[i], rollPosition, plotRolls, isMartydomOperation)
 					i += 1
 			if rollPosition == ops:
 				return rollPosition
@@ -3172,7 +3206,7 @@ class Labyrinth(cmd.Cmd):
 				random.shuffle(targets)
 				i = 0
 				while rollPosition < ops and i < len(targets):
-					rollPosition = self.placePlots(targets[i], rollPosition, plotRolls)
+					rollPosition = self.placePlots(targets[i], rollPosition, plotRolls, isMartydomOperation)
 					i += 1
 			if rollPosition == ops:
 				return rollPosition
@@ -3182,7 +3216,7 @@ class Labyrinth(cmd.Cmd):
 				random.shuffle(targets)
 				i = 0
 				while rollPosition < ops and i < len(targets):
-					rollPosition = self.placePlots(targets[i], rollPosition, plotRolls)
+					rollPosition = self.placePlots(targets[i], rollPosition, plotRolls, isMartydomOperation)
 					i += 1
 			if rollPosition == ops:
 				return rollPosition
@@ -3191,7 +3225,7 @@ class Labyrinth(cmd.Cmd):
 				random.shuffle(targets)
 				i = 0
 				while rollPosition < ops and i < len(targets):
-					rollPosition = self.placePlots(targets[i], rollPosition, plotRolls)
+					rollPosition = self.placePlots(targets[i], rollPosition, plotRolls, isMartydomOperation)
 					i += 1
 			if rollPosition == ops:
 				return rollPosition
@@ -3200,15 +3234,16 @@ class Labyrinth(cmd.Cmd):
 			random.shuffle(targets)
 			i = 0
 			while rollPosition < ops and i < len(targets):
-				rollPosition = self.placePlots(targets[i], rollPosition, plotRolls)
+				rollPosition = self.placePlots(targets[i], rollPosition, plotRolls, isMartydomOperation)
 				i += 1
 		return rollPosition
 				
-	def executePlot(self, ops, isOps, plotRolls):
-		self.outputToHistory("* Jihadists Plotting", False)
+	def executePlot(self, ops, isOps, plotRolls, isMartydomOperation = False):
+		if not isMartydomOperation:
+			self.outputToHistory("* Jihadists Plotting", False)
 	# In US
 		self.debugPrint("DEBUG: In US")
-		rollPosition = self.placePlots("United States", 0, plotRolls)
+		rollPosition = self.placePlots("United States", 0, plotRolls, isMartydomOperation)
 		if rollPosition == ops:
 			return 0
 		if self.prestige >= 4:
@@ -3217,37 +3252,37 @@ class Labyrinth(cmd.Cmd):
 			if ("Abu Sayyaf" in self.markers) and ((self.map["Philippines"].totalCells(True)) >= self.map["Philippines"].troops()):
 	# In Philippines
 				self.debugPrint("DEBUG: Philippines")
-				rollPosition = self.placePlots("Philippines", rollPosition, plotRolls)
+				rollPosition = self.placePlots("Philippines", rollPosition, plotRolls, isMartydomOperation)
 				if rollPosition == ops:
 					return 0
 	# With troops
 			self.debugPrint("DEBUG: troops")
 			troopDict = self.getCountriesWithTroopsByGovernance()
-			rollPosition = self.handlePlotPriorities(troopDict, ops, rollPosition, plotRolls, isOps)
+			rollPosition = self.handlePlotPriorities(troopDict, ops, rollPosition, plotRolls, isOps, isMartydomOperation)
 			if rollPosition == ops:
 				return 0
 	# No GWOT Penalty
 		if self.gwotPenalty() >= 0:			
 			self.debugPrint("DEBUG: No GWOT Penalty")
 			postureDict = self.getCountriesWithUSPostureByGovernance()
-			rollPosition = self.handlePlotPriorities(postureDict, ops, rollPosition, plotRolls, isOps)
+			rollPosition = self.handlePlotPriorities(postureDict, ops, rollPosition, plotRolls, isOps, isMartydomOperation)
 			if rollPosition == ops:
 				return 0
 	# With aid
 		self.debugPrint("DEBUG: aid")
 		aidDict = self.getCountriesWithAidByGovernance()
-		rollPosition = self.handlePlotPriorities(aidDict, ops, rollPosition, plotRolls, isOps)
+		rollPosition = self.handlePlotPriorities(aidDict, ops, rollPosition, plotRolls, isOps, isMartydomOperation)
 		if rollPosition == ops:
 			return 0
 	# Funding < 9
 		if self.funding < 9:
 			self.debugPrint("DEBUG: Funding < 9")
 			nonMuslimDict = self.getNonMuslimCountriesByGovernance()
-			rollPosition = self.handlePlotPriorities(nonMuslimDict, ops, rollPosition, plotRolls, isOps)
+			rollPosition = self.handlePlotPriorities(nonMuslimDict, ops, rollPosition, plotRolls, isOps, isMartydomOperation)
 			if rollPosition == ops:
 				return 0
 			muslimDict = self.getMuslimCountriesByGovernance()
-			rollPosition = self.handlePlotPriorities(muslimDict, ops, rollPosition, plotRolls, isOps)
+			rollPosition = self.handlePlotPriorities(muslimDict, ops, rollPosition, plotRolls, isOps, isMartydomOperation)
 			if rollPosition == ops:
 				return 0
 		return len(plotRolls) - rollPosition
