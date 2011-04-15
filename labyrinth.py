@@ -414,9 +414,34 @@ class Card:
 			elif self.number == 87 or self.number == 88 or self.number == 89: # Martyrdom Operation
 				for country in app.map:
 					if app.map[country].governance != 4:
-						if app.map[country].totalCells() > 0:
+						if app.map[country].totalCells(True) > 0:
 							return True
 				return False
+			elif self.number == 90: # Quagmire
+				if app.prestige >= 7:
+					return False
+				for country in app.map:
+					if app.map[country].regimeChange > 0:
+						if app.map[country].totalCells(True) > 0:
+							return True
+				return False
+			elif self.number == 91: # Regional al-Qaeda
+				num = 0
+				for country in app.map:
+					if app.map[country].type == "Suni" or app.map[country].type == "Shia-Mix":
+						if app.map[country].governance == 0:
+							num += 1
+				return num >= 2
+			elif self.number == 92: # Saddam
+				if "Saddam Captured" in app.markers:
+					return False
+				return (app.map["Iraq"].governance == 3) and (app.map["Iraq"].alignment == "Adversary")
+			elif self.number == 93: # Taliban
+				return True
+			elif self.number == 94: # The door of Itjihad was closed
+				return app.getYesNoFromUser("Was a country tested or improved to Fair or Good this or last Action Phase.? (y/n): ")
+			elif self.number == 95: # Wahhabism
+				return True
 		else: # Unassociated Events
 			if side == "Jihadist" and "The door of Itjihad was closed" in app.lapsing:
 				return False
@@ -500,6 +525,18 @@ class Card:
 		elif self.number == 86: # Lebanon War
 			return True
 		elif self.number == 87 or self.number == 88 or self.number == 89: # Martyrdom Operation
+			return False
+		elif self.number == 90: # Quagmire
+			return False
+		elif self.number == 91: # Regional al-Qaeda
+			return True
+		elif self.number == 92: # Saddam
+			return False
+		elif self.number == 93: # Taliban
+			return True
+		elif self.number == 94: # The door of Itjihad was closed
+			return False
+		elif self.number == 95: # Wahhabism
 			return False
 		return False
 	
@@ -1455,7 +1492,69 @@ class Card:
 				app.outputToHistory(app.map[target].countryStr(), True)				
 			elif self.number == 87 or self.number == 88 or self.number == 89: # Martyrdom Operation
 				app.executePlot(1, False, [], True)
-				
+			elif self.number == 90: # Quagmire
+				app.map["United States"].posture = "Soft"
+				app.outputToHistory("US Posture now Soft.", False)
+				app.outputToHistory("US randomly discards two cards and Jihadist plays them.", False)
+				app.outputToHistory("Do this using the j # command for each card.", True)
+			elif self.number == 91: # Regional al-Qaeda
+				possibles = []
+				for country in app.map:
+					if app.map[country].type == "Suni" or app.map[country].type == "Shia-Mix":
+						if app.map[country].governance == 0:
+							possibles.append(country)
+				random.shuffle(possibles)
+				app.testCountry(possibles[0])
+				app.map[possibles[0]].sleeperCells += 1
+				app.cells -= 1
+				app.outputToHistory("Sleeper Cell placed in %s" % possibles[0], False)
+				app.outputToHistory(app.map[possibles[0]].countryStr(), True)
+				if app.cells > 0:
+					app.testCountry(possibles[1])
+					app.map[possibles[1]].sleeperCells += 1
+					app.cells -= 1
+					app.outputToHistory("Sleeper Cell placed in %s" % possibles[1], False)
+					app.outputToHistory(app.map[possibles[1]].countryStr(), True)
+			elif self.number == 92: # Saddam
+				app.funding = 9
+				app.outputToHistory("Jihadist Funding now 9.", True)
+			elif self.number == 93: # Taliban
+				app.testCountry("Afghanistan")
+				app.map["Afghanistan"].besieged = 1
+				app.outputToHistory("Afghanistan is now a Besieged Regime.", False)
+				app.map["Afghanistan"].sleeperCells += 1
+				app.cells -= 1
+				app.outputToHistory("Sleeper Cell placed in %s" % "Afghanistan", False)
+				app.outputToHistory(app.map["Afghanistan"].countryStr(), False)
+				if app.cells > 0:
+					app.testCountry("Pakistan")
+					app.map["Pakistan"].sleeperCells += 1
+					app.cells -= 1
+					app.outputToHistory("Sleeper Cell placed in %s" % "Pakistan", False)
+					app.outputToHistory(app.map["Pakistan"].countryStr(), False)
+				if (app.map["Afghanistan"].governance == 4) or (app.map["Pakistan"].governance == 4):
+					app.changePrestige(-3)
+				else:
+					app.changePrestige(-1)
+			elif self.number == 94: # The door of Itjihad was closed
+				target = None
+				while not target:
+					input = app.getCountryFromUser("Choose a country tested or improved to Fair or Good this or last Action Phase: ",  "XXX", None)	
+					if input == "":
+						print ""
+					elif app.map[input].governance != 2 and 	app.map[input].governance != 1:
+						print "%s is not Fair or Good."
+					else:
+						target = input
+						break
+				app.map[target].governance += 1
+				app.outputToHistory("%s Governance worsened." % target, False)
+				app.outputToHistory(app.map[target].countryStr(), True)
+			elif self.number == 95: # Wahhabism
+				if app.map["Saudi Arabia"].governance == 4:
+					app.changeFunding(9)
+				else:
+					app.changeFunding(app.countryResources("Saudi Arabia"))
 				
 class Labyrinth(cmd.Cmd):
 
