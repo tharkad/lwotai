@@ -459,6 +459,10 @@ class Card:
 				return True
 			elif self.number == 102: # Former Soviet Union
 				return True
+			elif self.number == 103: # Hizballah
+				return True
+			elif self.number == 104 or self.number == 105: # Iran
+				return True
 			elif self.number == 114: # GTMO
 				return True
 				
@@ -566,6 +570,10 @@ class Card:
 		elif self.number == 101: # Kosovo
 			return False
 		elif self.number == 102: # Former Soviet Union
+			return False
+		elif self.number == 103: # Hizballah
+			return False
+		elif self.number == 104 or self.number == 105: # Iran
 			return False
 		return False
 	
@@ -1640,7 +1648,140 @@ class Card:
 					app.map["Central Asia"].governance = 2
 				app.map["Central Asia"].alignment = "Neutral"
 				app.outputToHistory("%s tested, governance %s" % (app.map["Central Asia"].name, app.map["Central Asia"].govStr()), False)
-
+			elif self.number == 103: # Hizballah
+				if side == "US":
+					oneAway = []
+					twoAway = []
+					threeAway = []
+					for countryObj in app.map["Lebanon"].links:	
+						oneAway.append(countryObj.name)
+					for country in oneAway:
+						for subCountryObj in app.map[country].links:
+							if subCountryObj.name not in twoAway and subCountryObj.name not in oneAway and subCountryObj.name != "Lebanon":
+								twoAway.append(subCountryObj.name)
+					for country in twoAway:
+						for subCountryObj in app.map[country].links:
+							if subCountryObj.name not in threeAway and subCountryObj.name not in twoAway and subCountryObj.name not in oneAway and subCountryObj.name != "Lebanon":
+								threeAway.append(subCountryObj.name)
+					possibles = []
+					for country in oneAway:
+						if country not in possibles and app.map[country].totalCells(True) > 0 and app.map[country].type == "Shia-Mix":
+							possibles.append(country)
+					for country in twoAway:
+						if country not in possibles and app.map[country].totalCells(True) > 0 and app.map[country].type == "Shia-Mix":
+							possibles.append(country)
+					for country in threeAway:
+						if country not in possibles and app.map[country].totalCells(True) > 0 and app.map[country].type == "Shia-Mix":
+							possibles.append(country)
+					if len(possibles) <= 0:
+						app.outputToHistory("No Shia-Mix countries with cells within 3 countries of Lebanon.", True)
+						return True
+					elif len(possibles) == 1:
+						target = possibles[0]
+					else:
+						target = None
+						while not target:
+							input = app.getCountryFromUser("Remove a cell from what Shia-Mix country within 3 countries of Lebanon (? for list)?: ",  "XXX", app.listCountriesInParam, possibles)	
+							if input == "":
+								print ""
+							else:
+								if app.map[input].totalCells(True) <= 0:
+									print "There are no cells in %s" % input
+									print ""
+								elif input not in possibles:
+									print "%s not a Shia-Mix country within 3 countries of Lebanon." % input
+									print ""
+								else:
+									target = input
+					app.removeCell(target)
+					app.outputToHistory(app.map[target].countryStr(), True)
+					return True
+				else:
+					app.testCountry("Lebanon")
+					app.map["Lebanon"].governance = 3
+					app.outputToHistory("Lebanon governance now Poor.", False)
+					app.map["Lebanon"].alignment = "Neutral"
+					app.outputToHistory("Lebanon alignment now Neutral.", True)
+			elif self.number == 104 or self.number == 105: # Iran
+				if side == "US":
+					target = None
+					while not target:
+						input = app.getCountryFromUser("Choose a Shia-Mix country to test. You can then remove a cell from there or Iran (? for list)?: ",  "XXX", app.listShiaMixCountries)	
+						if input == "":
+							print ""
+						else:
+							if app.map[input].type != "Shia-Mix":
+								print "%s is not a Shia-Mix country." % input
+								print ""
+							else:
+								target = input
+					picked = target
+					app.testCountry(picked)
+					if app.map["Iran"].totalCells(True) > 0:
+						target = None
+						while not target:
+							input = app.getCountryFromUser("Remove a cell from %s or %s: " % (picked, "Iran"),  "XXX", None)	
+							if input == "":
+								print ""
+							else:
+								if input != picked and input != "Iran":
+									print "Remove a cell from %s or %s: " % (picked, "Iran")
+									print ""
+								else:
+									target = input
+					else:
+						target = picked
+					app.removeCell(target)
+					app.outputToHistory(app.map[target].countryStr(), True)
+					return True
+				else:
+					possibles = []
+					for country in app.map:
+						if app.map[country].type == "Shia-Mix":
+							possibles.append(country)
+					target = random.choice(possibles)
+					app.testCountry(target)
+					tested = target
+					target = None
+					goods = []
+					for country in app.map:
+						if app.map[country].type == "Shia-Mix" or app.map[country].type == "Suni":
+							if app.map[country].governance == 1:
+								goods.append(country)
+					if len(goods) > 1:
+						distances = []
+						for country in goods:
+							distances.append((app.countryDistance(tested, country), country))
+						distances.sort()
+						target = distances[0][1]
+					elif len(goods) == 1:
+						target = goods[0]
+					else:
+						fairs = []
+						for country in app.map:
+							if app.map[country].type == "Shia-Mix" or app.map[country].type == "Suni":
+								if app.map[country].governance == 2:
+									fairs.append(country)
+						if len(fairs) > 1:
+							distances = []
+							for country in fairs:
+								distances.append((app.countryDistance(tested, country), country))
+							distances.sort()
+							target = distances[0][1]
+						elif len(fairs) == 1:
+							target = fairs[0]
+						else:
+							app.outputToHistory("No Good or Fair countries to Jihad in.", True)
+							return
+					for i in range(2):
+						if random.randint(1,6) <= app.map[target].governance:
+							if app.map[target].governance < 4:
+								app.map[target].governance += 1
+								app.outputToHistory("Governance worsened in %s." % target, False)
+								app.outputToHistory(app.map[target].countryStr(), True)
+													
+					
+					
 class Labyrinth(cmd.Cmd):
 
 	map = {}
@@ -2151,7 +2292,7 @@ class Labyrinth(cmd.Cmd):
 		self.deck["118"] = Card(118,"Unassociated","Oil Price Spike",3)
 		self.deck["119"] = Card(119,"Unassociated","Saleh",3)
 		self.deck["120"] = Card(120,"Unassociated","US Election",3)
-	
+
 	def getCountryFromUser(self, prompt, special, helpFunction, helpParameter = None):
 		goodCountry = None
 		while not goodCountry:
@@ -2935,6 +3076,32 @@ class Labyrinth(cmd.Cmd):
 				if (self.map[country].totalCells(True) > 0):
 					return True
 		return False
+	
+	def inLists(self, country, lists):
+		for list in lists:
+			if country in lists:	
+				return True
+		return False
+	
+	def countryDistance(self, start, end):
+		if start == end:
+			return 0
+		distanceGroups = []
+		distanceGroups.append([start])
+		distance = 1
+		while not self.inLists(end, distanceGroups):
+			list = distanceGroups[distance - 1]
+			nextWave = []
+			for country in list:
+				for subCountry in self.map:
+					if not self.inLists(subCountry, distanceGroups):
+						if self.isAdjacent(subCountry, country):
+							if subCountry == end:
+								return distance
+							if subCountry not in nextWave:
+								nextWave.append(subCountry)
+			distanceGroups.append(nextWave)
+			distance += 1
 		
 	def travelDestinationChooseBasedOnPriority(self, countryList):
 		for country in countryList:
@@ -3760,6 +3927,14 @@ class Labyrinth(cmd.Cmd):
 		else:
 			self.removeCell(country)
 		
+	def listCountriesInParam(self, needed = None):
+		print ""
+		print "Contries"
+		print "--------"
+		for country in needed:
+			self.map[country].printCountry()
+		print ""
+
 	def listCountriesWithTroops(self, needed = None):
 		print ""
 		print "Contries with Troops"
@@ -3899,12 +4074,21 @@ class Labyrinth(cmd.Cmd):
 	def listShiaMixRegimeChangeCountriesWithCells(self, na = None):
 		print ""
 		print "Shia-Mix Regime Change Countries with Cells"
-		print "-----------------------"
+		print "-------------------------------------------"
 		for country in self.map:
-			if app.map[country].type == "Shia-Mix":
-				if app.map[country].regimeChange > 0:
-					if (app.map[country].totalCells(True)) > 0:
+			if self.map[country].type == "Shia-Mix":
+				if self.map[country].regimeChange > 0:
+					if (self.map[country].totalCells(True)) > 0:
 						self.map[country].printCountry()
+		print ""
+
+	def listShiaMixCountries(self, na = None):
+		print ""
+		print "Shia-Mix Countries"
+		print "------------------"
+		for country in self.map:
+			if self.map[country].type == "Shia-Mix":
+				self.map[country].printCountry()
 		print ""
 
 	def listSchengenCountries(self, na = None):

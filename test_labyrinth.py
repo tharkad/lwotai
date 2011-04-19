@@ -6222,6 +6222,17 @@ class countryResources(unittest.TestCase):
 		self.assertTrue(app.countryResources("Egypt") == 3)
 		self.assertTrue(app.countryResources("Syria") == 2)
 		self.assertTrue(app.countryResources("Lebanon") == 1)
+
+class countryDistance(unittest.TestCase):
+	'''Test countryDistance'''
+	
+	def testIsAdjacent(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		self.assertTrue(app.countryDistance("Iran","Iran") == 0)
+		self.assertTrue(app.countryDistance("Iran","Iraq") == 1)
+		self.assertTrue(app.countryDistance("Iran","Sudan") == 4)
+		self.assertTrue(app.countryDistance("Thailand","United States") == 2)
+		self.assertTrue(app.countryDistance("Russia","Morocco") == 2)
 		
 class card1(unittest.TestCase):
 	'''Backlash'''
@@ -8883,6 +8894,7 @@ class card98(unittest.TestCase):
 	def testPlayable(self):
 		app = Labyrinth(1, 1, testBlankScenarioSetup)
 		self.assertTrue(app.deck["98"].playable("US", app))
+		self.assertTrue(app.deck["98"].playable("Jihadist", app))
 
 	def testPutsCell(self):
 		app = Labyrinth(1, 1, testBlankScenarioSetup)
@@ -8904,6 +8916,7 @@ class card99(unittest.TestCase):
 	def testPlayable(self):
 		app = Labyrinth(1, 1, testBlankScenarioSetup)
 		self.assertTrue(app.deck["99"].playable("US", app))
+		self.assertTrue(app.deck["99"].playable("Jihadist", app))
 
 	def testPutsCell(self):
 		app = Labyrinth(1, 1, testBlankScenarioSetup)
@@ -8926,6 +8939,7 @@ class cardHundred(unittest.TestCase):
 	def testPlayable(self):
 		app = Labyrinth(1, 1, testBlankScenarioSetup)
 		self.assertTrue(app.deck["100"].playable("US", app))
+		self.assertTrue(app.deck["100"].playable("Jihadist", app))
 
 	def testPutsCell(self):
 		app = Labyrinth(1, 1, testBlankScenarioSetup)
@@ -8966,6 +8980,7 @@ class cardHundredOne(unittest.TestCase):
 	def testPlayable(self):
 		app = Labyrinth(1, 1, testBlankScenarioSetup)
 		self.assertTrue(app.deck["101"].playable("US", app))
+		self.assertTrue(app.deck["101"].playable("Jihadist", app))
 
 	def testPutsCell(self):
 		app = Labyrinth(1, 1, testBlankScenarioSetup)
@@ -8989,6 +9004,7 @@ class cardHundredTwo(unittest.TestCase):
 	def testPlayable(self):
 		app = Labyrinth(1, 1, testBlankScenarioSetup)
 		self.assertTrue(app.deck["102"].playable("US", app))
+		self.assertTrue(app.deck["102"].playable("Jihadist", app))
 
 	def testPutsCell(self):
 		app = Labyrinth(1, 1, testBlankScenarioSetup)
@@ -9006,6 +9022,106 @@ class cardHundredTwo(unittest.TestCase):
 		app.deck["102"].playEvent("Jihadist", app)
 		self.assertTrue(app.map["Central Asia"].governance != 1)
 		self.assertTrue(app.map["Central Asia"].alignment == "Neutral")
+		
+class cardHundredThree(unittest.TestCase):
+	'''Hizballah'''
+
+	def testPlayable(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		self.assertTrue(app.deck["103"].playable("US", app))
+		self.assertTrue(app.deck["103"].playable("Jihadist", app))
+
+	def testPutsCell(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		self.assertFalse(app.deck["103"].putsCell(app))			
+
+	def testEvent(self):
+ 		app = Labyrinth(1, 1, testBlankScenarioSetup)
+ 		app.testCountry("Iraq")
+ 		app.map["Iraq"].sleeperCells = 1
+		app.deck["103"].playEvent("US", app)
+		self.assertTrue(app.map["Iraq"].sleeperCells == 0)
+		
+ 		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		app.deck["103"].playEvent("Jihadist", app)
+		self.assertTrue(app.map["Lebanon"].governance == 3)
+		self.assertTrue(app.map["Lebanon"].alignment == "Neutral")
+
+#  		app = Labyrinth(1, 1, testBlankScenarioSetup)
+#  		app.testCountry("Lebanon")
+#  		app.map["Lebanon"].governance = 1
+#  		app.map["Lebanon"].alignment = "Ally"
+#  		app.map["Jordan"].governance = 1
+#  		app.map["Jordan"].alignment = "Ally"
+# 		app.deck["103"].playEvent("Jihadist", app)
+# 		self.assertTrue(app.map["Lebanon"].governance == 3)
+# 		self.assertTrue(app.map["Lebanon"].alignment == "Neutral")
+# 		
+#  		app = Labyrinth(1, 1, testBlankScenarioSetup)
+#  		app.testCountry("Iraq")
+#  		app.map["Iraq"].sleeperCells = 1
+#  		app.testCountry("Gulf States")
+#  		app.map["Gulf States"].sleeperCells = 1
+# 		app.deck["103"].playEvent("US", app)
+# 		self.assertTrue(app.map["Iraq"].sleeperCells == 0)
+		
+class cardHundredFour(unittest.TestCase):
+	'''Iran'''
+
+	def testPlayable(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		self.assertTrue(app.deck["104"].playable("US", app))
+		self.assertTrue(app.deck["104"].playable("Jihadist", app))
+
+	def testPutsCell(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		self.assertFalse(app.deck["104"].putsCell(app))			
+
+	def testEvent(self):
+ 		app = Labyrinth(1, 1, testBlankScenarioSetup)
+#  		app.testCountry("Iraq")
+#  		app.map["Iraq"].sleeperCells = 1
+# 		app.deck["104"].playEvent("US", app)
+# 		self.assertTrue(app.map["Iraq"].sleeperCells == 0)
+# 		
+#  		app = Labyrinth(1, 1, testBlankScenarioSetup)
+#  		app.testCountry("Iraq")
+#  		app.map["Iraq"].sleeperCells = 1
+#  		app.testCountry("Iran")
+#  		app.map["Iran"].sleeperCells = 1
+# 		app.deck["104"].playEvent("US", app)
+# 		self.assertTrue(app.map["Iran"].sleeperCells == 0)
+		
+		app.deck["104"].playEvent("Jihadist", app)
+		
+class cardHundredFive(unittest.TestCase):
+	'''Iran'''
+
+	def testPlayable(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		self.assertTrue(app.deck["105"].playable("US", app))
+		self.assertTrue(app.deck["105"].playable("Jihadist", app))
+
+	def testPutsCell(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		self.assertFalse(app.deck["105"].putsCell(app))			
+
+	def testEvent(self):
+ 		app = Labyrinth(1, 1, testBlankScenarioSetup)
+#  		app.testCountry("Iraq")
+#  		app.map["Iraq"].sleeperCells = 1
+# 		app.deck["105"].playEvent("US", app)
+# 		self.assertTrue(app.map["Iraq"].sleeperCells == 0)
+# 		
+#  		app = Labyrinth(1, 1, testBlankScenarioSetup)
+#  		app.testCountry("Iraq")
+#  		app.map["Iraq"].sleeperCells = 1
+#  		app.testCountry("Iran")
+#  		app.map["Iran"].sleeperCells = 1
+# 		app.deck["105"].playEvent("US", app)
+# 		self.assertTrue(app.map["Iran"].sleeperCells == 0)
+		
+		app.deck["105"].playEvent("Jihadist", app)
 		
 		
 
