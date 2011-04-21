@@ -463,6 +463,26 @@ class Card:
 				return True
 			elif self.number == 104 or self.number == 105: # Iran
 				return True
+			elif self.number == 106: # Jaysh al-Mahdi
+				for country in app.map:
+					if app.map[country].type == "Shia-Mix":
+						if app.map[country].troops() > 0 and app.map[country].totalCells() > 0:
+							return True
+				return False
+			elif self.number == 107: # Kurdistan
+				return True
+			elif self.number == 108: # Musharraf
+				if "Benazir Bhutto" in app.markers:
+					return False
+				return app.map["Pakistan"].totalCells() > 0
+			elif self.number == 109: # Tora Bora
+				for country in app.map:
+					if app.map[country].regimeChange > 0:
+						if app.map[country].totalCells() >= 2:
+							return True
+				return False
+			elif self.number == 110: # Zarqawi
+				return app.map["Iraq"].troops() > 0 or app.map["Syria"].troops() > 0 or app.map["Lebanon"].troops() > 0 or app.map["Jordan"].troops() > 0
 			elif self.number == 114: # GTMO
 				return True
 				
@@ -575,6 +595,16 @@ class Card:
 			return False
 		elif self.number == 104 or self.number == 105: # Iran
 			return False
+		elif self.number == 106: # Jaysh al-Mahdi
+			return False
+		elif self.number == 107: # Kurdistan
+			return False
+		elif self.number == 108: # Musharraf
+			return False
+		elif self.number == 109: # Tora Bora
+			return False
+		elif self.number == 110: # Zarqawi
+			return True
 		return False
 	
 	def playEvent(self, side, app):
@@ -1779,8 +1809,169 @@ class Card:
 								app.map[target].governance += 1
 								app.outputToHistory("Governance worsened in %s." % target, False)
 								app.outputToHistory(app.map[target].countryStr(), True)
-													
-					
+			elif self.number == 106: # Jaysh al-Mahdi
+				if side == "US":
+					target = None
+					possibles = []
+					for country in app.map:
+						if app.map[country].type == "Shia-Mix":
+							if app.map[country].troops() > 0 and app.map[country].totalCells() > 0:
+								possibles.append(country)
+					if len(possibles) == 1:
+						target = possibles[0]
+					while not target:
+						input = app.getCountryFromUser("Choose a Shia-Mix country with cells and troops (? for list)?: ",  "XXX", app.listShiaMixCountriesWithCellsTroops)	
+						if input == "":
+							print ""
+						else:
+							if input not in possibles:
+								print "%s is not a Shia-Mix country with cells and troops." % input
+								print ""
+							else:
+								target = input
+					app.removeCell(target)
+					app.removeCell(target)
+					app.outputToHistory(app.map[target].countryStr(), True)
+					return True
+				else:
+					possibles = []
+					for country in app.map:
+						if app.map[country].type == "Shia-Mix":
+							possibles.append(country)
+					target = random.choice(possibles)
+					app.testCountry(target)
+					tested = target
+					target = None
+					goods = []
+					for country in app.map:
+						if app.map[country].type == "Shia-Mix" or app.map[country].type == "Suni":
+							if app.map[country].governance == 1:
+								goods.append(country)
+					if len(goods) > 1:
+						distances = []
+						for country in goods:
+							distances.append((app.countryDistance(tested, country), country))
+						distances.sort()
+						target = distances[0][1]
+					elif len(goods) == 1:
+						target = goods[0]
+					else:
+						fairs = []
+						for country in app.map:
+							if app.map[country].type == "Shia-Mix" or app.map[country].type == "Suni":
+								if app.map[country].governance == 2:
+									fairs.append(country)
+						if len(fairs) > 1:
+							distances = []
+							for country in fairs:
+								distances.append((app.countryDistance(tested, country), country))
+							distances.sort()
+							target = distances[0][1]
+						elif len(fairs) == 1:
+							target = fairs[0]
+						else:
+							app.outputToHistory("No Good or Fair countries to Jihad in.", True)
+							return
+						if app.map[target].governance < 4:
+							app.map[target].governance += 1
+							app.outputToHistory("Governance worsened in %s." % target, False)
+							app.outputToHistory(app.map[target].countryStr(), True)
+			elif self.number == 107: # Kurdistan
+				if side == "US":
+					app.testCountry("Iraq")
+					app.map["Iraq"].aid = 1
+					app.outputToHistory("Aid added to Iraq.", False)
+					app.outputToHistory(app.map["Iraq"].countryStr(), True)
+				else:
+					app.testCountry("Turkey")
+					target = None
+					possibles = []
+					if app.map["Turkey"].governance < 3:
+						possibles.append("Turkey")
+					if app.map["Iraq"].governance != 0 and app.map["Iraq"].governance < 3:
+						possibles.append("Iraq")
+					if len(possibles) == 0:
+						app.outputToHistory("Iraq and Lebanon cannot have governance worssened.", True)
+						return
+					elif len(possibles) == 0:
+						target = possibles[0]
+					else:
+						countryScores = {}
+						for country in possibles:
+							countryScores[country] = 0
+							if app.map[country].aid > 0:
+								countryScores[country] += 10000
+							if app.map[country].besieged > 0:
+								countryScores[country] += 1000
+							countryScores[country] += (app.map[country].resources * 100)
+							countryScores[country] += random.randint(1,99)
+						countryOrder = []
+						for country in countryScores:
+							countryOrder.append((countryScores[country], (app.map[country].totalCells(True)), country))
+						countryOrder.sort()
+						countryOrder.reverse()
+						target = countryOrder[0][2]
+					app.map[target].governance += 1
+					app.outputToHistory("Governance worsened in %s." % target, False)
+					app.outputToHistory(app.map[target].countryStr(), True)
+			elif self.number == 108: # Musharraf
+				app.removeCell("Pakistan")
+				app.map["Pakistan"].governance = 3
+				app.map["Pakistan"].alignment = "Ally"
+				app.outputToHistory("Pakistan now Poor Ally.", False)
+				app.outputToHistory(app.map["Pakistan"].countryStr(), True)
+			elif self.number == 109: # Tora Bora
+				possibles = []
+				for country in app.map:
+					if app.map[country].regimeChange > 0:
+						if app.map[country].totalCells() >= 2:
+							possibles.append(country)
+				target = None
+				if len(possibles) == 0:
+					return False
+				if len(possibles) == 1:
+					target = possibles[0]
+				else:
+					if side == "US":
+						app.outputToHistory("US draws one card.", False)
+						while not target:
+							input = app.getCountryFromUser("Choose a Regime Change country with at least 2 troops. (? for list)?: ",  "XXX", app.listRegimeChangeWithTwoCells)	
+							if input == "":
+								print ""
+							else:
+								if input not in possibles:
+									print "%s is not a Regime Change country with at least 2 troops." % input
+									print ""
+								else:
+									target = input
+					else:
+						app.outputToHistory("Jihadist draws one card.", False)
+						target = random.choice(possibles)
+				app.removeCell(target)
+				app.removeCell(target)
+				prestigeRolls = []
+				for i in range(3):
+					prestigeRolls.append(random.randint(1,6))
+				presMultiplier = 1
+				if prestigeRolls[0] <= 4:
+					presMultiplier = -1
+				app.changePrestige(min(prestigeRolls[1], prestigeRolls[2]) * presMultiplier)
+			elif self.number == 110: # Zarqawi
+				if side == "US":
+					app.changePrestige(3)
+				else:
+					possibles = []
+					for country in ["Iraq", "Syria", "Lebanon", "Jordan"]:
+						if app.map[country].troops() > 0:
+							possibles.append(country)
+					target = random.choice(possibles)
+					cellsToMove = min(3, app.cells)
+					app.map[target].sleeperCells += cellsToMove
+					app.cells -= cellsToMove
+					app.outputToHistory("%d cells added to %s." % (cellsToMove, target), False)
+					app.map[target].plots += 1
+					app.outputToHistory("Add a Plot 2 to %s." % target, False)
+					app.outputToHistory(app.map[target].countryStr(), True)				
 					
 class Labyrinth(cmd.Cmd):
 
@@ -2508,6 +2699,8 @@ class Labyrinth(cmd.Cmd):
 		self.outputToHistory("Jihadist Funding now %d" % self.funding, lineFeed)
 				
 	def removeCell(self, country):
+		if self.map[country].totalCells() == 0:
+			return
 		if "Sadr" in self.map[country].markers:
 			self.map[country].markers.remove("Sadr")
 			self.outputToHistory("Sadr removed from %s." % country, False)			
@@ -4016,6 +4209,16 @@ class Labyrinth(cmd.Cmd):
 			if self.map[country].regimeChange > 0:
 				self.map[country].printCountry()
 		print ""
+
+	def listRegimeChangeWithTwoCells(self, na = None):
+		print ""
+		print "Regime Change Countries with Two Cells"
+		print "---------------------------------------"
+		for country in self.map:
+			if self.map[country].regimeChange > 0:
+				if self.map[country].totalCells() >= 2:
+					self.map[country].printCountry()
+		print ""
 		
 	def listCountriesWithCellAndAdjacentTroops(self, na = None):
 		print ""
@@ -4089,6 +4292,16 @@ class Labyrinth(cmd.Cmd):
 		for country in self.map:
 			if self.map[country].type == "Shia-Mix":
 				self.map[country].printCountry()
+		print ""
+
+	def listShiaMixCountriesWithCellsTroops(self, na = None):
+		print ""
+		print "Shia-Mix Countries with Cells and Troops"
+		print "----------------------------------------"
+		for country in self.map:
+			if self.map[country].type == "Shia-Mix":
+				if self.map[country].troops() > 0 and self.map[country].totalCells() > 0:
+					self.map[country].printCountry()
 		print ""
 
 	def listSchengenCountries(self, na = None):

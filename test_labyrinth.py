@@ -9123,7 +9123,247 @@ class cardHundredFive(unittest.TestCase):
 		
 		app.deck["105"].playEvent("Jihadist", app)
 		
+class cardHundredSix(unittest.TestCase):
+	'''Jaysh al-Mahdi'''
+
+	def testPlayable(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		self.assertFalse(app.deck["106"].playable("US", app))
+		self.assertFalse(app.deck["106"].playable("Jihadist", app))
+		app.testCountry("Iraq")
+		app.map["Iraq"].sleeperCells = 1
+		self.assertFalse(app.deck["106"].playable("US", app))
+		self.assertFalse(app.deck["106"].playable("Jihadist", app))
+		app.map["Iraq"].troopCubes = 1
+		self.assertTrue(app.deck["106"].playable("US", app))
+		self.assertTrue(app.deck["106"].playable("Jihadist", app))
+		app.map["Iraq"].sleeperCells = 0
+		self.assertFalse(app.deck["106"].playable("US", app))
+		self.assertFalse(app.deck["106"].playable("Jihadist", app))
+
+	def testPutsCell(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		self.assertFalse(app.deck["106"].putsCell(app))			
+
+	def testEvent(self):
+ 		app = Labyrinth(1, 1, testBlankScenarioSetup)
+ 		app.testCountry("Iraq")
+		app.map["Iraq"].sleeperCells = 3
+		app.map["Iraq"].troopCubes = 1
+		app.deck["106"].playEvent("US", app)
+		self.assertTrue(app.map["Iraq"].sleeperCells == 1)
+
+ 		app = Labyrinth(1, 1, testBlankScenarioSetup)
+ 		app.testCountry("Iraq")
+		app.map["Iraq"].sleeperCells = 2
+		app.map["Iraq"].troopCubes = 1
+		app.deck["106"].playEvent("US", app)
+		self.assertTrue(app.map["Iraq"].sleeperCells == 0)
+
+ 		app = Labyrinth(1, 1, testBlankScenarioSetup)
+ 		app.testCountry("Iraq")
+		app.map["Iraq"].sleeperCells = 1
+		app.map["Iraq"].troopCubes = 1
+		app.deck["106"].playEvent("US", app)
+		self.assertTrue(app.map["Iraq"].sleeperCells == 0)
+
+ 		app = Labyrinth(1, 1, testBlankScenarioSetup)
+#  		app.testCountry("Iraq")
+# 		app.map["Iraq"].sleeperCells = 2
+# 		app.map["Iraq"].troopCubes = 1
+# 		app.map["Lebanon"].sleeperCells = 2
+# 		app.map["Lebanon"].troopCubes = 1
+# 		print "Choose Lebanon"
+# 		app.deck["106"].playEvent("US", app)
+# 		self.assertTrue(app.map["Lebanon"].sleeperCells == 0)
 		
+ 		print "HERE"
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+ 		app.testCountry("Iraq")
+		app.map["Iraq"].governance = 2
+		app.map["Iraq"].sleeperCells = 2
+		app.map["Iraq"].troopCubes = 1
+		app.deck["106"].playEvent("Jihadist", app)
+		
+class cardHundredSeven(unittest.TestCase):
+	'''Kurdistan'''
+
+	def testPlayable(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		self.assertTrue(app.deck["107"].playable("US", app))
+		self.assertTrue(app.deck["107"].playable("Jihadist", app))
+
+	def testPutsCell(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		self.assertFalse(app.deck["107"].putsCell(app))			
+
+	def testEvent(self):
+ 		app = Labyrinth(1, 1, testBlankScenarioSetup)
+ 		app.testCountry("Iraq")
+		app.deck["107"].playEvent("US", app)
+		self.assertTrue(app.map["Iraq"].aid == 1)
+		
+ 		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		app.deck["107"].playEvent("Jihadist", app)
+		self.assertTrue(app.map["Turkey"].governance == 3)
+		
+ 		app = Labyrinth(1, 1, testBlankScenarioSetup)
+ 		app.testCountry("Iraq")
+		app.map["Iraq"].governance = 1
+		app.deck["107"].playEvent("Jihadist", app)
+		self.assertTrue(app.map["Turkey"].governance > 1)
+		self.assertTrue(app.map["Iraq"].governance == 2)
+		
+ 		app = Labyrinth(1, 1, testBlankScenarioSetup)
+ 		app.testCountry("Iraq")
+		app.map["Iraq"].governance = 2
+ 		app.testCountry("Turkey")
+		app.map["Turkey"].governance = 2
+		app.map["Turkey"].aid = 1
+		app.deck["107"].playEvent("Jihadist", app)
+		self.assertTrue(app.map["Turkey"].governance == 3)
+		self.assertTrue(app.map["Iraq"].governance == 2)
+
+class cardHundredEight(unittest.TestCase):
+	'''Musharraf'''
+
+	def testPlayable(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		self.assertFalse(app.deck["108"].playable("US", app))
+		self.assertFalse(app.deck["108"].playable("Jihadist", app))
+		app.testCountry("Pakistan")
+		app.map["Pakistan"].activeCells = 1
+		self.assertTrue(app.deck["108"].playable("US", app))
+		self.assertTrue(app.deck["108"].playable("Jihadist", app))
+		app.markers.append("Benazir Bhutto")
+		self.assertFalse(app.deck["108"].playable("US", app))
+		self.assertFalse(app.deck["108"].playable("Jihadist", app))
+
+	def testPutsCell(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		self.assertFalse(app.deck["108"].putsCell(app))			
+
+	def testEvent(self):
+ 		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		app.testCountry("Pakistan")
+		app.map["Pakistan"].sleeperCells = 1
+		app.map["Pakistan"].governance = 1
+		app.deck["108"].playEvent("US", app)
+		self.assertTrue(app.map["Pakistan"].totalCells(True) == 0)
+		self.assertTrue(app.map["Pakistan"].governance == 3)
+		self.assertTrue(app.map["Pakistan"].alignment == "Ally")
+		
+ 		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		app.testCountry("Pakistan")
+		app.map["Pakistan"].sleeperCells = 3
+		app.map["Pakistan"].governance = 4
+		app.map["Pakistan"].alignment = "Adversary"
+		app.deck["108"].playEvent("Jihadist", app)
+		self.assertTrue(app.map["Pakistan"].totalCells(True) == 2)
+		self.assertTrue(app.map["Pakistan"].governance == 3)
+		self.assertTrue(app.map["Pakistan"].alignment == "Ally")
+		
+class cardHundredNine(unittest.TestCase):
+	'''Tora Bora'''
+
+	def testPlayable(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		self.assertFalse(app.deck["109"].playable("US", app))
+		self.assertFalse(app.deck["109"].playable("Jihadist", app))
+		app.testCountry("Pakistan")
+		app.map["Pakistan"].activeCells = 2
+		self.assertFalse(app.deck["109"].playable("US", app))
+		self.assertFalse(app.deck["109"].playable("Jihadist", app))
+		app.map["Pakistan"].regimeChange = 1
+		self.assertTrue(app.deck["109"].playable("US", app))
+		self.assertTrue(app.deck["109"].playable("Jihadist", app))
+
+	def testPutsCell(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		self.assertFalse(app.deck["109"].putsCell(app))			
+
+	def testEvent(self):
+ 		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		app.testCountry("Pakistan")
+		app.map["Pakistan"].sleeperCells = 2
+		app.map["Pakistan"].regimeChange = 1
+		app.deck["109"].playEvent("US", app)
+		self.assertTrue(app.map["Pakistan"].totalCells(True) == 0)
+		self.assertTrue(app.prestige != 7)
+		
+ 		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		app.testCountry("Pakistan")
+		app.map["Pakistan"].sleeperCells = 2
+		app.map["Pakistan"].regimeChange = 1
+		app.deck["109"].playEvent("Jihadist", app)
+		self.assertTrue(app.map["Pakistan"].totalCells(True) == 0)
+		self.assertTrue(app.prestige != 7)
+
+ 		app = Labyrinth(1, 1, testBlankScenarioSetup)
+# 		app.testCountry("Pakistan")
+# 		app.map["Pakistan"].sleeperCells = 2
+# 		app.map["Pakistan"].regimeChange = 1
+# 		app.testCountry("Iraq")
+# 		app.map["Iraq"].sleeperCells = 2
+# 		app.map["Iraq"].regimeChange = 1
+# 		print "Choose Iraq"
+# 		app.deck["109"].playEvent("US", app)
+# 		self.assertTrue(app.map["Iraq"].totalCells(True) == 0)
+# 		self.assertTrue(app.prestige != 7)
+		
+class cardHundredTen(unittest.TestCase):
+	'''Zarqawi'''
+
+	def testPlayable(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		self.assertFalse(app.deck["110"].playable("US", app))
+		self.assertFalse(app.deck["110"].playable("Jihadist", app))
+		app.testCountry("Iraq")
+		app.map["Iraq"].troopCubes = 1
+		self.assertTrue(app.deck["110"].playable("US", app))
+		self.assertTrue(app.deck["110"].playable("Jihadist", app))
+
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		self.assertFalse(app.deck["110"].playable("US", app))
+		self.assertFalse(app.deck["110"].playable("Jihadist", app))
+		app.testCountry("Syria")
+		app.map["Syria"].troopCubes = 1
+		self.assertTrue(app.deck["110"].playable("US", app))
+		self.assertTrue(app.deck["110"].playable("Jihadist", app))
+
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		self.assertFalse(app.deck["110"].playable("US", app))
+		self.assertFalse(app.deck["110"].playable("Jihadist", app))
+		app.testCountry("Lebanon")
+		app.map["Lebanon"].troopCubes = 1
+		self.assertTrue(app.deck["110"].playable("US", app))
+		self.assertTrue(app.deck["110"].playable("Jihadist", app))
+
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		self.assertFalse(app.deck["110"].playable("US", app))
+		self.assertFalse(app.deck["110"].playable("Jihadist", app))
+		app.testCountry("Jordan")
+		app.map["Jordan"].troopCubes = 1
+		self.assertTrue(app.deck["110"].playable("US", app))
+		self.assertTrue(app.deck["110"].playable("Jihadist", app))
+
+	def testPutsCell(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		self.assertTrue(app.deck["110"].putsCell(app))			
+
+	def testEvent(self):
+ 		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		app.testCountry("Iraq")
+		app.map["Iraq"].troopCubes = 2
+		app.deck["110"].playEvent("US", app)
+		self.assertTrue(app.prestige == 10)
+		
+ 		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		app.testCountry("Iraq")
+		app.map["Iraq"].troopCubes = 2
+		app.deck["110"].playEvent("Jihadist", app)
+		self.assertTrue(app.map["Iraq"].totalCells(True) == 3)
+		self.assertTrue(app.map["Iraq"].plots == 1)
 
 if __name__ == "__main__":
 	unittest.main()   
