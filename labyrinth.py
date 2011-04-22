@@ -344,7 +344,7 @@ class Card:
 			elif self.number == 60: # Bhutto Shot
 				return app.map["Pakistan"].totalCells() > 0
 			elif self.number == 61: # Detainee Release
-				if "GTMO" in app.markers or "Renditions" in app.markers:
+				if "GTMO" in app.lapsing or "Renditions" in app.markers:
 					return False
 				return app.getYesNoFromUser("Did the US Disrupt during this or the last Action Phase? (y/n): ")
 			elif self.number == 62: # Ex-KGB
@@ -483,8 +483,50 @@ class Card:
 				return False
 			elif self.number == 110: # Zarqawi
 				return app.map["Iraq"].troops() > 0 or app.map["Syria"].troops() > 0 or app.map["Lebanon"].troops() > 0 or app.map["Jordan"].troops() > 0
+			elif self.number == 111: # Zawahiri
+				if side == "US":
+					if "FATA" in app.map["Pakistan"].markers:
+						return False
+					if "Al-Anbar" in app.markers:
+						return False
+					return app.numIslamicRule() == 0
+				else:
+					return True
+			elif self.number == 112: # Bin Ladin
+				if side == "US":
+					if "FATA" in app.map["Pakistan"].markers:
+						return False
+					if "Al-Anbar" in app.markers:
+						return False
+					return app.numIslamicRule() == 0
+				else:
+					return True
+			elif self.number == 113: # Darfur
+				return True
 			elif self.number == 114: # GTMO
 				return True
+			elif self.number == 115: # Hambali
+				possibles = ["Indonesia/Malaysia"]
+				for countryObj in app.map["Indonesia/Malaysia"].links:
+					possibles.append(countryObj.name)
+				for country in possibles:
+					if app.map[country].totalCells(True) > 0:
+						if app.map[country].type == "Non-Muslim":
+							if app.map[country].posture == "Hard":
+								return True
+						else:
+							if app.map[country].alignment == "Ally":
+								return True
+			elif self.number == 116: # KSM
+				if side == "US":
+					for country in app.map:
+						if app.map[country].plots > 0:
+							if app.map[country].type == "Non-Muslim" or app.map[country].alignment == "Ally":
+								return True
+					return False
+				else:
+					return True
+			return False
 				
 	def putsCell(self, app):
 		if self.number == 48: # Adam Gadahn
@@ -605,6 +647,18 @@ class Card:
 			return False
 		elif self.number == 110: # Zarqawi
 			return True
+		elif self.number == 111: # Zawahiri
+			return False
+		elif self.number == 112: # Bin Ladin
+			return False
+		elif self.number == 113: # Darfur
+			return False
+		elif self.number == 114: # GTMO
+			return False
+		elif self.number == 115: # Hambali
+			return False
+		elif self.number == 116: # KSM
+			return False
 		return False
 	
 	def playEvent(self, side, app):
@@ -982,20 +1036,17 @@ class Card:
 							app.map[country].activeCells -= num
 							app.cells += num
 							app.outputToHistory("%d Active Cell(s) removed from %s." % (num, country), False)
-
 					if app.map[country].sleeperCells > 0:
 						num = app.map[country].sleeperCells
 						if num > 0:
 							app.map[country].sleeperCells -= num
 							app.cells += num
 							app.outputToHistory("%d Sleeper Cell(s) removed from %s." % (num, country), False)
-
 					if app.map[country].cadre > 0:
 						num = app.map[country].cadre
 						if num > 0:
 							app.map[country].cadre = 0
 							app.outputToHistory("Cadre removed from %s." % country, False)
-
 					if app.map[country].plots > 0:
 						num = app.map[country].plots
 						if num > 0:
@@ -1972,7 +2023,113 @@ class Card:
 					app.map[target].plots += 1
 					app.outputToHistory("Add a Plot 2 to %s." % target, False)
 					app.outputToHistory(app.map[target].countryStr(), True)				
+			elif self.number == 111: # Zawahiri
+				if side == "US":
+					app.changeFunding(-2)
+				else:
+					if app.numIslamicRule() > 0:
+						app.changePrestige(-3)
+					else:
+						app.changePrestige(-1)
+			elif self.number == 112: # Bin Ladin
+				if side == "US":
+					app.changeFunding(-4)
+				else:
+					if app.numIslamicRule() > 0:
+						app.changePrestige(-4)
+					else:
+						app.changePrestige(-2)
+			elif self.number == 113: # Darfur
+				app.testCountry("Sudan")
+				if app.prestige >= 7:
+					app.map["Sudan"].aid = 1
+					app.outputToHistory("Aid added to Sudan.", False)
+					if app.map["Sudan"].alignment == "Adversary":
+						app.map["Sudan"].alignment = "Neutral"
+						app.outputToHistory("Sudan alignment improved.", False)
+					elif app.map["Sudan"].alignment == "Neutral":
+						app.map["Sudan"].alignment = "Ally"
+						app.outputToHistory("Sudan alignment improved.", False)
+				else:
+					app.map["Sudan"].besieged = 1
+					app.outputToHistory("Sudan now Besieged Regime.", False)
+					if app.map["Sudan"].alignment == "Ally":
+						app.map["Sudan"].alignment = "Neutral"
+						app.outputToHistory("Sudan alignment worssened.", False)
+					elif app.map["Sudan"].alignment == "Neutral":
+						app.map["Sudan"].alignment = "Adversary"
+						app.outputToHistory("Sudan alignment worssened.", False)
+				app.outputToHistory(app.map["Sudan"].countryStr(), True)				
+			elif self.number == 114: # GTMO
+				app.lapsing.append("GTMO")
+				app.outputToHistory("GTMO in play. No recruit operations or Detainee Release the rest of this turn.", False)
+				prestigeRolls = []
+				for i in range(3):
+					prestigeRolls.append(random.randint(1,6))
+				presMultiplier = 1
+				if prestigeRolls[0] <= 4:
+					presMultiplier = -1
+				app.changePrestige(min(prestigeRolls[1], prestigeRolls[2]) * presMultiplier)								
+			elif self.number == 115: # Hambali
+				if side == "US":
+					possibles = ["Indonesia/Malaysia"]
+					targets = []
+					target = None
+					for countryObj in app.map["Indonesia/Malaysia"].links:
+						possibles.append(countryObj.name)
+					for country in possibles:
+						if app.map[country].totalCells(True) > 0:
+							if app.map[country].type == "Non-Muslim":
+								if app.map[country].posture == "Hard":
+									targets.append(country)
+							else:
+								if app.map[country].alignment == "Ally":
+									targets.append(country)
+					if len(targets) == 1:
+						target = targets[0]
+					else:
+						while not target:
+							input = app.getCountryFromUser("Choose Indonesia or an adjacent country that has a cell and is Ally or Hard. (? for list)?: ",  "XXX", app.listHambali)	
+							if input == "":
+								print ""
+							else:
+								if input not in targets:
+									print "%s is not Indonesia or an adjacent country that has a cell and is Ally or Hard." % input
+									print ""
+								else:
+									target = input
+					app.removeCell(target)
+					app.outputToHistory("US draw 2 cards.", False)
+				else:
+					possibles = ["Indonesia/Malaysia"]
+					targets = []
+					target = None
+					for countryObj in app.map["Indonesia/Malaysia"].links:
+						possibles.append(countryObj.name)
+					for country in possibles:
+						if app.map[country].totalCells(True) > 0:
+							if app.map[country].type == "Non-Muslim":
+								if app.map[country].posture == "Hard":
+									targets.append(country)
+							else:
+								if app.map[country].alignment == "Ally":
+									targets.append(country)
+					target = random.choice(targets)
+					app.map[target].plots += 1
+					app.outputToHistory("Place an plot in %s." % target, True)
+			elif self.number == 116: # KSM
+				if side == "US":
+					for country in app.map:
+						if app.map[country].plots > 0:
+							if app.map[country].alignment == "Ally" or app.map[country].type == "Non-Muslim":
+								numPlots = app.map[country].plots
+								app.map[country].plots = 0
+								app.outputToHistory("%d Plots removed from %s." % (numPlots, country), False)
+					app.outputToHistory("US draws 2 cards.", True)
+				else:
+					app.executePlot(1, False, [], False, False, True)
 					
+				
 class Labyrinth(cmd.Cmd):
 
 	map = {}
@@ -3236,6 +3393,9 @@ class Labyrinth(cmd.Cmd):
 			if isMadrassas:
 				cells = self.cells
 			else:
+				if "GTMO" in self.lapsing:
+					self.outputToHistory("* Cannot Recruit due to GTMO.", True)
+					return ops
 				cells = self.numCellsAvailable()
 			if cells <= 0:
 				self.outputToHistory("* No cells available to Recruit.", True)
@@ -3699,7 +3859,7 @@ class Labyrinth(cmd.Cmd):
 				self.outputToHistory(self.map[sources[i]].countryStr(), True)				
 		return ops - len(sources)
 		
-	def placePlots(self, country, rollPosition, plotRolls, isMartydomOperation = False, isDanishCartoons = False):
+	def placePlots(self, country, rollPosition, plotRolls, isMartydomOperation = False, isDanishCartoons = False, isKSM = False):
 		if (self.map[country].totalCells(True)) > 0:
 			if isMartydomOperation:
 				self.removeCell(country)
@@ -3713,6 +3873,11 @@ class Labyrinth(cmd.Cmd):
 					self.outputToHistory("Place a Plot 1 in %s." % country, False)
 				self.map[country].plots += 1
 				rollPosition = 1
+			elif isKSM:
+				if self.map[country] != 4:
+					self.outputToHistory("Place any available plot in %s." % country, False)
+					self.map[country].plots += 1
+					rollPosition = 1
 			else:
 				opsRemaining = len(plotRolls) - rollPosition
 				cellsAvailable = self.map[country].totalCells(True)
@@ -3741,14 +3906,14 @@ class Labyrinth(cmd.Cmd):
 				rollPosition += plotsToPlace
 		return rollPosition
 		
-	def handlePlotPriorities(self, countriesDict, ops, rollPosition, plotRolls, isOps, isMartydomOperation = False, isDanishCartoons = False):
+	def handlePlotPriorities(self, countriesDict, ops, rollPosition, plotRolls, isOps, isMartydomOperation = False, isDanishCartoons = False, isKSM = False):
 		if isOps:
 			if len(countriesDict["Fair"]) > 0:
 				targets = countriesDict["Fair"]
 				random.shuffle(targets)
 				i = 0
 				while rollPosition < ops and i < len(targets):
-					rollPosition = self.placePlots(targets[i], rollPosition, plotRolls, isMartydomOperation)
+					rollPosition = self.placePlots(targets[i], rollPosition, plotRolls, isMartydomOperation, isDanishCartoons, isKSM)
 					i += 1
 			if rollPosition == ops:
 				return rollPosition
@@ -3757,7 +3922,7 @@ class Labyrinth(cmd.Cmd):
 				random.shuffle(targets)
 				i = 0
 				while rollPosition < ops and i < len(targets):
-					rollPosition = self.placePlots(targets[i], rollPosition, plotRolls, isMartydomOperation)
+					rollPosition = self.placePlots(targets[i], rollPosition, plotRolls, isMartydomOperation, isDanishCartoons, isKSM)
 					i += 1
 			if rollPosition == ops:
 				return rollPosition
@@ -3767,7 +3932,7 @@ class Labyrinth(cmd.Cmd):
 				random.shuffle(targets)
 				i = 0
 				while rollPosition < ops and i < len(targets):
-					rollPosition = self.placePlots(targets[i], rollPosition, plotRolls, isMartydomOperation)
+					rollPosition = self.placePlots(targets[i], rollPosition, plotRolls, isMartydomOperation, isDanishCartoons, isKSM)
 					i += 1
 			if rollPosition == ops:
 				return rollPosition
@@ -3776,7 +3941,7 @@ class Labyrinth(cmd.Cmd):
 				random.shuffle(targets)
 				i = 0
 				while rollPosition < ops and i < len(targets):
-					rollPosition = self.placePlots(targets[i], rollPosition, plotRolls, isMartydomOperation)
+					rollPosition = self.placePlots(targets[i], rollPosition, plotRolls, isMartydomOperation, isDanishCartoons, isKSM)
 					i += 1
 			if rollPosition == ops:
 				return rollPosition
@@ -3785,16 +3950,16 @@ class Labyrinth(cmd.Cmd):
 			random.shuffle(targets)
 			i = 0
 			while rollPosition < ops and i < len(targets):
-				rollPosition = self.placePlots(targets[i], rollPosition, plotRolls, isMartydomOperation)
+				rollPosition = self.placePlots(targets[i], rollPosition, plotRolls, isMartydomOperation, isDanishCartoons, isKSM)
 				i += 1
 		return rollPosition
 				
-	def executePlot(self, ops, isOps, plotRolls, isMartydomOperation = False, isDanishCartoons = False):
-		if not isMartydomOperation and not isDanishCartoons:
+	def executePlot(self, ops, isOps, plotRolls, isMartydomOperation = False, isDanishCartoons = False, isKSM = False):
+		if not isMartydomOperation and not isDanishCartoons and not isKSM:
 			self.outputToHistory("* Jihadists Plotting", False)
 	# In US
 		self.debugPrint("DEBUG: In US")
-		rollPosition = self.placePlots("United States", 0, plotRolls, isMartydomOperation, isDanishCartoons)
+		rollPosition = self.placePlots("United States", 0, plotRolls, isMartydomOperation, isDanishCartoons, isKSM)
 		if rollPosition == ops:
 			return 0
 		if self.prestige >= 4:
@@ -3803,37 +3968,37 @@ class Labyrinth(cmd.Cmd):
 			if ("Abu Sayyaf" in self.markers) and ((self.map["Philippines"].totalCells(True)) >= self.map["Philippines"].troops()):
 	# In Philippines
 				self.debugPrint("DEBUG: Philippines")
-				rollPosition = self.placePlots("Philippines", rollPosition, plotRolls, isMartydomOperation, isDanishCartoons)
+				rollPosition = self.placePlots("Philippines", rollPosition, plotRolls, isMartydomOperation, isDanishCartoons, isKSM)
 				if rollPosition == ops:
 					return 0
 	# With troops
 			self.debugPrint("DEBUG: troops")
 			troopDict = self.getCountriesWithTroopsByGovernance()
-			rollPosition = self.handlePlotPriorities(troopDict, ops, rollPosition, plotRolls, isOps, isMartydomOperation, isDanishCartoons)
+			rollPosition = self.handlePlotPriorities(troopDict, ops, rollPosition, plotRolls, isOps, isMartydomOperation, isDanishCartoons, isKSM)
 			if rollPosition == ops:
 				return 0
 	# No GWOT Penalty
 		if self.gwotPenalty() >= 0:			
 			self.debugPrint("DEBUG: No GWOT Penalty")
 			postureDict = self.getCountriesWithUSPostureByGovernance()
-			rollPosition = self.handlePlotPriorities(postureDict, ops, rollPosition, plotRolls, isOps, isMartydomOperation, isDanishCartoons)
+			rollPosition = self.handlePlotPriorities(postureDict, ops, rollPosition, plotRolls, isOps, isMartydomOperation, isDanishCartoons, isKSM)
 			if rollPosition == ops:
 				return 0
 	# With aid
 		self.debugPrint("DEBUG: aid")
 		aidDict = self.getCountriesWithAidByGovernance()
-		rollPosition = self.handlePlotPriorities(aidDict, ops, rollPosition, plotRolls, isOps, isMartydomOperation, isDanishCartoons)
+		rollPosition = self.handlePlotPriorities(aidDict, ops, rollPosition, plotRolls, isOps, isMartydomOperation, isDanishCartoons, isKSM)
 		if rollPosition == ops:
 			return 0
 	# Funding < 9
 		if self.funding < 9:
 			self.debugPrint("DEBUG: Funding < 9")
 			nonMuslimDict = self.getNonMuslimCountriesByGovernance()
-			rollPosition = self.handlePlotPriorities(nonMuslimDict, ops, rollPosition, plotRolls, isOps, isMartydomOperation, isDanishCartoons)
+			rollPosition = self.handlePlotPriorities(nonMuslimDict, ops, rollPosition, plotRolls, isOps, isMartydomOperation, isDanishCartoons, isKSM)
 			if rollPosition == ops:
 				return 0
 			muslimDict = self.getMuslimCountriesByGovernance()
-			rollPosition = self.handlePlotPriorities(muslimDict, ops, rollPosition, plotRolls, isOps, isMartydomOperation, isDanishCartoons)
+			rollPosition = self.handlePlotPriorities(muslimDict, ops, rollPosition, plotRolls, isOps, isMartydomOperation, isDanishCartoons, isKSM)
 			if rollPosition == ops:
 				return 0
 		return len(plotRolls) - rollPosition
@@ -4312,6 +4477,22 @@ class Labyrinth(cmd.Cmd):
 			if self.map[country].schengen > 0:
 				self.map[country].printCountry()
 		print ""
+
+	def listHambali(self, na = None):
+		print ""
+		print "Indonesia or adjacent country with cell and Ally or Hard"
+		print "--------------------------------------------------------"
+		possibles = ["Indonesia/Malaysia"]
+		for countryObj in self.map["Indonesia/Malaysia"].links:
+			possibles.append(countryObj.name)
+		for country in possibles:
+			if self.map[country].totalCells(True) > 0:
+				if self.map[country].type == "Non-Muslim":
+					if self.map[country].posture == "Hard":
+						self.map[country].printCountry()
+				else:
+					if self.map[country].alignment == "Ally":
+						self.map[country].printCountry()
 
 	def do_status(self, rest):
 		goodRes = 0
