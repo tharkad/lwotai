@@ -526,6 +526,12 @@ class Card:
 					return False
 				else:
 					return True
+			elif self.number == 117 or self.number == 118: # Oil Price Spike
+				return True
+			elif self.number == 119: # Saleh
+				return True
+			elif self.number == 120: # US Election
+				return True
 			return False
 				
 	def putsCell(self, app):
@@ -658,6 +664,12 @@ class Card:
 		elif self.number == 115: # Hambali
 			return False
 		elif self.number == 116: # KSM
+			return False
+		elif self.number == 117 or self.number == 118: # Oil Price Spike
+			return False
+		elif self.number == 119: # Saleh
+			return False
+		elif self.number == 120: # US Election
 			return False
 		return False
 	
@@ -2128,7 +2140,37 @@ class Card:
 					app.outputToHistory("US draws 2 cards.", True)
 				else:
 					app.executePlot(1, False, [], False, False, True)
-					
+			elif self.number == 117 or self.number == 118: # Oil Price Spike
+				app.lapsing.append("Oil Price Spike")
+				app.outputToHistory("Oil Price Spike in play. Add +1 to the resources of each Oil Exporter country for the turn.", False)
+				if side == "US":
+					app.outputToHistory("Select, reveal, and draw a card other than Oil Price Spike from the discard pile or a box.", True)
+				else:
+					if app.getYesNoFromUser("Are there any Jihadist event cards in the discard pile? "):
+						app.outputToHistory("Draw from the Discard Pile randomly among the highest-value Jihadist-associated event cards. Put the card on top of the Jihadist hand.", True)
+					else:
+						app.aiFlowChartMajorJihad(self.number)
+			elif self.number == 119: # Saleh
+				app.testCountry("Yemen")
+				if side == "US":
+					if app.map["Yemen"].governance != 4:
+						if app.map["Yemen"].alignment == "Adversary":
+							app.map["Yemen"].alignment = "Neutral"
+						elif app.map["Yemen"].alignment == "Neutral":
+							app.map["Yemen"].alignment = "Ally"
+						app.outputToHistory("Yemen Alignment improved to %s." % app.map["Yemen"].alignment, False)
+						app.map["Yemen"].aid = 1
+						app.outputToHistory("Aid added to Yemen.", True)
+				else:
+					if app.map["Yemen"].alignment == "Ally":
+						app.map["Yemen"].alignment = "Neutral"
+					elif app.map["Yemen"].alignment == "Neutral":
+						app.map["Yemen"].alignment = "Adversary"
+					app.outputToHistory("Yemen Alignment worssened to %s." % app.map["Yemen"].alignment, False)
+					app.map["Yemen"].besieged = 1
+					app.outputToHistory("Yemen now Besieged Regime.", True)
+			elif self.number == 120: # US Election
+				app.executeCardUSElection(random.randint(1,6))
 				
 class Labyrinth(cmd.Cmd):
 
@@ -4284,6 +4326,18 @@ class Labyrinth(cmd.Cmd):
 			self.outputToHistory("Add a WMD to available Plots.", True)
 		else:
 			self.removeCell(country)
+
+	def executeCardUSElection(self, postureRoll):
+		if postureRoll <= 4:
+			self.map["United States"].posture = "Soft"
+			self.outputToHistory("United States Posture now Soft.", False)
+		else:
+			self.map["United States"].posture = "Hard"
+			self.outputToHistory("United States Posture now Hard.", False)
+		if self.gwotPenalty() == 0:
+			self.changePrestige(1)
+		else:
+			self.changePrestige(-1)
 		
 	def listCountriesInParam(self, needed = None):
 		print ""
@@ -5037,12 +5091,18 @@ class Labyrinth(cmd.Cmd):
 		self.outputToHistory("== US plays %s - %d Ops ==" % (self.deck[str(cardNum)].name, self.deck[str(cardNum)].ops), True)
 		if self.deck[str(cardNum)].playable("US", self):
 			self.outputToHistory("Playable %s Event" % self.deck[str(cardNum)].type, False)
-			choice = self.getEventOrOpsFromUser("Play card for Event or Ops (enter e or o): ")
+			if cardNum != 120:
+				choice = self.getEventOrOpsFromUser("Play card for Event or Ops (enter e or o): ")
+			else:
+				choice = self.getEventOrOpsFromUser("This event must be played, do you want the Event or Ops to happen first (enter e or o): ")
 			if choice == "event":
 				self.outputToHistory("Played for Event.", False)
 				self.deck[str(cardNum)].playEvent("US", self)
+				if cardNum == 120:
+					print "Now, %d Ops available. Use commands: alert, deploy, disrupt, reassessment, regime, or withdraw" % self.deck[str(cardNum)].ops
 			elif choice == "ops":
 				self.outputToHistory("Played for Ops.", False)
+				print "When finished with Ops enter u 120 again to play the event." % self.deck[str(cardNum)].ops
 				print "%d Ops available. Use commands: alert, deploy, disrupt, reassessment, regime, or withdraw" % self.deck[str(cardNum)].ops
 		else:
 			if self.deck[str(cardNum)].type == "Jihadist":

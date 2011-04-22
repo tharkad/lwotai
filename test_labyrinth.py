@@ -9731,7 +9731,114 @@ class cardHundredSixteen(unittest.TestCase):
  		self.assertTrue(app.map["United States"].sleeperCells == 1)
  		self.assertTrue(app.map["United States"].activeCells == 0)
  		self.assertTrue(app.map["United States"].plots == 1)
-		
+
+class cardHundredSeventeen(unittest.TestCase):
+	'''Oil Price Spike'''
+
+	def testPlayable(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		self.assertTrue(app.deck["117"].playable("Jihadist", app))
+		self.assertTrue(app.deck["117"].playable("US", app))
+
+	def testPutsCell(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		self.assertFalse(app.deck["117"].putsCell(app))			
+
+	def testEvent(self):
+ 		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		app.deck["117"].playEvent("US", app)
+ 		self.assertTrue(app.countryResources("Saudi Arabia") == 4)
+# 
+#  		app = Labyrinth(1, 1, testBlankScenarioSetup)
+# 		app.deck["117"].playEvent("Jihadist", app)
+#  		self.assertTrue(app.countryResources("Saudi Arabia") == 4)
+# 		app.deck["117"].playEvent("US", app)
+#  		self.assertTrue(app.countryResources("Saudi Arabia") == 5)
+
+class cardHundredEightteen(unittest.TestCase):
+	'''Oil Price Spike'''
+
+	def testPlayable(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		self.assertTrue(app.deck["118"].playable("Jihadist", app))
+		self.assertTrue(app.deck["118"].playable("US", app))
+
+	def testPutsCell(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		self.assertFalse(app.deck["118"].putsCell(app))			
+
+	def testEvent(self):
+ 		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		app.deck["118"].playEvent("US", app)
+ 		self.assertTrue(app.countryResources("Saudi Arabia") == 4)
+
+#  		app = Labyrinth(1, 1, testBlankScenarioSetup)
+# 		app.deck["118"].playEvent("Jihadist", app)
+#  		self.assertTrue(app.countryResources("Saudi Arabia") == 4)
+# 		app.deck["118"].playEvent("US", app)
+#  		self.assertTrue(app.countryResources("Saudi Arabia") == 5)
+
+class cardHundredNineteen(unittest.TestCase):
+	'''Saleh'''
+
+	def testPlayable(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		self.assertTrue(app.deck["119"].playable("Jihadist", app))
+		self.assertTrue(app.deck["119"].playable("US", app))
+
+	def testPutsCell(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		self.assertFalse(app.deck["119"].putsCell(app))			
+
+	def testEvent(self):
+ 		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		app.deck["119"].playEvent("US", app)
+ 		self.assertTrue(app.map["Yemen"].governance != 0)
+ 		self.assertTrue(app.map["Yemen"].alignment == "Ally")
+ 		self.assertTrue(app.map["Yemen"].aid == 1)
+
+ 		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		app.map["Yemen"].governance = 4
+		app.map["Yemen"].alignment = "Neutral"
+		app.deck["119"].playEvent("US", app)
+ 		self.assertTrue(app.map["Yemen"].governance != 0)
+ 		self.assertTrue(app.map["Yemen"].alignment == "Neutral")
+ 		self.assertTrue(app.map["Yemen"].aid == 0)
+
+ 		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		app.deck["119"].playEvent("Jihadist", app)
+ 		self.assertTrue(app.map["Yemen"].governance != 0)
+ 		self.assertTrue(app.map["Yemen"].alignment == "Adversary")
+ 		self.assertTrue(app.map["Yemen"].besieged == 1)
+
+class cardHundredTwenty(unittest.TestCase):
+	'''US Election'''
+
+	def testPlayable(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		self.assertTrue(app.deck["120"].playable("Jihadist", app))
+		self.assertTrue(app.deck["120"].playable("US", app))
+
+	def testPutsCell(self):
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		self.assertFalse(app.deck["120"].putsCell(app))			
+
+	def testEvent(self):
+ 		app = Labyrinth(1, 1, testBlankScenarioSetup)
+ 		app.executeCardUSElection(5)
+ 		self.assertTrue(app.prestige == 8)
+ 		
+ 		app = Labyrinth(1, 1, testBlankScenarioSetup)
+ 		app.executeCardUSElection(4)
+ 		self.assertTrue(app.prestige == 6)
+ 		
+ 		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		app.deck["120"].playEvent("US", app)
+ 		self.assertTrue(app.prestige != 7)
+
+ 		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		app.deck["120"].playEvent("US", app)
+ 		self.assertTrue(app.prestige != 7)
 
 if __name__ == "__main__":
 	unittest.main()   
