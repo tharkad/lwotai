@@ -112,7 +112,7 @@ class Country:
 		
 	def countryStr(self):
 		markersStr = ""
-		if self.markers != []:
+		if len(self.markers) != 0:
 			markersStr = "\n   Markers: %s" % ", ".join(self.markers)
 		if self.type == "Shia-Mix" or self.type == "Suni":
 			return "%s, %s %s, %d Resource(s)\n   Troops:%d Active:%d Sleeper:%d Cadre:%d Aid:%d Besieged:%d Reg Ch:%d Plots:%d %s" % (self.name, self.govStr(),self.alignment,self.app.countryResources(self.name),self.troops(),self.activeCells,self.sleeperCells, self.cadre, self.aid, self.besieged, self.regimeChange, self.plots, markersStr)
@@ -2125,26 +2125,26 @@ class Labyrinth(cmd.Cmd):
 		self.phase = ""
 		self.map = {}
 		self.mapSetup()
+		self.history = []
+		self.markers = []
+		self.lapsing = []
 		if setupFuntion:
 			setupFuntion(self)
 		else:
 			self.scenarioSetup()
 			#self.testScenarioSetup()
-		self.history = []
-		self.markers = []
-		self.lapsing = []
 		self.prompt = "Command: "
 		self.gameOver = False
 		self.backlashInPlay = False
 
 		if self.scenario == 1:
-			self.outputToHistory("Scenario: Let's Roll", False)
+			self.outputToHistory("Scenario: Let's Roll!", False)
 		elif self.scenario == 2:
 			self.outputToHistory("Scenario: You Can Call Me Al", False)
 		elif self.scenario == 3:
 			self.outputToHistory("Scenario: Anaconda", False)
 		elif self.scenario == 4:
-			self.outputToHistory("Scenario: Mission Accomplished", False)
+			self.outputToHistory("Scenario: Mission Accomplished?", False)
 
 		if self.ideology == 1:
 			self.outputToHistory("Jihadist Ideology: Normal", False)
@@ -2429,7 +2429,144 @@ class Labyrinth(cmd.Cmd):
 			if self.scenario == 1:
 				self.map["United States"].posture = "Hard"
 			else:
-				self.map["United States"].posture = "Soft"			
+				self.map["United States"].posture = "Soft"	
+				print "Remove the card Axis of Evil from the game."
+				print ""
+		elif self.scenario == 3:
+			self.startYear = 2002
+			self.turn = 1
+			self.prestige = 8
+			self.troops = 5
+			self.funding = 6
+			self.cells = 13
+			self.map["Libya"].governance = 3
+			self.map["Libya"].alignment = "Adversary"
+			self.map["Syria"].governance = 2
+			self.map["Syria"].alignment = "Adversary"
+			self.map["Iraq"].governance = 3
+			self.map["Iraq"].alignment = "Adversary"
+			self.map["Saudi Arabia"].governance = 3
+			self.map["Saudi Arabia"].alignment = "Ally"
+			self.map["Saudi Arabia"].troopCubes = 2
+			self.map["Gulf States"].governance = 2
+			self.map["Gulf States"].alignment = "Ally"
+			self.map["Gulf States"].troopCubes = 2
+			self.map["Pakistan"].governance = 3
+			self.map["Pakistan"].alignment = "Ally"
+			self.map["Pakistan"].sleeperCells = 1
+			self.map["Pakistan"].markers.append("FATA")
+			self.map["Afghanistan"].governance = 3
+			self.map["Afghanistan"].alignment = "Ally"
+			self.map["Afghanistan"].sleeperCells = 1
+			self.map["Afghanistan"].troopCubes = 6
+			self.map["Afghanistan"].regimeChange = 1
+			self.map["Somalia"].besieged = 1
+			self.map["Central Asia"].governance = 3
+			self.map["Central Asia"].alignment = "Ally"
+			self.markers.append("Patriot Act")
+			possibles = []
+			for country in self.map:
+				if country != "United States":
+					possibles.append(country)
+			random.shuffle(possibles)
+			for i in range(3):
+				self.testCountry(possibles[i])
+				self.placeCells(possibles[i], 1)
+			print "Remove the cards Patriot Act and Tora Bora from the game."
+			print ""
+		elif self.scenario == 4:
+			self.startYear = 2003
+			self.turn = 1
+			self.prestige = 3
+			self.troops = 0
+			self.funding = 5
+			self.cells = 5
+			self.map["Libya"].governance = 3
+			self.map["Libya"].alignment = "Adversary"
+			self.map["Syria"].governance = 2
+			self.map["Syria"].alignment = "Adversary"
+			self.map["Syria"].sleeperCells = 1
+			self.map["Iraq"].governance = 3
+			self.map["Iraq"].alignment = "Ally"
+			self.map["Iraq"].troopCubes = 6
+			self.map["Iraq"].sleeperCells = 3
+			self.map["Iraq"].regimeChange = 1
+			self.map["Iran"].sleeperCells = 1
+			self.map["Saudi Arabia"].governance = 3
+			self.map["Saudi Arabia"].alignment = "Ally"
+			self.map["Saudi Arabia"].sleeperCells = 1
+			self.map["Gulf States"].governance = 2
+			self.map["Gulf States"].alignment = "Ally"
+			self.map["Gulf States"].troopCubes = 2
+			self.map["Pakistan"].governance = 2
+			self.map["Pakistan"].alignment = "Ally"
+			self.map["Pakistan"].sleeperCells = 1
+			self.map["Pakistan"].markers.append("FATA")
+			self.map["Afghanistan"].governance = 3
+			self.map["Afghanistan"].alignment = "Ally"
+			self.map["Afghanistan"].sleeperCells = 1
+			self.map["Afghanistan"].troopCubes = 5
+			self.map["Afghanistan"].regimeChange = 1
+			self.map["Somalia"].besieged = 1
+			self.map["Central Asia"].governance = 2
+			self.map["Central Asia"].alignment = "Neutral"
+			self.map["Indonesia/Malaysia"].governance = 2
+			self.map["Indonesia/Malaysia"].alignment = "Neutral"
+			self.map["Indonesia/Malaysia"].sleeperCells = 1
+			self.map["Philippines"].posture = "Soft"
+			self.map["Philippines"].troopCubes = 2
+			self.map["Philippines"].sleeperCells = 1
+			self.map["United Kingdom"].posture = "Soft"
+			self.markers.append("Abu Sayyaf")
+			self.markers.append("Patriot Act")
+			self.markers.append("NEST")
+			possibles = []
+			for country in self.map:
+				if self.map[country].schengen:
+					self.testCountry(country)
+			print ""
+			print "Remove the cards Patriot Act, Tora Bora, NEST, Abu Sayyaf, KSM and Iraqi WMD from the game."
+			print ""
+		goodRes = 0
+		islamRes = 0
+		goodC = 0
+		islamC = 0
+		worldPos = 0
+		for country in self.map:
+			if self.map[country].type == "Shia-Mix" or self.map[country].type == "Suni": 
+				if self.map[country].governance == 1:
+					goodC += 1
+					goodRes += self.countryResources(country)
+				elif self.map[country].governance == 2:
+					goodC += 1
+				elif self.map[country].governance == 3:
+					islamC += 1
+				elif self.map[country].governance == 4:
+					islamC += 1
+					islamRes += self.countryResources(country)
+			elif self.map[country].type != "Iran" and self.map[country].name != "United States":
+				if self.map[country].posture == "Hard":
+					worldPos += 1
+				elif self.map[country].posture == "Soft":
+					worldPos -= 1
+		print "Good Resources   : %d" % goodRes
+		print "Islamic Resources: %d" % islamRes
+		print "---"
+		print "Good/Fair Countries   : %d" % goodC
+		print "Poor/Islamic Countries: %d" % islamC
+		print ""
+		print "GWOT"
+		print "US Posture: %s" % self.map["United States"].posture
+		if worldPos > 0:
+			worldPosStr = "Hard"
+		elif worldPos < 0:
+			worldPosStr = "Soft"
+		else:
+			worldPosStr = "Even"
+		print "World Posture: %s %d" % (worldPosStr, abs(worldPos))
+		print "US Prestige: %d" % self.prestige
+		print ""
+			
 	
 	def testScenarioSetup(self):
 		if self.scenario == 1 or self.scenario == 2: # Let's Roll
@@ -3159,13 +3296,14 @@ class Labyrinth(cmd.Cmd):
 			if self.map[country].troops() > 0:
 				self.prestige = 1
 				self.outputToHistory("Troops present so US Prestige now 1", False) 
-		for i in range(failures):
-			if self.map[country].numActiveCells() > 0:
-				self.map[country].removeActiveCell()
-			else:
-				self.map[country].sleeperCells -= 1		
-				self.outputToHistory("Sleeper cell Removed to Funding Track", False)
-				self.cells += 1
+		if self.ideology <= 4:
+			for i in range(failures):
+				if self.map[country].numActiveCells() > 0:
+					self.map[country].removeActiveCell()
+				else:
+					self.map[country].sleeperCells -= 1		
+					self.outputToHistory("Sleeper cell Removed to Funding Track", False)
+					self.cells += 1
 		self.outputToHistory(self.map[country].countryStr(), False) 
 		print ""
 		
@@ -4596,11 +4734,11 @@ class Labyrinth(cmd.Cmd):
 		print "Cells Available: %d" % self.cells
 		print ""
 		print "EVENTS"
-		if self.markers == []:
-			print "Marked: None"
+		if len(self.markers) == 0:
+			print "Markers: None"
 		else:
-			print "Marked: %s" % ", ".join(self.markers)
-		if self.lapsing == []:
+			print "Markers: %s" % ", ".join(self.markers)
+		if len(self.lapsing) == 0:
 			print "Lapsing: None"
 		else:
 			print "Lapsing: %s" % ", ".join(self.lapsing)
@@ -5189,11 +5327,10 @@ def main():
 	while scenario == 0:
 		try:
 			print "Choose Scenario"
-			print "(1) Let's Roll"
+			print "(1) Let's Roll!"
 			print "(2) You Can Call Me Al"
 			print "(3) Anaconda"
-			print "(4) Mission Accomplished"
-			print "(5) Arab Street Rising"
+			print "(4) Mission Accomplished?"
 			input = raw_input("Enter choice: ")
 			input = int(input)
 			if input >= 1 and input <= 5:
@@ -5209,10 +5346,10 @@ def main():
 		try:
 			print "Choose Jihadist Ideology"
 			print "(1) Normal"
-			print "(2) Attractive"
-			print "(3) Potent"
-			print "(4) Infectious"
-			print "(5) Virulent"
+			print "(2) Attractive (2 cells per recruit success)"
+			print "(3) Potent (+ Only 3 more cells than troops needed for Major Jihad)"
+			print "(4) Infectious (+ No program impact - US must remember to play all your cards)"
+			print "(5) Virulent (+ Failed Jihad rolls do not remove cells)"
 			input = raw_input("Enter choice: ")
 			input = int(input)
 			if input >= 1 and input <= 5:
