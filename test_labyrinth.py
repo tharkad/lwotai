@@ -1,3 +1,7 @@
+'''
+LWOTai - A Python implementation of the Single-Player AI for Labyrinth: the War on Terror by GMT Games.
+Mike Houser, 2011
+'''
 from labyrinth import Labyrinth
 import unittest
 
@@ -6461,13 +6465,6 @@ class card11(unittest.TestCase):
 	def testPlayable(self):
 		app = Labyrinth(1, 1, testBlankScenarioSetup)
 		self.assertTrue(app.deck["11"].playable("US", app))
-		app.troops = 4		
-		self.assertFalse(app.deck["11"].playable("US", app))
-		app.troops = 9
-		app.map["Lebanon"].governance = 4
-		self.assertFalse(app.deck["11"].playable("US", app))
-		app.map["Lebanon"].governance = 3
-		self.assertTrue(app.deck["11"].playable("US", app))
 
 	def testEvent(self):
 		app = Labyrinth(1, 1, testBlankScenarioSetup)
@@ -6953,6 +6950,30 @@ class card31(unittest.TestCase):
 		app.map["United Kingdom"].activeCells = 1
 		app.map["United Kingdom"].cadre = 1
 		app.map["United Kingdom"].plots = 1
+		app.map["Canada"].sleeperCells = 1
+		app.map["Canada"].activeCells = 1
+		app.map["Canada"].cadre = 1
+		app.map["Canada"].plots = 1
+		app.deck["31"].playEvent("US", app)
+		self.assertTrue("Wiretapping" in app.markers)
+		self.assertTrue(app.map["United States"].sleeperCells == 0)
+		self.assertTrue(app.map["United States"].activeCells == 0)
+		self.assertTrue(app.map["United States"].cadre == 0)
+		self.assertTrue(app.map["United States"].plots == 0)
+		self.assertTrue(app.map["United Kingdom"].sleeperCells == 0)
+		self.assertTrue(app.map["United Kingdom"].activeCells == 0)
+		self.assertTrue(app.map["United Kingdom"].cadre == 0)
+		self.assertTrue(app.map["United Kingdom"].plots == 0)
+		self.assertTrue(app.map["Canada"].sleeperCells == 0)
+		self.assertTrue(app.map["Canada"].activeCells == 0)
+		self.assertTrue(app.map["Canada"].cadre == 0)
+		self.assertTrue(app.map["Canada"].plots == 0)
+
+ 		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		app.map["United States"].sleeperCells = 1
+		app.map["United States"].activeCells = 1
+		app.map["United States"].cadre = 1
+		app.map["United States"].plots = 1
 		app.map["Canada"].sleeperCells = 1
 		app.map["Canada"].activeCells = 1
 		app.map["Canada"].cadre = 1
@@ -7700,13 +7721,14 @@ class card57(unittest.TestCase):
 		
 	def testPutsCell(self):
 		app = Labyrinth(1, 1, testBlankScenarioSetup)
-		self.assertFalse(app.deck["57"].putsCell(app))			
+		self.assertTrue(app.deck["57"].putsCell(app))			
 
 	def testEvent(self):
  		app = Labyrinth(1, 1, testBlankScenarioSetup)
 		app.deck["57"].playEvent("Jihadist", app)
 		self.assertTrue("Abu Sayyaf" in app.markers)
-		app.testCountry("Philippines")
+		self.assertTrue(app.map["Philippines"].governance != 0)
+		self.assertTrue(app.map["Philippines"].sleeperCells == 1)
 		app.map["Philippines"].sleeperCells = 3
 		app.placePlots("Philippines", 0, [1,5,1])
 		self.assertTrue(app.prestige == 5)

@@ -1,3 +1,8 @@
+'''
+LWOTai - A Python implementation of the Single-Player AI for Labyrinth: the War on Terror by GMT Games.
+Mike Houser, 2011
+'''
+
 import cmd
 import random
 
@@ -124,12 +129,18 @@ class Card:
 	name = ""
 	type = ""
 	ops = 0
+	remove = False
+	mark = False
+	lapsing = False
 	
-	def __init__(self, theNumber, theType, theName, theOps):
+	def __init__(self, theNumber, theType, theName, theOps, theRemove, theMark, theLapsing):
 		self.number = theNumber
 		self.name = theName
 		self.type = theType
 		self.ops = theOps
+		self.remove = theRemove
+		self.mark = theMark
+		self.lapsing = theLapsing
 		
 	def playable(self, side, app):
 		if self.type == "US" and side == "Jihadist":
@@ -163,11 +174,7 @@ class Card:
 									return True
 				return False
 			elif self.number == 11: # Abbas
-				numIR = app.numIslamicRule()
-				if app.troops >= 5 and numIR <= 0:
-					return True
-				else:
-					return False
+				return True
 			elif self.number == 12: # Al-Azhar
 				return True
 			elif self.number == 13: # Anbar Awakening
@@ -554,7 +561,7 @@ class Card:
 		elif self.number == 56: # Vieira de Mello Slain
 			return False
 		elif self.number == 57: # Abu Sayyaf
-			return False
+			return True
 		elif self.number == 58: # Al-Anbar
 			return True
 		elif self.number == 59: # Amerithrax
@@ -674,6 +681,7 @@ class Card:
 		return False
 	
 	def playEvent(self, side, app):
+		app.outputToHistory("Card played for Event.", True)
 		if self.type == "US" and side == "Jihadist":
 			return False
 		elif self.type == "Jihadist" and side == "US":
@@ -689,24 +697,20 @@ class Card:
 			elif self.number == 2: # Biometrics
 				app.lapsing.append("Biometrics")
 				app.outputToHistory("Biometrics in play. This turn, travel to adjacent Good countries must roll to succeed and no non-adjacent travel.", True)
-				return True
 			elif self.number == 3: # CRT
 				app.map["Russia"].markers.append("CRT")
 				app.outputToHistory("CRT Maker added in Russia", True)
 				if (app.map["Central Asia"].alignment == "Ally") or (app.map["Central Asia"].alignment == "Neutral"):
 					app.map["Central Asia"].markers.append("CRT")
 					app.outputToHistory("CRT Maker added in Central Asia", True)
-				return True
 			elif self.number == 4: # Moro Talks
 				app.markers.append("Moro Talks")
 				app.outputToHistory("Moro Talks in play.", False)
 				app.testCountry("Philippines")
 				app.changeFunding(-1)
-				return True
 			elif self.number == 5: # NEST
 				app.markers.append("NEST")
 				app.outputToHistory("NEST in play. If jihadists have WMD, all plots in the US placed face up.", True)
-				return True
 			elif self.number == 6 or self.number == 7: # Sanctions
 				if "Patriot Act" in app.markers:
 					app.changeFunding(-2)
@@ -735,17 +739,13 @@ class Card:
 							else:
 								app.removeCell(input)
 								app.outputToHistory(app.map[input].countryStr(), True)
-								return True
 			elif self.number == 11: # Abbas
 				numIR = app.numIslamicRule()
+				app.markers.append("Abbas")
+				app.outputToHistory("Abbas in play.", False)
 				if app.troops >= 5 and numIR <= 0:
-					app.markers.append("Abbas")
-					app.outputToHistory("Abbas in play.", False)
 					app.changePrestige(1, False)
 					app.changeFunding(-2, True)
-					return True
-				else:
-					return False
 			elif self.number == 12: # Al-Azhar
 				app.testCountry("Egypt")
 				numIR = app.numIslamicRule()
@@ -753,7 +753,6 @@ class Card:
 					app.changeFunding(-4, True)
 				else:
 					app.changeFunding(-2, True)
-				return True
 			elif self.number == 13: # Anbar Awakening
 				if (app.map["Iraq"].troops() > 0) or (app.map["Syria"].troops() > 0):
 					app.markers.append("Anbar Awakening")
@@ -860,18 +859,15 @@ class Card:
 					else:
 						app.outputToHistory("There are no cells in Russia or Central Asia.", False)	
 				app.outputToHistory("Shuffle Jihadist hand.", True)
-				return True
 			elif self.number == 18: # Intel Community
 				app.outputToHistory("Examine Jihadist hand then shuffle it.", False)
-				app.outputToHistory("Conduct a 1-value operation (Use commands: alert, deploy, disrupt, reassessment, regime, or withdraw).", False)
+				app.outputToHistory("Conduct a 1-value operation (Use commands: alert, deploy, disrupt, reassessment, regime, withdraw, or woi).", False)
 				app.outputToHistory("You may now interrupt this action phase to play another card (Use the u command).", True)
-				return True
 			elif self.number == 19: # Kemalist Republic
 				app.outputToHistory("Turkey now a Fair Ally.", False)
 				app.map["Turkey"].governance = 2
 				app.map["Turkey"].alignment = "Ally"
 				app.outputToHistory(app.map["Turkey"].countryStr(), True)
-				return True
 			elif self.number == 20: # King Abdullah
 				app.outputToHistory("Jordan now a Fair Ally.", False)
 				app.map["Jordan"].governance = 2
@@ -879,7 +875,6 @@ class Card:
 				app.outputToHistory(app.map["Jordan"].countryStr(), True)
 				app.changePrestige(1)
 				app.changeFunding(-1)
-				return True
 			elif self.number == 21: # Let's Roll
 				while True:
 					plotCountry = app.getCountryFromUser("Choose an Ally or Good country to remove a plot from (? for list): ", "XXX", app.listGoodAllyPlotCountries)
@@ -906,7 +901,6 @@ class Card:
 									else:
 										postureStr = app.getPostureFromUser("What Posture should %s have (h or s)? " % postureCountry)
 										app.executeCardLetsRoll(plotCountry, postureCountry, postureStr)
-										return True
 			elif self.number == 22: # Mossad and Shin Bet
 				app.removeAllCellsFromCountry("Israel")
 				app.removeAllCellsFromCountry("Jordan")
@@ -931,7 +925,6 @@ class Card:
 						else:
 							app.removeCell(input)
 							app.outputToHistory(app.map[input].countryStr(), True)
-							return True
 			elif self.number == 26: # Quartet
 				if not "Abbas" in app.markers:
 					return False
@@ -944,7 +937,6 @@ class Card:
 				app.changePrestige(2)
 				app.changeFunding(-3)
 				app.outputToHistory("", False)
-				return True
 			elif self.number == 27: # Saddam Captured
 				if app.map["Iraq"].troops() == 0:
 					return False
@@ -1006,7 +998,6 @@ class Card:
 					if finishedPicking:
 						break
 				app.outputToHistory("", False)
-				return True
 			elif self.number == 30: # UN Nation Building
 				numRC = app.numRegimeChange()
 				if (numRC <= 0) or ("Vieira de Mello Slain" in app.markers):
@@ -1038,9 +1029,6 @@ class Card:
 			elif self.number == 31: # Wiretapping
 				if "Leak-Wiretapping" in app.markers:
 					return False
-				for country in ["United States", "United Kingdom", "Canada"]:
-					if app.map[country].activeCells <= 0 and app.map[country].sleeperCells <= 0 and app.map[country].cadre <= 0 and app.map[country].plots <= 0:
-						return True
 				for country in ["United States", "United Kingdom", "Canada"]:
 					if app.map[country].activeCells > 0:
 						num = app.map[country].activeCells
@@ -1088,7 +1076,6 @@ class Card:
 								app.map[input].aid = 1
 								app.outputToHistory("Aid added to %s." % input, False)
 								app.outputToHistory(app.map[input].countryStr(), True)
-								return True
 			elif self.number == 33: # Benazir Bhutto
 				app.markers.append("Benazir Bhutto")
 				app.outputToHistory("Benazir Bhutto in Play.", False)
@@ -1097,7 +1084,6 @@ class Card:
 					app.outputToHistory("Pakistan now Fair governance.", False)
 				app.outputToHistory("No Jihads in Pakistan.", False)
 				app.outputToHistory(app.map["Pakistan"].countryStr(), True)
-				return True
 			elif self.number == 34: # Enhanced Measures
 				app.markers.append("Enhanced Measures")
 				app.outputToHistory("Enhanced Measures in Play.", False)
@@ -1244,7 +1230,6 @@ class Card:
 							app.map[postureCountry].posture = postureStr
 							app.outputToHistory(app.map["United States"].countryStr(), False)				
 							app.outputToHistory(app.map[postureCountry].countryStr(), True)	
-							return True
 			elif self.number == 46: # Sistani
 				targetCountries = []
 				for country in app.map:
@@ -1288,28 +1273,18 @@ class Card:
 				app.outputToHistory("Jihadist Activity Phase findshed, enter plot command.", True)
 				app.executeRecruit("United States", ops, rolls, 2)
 			elif self.number == 49: # Al-Ittihad al-Islami
-				app.testCountry("Somalia")
-				app.map["Somalia"].sleeperCells += 1
-				app.cells -= 1
-				app.outputToHistory("Sleeper Cell placed in Somalia", False)
-				app.outputToHistory(app.map["Somalia"].countryStr(), True)
+				app.placeCells("Somalia", 1)
 			elif self.number == 50: # Ansar al-Islam
 				possible = ["Iraq", "Iran"]
 				target = random.choice(possible)
-				app.testCountry(target)
-				app.map[target].sleeperCells += 1
-				app.cells -= 1
-				app.outputToHistory("Sleeper Cell placed in %s" % target, False)
-				app.outputToHistory(app.map[target].countryStr(), True)
+				app.placeCells(target, 1)
 			elif self.number == 51: # FREs
 				if "Saddam Captured" in app.markers:
 					cellsToMove = 2
 				else:
 					cellsToMove = 4					
 				cellsToMove = min(cellsToMove, app.cells)
-				app.map["Iraq"].sleeperCells += cellsToMove
-				app.cells -= cellsToMove
-				app.outputToHistory("%d Sleeper Cells added to Iraq" % cellsToMove)
+				app.placeCells("Iraq", cellsToMove)
 			elif self.number == 52: # IDEs
 				app.outputToHistory("US randomly discards one card.", True)
 			elif self.number == 53: # Madrassas
@@ -1346,20 +1321,21 @@ class Card:
 				app.outputToHistory("Vieira de Mello Slain in play.", False)
 				app.changePrestige(-1)
 			elif self.number == 57: # Abu Sayyaf
+				app.placeCells("Philippines", 1)
 				app.markers.append("Abu Sayyaf")
 			elif self.number == 58: # Al-Anbar
 				app.markers.append("Al-Anbar")
-				app.outputToHistory("Al-Anbar in play.", False)
+				app.outputToHistory("Al-Anbar in play.", True)
 				app.testCountry("Iraq")
 				if app.cells > 0:
 					app.map["Iraq"].sleeperCells += 1
 					app.cells -= 1
-					app.outputToHistory("Sleeper Cell placed in Iraq", False)
+					app.outputToHistory("Sleeper Cell placed in Iraq", True)
 			elif self.number == 59: # Amerithrax
 				app.outputToHistory("US side discards its highest-value US-associated event card, if it has any.", True)
 			elif self.number == 60: # Bhutto Shot
 				app.markers.append("Bhutto Shot")
-				app.outputToHistory("Bhutto Shot in play.", False)
+				app.outputToHistory("Bhutto Shot in play.", True)
 			elif self.number == 61: # Detainee Release
 				if app.cells > 0:
 					target = None
@@ -1408,6 +1384,7 @@ class Card:
 						elif app.map["Central Asia"].alignment == "Neutral":
 							app.map["Central Asia"].alignment = "Adversary"
 							app.outputToHistory("Central Asia now Adversary.", True)
+						app.outputToHistory(app.map["Central Asia"].countryStr(), True)
 			elif self.number == 63: # Gaza War
 				app.changeFunding(1)
 				app.changePrestige(-1)
@@ -1432,44 +1409,20 @@ class Card:
 				roll = random.randint(1,6)
 				app.executeCardHEU(target, roll)
 			elif self.number == 66: # Homegrown
-				app.testCountry("United Kingdom")
-				app.map["United Kingdom"].sleeperCells += 1
-				app.cells -= 1
-				app.outputToHistory("Sleeper Cell placed in United Kingdom", False)
-				app.outputToHistory(app.map["United Kingdom"].countryStr(), True)
+				app.placeCells("United Kingdom", 1)
 			elif self.number == 67: # Islamic Jihad Union
-				app.testCountry("Central Asia")
-				app.map["Central Asia"].sleeperCells += 1
-				app.cells -= 1
-				app.outputToHistory("Sleeper Cell placed in Central Asia", False)
-				app.outputToHistory(app.map["Central Asia"].countryStr(), True)
+				app.placeCells("Central Asia", 1)
 				if app.cells > 0:
-					app.testCountry("Afghanistan")
-					app.map["Afghanistan"].sleeperCells += 1
-					app.cells -= 1
-					app.outputToHistory("Sleeper Cell placed in Afghanistan", False)
-					app.outputToHistory(app.map["Afghanistan"].countryStr(), True)
+					app.placeCells("Afghanistan", 1)
 			elif self.number == 68: # Jemaah Islamiya
-				cellsToPlace = min(app.cells, 2)
-				app.testCountry("Indonesia/Malaysia")
-				app.map["Indonesia/Malaysia"].sleeperCells += cellsToPlace
-				app.cells -= cellsToPlace
-				app.outputToHistory("%d Sleeper Cell(s) placed in Indonesia/Malaysia" % cellsToPlace, True)
+				app.placeCells("Indonesia/Malaysia", 2)
 			elif self.number == 69: # Kazakh Strain
 				roll = random.randint(1,6)
 				app.executeCardHEU("Central Asia", roll)
 			elif self.number == 70: # Lashkar-e-Tayyiba
-				app.testCountry("Pakistan")
-				app.map["Pakistan"].sleeperCells += 1
-				app.cells -= 1
-				app.outputToHistory("Sleeper Cell placed in Pakistan", False)
-				app.outputToHistory(app.map["Pakistan"].countryStr(), True)
+				app.placeCells("Pakistan", 1)
 				if app.cells > 0:
-					app.testCountry("India")
-					app.map["India"].sleeperCells += 1
-					app.cells -= 1
-					app.outputToHistory("Sleeper Cell placed in India", False)
-					app.outputToHistory(app.map["India"].countryStr(), True)
+					app.placeCells("India", 1)
 			elif self.number == 71: # Loose Nuke
 				roll = random.randint(1,6)
 				app.executeCardHEU("Russia", roll)
@@ -1477,10 +1430,7 @@ class Card:
 				cellsToPlace = min(app.cells, 3)
 				if app.map["Afghanistan"].governance == 4:
 					cellsToPlace = app.cells
-				app.testCountry("Afghanistan")
-				app.map["Afghanistan"].sleeperCells += cellsToPlace
-				app.cells -= cellsToPlace
-				app.outputToHistory("%d Sleeper Cell(s) placed in Afghanistan" % cellsToPlace, True)
+				app.placeCells("Afghanistan", cellsToPlace)
 			elif self.number == 73: # Pirates
 				app.markers.append("Pirates")
 				app.outputToHistory("Pirates in play.", False)
@@ -1534,10 +1484,7 @@ class Card:
 				app.testCountry("Pakistan")
 				app.map["Pakistan"].markers.append("FATA")
 				app.outputToHistory("FATA Maker added in Pakistan", True)
-				app.map["Pakistan"].sleeperCells += 1
-				app.cells -= 1
-				app.outputToHistory("Sleeper Cell placed in Pakistan", False)
-				app.outputToHistory(app.map["Pakistan"].countryStr(), True)
+				app.placeCells("Pakistan", 1)
 			elif self.number == 81: # Foreign Fighters
 				possibles = []
 				for country in app.map:
@@ -1546,11 +1493,7 @@ class Card:
 				if len(possibles) <= 0:
 					return False
 				target = random.choice(possibles)
-				cellsToPlace = min(app.cells, 5)
-				app.testCountry(target)
-				app.map[target].sleeperCells += cellsToPlace
-				app.cells -= cellsToPlace
-				app.outputToHistory("%d Sleeper Cell(s) placed in %s" % (cellsToPlace, target), False)
+				app.placeCells(target, 5)
 				if app.map[target].aid > 0:
 					app.map[target].aid = 0
 					app.outputToHistory("Aid removed from %s" % target, False)
@@ -1559,22 +1502,19 @@ class Card:
 					app.outputToHistory("%s no Besieged Regime" % target, False)
 				app.outputToHistory(app.map[target].countryStr(), True)
 			elif self.number == 82: # Jihadist Videos
-				cellsToPlace = min(3, app.cells)
 				possibles = []
 				for country in app.map:
 					if app.map[country].totalCells() == 0:
 						possibles.append(country)
 				random.shuffle(possibles)
-				for i in range(cellsToPlace):
-					rolls = []
-					rolls.append(random.randint(1,6))
+				for i in range(3):
 					app.testCountry(possibles[i])
-					app.executeRecruit(possibles[i], 1, rolls, False, True)
+					if app.cells > 0:
+						rolls = []
+						rolls.append(random.randint(1,6))
+						app.executeRecruit(possibles[i], 1, rolls, False, True)
 			elif self.number == 83: # Kashmir
-				app.testCountry("Pakistan")
-				app.map["Pakistan"].sleeperCells += 1
-				app.cells -= 1
-				app.outputToHistory("Sleeper Cell placed in Pakistan", False)
+				app.placeCells("Pakistan", 1)
 				if app.map["Pakistan"].alignment == "Ally":
 					app.map["Pakistan"].alignment = "Neutral"
 				elif app.map["Pakistan"].alignment == "Neutral":	
@@ -1615,13 +1555,10 @@ class Card:
 					if app.map[country].type == "Shia-Mix":
 						possibles.append(country)
 				target = random.choice(possibles)
-				app.testCountry(target)
-				app.map[target].sleeperCells += 1
-				app.cells -= 1
-				app.outputToHistory("%d Sleeper Cell placed in %s" % (1, target), False)
-				app.outputToHistory(app.map[target].countryStr(), True)				
+				app.placeCells(target, 1)
 			elif self.number == 87 or self.number == 88 or self.number == 89: # Martyrdom Operation
-				app.executePlot(1, False, [], True)
+				if app.executePlot(1, False, [1], True) == 1:
+					app.outputToHistory("No plots could be placed.", True)
 			elif self.number == 90: # Quagmire
 				app.map["United States"].posture = "Soft"
 				app.outputToHistory("US Posture now Soft.", False)
@@ -1634,17 +1571,8 @@ class Card:
 						if app.map[country].governance == 0:
 							possibles.append(country)
 				random.shuffle(possibles)
-				app.testCountry(possibles[0])
-				app.map[possibles[0]].sleeperCells += 1
-				app.cells -= 1
-				app.outputToHistory("Sleeper Cell placed in %s" % possibles[0], False)
-				app.outputToHistory(app.map[possibles[0]].countryStr(), True)
-				if app.cells > 0:
-					app.testCountry(possibles[1])
-					app.map[possibles[1]].sleeperCells += 1
-					app.cells -= 1
-					app.outputToHistory("Sleeper Cell placed in %s" % possibles[1], False)
-					app.outputToHistory(app.map[possibles[1]].countryStr(), True)
+				app.placeCells(possibles[0], 1)
+				app.placeCells(possibles[1], 1)
 			elif self.number == 92: # Saddam
 				app.funding = 9
 				app.outputToHistory("Jihadist Funding now 9.", True)
@@ -1652,16 +1580,8 @@ class Card:
 				app.testCountry("Afghanistan")
 				app.map["Afghanistan"].besieged = 1
 				app.outputToHistory("Afghanistan is now a Besieged Regime.", False)
-				app.map["Afghanistan"].sleeperCells += 1
-				app.cells -= 1
-				app.outputToHistory("Sleeper Cell placed in %s" % "Afghanistan", False)
-				app.outputToHistory(app.map["Afghanistan"].countryStr(), False)
-				if app.cells > 0:
-					app.testCountry("Pakistan")
-					app.map["Pakistan"].sleeperCells += 1
-					app.cells -= 1
-					app.outputToHistory("Sleeper Cell placed in %s" % "Pakistan", False)
-					app.outputToHistory(app.map["Pakistan"].countryStr(), False)
+				app.placeCells("Afghanistan", 1)
+				app.placeCells("Pakistan", 1)
 				if (app.map["Afghanistan"].governance == 4) or (app.map["Pakistan"].governance == 4):
 					app.changePrestige(-3)
 				else:
@@ -1696,6 +1616,7 @@ class Card:
 						if app.map[country].governance != 4:
 							possibles.append(country)
 				target = random.choice(possibles)
+				app.testCountry(target)
 				if app.numIslamicRule() > 0:
 					app.outputToHistory("Place any available plot in %s." % target, False)
 				else:
@@ -1704,18 +1625,14 @@ class Card:
 			elif self.number == 97: # Fatwa
 				app.outputToHistory("Trade random cards.", False)
 				if side == "US":
-					app.outputToHistory("Conduct a 1-value operation (Use commands: alert, deploy, disrupt, reassessment, regime, or withdraw).", False)
+					app.outputToHistory("Conduct a 1-value operation (Use commands: alert, deploy, disrupt, reassessment, regime, withdraw, or woi).", False)
 				else:
 					app.aiFlowChartMajorJihad(97)				
 			elif self.number == 98: # Gaza Withdrawl
 				if side == "US":
 					app.changeFunding(-1)
 				else:
-					app.testCountry("Israel")
-					app.map["Israel"].sleeperCells += 1
-					app.cells -= 1
-					app.outputToHistory("Sleeper Cell placed in Israel", False)
-					app.outputToHistory(app.map["Israel"].countryStr(), True)
+					app.placeCells("Israel", 1)
 			elif self.number == 99: # HAMAS Elected
 				app.outputToHistory("US selects and discards one card.", False)
 				app.changePrestige(-1)
@@ -1768,7 +1685,6 @@ class Card:
 							possibles.append(country)
 					if len(possibles) <= 0:
 						app.outputToHistory("No Shia-Mix countries with cells within 3 countries of Lebanon.", True)
-						return True
 					elif len(possibles) == 1:
 						target = possibles[0]
 					else:
@@ -1788,7 +1704,6 @@ class Card:
 									target = input
 					app.removeCell(target)
 					app.outputToHistory(app.map[target].countryStr(), True)
-					return True
 				else:
 					app.testCountry("Lebanon")
 					app.map["Lebanon"].governance = 3
@@ -1826,7 +1741,6 @@ class Card:
 						target = picked
 					app.removeCell(target)
 					app.outputToHistory(app.map[target].countryStr(), True)
-					return True
 				else:
 					possibles = []
 					for country in app.map:
@@ -1895,7 +1809,6 @@ class Card:
 					app.removeCell(target)
 					app.removeCell(target)
 					app.outputToHistory(app.map[target].countryStr(), True)
-					return True
 				else:
 					possibles = []
 					for country in app.map:
@@ -1966,7 +1879,7 @@ class Card:
 								countryScores[country] += 10000
 							if app.map[country].besieged > 0:
 								countryScores[country] += 1000
-							countryScores[country] += (app.map[country].resources * 100)
+							countryScores[country] += (app.countryResources(country) * 100)
 							countryScores[country] += random.randint(1,99)
 						countryOrder = []
 						for country in countryScores:
@@ -2028,10 +1941,7 @@ class Card:
 						if app.map[country].troops() > 0:
 							possibles.append(country)
 					target = random.choice(possibles)
-					cellsToMove = min(3, app.cells)
-					app.map[target].sleeperCells += cellsToMove
-					app.cells -= cellsToMove
-					app.outputToHistory("%d cells added to %s." % (cellsToMove, target), False)
+					app.placeCells(target, 3)
 					app.map[target].plots += 1
 					app.outputToHistory("Add a Plot 2 to %s." % target, False)
 					app.outputToHistory(app.map[target].countryStr(), True)				
@@ -2139,7 +2049,8 @@ class Card:
 								app.outputToHistory("%d Plots removed from %s." % (numPlots, country), False)
 					app.outputToHistory("US draws 2 cards.", True)
 				else:
-					app.executePlot(1, False, [], False, False, True)
+					if app.executePlot(1, False, [1], False, False, True) == 1:
+						app.outputToHistory("No plots could be placed.", True)
 			elif self.number == 117 or self.number == 118: # Oil Price Spike
 				app.lapsing.append("Oil Price Spike")
 				app.outputToHistory("Oil Price Spike in play. Add +1 to the resources of each Oil Exporter country for the turn.", False)
@@ -2171,6 +2082,12 @@ class Card:
 					app.outputToHistory("Yemen now Besieged Regime.", True)
 			elif self.number == 120: # US Election
 				app.executeCardUSElection(random.randint(1,6))
+		if self.remove:
+			app.outputToHistory("Remove card from game.", True)
+		if self.mark:
+			app.outputToHistory("Place marker for card.", True)
+		if self.lapsing:
+			app.outputToHistory("Place card in Lapsing.", True)
 				
 class Labyrinth(cmd.Cmd):
 
@@ -2562,126 +2479,126 @@ class Labyrinth(cmd.Cmd):
 				self.map["United States"].posture = "Soft"		
 				
 	def deckSetup(self):
-		self.deck["1"] = Card(1,"US","Backlash",1)
-		self.deck["2"] = Card(2,"US","Biometrics",1)
-		self.deck["3"] = Card(3,"US","CTR",1)
-		self.deck["4"] = Card(4,"US","Moro Talks",1)
-		self.deck["5"] = Card(5,"US","NEST",1)
-		self.deck["6"] = Card(6,"US","Sacntions",1)
-		self.deck["7"] = Card(7,"US","Sanctions",1)
-		self.deck["8"] = Card(8,"US","Special Forces",1)
-		self.deck["9"] = Card(9,"US","Special Forces",1)
-		self.deck["10"] = Card(10,"US","Special Forces",1)
-		self.deck["11"] = Card(11,"US","Abbas",2)
-		self.deck["12"] = Card(12,"US","Al-Azhar",2)
-		self.deck["13"] = Card(13,"US","Anbar Awakening",2)
-		self.deck["14"] = Card(14,"US","Covert Action",2)
-		self.deck["15"] = Card(15,"US","Ethiopia Strikes",2)
-		self.deck["16"] = Card(16,"US","Euro-Islam",2)
-		self.deck["17"] = Card(17,"US","FSB",2)
-		self.deck["18"] = Card(18,"US","Intel Community",2)
-		self.deck["19"] = Card(19,"US","Kemalist Republic",2)
-		self.deck["20"] = Card(20,"US","King Abdullah",2)
-		self.deck["21"] = Card(21,"US","Let's Roll",2)
-		self.deck["22"] = Card(22,"US","Mossad and Shin Bet",2)
-		self.deck["23"] = Card(23,"US","Predator",2)
-		self.deck["24"] = Card(24,"US","Predator",2)
-		self.deck["25"] = Card(25,"US","Predator",2)
-		self.deck["26"] = Card(26,"US","Quartet",2)
-		self.deck["27"] = Card(27,"US","Sadam Captured",2)
-		self.deck["28"] = Card(28,"US","Sharia",2)
-		self.deck["29"] = Card(29,"US","Tony Blair",2)
-		self.deck["30"] = Card(30,"US","UN Nation Building",2)
-		self.deck["31"] = Card(31,"US","Wiretapping",2)
-		self.deck["32"] = Card(32,"US","Back Channel",3)
-		self.deck["33"] = Card(33,"US","Benazir Bhutto",3)
-		self.deck["34"] = Card(34,"US","Enhanced Measures",3)
-		self.deck["35"] = Card(35,"US","Hijab",3)
-		self.deck["36"] = Card(36,"US","Indo-Pakistani Talks",3)
-		self.deck["37"] = Card(37,"US","Iraqi WMD",3)
-		self.deck["38"] = Card(38,"US","Libyan Deal",3)
-		self.deck["39"] = Card(39,"US","Libyan WMD",3)
-		self.deck["40"] = Card(40,"US","Mass Turnout",3)
-		self.deck["41"] = Card(41,"US","NATO",3)
-		self.deck["42"] = Card(42,"US","Pakistani Offensive",3)
-		self.deck["43"] = Card(43,"US","Patriot Act",3)
-		self.deck["44"] = Card(44,"US","Renditions",3)
-		self.deck["45"] = Card(45,"US","Safer Now",3)
-		self.deck["46"] = Card(46,"US","Sistani",3)
-		self.deck["47"] = Card(47,"US","The door of Itjihad was closed",3)
-		self.deck["48"] = Card(48,"Jihadist","Adam Gadahn",1)
-		self.deck["49"] = Card(49,"Jihadist","Al-Ittihad al-Islami",1)
-		self.deck["50"] = Card(50,"Jihadist","Ansar al-Islam",1)
-		self.deck["51"] = Card(51,"Jihadist","FREs",1)
-		self.deck["52"] = Card(52,"Jihadist","IEDs",1)
-		self.deck["53"] = Card(53,"Jihadist","Madrassas",1)
-		self.deck["54"] = Card(54,"Jihadist","Moqtada al-Sadr",1)
-		self.deck["55"] = Card(55,"Jihadist","Uyghur Jihad",1)
-		self.deck["56"] = Card(56,"Jihadist","Vieira de Mello Slain",1)
-		self.deck["57"] = Card(57,"Jihadist","Abu Sayyaf",2)
-		self.deck["58"] = Card(58,"Jihadist","Al-Anbar",2)
-		self.deck["59"] = Card(59,"Jihadist","Amerithrax",2)
-		self.deck["60"] = Card(60,"Jihadist","Bhutto Shot",2)
-		self.deck["61"] = Card(61,"Jihadist","Detainee Release",2)
-		self.deck["62"] = Card(62,"Jihadist","Ex-KGB",2)
-		self.deck["63"] = Card(63,"Jihadist","Gaza War",2)
-		self.deck["64"] = Card(64,"Jihadist","Hariri Killed",2)
-		self.deck["65"] = Card(65,"Jihadist","HEU",2)
-		self.deck["66"] = Card(66,"Jihadist","Homegrown",2)
-		self.deck["67"] = Card(67,"Jihadist","Islamic Jihad Union",2)
-		self.deck["68"] = Card(68,"Jihadist","Jemaah Islamiya",2)
-		self.deck["69"] = Card(69,"Jihadist","Kazakh Strain",2)
-		self.deck["70"] = Card(70,"Jihadist","Lashkar-e-Tayyiba",2)
-		self.deck["71"] = Card(71,"Jihadist","Loose Nuke",2)
-		self.deck["72"] = Card(72,"Jihadist","Opium",2)
-		self.deck["73"] = Card(73,"Jihadist","Pirates",2)
-		self.deck["74"] = Card(74,"Jihadist","Schengen Visas",2)
-		self.deck["75"] = Card(75,"Jihadist","Schroeder & Chirac",2)
-		self.deck["76"] = Card(76,"Jihadist","Abu Ghurayb",3)
-		self.deck["77"] = Card(77,"Jihadist","Al Jazeera",3)
-		self.deck["78"] = Card(78,"Jihadist","Axis of Evil",3)
-		self.deck["79"] = Card(79,"Jihadist","Clean Operatives",3)
-		self.deck["80"] = Card(80,"Jihadist","FATA",3)
-		self.deck["81"] = Card(81,"Jihadist","Foreign Fighters",3)
-		self.deck["82"] = Card(82,"Jihadist","Jihadist Videos",3)
-		self.deck["83"] = Card(83,"Jihadist","Kashmir",3)
-		self.deck["84"] = Card(84,"Jihadist","Leak",3)
-		self.deck["85"] = Card(85,"Jihadist","Leak",3)
-		self.deck["86"] = Card(86,"Jihadist","Lebanon War",3)
-		self.deck["87"] = Card(87,"Jihadist","Martyrdom Operation",3)
-		self.deck["88"] = Card(88,"Jihadist","Martyrdom Operation",3)
-		self.deck["89"] = Card(89,"Jihadist","Martyrdom Operation",3)
-		self.deck["90"] = Card(90,"Jihadist","Quagmire",3)
-		self.deck["91"] = Card(91,"Jihadist","Regional al-Qaeda",3)
-		self.deck["92"] = Card(92,"Jihadist","Saddam",3)
-		self.deck["93"] = Card(93,"Jihadist","Taliban",3)
-		self.deck["94"] = Card(94,"Jihadist","The door of Itjihad was closed",3)
-		self.deck["95"] = Card(95,"Jihadist","Wahhabism",3)
-		self.deck["96"] = Card(96,"Unassociated","Danish Cartoons",1)
-		self.deck["97"] = Card(97,"Unassociated","Fatwa",1)
-		self.deck["98"] = Card(98,"Unassociated","Gaza Withdrawal",1)
-		self.deck["99"] = Card(99,"Unassociated","HAMAS Elected",1)
-		self.deck["100"] = Card(100,"Unassociated","Hizb Ut-Tahrir",1)
-		self.deck["101"] = Card(101,"Unassociated","Kosovo",1)
-		self.deck["102"] = Card(102,"Unassociated","Former Soviet Union",2)
-		self.deck["103"] = Card(103,"Unassociated","Hizballah",2)
-		self.deck["104"] = Card(104,"Unassociated","Iran",2)
-		self.deck["105"] = Card(105,"Unassociated","Iran",2)
-		self.deck["106"] = Card(106,"Unassociated","Jaysh al-Mahdi",2)
-		self.deck["107"] = Card(107,"Unassociated","Kurdistan",2)
-		self.deck["108"] = Card(108,"Unassociated","Musharraf",2)
-		self.deck["109"] = Card(109,"Unassociated","Tora Bora",2)
-		self.deck["110"] = Card(110,"Unassociated","Zarqawi",2)
-		self.deck["111"] = Card(111,"Unassociated","Zawahiri",2)
-		self.deck["112"] = Card(112,"Unassociated","Bin Ladin",3)
-		self.deck["113"] = Card(113,"Unassociated","Darfur",3)
-		self.deck["114"] = Card(114,"Unassociated","GTMO",3)
-		self.deck["115"] = Card(115,"Unassociated","Hambali",3)
-		self.deck["116"] = Card(116,"Unassociated","KSM",3)
-		self.deck["117"] = Card(117,"Unassociated","Oil Price Spike",3)
-		self.deck["118"] = Card(118,"Unassociated","Oil Price Spike",3)
-		self.deck["119"] = Card(119,"Unassociated","Saleh",3)
-		self.deck["120"] = Card(120,"Unassociated","US Election",3)
+		self.deck["1"] = Card(1,"US","Backlash",1,False,False,False)
+		self.deck["2"] = Card(2,"US","Biometrics",1,False,False,True)
+		self.deck["3"] = Card(3,"US","CTR",1,False,True,False)
+		self.deck["4"] = Card(4,"US","Moro Talks",1,True,True,False)
+		self.deck["5"] = Card(5,"US","NEST",1,True,True,False)
+		self.deck["6"] = Card(6,"US","Sacntions",1,False,False,False)
+		self.deck["7"] = Card(7,"US","Sanctions",1,False,False,False)
+		self.deck["8"] = Card(8,"US","Special Forces",1,False,False,False)
+		self.deck["9"] = Card(9,"US","Special Forces",1,False,False,False)
+		self.deck["10"] = Card(10,"US","Special Forces",1,False,False,False)
+		self.deck["11"] = Card(11,"US","Abbas",2,True,True,False)
+		self.deck["12"] = Card(12,"US","Al-Azhar",2,False,False,False)
+		self.deck["13"] = Card(13,"US","Anbar Awakening",2,False,True,False)
+		self.deck["14"] = Card(14,"US","Covert Action",2,False,False,False)
+		self.deck["15"] = Card(15,"US","Ethiopia Strikes",2,True,False,False)
+		self.deck["16"] = Card(16,"US","Euro-Islam",2,True,False,False)
+		self.deck["17"] = Card(17,"US","FSB",2,False,False,False)
+		self.deck["18"] = Card(18,"US","Intel Community",2,False,False,False)
+		self.deck["19"] = Card(19,"US","Kemalist Republic",2,False,False,False)
+		self.deck["20"] = Card(20,"US","King Abdullah",2,True,False,False)
+		self.deck["21"] = Card(21,"US","Let's Roll",2,False,False,False)
+		self.deck["22"] = Card(22,"US","Mossad and Shin Bet",2,False,False,False)
+		self.deck["23"] = Card(23,"US","Predator",2,False,False,False)
+		self.deck["24"] = Card(24,"US","Predator",2,False,False,False)
+		self.deck["25"] = Card(25,"US","Predator",2,False,False,False)
+		self.deck["26"] = Card(26,"US","Quartet",2,False,False,False)
+		self.deck["27"] = Card(27,"US","Sadam Captured",2,True,True,False)
+		self.deck["28"] = Card(28,"US","Sharia",2,False,False,False)
+		self.deck["29"] = Card(29,"US","Tony Blair",2,True,False,False)
+		self.deck["30"] = Card(30,"US","UN Nation Building",2,False,False,False)
+		self.deck["31"] = Card(31,"US","Wiretapping",2,False,True,False)
+		self.deck["32"] = Card(32,"US","Back Channel",3,False,False,False)
+		self.deck["33"] = Card(33,"US","Benazir Bhutto",3,True,True,False)
+		self.deck["34"] = Card(34,"US","Enhanced Measures",3,False,True,False)
+		self.deck["35"] = Card(35,"US","Hijab",3,True,False,False)
+		self.deck["36"] = Card(36,"US","Indo-Pakistani Talks",3,True,True,False)
+		self.deck["37"] = Card(37,"US","Iraqi WMD",3,True,True,False)
+		self.deck["38"] = Card(38,"US","Libyan Deal",3,True,True,False)
+		self.deck["39"] = Card(39,"US","Libyan WMD",3,True,True,False)
+		self.deck["40"] = Card(40,"US","Mass Turnout",3,False,False,False)
+		self.deck["41"] = Card(41,"US","NATO",3,False,True,False)
+		self.deck["42"] = Card(42,"US","Pakistani Offensive",3,False,False,False)
+		self.deck["43"] = Card(43,"US","Patriot Act",3,True,True,False)
+		self.deck["44"] = Card(44,"US","Renditions",3,False,True,False)
+		self.deck["45"] = Card(45,"US","Safer Now",3,False,False,False)
+		self.deck["46"] = Card(46,"US","Sistani",3,False,False,False)
+		self.deck["47"] = Card(47,"US","The door of Itjihad was closed",3,False,False,True)
+		self.deck["48"] = Card(48,"Jihadist","Adam Gadahn",1,False,False,False)
+		self.deck["49"] = Card(49,"Jihadist","Al-Ittihad al-Islami",1,True,False,False)
+		self.deck["50"] = Card(50,"Jihadist","Ansar al-Islam",1,True,False,False)
+		self.deck["51"] = Card(51,"Jihadist","FREs",1,False,False,False)
+		self.deck["52"] = Card(52,"Jihadist","IEDs",1,False,False,False)
+		self.deck["53"] = Card(53,"Jihadist","Madrassas",1,False,False,False)
+		self.deck["54"] = Card(54,"Jihadist","Moqtada al-Sadr",1,True,True,False)
+		self.deck["55"] = Card(55,"Jihadist","Uyghur Jihad",1,True,False,False)
+		self.deck["56"] = Card(56,"Jihadist","Vieira de Mello Slain",1,True,True,False)
+		self.deck["57"] = Card(57,"Jihadist","Abu Sayyaf",2,True,True,False)
+		self.deck["58"] = Card(58,"Jihadist","Al-Anbar",2,True,True,False)
+		self.deck["59"] = Card(59,"Jihadist","Amerithrax",2,False,False,False)
+		self.deck["60"] = Card(60,"Jihadist","Bhutto Shot",2,True,True,False)
+		self.deck["61"] = Card(61,"Jihadist","Detainee Release",2,False,False,False)
+		self.deck["62"] = Card(62,"Jihadist","Ex-KGB",2,False,False,False)
+		self.deck["63"] = Card(63,"Jihadist","Gaza War",2,False,False,False)
+		self.deck["64"] = Card(64,"Jihadist","Hariri Killed",2,True,False,False)
+		self.deck["65"] = Card(65,"Jihadist","HEU",2,True,False,False)
+		self.deck["66"] = Card(66,"Jihadist","Homegrown",2,False,False,False)
+		self.deck["67"] = Card(67,"Jihadist","Islamic Jihad Union",2,True,False,False)
+		self.deck["68"] = Card(68,"Jihadist","Jemaah Islamiya",2,False,False,False)
+		self.deck["69"] = Card(69,"Jihadist","Kazakh Strain",2,True,False,False)
+		self.deck["70"] = Card(70,"Jihadist","Lashkar-e-Tayyiba",2,False,False,False)
+		self.deck["71"] = Card(71,"Jihadist","Loose Nuke",2,True,False,False)
+		self.deck["72"] = Card(72,"Jihadist","Opium",2,False,False,False)
+		self.deck["73"] = Card(73,"Jihadist","Pirates",2,True,True,False)
+		self.deck["74"] = Card(74,"Jihadist","Schengen Visas",2,False,False,False)
+		self.deck["75"] = Card(75,"Jihadist","Schroeder & Chirac",2,False,False,False)
+		self.deck["76"] = Card(76,"Jihadist","Abu Ghurayb",3,True,False,False)
+		self.deck["77"] = Card(77,"Jihadist","Al Jazeera",3,False,False,False)
+		self.deck["78"] = Card(78,"Jihadist","Axis of Evil",3,False,False,False)
+		self.deck["79"] = Card(79,"Jihadist","Clean Operatives",3,False,False,False)
+		self.deck["80"] = Card(80,"Jihadist","FATA",3,False,True,False)
+		self.deck["81"] = Card(81,"Jihadist","Foreign Fighters",3,False,False,False)
+		self.deck["82"] = Card(82,"Jihadist","Jihadist Videos",3,False,False,False)
+		self.deck["83"] = Card(83,"Jihadist","Kashmir",3,False,False,False)
+		self.deck["84"] = Card(84,"Jihadist","Leak",3,False,False,False)
+		self.deck["85"] = Card(85,"Jihadist","Leak",3,False,False,False)
+		self.deck["86"] = Card(86,"Jihadist","Lebanon War",3,False,False,False)
+		self.deck["87"] = Card(87,"Jihadist","Martyrdom Operation",3,False,False,False)
+		self.deck["88"] = Card(88,"Jihadist","Martyrdom Operation",3,False,False,False)
+		self.deck["89"] = Card(89,"Jihadist","Martyrdom Operation",3,False,False,False)
+		self.deck["90"] = Card(90,"Jihadist","Quagmire",3,False,False,False)
+		self.deck["91"] = Card(91,"Jihadist","Regional al-Qaeda",3,False,False,False)
+		self.deck["92"] = Card(92,"Jihadist","Saddam",3,False,False,False)
+		self.deck["93"] = Card(93,"Jihadist","Taliban",3,False,False,False)
+		self.deck["94"] = Card(94,"Jihadist","The door of Itjihad was closed",3,False,False,False)
+		self.deck["95"] = Card(95,"Jihadist","Wahhabism",3,False,False,False)
+		self.deck["96"] = Card(96,"Unassociated","Danish Cartoons",1,True,False,False)
+		self.deck["97"] = Card(97,"Unassociated","Fatwa",1,False,False,False)
+		self.deck["98"] = Card(98,"Unassociated","Gaza Withdrawal",1,True,False,False)
+		self.deck["99"] = Card(99,"Unassociated","HAMAS Elected",1,True,False,False)
+		self.deck["100"] = Card(100,"Unassociated","Hizb Ut-Tahrir",1,False,False,False)
+		self.deck["101"] = Card(101,"Unassociated","Kosovo",1,False,False,False)
+		self.deck["102"] = Card(102,"Unassociated","Former Soviet Union",2,False,False,False)
+		self.deck["103"] = Card(103,"Unassociated","Hizballah",2,False,False,False)
+		self.deck["104"] = Card(104,"Unassociated","Iran",2,False,False,False)
+		self.deck["105"] = Card(105,"Unassociated","Iran",2,False,False,False)
+		self.deck["106"] = Card(106,"Unassociated","Jaysh al-Mahdi",2,False,False,False)
+		self.deck["107"] = Card(107,"Unassociated","Kurdistan",2,False,False,False)
+		self.deck["108"] = Card(108,"Unassociated","Musharraf",2,False,False,False)
+		self.deck["109"] = Card(109,"Unassociated","Tora Bora",2,True,False,False)
+		self.deck["110"] = Card(110,"Unassociated","Zarqawi",2,False,False,False)
+		self.deck["111"] = Card(111,"Unassociated","Zawahiri",2,False,False,False)
+		self.deck["112"] = Card(112,"Unassociated","Bin Ladin",3,False,False,False)
+		self.deck["113"] = Card(113,"Unassociated","Darfur",3,False,False,False)
+		self.deck["114"] = Card(114,"Unassociated","GTMO",3,False,False,True)
+		self.deck["115"] = Card(115,"Unassociated","Hambali",3,False,False,False)
+		self.deck["116"] = Card(116,"Unassociated","KSM",3,False,False,False)
+		self.deck["117"] = Card(117,"Unassociated","Oil Price Spike",3,False,False,True)
+		self.deck["118"] = Card(118,"Unassociated","Oil Price Spike",3,False,False,True)
+		self.deck["119"] = Card(119,"Unassociated","Saleh",3,False,False,False)
+		self.deck["120"] = Card(120,"Unassociated","US Election",3,False,False,False)
 
 	def getCountryFromUser(self, prompt, special, helpFunction, helpParameter = None):
 		goodCountry = None
@@ -2896,23 +2813,34 @@ class Labyrinth(cmd.Cmd):
 		elif self.funding > 9:
 			self.funding = 9
 		self.outputToHistory("Jihadist Funding now %d" % self.funding, lineFeed)
+		
+	def placeCells(self, country, numCells):
+		if self.cells == 0:
+			self.outputToHistory("No cells are on the Funding Track.", True)
+		else:
+			self.testCountry(country)
+			cellsToMove = min(numCells, self.cells)
+			self.map[country].sleeperCells += cellsToMove
+			self.cells -= cellsToMove
+			self.outputToHistory("%d Sleeper Cell(s) placed in %s" % (cellsToMove, country), False)
+			self.outputToHistory(self.map[country].countryStr(), True)
 				
 	def removeCell(self, country):
 		if self.map[country].totalCells() == 0:
 			return
 		if "Sadr" in self.map[country].markers:
 			self.map[country].markers.remove("Sadr")
-			self.outputToHistory("Sadr removed from %s." % country, False)			
+			self.outputToHistory("Sadr removed from %s." % country, True)			
 		elif self.map[country].sleeperCells > 0:
 			self.map[country].sleeperCells -= 1
 			self.cells += 1
-			self.outputToHistory("Sleeper Cell removed from %s." % country, False)
+			self.outputToHistory("Sleeper Cell removed from %s." % country, True)
 		else:
 			self.map[country].activeCells -= 1
 			self.cells += 1
-			self.outputToHistory("Active Cell removed from %s." % country, False)
+			self.outputToHistory("Active Cell removed from %s." % country, True)
 		if self.map[country].totalCells() == 0:
-			self.outputToHistory("Cadre added in %s." % country, False)
+			self.outputToHistory("Cadre added in %s." % country, True)
 			self.map[country].cadre = 1
 	
 	def removeAllCellsFromCountry(self, country):
@@ -3226,7 +3154,7 @@ class Labyrinth(cmd.Cmd):
 			self.map[country].regimeChange = 0
 			self.map[country].besieged = 0
 			self.map[country].aid = 0
-			self.funding = min(9, self.funding + self.map[country].resources)
+			self.funding = min(9, self.funding + self.countryResources(country))
 			self.outputToHistory("Funding now %d" % self.funding, False) 
 			if self.map[country].troops() > 0:
 				self.prestige = 1
@@ -3292,11 +3220,11 @@ class Labyrinth(cmd.Cmd):
 			else:
 				maxResource = 0
 				for country in possible:
-					if self.map[country].resources > maxResource:
-						maxResource = self.map[country].resources
+					if self.countryResources(country) > maxResource:
+						maxResource = self.countryResources(country)
 				newPossible = []
 				for country in possible:
-					if self.map[country].resources == maxResource:
+					if self.countryResources(country) == maxResource:
 						newPossible.append(country)
 				return random.choice(newPossible)
 
@@ -3329,7 +3257,7 @@ class Labyrinth(cmd.Cmd):
 					countryScores[country] += 10000
 				if self.map[country].besieged > 0:
 					countryScores[country] += 1000
-				countryScores[country] += (self.map[country].resources * 100)
+				countryScores[country] += (self.countryResources(country) * 100)
 				countryScores[country] += random.randint(1,99)
 			countryOrder = []
 			for country in countryScores:
@@ -3353,7 +3281,7 @@ class Labyrinth(cmd.Cmd):
 				countryScores[country] = 0
 				if (self.map[country].regimeChange > 0) and (self.map[country].troops() - self.map[country].totalCells(True)) >= 5:
 					countryScores[country] += 100000000
-				elif ((self.map[country].governance == 4) and (self.map[country].totalCells(True) < (2 * self.map[country].resources))):
+				elif ((self.map[country].governance == 4) and (self.map[country].totalCells(True) < (2 * self.countryResources(country)))):
 					countryScores[country] += 10000000
 				elif (self.map[country].governance != 4) and (self.map[country].regimeChange <= 0):
 					if self.map[country].recruit > 0:
@@ -3364,7 +3292,7 @@ class Labyrinth(cmd.Cmd):
 			if self.map[country].besieged > 0:
 				countryScores[country] += 100000
 			countryScores[country] += (1000 * (self.map[country].troops() + self.map[country].totalCells(True)))
-			countryScores[country] += 100 * self.map[country].resources
+			countryScores[country] += 100 * self.countryResources(country)
 			countryScores[country] += random.randint(1,99)
 		countryOrder = []
 		for country in countryScores:
@@ -3385,9 +3313,9 @@ class Labyrinth(cmd.Cmd):
 		cellsToRecruit = min(cellsRequested, cells)
 		if (self.map[country].regimeChange or self.map[country].governance == 4):
 			if self.map[country].regimeChange:
-				self.outputToHistory("Recruit to Islamic Rule country automatically successful.", False)
-			else:
 				self.outputToHistory("Recruit to Regime Change country automatically successful.", False)
+			else:
+				self.outputToHistory("Recruit to Islamic Rule country automatically successful.", False)
 			self.cells -= cellsToRecruit
 			self.map[country].sleeperCells += cellsToRecruit
 			self.map[country].cadre = 0
@@ -3504,11 +3432,11 @@ class Labyrinth(cmd.Cmd):
 				return country
 		maxResources = 0
 		for country in countryList:
-			if self.map[country].resources > maxResources:
-				maxResources = self.map[country].resources
+			if self.countryResources(country) > maxResources:
+				maxResources = self.countryResources(country)
 		maxdests = []
 		for country in countryList:
-			if self.map[country].resources == maxResources:
+			if self.countryResources(country) == maxResources:
 				maxdests.append(country)
 		return random.choice(maxdests)
 			
@@ -3797,7 +3725,6 @@ class Labyrinth(cmd.Cmd):
 		dict["Poor"] = []
 		for country in self.map:
 			if self.map[country].aid > 0:
-				print "AID", country
 				if self.map[country].governance == 1:
 					dict["Good"].append(country)
 				elif self.map[country].governance == 2:
@@ -4199,11 +4126,10 @@ class Labyrinth(cmd.Cmd):
 			self.map[country].plots = 0
 	
 	def eventPutsCell(self, cardNum):
-		return self.deck[str(cardNum)].putsCell()
+		return self.deck[str(cardNum)].putsCell(self)
 		
 	def playableNonUSEvent(self, cardNum):
-		# return self.deck[str(cardNum)].type != "US" and  self.deck[str(cardNum)].playable("Jihadist")
-		self.outputToHistory("Unplayable Non-US Event.", False)
+		return self.deck[str(cardNum)].type != "US" and  self.deck[str(cardNum)].playable("Jihadist", self)
 		return False
 
 	def playableUSEvent(self, cardNum):
@@ -4214,6 +4140,7 @@ class Labyrinth(cmd.Cmd):
 		self.debugPrint("DEBUG: Playble Non-US event? [1]")
 		if self.playableNonUSEvent(cardNum):
 			self.debugPrint("DEBUG: YES")
+			self.outputToHistory("Playable Non-US Event.", False)
 			self.debugPrint("Event Recruits or places cell? [2]")
 			if self.eventPutsCell(cardNum):
 				self.debugPrint("DEBUG: YES")
@@ -4234,6 +4161,7 @@ class Labyrinth(cmd.Cmd):
 			if self.playableUSEvent(cardNum):
 				self.debugPrint("DEBUG: YES")
 				self.debugPrint("DEBUG: Plot Here [5]")
+				self.outputToHistory("Playable US Event.", False)
 				unusedOps = self.handlePlot(self.deck[str(cardNum)].ops, True)
 				if unusedOps > 0:
 					self.debugPrint("DEBUG: Radicalization with remaining %d ops" % unusedOps)
@@ -4241,14 +4169,16 @@ class Labyrinth(cmd.Cmd):
 				self.debugPrint("DEBUG: END")
 			else:
 				self.debugPrint("DEBUG: NO")
+				self.outputToHistory("Unplayable Event. Using Ops for Operations.", False)
 				self.aiFlowChartMajorJihad(cardNum)
 
 	def aiFlowChartPlayEvent(self, cardNum):
 		self.debugPrint("Play Event [6]")
-		self.deck[str(cardNum)].playEvent("Jihadist")
+		self.deck[str(cardNum)].playEvent("Jihadist", self)
 		self.debugPrint("Unassociated Event? [8]")
 		if self.deck[str(cardNum)].type == "Unassociated":
 			self.debugPrint("DEBUG: YES")
+			self.outputToHistory("Unassociated event now being used for Ops.", False)
 			self.aiFlowChartMajorJihad(cardNum)
 		else:
 			self.debugPrint("DEBUG: NO")
@@ -4558,14 +4488,14 @@ class Labyrinth(cmd.Cmd):
 			if self.map[country].type == "Shia-Mix" or self.map[country].type == "Suni": 
 				if self.map[country].governance == 1:
 					goodC += 1
-					goodRes += self.map[country].resources
+					goodRes += self.countryResources(country)
 				elif self.map[country].governance == 2:
 					goodC += 1
 				elif self.map[country].governance == 3:
 					islamC += 1
 				elif self.map[country].governance == 4:
 					islamC += 1
-					islamRes += self.map[country].resources
+					islamRes += self.countryResources(country)
 			elif self.map[country].type != "Iran" and self.map[country].name != "United States":
 				if self.map[country].posture == "Hard":
 					worldPos += 1
@@ -4650,7 +4580,7 @@ class Labyrinth(cmd.Cmd):
 			worldPosStr = "Soft"
 		else:
 			worldPosStr = "Even"
-		print "World Posture: %s %d" % (worldPosStr, worldPos)
+		print "World Posture: %s %d" % (worldPosStr, abs(worldPos))
 		print "US Prestige: %d" % self.prestige
 		print ""
 		print "TROOPS"
@@ -5023,6 +4953,12 @@ class Labyrinth(cmd.Cmd):
 	def help_wit(self):
 		self.help_withdraw()
 		
+	def do_res(self, rest):
+		self.do_reserves(rest)
+				
+	def help_res(self):
+		self.help_reserves()
+		
 	def do_j(self, rest):
 		cardNum = None
 		try:
@@ -5078,13 +5014,13 @@ class Labyrinth(cmd.Cmd):
 		try:
 			input = int(rest)
 			if input < 1 or input > 120:
-				print "Enter u then the card number e.g. j 24"
+				print "Enter u then the card number e.g. u 24"
 				print ""
 				return
 			else:
 				cardNum = input
 		except:
-			print "Enter u then the card number e.g. j 24"
+			print "Enter u then the card number e.g. u 24"
 			print ""
 			return
 		self.outputToHistory("", False)
@@ -5099,11 +5035,12 @@ class Labyrinth(cmd.Cmd):
 				self.outputToHistory("Played for Event.", False)
 				self.deck[str(cardNum)].playEvent("US", self)
 				if cardNum == 120:
-					print "Now, %d Ops available. Use commands: alert, deploy, disrupt, reassessment, regime, or withdraw" % self.deck[str(cardNum)].ops
+					print "Now, %d Ops available. Use commands: alert, deploy, disrupt, reassessment, regime, withdraw, or woi" % self.deck[str(cardNum)].ops
 			elif choice == "ops":
 				self.outputToHistory("Played for Ops.", False)
-				print "When finished with Ops enter u 120 again to play the event." % self.deck[str(cardNum)].ops
-				print "%d Ops available. Use commands: alert, deploy, disrupt, reassessment, regime, or withdraw" % self.deck[str(cardNum)].ops
+				if cardNum == 120:
+					print "When finished with Ops enter u 120 again to play the event."
+				print "%d Ops available. Use commands: alert, deploy, disrupt, reassessment, regime, withdraw, or woi" % self.deck[str(cardNum)].ops
 		else:
 			if self.deck[str(cardNum)].type == "Jihadist":
 				if self.deck[str(cardNum)].playable("Jihadist", self):
@@ -5113,11 +5050,11 @@ class Labyrinth(cmd.Cmd):
 						self.deck[str(cardNum)].playEvent("Jihadist", self)
 					else:
 						print "Use the Ops now then enter u <card #> again to play the event"
-					print "%d Ops available. Use commands: alert, deploy, disrupt, reassessment, regime, or withdraw" % self.deck[str(cardNum)].ops
+					print "%d Ops available. Use commands: alert, deploy, disrupt, reassessment, regime, withdraw, or woi" % self.deck[str(cardNum)].ops
 					return
 		# Here if it's unplayable by either side.
 			self.outputToHistory("Unplayable %s Event" % self.deck[str(cardNum)].type, False)
-			print "%d Ops available. Use commands: alert, deploy, disrupt, reassessment, regime, or withdraw" % self.deck[str(cardNum)].ops
+			print "%d Ops available. Use commands: alert, deploy, disrupt, reassessment, regime, withdraw, or woi" % self.deck[str(cardNum)].ops
 					
 	def help_u(self):
 		print "Enter the number of the US card when it is your card play."
@@ -5126,6 +5063,9 @@ class Labyrinth(cmd.Cmd):
 		foundPlot = False
 		for country in self.map:
 			while self.map[country].plots > 0:
+				if not foundPlot:
+					self.outputToHistory("", False)
+					self.outputToHistory("[[ Resolving Plots ]]", True)
 				foundPlot = True
 				print ""
 				plotType = self.getPlotTypeFromUser("Enter Plot type from %s: " % country)
@@ -5209,11 +5149,35 @@ class Labyrinth(cmd.Cmd):
 		for event in self.lapsing:
 			self.outputToHistory("%s has Lapsed." % event, False)
 		self.lapsing = []
+		goodRes = 0
+		islamRes = 0
+		goodC = 0
+		islamC = 0
+		worldPos = 0
+		for country in self.map:
+			if self.map[country].type == "Shia-Mix" or self.map[country].type == "Suni": 
+				if self.map[country].governance == 1:
+					goodC += 1
+					goodRes += self.countryResources(country)
+				elif self.map[country].governance == 2:
+					goodC += 1
+				elif self.map[country].governance == 3:
+					islamC += 1
+				elif self.map[country].governance == 4:
+					islamC += 1
+					islamRes += self.countryResources(country)
+		self.outputToHistory("---", False)
+		self.outputToHistory("Good Resources   : %d" % goodRes, False)
+		self.outputToHistory("Islamic Resources: %d" % islamRes, False)
+		self.outputToHistory("---", False)
+		self.outputToHistory("Good/Fair Countries   : %d" % goodC, False)
+		self.outputToHistory("Poor/Islamic Countries: %d" % islamC, False)
 		self.turn += 1
+		self.outputToHistory("---", False)
 		self.outputToHistory("", False)
-		self.outputToHistory("[[ %d (Turn %s) ]]" % (self.startYear + (self.turn - 1), self.turn), True)
+		self.outputToHistory("[[ %d (Turn %s) ]]" % (self.startYear + (self.turn - 1), self.turn), False)
 		
-	def help_plot(self):
+	def help_turn(self):
 		print "Use this command at the end of the turn."
 					
 def main():
