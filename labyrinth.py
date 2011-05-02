@@ -2,7 +2,7 @@
 LWOTai - A Python implementation of the Single-Player AI for Labyrinth: the War on Terror by GMT Games.
 Mike Houser, 2011
 
-Release 1.04272011
+Release 1.05022011
 '''
 
 import cmd
@@ -5092,12 +5092,6 @@ class Labyrinth(cmd.Cmd):
 				
 	def help_wit(self):
 		self.help_withdraw()
-		
-	def do_res(self, rest):
-		self.do_reserves(rest)
-				
-	def help_res(self):
-		self.help_reserves()
 		
 	def do_j(self, rest):
 		cardNum = None
