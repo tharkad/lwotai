@@ -2,7 +2,7 @@
 LWOTai - A Python implementation of the Single-Player AI for Labyrinth: the War on Terror by GMT Games.
 Mike Houser, 2011
 
-Release 1.05022011
+Release 1.05032011.1
 '''
 
 import cmd
@@ -4905,30 +4905,30 @@ class Labyrinth(cmd.Cmd):
 				else:
 					print "Country not elligable for War of Ideas."
 					print ""
-			if self.map[where].type == "Non-Muslim" and input != "United States": # Non-Muslim
-				postureRoll = self.getRollFromUser("Enter Posture Roll or r to have program roll: ")
-				if postureRoll > 4:
-					self.map[where].posture = "Hard"
-					self.outputToHistory("* War of Ideas in %s - Posture Hard" % where)
-					if self.map["United States"].posture == "Hard":
-						self.prestige += 1
-						if self.prestige > 9:
-							self.prestige = 9
-						else:
-							self.outputToHistory("US Prestige now %d" % self.prestige)
-				else:
-					self.map[where].posture = "Soft"
-					self.outputToHistory("* War of Ideas in %s - Posture Soft" % where)
-					if self.map["United States"].posture == "Soft":
-						self.prestige += 1
-						if self.prestige > 9:
-							self.prestige = 9
-						else:
-							self.outputToHistory("US Prestige now %d" % self.prestige)
-			else: # Muslim
-				woiRoll = self.getRollFromUser("Enter WoI roll or r to have program roll: ")
-				modRoll = self.modifiedWoIRoll(woiRoll, where)
-				self.handleMuslimWoI(modRoll, where)
+		if self.map[where].type == "Non-Muslim" and input != "United States": # Non-Muslim
+			postureRoll = self.getRollFromUser("Enter Posture Roll or r to have program roll: ")
+			if postureRoll > 4:
+				self.map[where].posture = "Hard"
+				self.outputToHistory("* War of Ideas in %s - Posture Hard" % where)
+				if self.map["United States"].posture == "Hard":
+					self.prestige += 1
+					if self.prestige > 9:
+						self.prestige = 9
+					else:
+						self.outputToHistory("US Prestige now %d" % self.prestige)
+			else:
+				self.map[where].posture = "Soft"
+				self.outputToHistory("* War of Ideas in %s - Posture Soft" % where)
+				if self.map["United States"].posture == "Soft":
+					self.prestige += 1
+					if self.prestige > 9:
+						self.prestige = 9
+					else:
+						self.outputToHistory("US Prestige now %d" % self.prestige)
+		else: # Muslim
+			woiRoll = self.getRollFromUser("Enter WoI roll or r to have program roll: ")
+			modRoll = self.modifiedWoIRoll(woiRoll, where)
+			self.handleMuslimWoI(modRoll, where)
 				
 	def help_woi(self):
 		print "Conduct War of Ideas operation."
@@ -5309,6 +5309,24 @@ class Labyrinth(cmd.Cmd):
 		self.turn += 1
 		self.outputToHistory("---", False)
 		self.outputToHistory("", False)
+		usCards = 0
+		jihadistCards = 0
+		if self.funding >= 7:
+			jihadistCards = 9
+		elif self.funding >= 4:
+			jihadistCards = 8
+		else:
+			jihadistCards = 7
+		if self.troops >= 10:
+			usCards = 9
+		elif self.troops >= 5:
+			usCards = 8
+		else:
+			usCards = 7
+		self.outputToHistory("Jihadist draws %d cards." % jihadistCards, False)
+		self.outputToHistory("US draws %d cards." % usCards, False)
+		self.outputToHistory("---", False)
+		self.outputToHistory("", False)		
 		self.outputToHistory("[[ %d (Turn %s) ]]" % (self.startYear + (self.turn - 1), self.turn), False)
 		
 	def help_turn(self):
