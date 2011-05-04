@@ -6477,6 +6477,38 @@ class card11(unittest.TestCase):
 		self.assertFalse("Abbas" in app.markers)
 
 		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		app.testCountry("Syria")
+		app.map["Syria"].governance = 4
+		app.deck["11"].playEvent("US", app)
+		self.assertTrue(app.prestige == 8)
+		self.assertTrue(app.funding == 3)
+		self.assertTrue("Abbas" in app.markers)
+		app.map["Israel"].plots = 1
+		app.resolvePlot("Israel", 1, [1], [], [], [], [], False)
+		self.assertFalse("Abbas" in app.markers)
+
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		app.testCountry("Lebanon")
+		app.map["Lebanon"].governance = 4
+		app.deck["11"].playEvent("US", app)
+		self.assertTrue(app.prestige == 7)
+		self.assertTrue(app.funding == 5)
+		self.assertTrue("Abbas" in app.markers)
+		app.map["Israel"].plots = 1
+		app.resolvePlot("Israel", 1, [1], [], [], [], [], False)
+		self.assertFalse("Abbas" in app.markers)
+
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		app.troops = 4
+		app.deck["11"].playEvent("US", app)
+		self.assertTrue(app.prestige == 7)
+		self.assertTrue(app.funding == 5)
+		self.assertTrue("Abbas" in app.markers)
+		app.map["Israel"].plots = 1
+		app.resolvePlot("Israel", 1, [1], [], [], [], [], False)
+		self.assertFalse("Abbas" in app.markers)
+
+		app = Labyrinth(1, 1, testBlankScenarioSetup)
 		app.prestige = 12
 		app.funding = 2
 		app.deck["11"].playEvent("US", app)

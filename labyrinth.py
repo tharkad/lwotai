@@ -2,7 +2,7 @@
 LWOTai - A Python implementation of the Single-Player AI for Labyrinth: the War on Terror by GMT Games.
 Mike Houser, 2011
 
-Release 1.05032011.1
+Release 1.05042011.1
 '''
 
 import cmd
@@ -741,11 +741,17 @@ class Card:
 							else:
 								app.removeCell(input)
 								app.outputToHistory(app.map[input].countryStr(), True)
+								break
 			elif self.number == 11: # Abbas
-				numIR = app.numIslamicRule()
+				numIRIsrael = 0
+				for country in app.map:
+					if app.isAdjacent(country, "Israel"):
+						if app.map[country].governance == 4:
+							numIRIsrael = 1
+							break
 				app.markers.append("Abbas")
 				app.outputToHistory("Abbas in play.", False)
-				if app.troops >= 5 and numIR <= 0:
+				if app.troops >= 5 and numIRIsrael <= 0:
 					app.changePrestige(1, False)
 					app.changeFunding(-2, True)
 			elif self.number == 12: # Al-Azhar
@@ -903,6 +909,7 @@ class Card:
 									else:
 										postureStr = app.getPostureFromUser("What Posture should %s have (h or s)? " % postureCountry)
 										app.executeCardLetsRoll(plotCountry, postureCountry, postureStr)
+										break
 			elif self.number == 22: # Mossad and Shin Bet
 				app.removeAllCellsFromCountry("Israel")
 				app.removeAllCellsFromCountry("Jordan")
@@ -927,6 +934,7 @@ class Card:
 						else:
 							app.removeCell(input)
 							app.outputToHistory(app.map[input].countryStr(), True)
+							break
 			elif self.number == 26: # Quartet
 				if not "Abbas" in app.markers:
 					return False
@@ -1078,6 +1086,7 @@ class Card:
 								app.map[input].aid = 1
 								app.outputToHistory("Aid added to %s." % input, False)
 								app.outputToHistory(app.map[input].countryStr(), True)
+								break
 			elif self.number == 33: # Benazir Bhutto
 				app.markers.append("Benazir Bhutto")
 				app.outputToHistory("Benazir Bhutto in Play.", False)
@@ -1232,6 +1241,7 @@ class Card:
 							app.map[postureCountry].posture = postureStr
 							app.outputToHistory(app.map["United States"].countryStr(), False)				
 							app.outputToHistory(app.map[postureCountry].countryStr(), True)	
+							break
 			elif self.number == 46: # Sistani
 				targetCountries = []
 				for country in app.map:
@@ -1784,7 +1794,7 @@ class Card:
 							return
 					for i in range(2):
 						if random.randint(1,6) <= app.map[target].governance:
-							if app.map[target].governance < 4:
+							if app.map[target].governance < 3:
 								app.map[target].governance += 1
 								app.outputToHistory("Governance worsened in %s." % target, False)
 								app.outputToHistory(app.map[target].countryStr(), True)
@@ -2061,8 +2071,6 @@ class Card:
 				else:
 					if app.getYesNoFromUser("Are there any Jihadist event cards in the discard pile? "):
 						app.outputToHistory("Draw from the Discard Pile randomly among the highest-value Jihadist-associated event cards. Put the card on top of the Jihadist hand.", True)
-					else:
-						app.aiFlowChartMajorJihad(self.number)
 			elif self.number == 119: # Saleh
 				app.testCountry("Yemen")
 				if side == "US":
@@ -3200,7 +3208,7 @@ class Labyrinth(cmd.Cmd):
 				if numToDisrupt == 1:
 					disStr = None
 					while not disStr:
-						input = raw_input("You can disrupt one cell. Enter a or s: ")
+						input = raw_input("You can disrupt one cell. Enter a or s for either an active or sleeper cell: ")
 						input = input.lower()
 						if input == "a" or input == "s":
 							disStr = input
@@ -3216,17 +3224,17 @@ class Labyrinth(cmd.Cmd):
 					disStr = None
 					while not disStr:
 						if self.map[where].sleeperCells >= 2 and self.map[where].activeCells >= 2:
-							input = raw_input("You can disrupt two cells. Enter aa, as, or ss: ")
+							input = raw_input("You can disrupt two cells. Enter aa, as, or ss for active or slepper cells: ")
 							input = input.lower()
 							if input == "aa" or input == "as" or input == "sa" or input == "ss":
 								disStr = input
 						elif self.map[where].sleeperCells >= 2:
-							input = raw_input("You can disrupt two cells. Enter as, or ss: ")
+							input = raw_input("You can disrupt two cells. Enter as, or ss for active or slepper cells: ")
 							input = input.lower()
 							if input == "as" or input == "sa" or input == "ss":
 								disStr = input
 						elif self.map[where].activeCells >= 2:
-							input = raw_input("You can disrupt two cells. Enter aa, or as: ")
+							input = raw_input("You can disrupt two cells. Enter aa, or as for active or slepper cells: ")
 							input = input.lower()
 							if input == "as" or input == "sa" or input == "aa":
 								disStr = input
