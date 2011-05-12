@@ -909,7 +909,7 @@ class Card:
 									else:
 										postureStr = app.getPostureFromUser("What Posture should %s have (h or s)? " % postureCountry)
 										app.executeCardLetsRoll(plotCountry, postureCountry, postureStr)
-										break
+										return
 			elif self.number == 22: # Mossad and Shin Bet
 				app.removeAllCellsFromCountry("Israel")
 				app.removeAllCellsFromCountry("Jordan")
@@ -2119,8 +2119,9 @@ class Labyrinth(cmd.Cmd):
 	deck = {}
 	gameOver = False
 	backlashInPlay = False
+	testUserInput = []
 
-	def __init__(self, theScenario, theIdeology, setupFuntion = None):
+	def __init__(self, theScenario, theIdeology, setupFuntion = None, testUserInput = []):
 		cmd.Cmd.__init__(self)
 		self.scenario = theScenario
 		self.ideology = theIdeology
@@ -2138,6 +2139,7 @@ class Labyrinth(cmd.Cmd):
 		self.history = []
 		self.markers = []
 		self.lapsing = []
+		self.testUserInput = testUserInput
 		if setupFuntion:
 			setupFuntion(self)
 		else:
@@ -2747,10 +2749,19 @@ class Labyrinth(cmd.Cmd):
 		self.deck["119"] = Card(119,"Unassociated","Saleh",3,False,False,False)
 		self.deck["120"] = Card(120,"Unassociated","US Election",3,False,False,False)
 
+	def my_raw_input(self, prompt):
+		if len(self.testUserInput) > 0:
+			retVal = self.testUserInput[0]
+			self.testUserInput.remove(retVal)
+			print "TEST: Prompt: %s VAL: %s" % (prompt, retVal)
+			return retVal
+		else:
+			return raw_input(prompt)
+
 	def getCountryFromUser(self, prompt, special, helpFunction, helpParameter = None):
 		goodCountry = None
 		while not goodCountry:
-			input = raw_input(prompt)
+			input = self.my_raw_input(prompt)
 			if input == "":
 				return ""
 			elif input == "?" and helpFunction:
@@ -2780,7 +2791,7 @@ class Labyrinth(cmd.Cmd):
 		goodNum = None
 		while not goodNum:
 			try:
-				input = raw_input(prompt)
+				input = self.my_raw_input(prompt)
 				input = int(input)
 				if input <= max:
 					return input
@@ -2795,7 +2806,7 @@ class Labyrinth(cmd.Cmd):
 		goodNum = None
 		while not goodNum:
 			try:
-				input = raw_input(prompt)
+				input = self.my_raw_input(prompt)
 				if input.lower() == "none":
 					return "none"
 				input = int(input)
@@ -2812,7 +2823,7 @@ class Labyrinth(cmd.Cmd):
 		goodNum = None
 		while not goodNum:
 			try:
-				input = raw_input(prompt)
+				input = self.my_raw_input(prompt)
 				if input.lower() == "w" or input.lower() == "wmd":
 					return "WMD"
 				input = int(input)
@@ -2829,7 +2840,7 @@ class Labyrinth(cmd.Cmd):
 		goodNum = None
 		while not goodNum:
 			try:
-				input = raw_input(prompt)
+				input = self.my_raw_input(prompt)
 				if input == "r":
 					roll = random.randint(1,6)
 					print "Roll: %d" % roll
@@ -2847,7 +2858,7 @@ class Labyrinth(cmd.Cmd):
 		good = None
 		while not good:
 			try:
-				input = raw_input(prompt)
+				input = self.my_raw_input(prompt)
 				if input.lower() == "y" or input.lower() == "yes":
 					return True
 				elif input.lower() == "n" or input.lower() == "no":
@@ -2863,7 +2874,7 @@ class Labyrinth(cmd.Cmd):
 		good = None
 		while not good:
 			try:
-				input = raw_input(prompt)
+				input = self.my_raw_input(prompt)
 				if input.lower() == "h" or input.lower() == "hard":
 					return "Hard"
 				elif input.lower() == "s" or input.lower() == "soft":
@@ -2879,7 +2890,7 @@ class Labyrinth(cmd.Cmd):
 		good = None
 		while not good:
 			try:
-				input = raw_input(prompt)
+				input = self.my_raw_input(prompt)
 				if input.lower() == "e" or input.lower() == "event":
 					return "event"
 				elif input.lower() == "o" or input.lower() == "ops":
@@ -3208,7 +3219,7 @@ class Labyrinth(cmd.Cmd):
 				if numToDisrupt == 1:
 					disStr = None
 					while not disStr:
-						input = raw_input("You can disrupt one cell. Enter a or s for either an active or sleeper cell: ")
+						input = self.my_raw_input("You can disrupt one cell. Enter a or s for either an active or sleeper cell: ")
 						input = input.lower()
 						if input == "a" or input == "s":
 							disStr = input
@@ -3224,17 +3235,17 @@ class Labyrinth(cmd.Cmd):
 					disStr = None
 					while not disStr:
 						if self.map[where].sleeperCells >= 2 and self.map[where].activeCells >= 2:
-							input = raw_input("You can disrupt two cells. Enter aa, as, or ss for active or slepper cells: ")
+							input = self.my_raw_input("You can disrupt two cells. Enter aa, as, or ss for active or slepper cells: ")
 							input = input.lower()
 							if input == "aa" or input == "as" or input == "sa" or input == "ss":
 								disStr = input
 						elif self.map[where].sleeperCells >= 2:
-							input = raw_input("You can disrupt two cells. Enter as, or ss for active or slepper cells: ")
+							input = self.my_raw_input("You can disrupt two cells. Enter as, or ss for active or slepper cells: ")
 							input = input.lower()
 							if input == "as" or input == "sa" or input == "ss":
 								disStr = input
 						elif self.map[where].activeCells >= 2:
-							input = raw_input("You can disrupt two cells. Enter aa, or as for active or slepper cells: ")
+							input = self.my_raw_input("You can disrupt two cells. Enter aa, or as for active or slepper cells: ")
 							input = input.lower()
 							if input == "as" or input == "sa" or input == "aa":
 								disStr = input

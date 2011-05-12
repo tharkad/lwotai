@@ -6645,18 +6645,18 @@ class card17(unittest.TestCase):
 		self.assertTrue(app.deck["17"].playable("US", app))
 
 	def testEvent(self):
- 		app = Labyrinth(1, 1, testBlankScenarioSetup)
-# 		app.map["Central Asia"].activeCells = 1
-# 		app.map["Russia"].activeCells = 1
-# 		app.deck["17"].playEvent("US", app)
-# 	
-# 		app = Labyrinth(1, 1, testBlankScenarioSetup)
-# 		app.map["Russia"].activeCells = 1
-# 		app.deck["17"].playEvent("US", app)
-# 	
-# 		app = Labyrinth(1, 1, testBlankScenarioSetup)
-# 		app.map["Central Asia"].sleeperCells = 1
-# 		app.deck["17"].playEvent("US", app)
+ 		app = Labyrinth(1, 1, testBlankScenarioSetup, ['y'])
+		app.map["Central Asia"].activeCells = 1
+		app.map["Russia"].activeCells = 1
+		app.deck["17"].playEvent("US", app)
+	
+		app = Labyrinth(1, 1, testBlankScenarioSetup, ['y'])
+		app.map["Russia"].activeCells = 1
+		app.deck["17"].playEvent("US", app)
+	
+		app = Labyrinth(1, 1, testBlankScenarioSetup, ['y'])
+		app.map["Central Asia"].sleeperCells = 1
+		app.deck["17"].playEvent("US", app)
 
 class card18(unittest.TestCase):
 	'''Intel Community'''
@@ -6732,10 +6732,14 @@ class card21(unittest.TestCase):
 		self.assertTrue(app.map["Canada"].plots == 0)
 		self.assertTrue(app.map["Spain"].posture == "Hard")
 
- 		app = Labyrinth(1, 1, testBlankScenarioSetup)
+ 		app = Labyrinth(1, 1, testBlankScenarioSetup, ["Canada", "Spain", "h", "Saudi Arabia"])
 		app.map["Canada"].plots = 1
 		app.map["Spain"].posture = "Soft"
-# 		app.deck["21"].playEvent("US", app)
+ 		app.map["Saudi Arabia"].governance = 1
+		app.map["Saudi Arabia"].plots = 1
+		app.deck["21"].playEvent("US", app)
+ 		self.assertTrue(app.map["Spain"].posture == "Hard")
+		self.assertTrue(app.map["Saudi Arabia"].plots == 0)
 
 class card22(unittest.TestCase):
 	'''Mossad and Shin Bet'''
