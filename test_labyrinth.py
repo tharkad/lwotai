@@ -6732,8 +6732,7 @@ class card21(unittest.TestCase):
 		self.assertTrue(app.map["Canada"].plots == 0)
 		self.assertTrue(app.map["Spain"].posture == "Hard")
 
- 		app = Labyrinth(1, 1, testBlankScenarioSetup, ["Canada", "Spain", "h", "Saudi Arabia"])
-		app.map["Canada"].plots = 1
+ 		app = Labyrinth(1, 1, testBlankScenarioSetup, ["Saudi Arabi", "Spain","h"])
 		app.map["Spain"].posture = "Soft"
  		app.map["Saudi Arabia"].governance = 1
 		app.map["Saudi Arabia"].plots = 1
@@ -6808,9 +6807,10 @@ class card23and24and25(unittest.TestCase):
 		self.assertTrue(app.deck["25"].playable("US", app))
 		
 	def testEvent(self):
- 		app = Labyrinth(1, 1, testBlankScenarioSetup)
+ 		app = Labyrinth(1, 1, testBlankScenarioSetup, ["Iraq"])
 		app.map["Iraq"].sleeperCells = 2
-#		app.deck["25"].playEvent("US", app)
+		app.deck["25"].playEvent("US", app)
+		self.assertTrue(app.map["Iraq"].sleeperCells == 1)
 
 class card26(unittest.TestCase):
 	'''Quartet'''
@@ -6891,7 +6891,7 @@ class card29(unittest.TestCase):
 		self.assertTrue(app.map["France"].posture == "Hard")
 		#app.deck["29"].playEvent("US", app)
 
-class card31(unittest.TestCase):
+class card30(unittest.TestCase):
 	'''UN Nation Building'''
 	
 	def testPlayable(self):
@@ -6903,18 +6903,37 @@ class card31(unittest.TestCase):
 		self.assertFalse(app.deck["30"].playable("US", app))
 		
 	def testEvent(self):
- 		app = Labyrinth(1, 1, testBlankScenarioSetup)
-#  		app.map["United States"].posture = "Hard"
-#  		app.map["Spain"].posture = "Soft"
-#  		app.map["France"].posture = "Soft"
-#  		app.map["Germany"].posture = "Soft"
-#  		app.map["Canada"].posture = "Soft"
-# 		#app.map["Iraq"].regimeChange = 1
-# 		app.map["Pakistan"].regimeChange = 1
-# 		app.map["Pakistan"].governance = 3
-# 		app.map["Pakistan"].alignment = "Ally"
-# 		app.deck["30"].playEvent("US", app)
-# 		self.assertTrue(app.map["Pakistan"].aid == 1)
+ 		app = Labyrinth(1, 1, testBlankScenarioSetup, ["6"])
+ 		app.map["United States"].posture = "Hard"
+ 		app.map["Spain"].posture = "Soft"
+ 		app.map["France"].posture = "Soft"
+ 		app.map["Germany"].posture = "Soft"
+ 		app.map["Canada"].posture = "Soft"
+		#app.map["Iraq"].regimeChange = 1
+		app.map["Pakistan"].regimeChange = 1
+		app.map["Pakistan"].governance = 3
+		app.map["Pakistan"].alignment = "Ally"
+		app.deck["30"].playEvent("US", app)
+		self.assertTrue(app.map["Pakistan"].aid == 1)
+		self.assertTrue(app.map["Pakistan"].governance == 2)
+
+ 		app = Labyrinth(1, 1, testBlankScenarioSetup, ["Iraq", "6"])
+ 		app.map["United States"].posture = "Hard"
+ 		app.map["Spain"].posture = "Soft"
+ 		app.map["France"].posture = "Soft"
+ 		app.map["Germany"].posture = "Soft"
+ 		app.map["Canada"].posture = "Soft"
+		app.map["Iraq"].regimeChange = 1
+		app.map["Iraq"].governance = 3
+		app.map["Iraq"].alignment = "Ally"
+		app.map["Pakistan"].regimeChange = 1
+		app.map["Pakistan"].governance = 3
+		app.map["Pakistan"].alignment = "Ally"
+		app.deck["30"].playEvent("US", app)
+		self.assertTrue(app.map["Pakistan"].aid == 0)
+		self.assertTrue(app.map["Pakistan"].governance == 3)
+		self.assertTrue(app.map["Iraq"].aid == 1)
+		self.assertTrue(app.map["Iraq"].governance == 2)
 
 class card31(unittest.TestCase):
 	'''Wiretapping'''
@@ -7033,29 +7052,42 @@ class card32(unittest.TestCase):
 	'''Back Channel'''
 	
 	def testPlayable(self):
-		app = Labyrinth(1, 1, testBlankScenarioSetup)
+		app = Labyrinth(1, 1, testBlankScenarioSetup, ["y","n"])
  		app.map["United States"].posture = "Hard"
 		self.assertFalse(app.deck["32"].playable("US", app))
  		app.map["United States"].posture = "Soft"
 		self.assertFalse(app.deck["32"].playable("US", app))
 
-#  		app.map["Iraq"].governance = 3
-#  		app.map["Iraq"].alignment = "Adversary"
-#  		app.map["Pakistan"].alignment = "Adversary"
-#  		print "Say yes"
-# 		self.assertTrue(app.deck["32"].playable("US", app))
-#  		print "Say no"
-# 		self.assertFalse(app.deck["32"].playable("US", app))
+ 		app.map["Iraq"].governance = 3
+ 		app.map["Iraq"].alignment = "Adversary"
+ 		app.map["Pakistan"].alignment = "Adversary"
+ 		print "Say yes"
+		self.assertTrue(app.deck["32"].playable("US", app))
+ 		print "Say no"
+		self.assertFalse(app.deck["32"].playable("US", app))
  		
 	def testEvent(self):
- 		app = Labyrinth(1, 1, testBlankScenarioSetup)
+ 		app = Labyrinth(1, 1, testBlankScenarioSetup, ["y","y","Pakistan"])
  		app.map["United States"].posture = "Soft"
  		app.map["Iraq"].governance = 3
  		app.map["Iraq"].alignment = "Adversary"
  		app.map["Pakistan"].governance = 4
  		app.map["Pakistan"].alignment = "Adversary"
-# 		app.deck["32"].playable("US", app)
-# 		app.deck["32"].playEvent("US", app)
+ 		app.deck["32"].playable("US", app)
+ 		app.deck["32"].playEvent("US", app)
+ 		self.assertTrue(app.map["Iraq"].alignment == "Adversary")
+ 		self.assertTrue(app.map["Pakistan"].alignment == "Neutral")
+
+ 		app = Labyrinth(1, 1, testBlankScenarioSetup, ["n", "n"])
+ 		app.map["United States"].posture = "Soft"
+ 		app.map["Iraq"].governance = 3
+ 		app.map["Iraq"].alignment = "Adversary"
+ 		app.map["Pakistan"].governance = 4
+ 		app.map["Pakistan"].alignment = "Adversary"
+ 		app.deck["32"].playable("US", app)
+ 		app.deck["32"].playEvent("US", app)
+ 		self.assertTrue(app.map["Iraq"].alignment == "Adversary")
+ 		self.assertTrue(app.map["Pakistan"].alignment == "Adversary")
 
 class card33(unittest.TestCase):
 	'''Benazir Bhutto'''
@@ -7145,17 +7177,19 @@ class card34(unittest.TestCase):
 		self.assertFalse(app.deck["34"].playable("US", app))
 		
 	def testEvent(self):
-  		app = Labyrinth(1, 1, testBlankScenarioSetup)
-# 		app.map["Iraq"].cadre = 1
-# 		app.map["Iraq"].governance = 3
-# 		app.map["Iraq"].alignment = "Neutral"
-# 		app.map["Iraq"].troopCubes = 2
-# 		app.map["Pakistan"].cadre = 1
-# 		app.map["Pakistan"].governance = 3
-# 		app.map["Pakistan"].alignment = "Neutral"
-# 		app.map["Pakistan"].troopCubes = 2
-#  		app.deck["34"].playEvent("US", app)
-# 		self.assertTrue("Enhanced Measures" in app.markers)
+  		app = Labyrinth(1, 1, testBlankScenarioSetup, ["Iraq"])
+		app.map["Iraq"].cadre = 1
+		app.map["Iraq"].governance = 3
+		app.map["Iraq"].alignment = "Neutral"
+		app.map["Iraq"].troopCubes = 2
+		app.map["Pakistan"].cadre = 1
+		app.map["Pakistan"].governance = 3
+		app.map["Pakistan"].alignment = "Neutral"
+		app.map["Pakistan"].troopCubes = 2
+ 		app.deck["34"].playEvent("US", app)
+		self.assertTrue("Enhanced Measures" in app.markers)
+		self.assertTrue(app.map["Pakistan"].cadre == 1)
+		self.assertTrue(app.map["Iraq"].cadre == 0)
 		
 class card35(unittest.TestCase):
 	'''Hajib'''
@@ -7167,14 +7201,14 @@ class card35(unittest.TestCase):
 		self.assertFalse(app.deck["35"].playable("US", app))
 
 	def testEvent(self):
- 		app = Labyrinth(1, 1, testBlankScenarioSetup)
-#  		app.deck["35"].playEvent("US", app)
-#  		self.assertTrue(app.map["Turkey"].governance <= 2)
-#  		self.assertTrue(app.map["Turkey"].governance != 0)
-#  		self.assertTrue(app.map["Turkey"].alignment != "")
-# 		print "Say Hard"
-#  		self.assertTrue(app.map["France"].posture == "Hard")
-# 		self.assertTrue(app.funding == 3)
+ 		app = Labyrinth(1, 1, testBlankScenarioSetup, ["h"])
+ 		app.deck["35"].playEvent("US", app)
+ 		self.assertTrue(app.map["Turkey"].governance <= 2)
+ 		self.assertTrue(app.map["Turkey"].governance != 0)
+ 		self.assertTrue(app.map["Turkey"].alignment != "")
+		print "Say Hard"
+ 		self.assertTrue(app.map["France"].posture == "Hard")
+		self.assertTrue(app.funding == 3)
 
 class card36(unittest.TestCase):
 	'''Indo-Pakistani Talks'''
@@ -7192,15 +7226,16 @@ class card36(unittest.TestCase):
 		self.assertTrue(app.deck["36"].playable("US", app))
 
 	def testEvent(self):
- 		app = Labyrinth(1, 1, testBlankScenarioSetup)
-# 		app.map["Pakistan"].governance = 2
-# 		app.map["Pakistan"].alignment = "Adversary"
-#   	app.deck["36"].playEvent("US", app)
-#   	self.assertTrue(app.map["Pakistan"].alignment == "Ally")
-#   	self.assertTrue("Indo-Pakistani Talks" in app.markers)
-#   	app.map["India"].plots = 1
-#   	app.do_plot("")
-#    	self.assertFalse("Indo-Pakistani Talks" in app.markers)
+ 		app = Labyrinth(1, 1, testBlankScenarioSetup, ["s","1"])
+		app.map["Pakistan"].governance = 2
+		app.map["Pakistan"].alignment = "Adversary"
+  		app.deck["36"].playEvent("US", app)
+  		self.assertTrue(app.map["Pakistan"].alignment == "Ally")
+  		self.assertTrue("Indo-Pakistani Talks" in app.markers)
+  		self.assertTrue(app.map["India"].posture == "Soft")
+  		app.map["India"].plots = 1
+  		app.do_plot("")
+   		self.assertFalse("Indo-Pakistani Talks" in app.markers)
  		
 class card37(unittest.TestCase):
 	'''Iraqi WMD'''
@@ -7241,12 +7276,14 @@ class card38(unittest.TestCase):
 		self.assertFalse(app.deck["38"].playable("US", app))
 
 	def testEvent(self):
- 		app = Labyrinth(1, 1, testBlankScenarioSetup)
-# 		app.map["Libya"].governance = 3
-# 		app.map["Iraq"].alignment = "Ally"
-#		app.deck["38"].playEvent("US", app)
-#		self.assertTrue("Libyan Deal" in app.markers)
-# 		self.assertTrue(app.prestige == 8)
+ 		app = Labyrinth(1, 1, testBlankScenarioSetup,["france", "s", "Spain", "h"])
+		app.map["Libya"].governance = 3
+		app.map["Iraq"].alignment = "Ally"
+		app.deck["38"].playEvent("US", app)
+		self.assertTrue("Libyan Deal" in app.markers)
+		self.assertTrue(app.prestige == 8)
+		self.assertTrue(app.map["France"].posture == "Soft")
+		self.assertTrue(app.map["Spain"].posture == "Hard")
 
 class card39(unittest.TestCase):
 	'''Libyan WMD'''
@@ -7301,15 +7338,19 @@ class card40(unittest.TestCase):
 		self.assertTrue(app.map["Libya"].regimeChange == 0)
 		self.assertTrue(app.map["Libya"].aid == 0)
   		
-#   	app.map["Libya"].governance = 2
-# 		app.map["Libya"].alignment = "Adversary"
-# 		app.map["Libya"].regimeChange = 1
-# 		app.map["Libya"].aid = 1
-#   	app.map["Iraq"].governance = 2
-# 		app.map["Iraq"].alignment = "Adversary"
-# 		app.map["Iraq"].regimeChange = 1
-# 		app.map["Iraq"].aid = 1
-#    	app.deck["40"].playEvent("US", app)
+ 		app = Labyrinth(1, 1, testBlankScenarioSetup,["Iraq"])
+  		app.map["Libya"].governance = 2
+		app.map["Libya"].alignment = "Adversary"
+		app.map["Libya"].regimeChange = 1
+		app.map["Libya"].aid = 1
+  		app.map["Iraq"].governance = 2
+		app.map["Iraq"].alignment = "Adversary"
+		app.map["Iraq"].regimeChange = 1
+		app.map["Iraq"].aid = 1
+   		app.deck["40"].playEvent("US", app)
+		self.assertTrue(app.map["Iraq"].governance == 1)
+		self.assertTrue(app.map["Iraq"].regimeChange == 0)
+		self.assertTrue(app.map["Iraq"].aid == 0)
   		
 class card41(unittest.TestCase):
 	'''NATO'''
@@ -7327,7 +7368,7 @@ class card41(unittest.TestCase):
 		self.assertFalse(app.deck["41"].playable("US", app))
 
 	def testEvent(self):
- 		app = Labyrinth(1, 1, testBlankScenarioSetup)
+ 		app = Labyrinth(1, 1, testBlankScenarioSetup, ["Libya", "track", "3"])
  		app.map["Libya"].governance = 3
 		app.map["Libya"].alignment = "Ally"
 		app.map["Libya"].regimeChange = 1
@@ -7337,23 +7378,26 @@ class card41(unittest.TestCase):
 		self.assertTrue(app.map["Libya"].troops() == 4)
 		self.assertTrue("NATO" in app.map["Libya"].markers)
 
-# 		app.map["Libya"].regimeChange = 0
-# 		print "Deploy 3 from Libya to track:"
-# 		app.do_deploy("")
-# 		self.assertTrue(app.map["Libya"].troops() == 0)
-# 		self.assertTrue("NATO" not in app.map["Libya"].markers)		
+		app.map["Libya"].regimeChange = 0
+		print "Deploy 3 from Libya to track:"
+		app.do_deploy("")
+		self.assertTrue(app.map["Libya"].troops() == 0)
+		self.assertTrue("NATO" not in app.map["Libya"].markers)		
    		
-#  		app = Labyrinth(1, 1, testBlankScenarioSetup)
-#   	app.map["Libya"].governance = 2
-# 		app.map["Libya"].alignment = "Adversary"
-# 		app.map["Libya"].regimeChange = 1
-# 		app.map["Libya"].aid = 1
-#   	app.map["Iraq"].governance = 2
-# 		app.map["Iraq"].alignment = "Adversary"
-# 		app.map["Iraq"].regimeChange = 1
-# 		app.map["Iraq"].aid = 1
-#    	app.deck["41"].playEvent("US", app)
-  		
+ 		app = Labyrinth(1, 1, testBlankScenarioSetup, ["Iraq"])
+  		app.map["Libya"].governance = 2
+		app.map["Libya"].alignment = "Adversary"
+		app.map["Libya"].regimeChange = 1
+		app.map["Libya"].aid = 1
+  		app.map["Iraq"].governance = 2
+		app.map["Iraq"].alignment = "Adversary"
+		app.map["Iraq"].regimeChange = 1
+		app.map["Iraq"].aid = 1
+   		app.deck["41"].playEvent("US", app)
+ 		self.assertTrue(app.map["Iraq"].aid == 1)
+		self.assertTrue(app.map["Iraq"].troops() == 2)
+		self.assertTrue("NATO" in app.map["Iraq"].markers)
+ 		
 class card42(unittest.TestCase):
 	'''Pakistani Offensive'''
 	
@@ -7415,17 +7459,33 @@ class card44(unittest.TestCase):
 		self.assertFalse(app.deck["44"].playable("US", app))
 
 	def testEvent(self):
- 		app = Labyrinth(1, 1, testBlankScenarioSetup)
-# 		app.map["Iraq"].cadre = 1
-# 		app.map["Iraq"].governance = 3
-# 		app.map["Iraq"].alignment = "Neutral"
-# 		app.map["Iraq"].troopCubes = 2
-# 		app.map["Pakistan"].cadre = 1
-# 		app.map["Pakistan"].governance = 3
-# 		app.map["Pakistan"].alignment = "Neutral"
-# 		app.map["Pakistan"].troopCubes = 2
+ 		app = Labyrinth(1, 1, testBlankScenarioSetup, ["Iraq"])
+		app.map["Iraq"].cadre = 1
+		app.map["Iraq"].governance = 3
+		app.map["Iraq"].alignment = "Neutral"
+		app.map["Iraq"].troopCubes = 2
+		app.map["Pakistan"].cadre = 1
+		app.map["Pakistan"].governance = 3
+		app.map["Pakistan"].alignment = "Neutral"
+		app.map["Pakistan"].troopCubes = 2
  		app.deck["44"].playEvent("US", app)
 		self.assertTrue("Renditions" in app.markers)
+		self.assertTrue(app.map["Iraq"].cadre == 0)
+	
+ 		app = Labyrinth(1, 1, testBlankScenarioSetup, ["Pakistan"])
+		app.map["Iraq"].cadre = 1
+		app.map["Iraq"].governance = 3
+		app.map["Iraq"].alignment = "Neutral"
+		app.map["Iraq"].troopCubes = 2
+		app.map["Pakistan"].cadre = 1
+		app.map["Pakistan"].sleeperCells = 2
+		app.map["Pakistan"].governance = 3
+		app.map["Pakistan"].alignment = "Neutral"
+		app.map["Pakistan"].troopCubes = 2
+ 		app.deck["44"].playEvent("US", app)
+		self.assertTrue("Renditions" in app.markers)
+		self.assertTrue(app.map["Pakistan"].cadre == 1)
+		self.assertTrue(app.map["Pakistan"].sleeperCells == 0)
 	
 class card45(unittest.TestCase):
 	'''Safer Now'''
