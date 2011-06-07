@@ -1,0 +1,8 @@
+LWOTai is a command line program. You need to have Python installed on your systen to use it. You can run it from a command line as follows: python lwotai.py The most important thing to know is that the program does not track the deck, cards, hands or use of Reserves. You have to do that either with the board game or on Vassal.
+Set up the game as usual and pick the scenario and ideology. You will then be at the Command prompt. You can enter "?" to see the various commands. The most important are the "j" and "u" commands. When it is a players turn, pick the card they will play and enter that command and the card number. For instance, it is the Jihadist turn at the beginning of the game. Turn over the top card of their hand and then enter j and that card number (e.g. j 22). The program will then tell you what the Jihadist did so you can update your map. It's the same with your plays using the u command. If more information is necessary the program will ask for it.
+
+When you use a card for Ops you then use the command for the operation you want. For instance if you want to disrupt you enter disrupt and the Command prompt. The program will then ask what it needs to know about the disrupt.
+
+There are two timekeeping function you have to remember to use. After the Jihadist Activity Phase each turn you must enter the "plot" command so that unblocked plots are handled. And at the end of a turn you must enter the "turn" command to handle all the end of turn activities.
+
+At any time you can use the "status" command to get a print out of the entire board position. And you can use the "history" command to see everything that has happened in the game.
