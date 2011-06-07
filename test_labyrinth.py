@@ -9179,6 +9179,11 @@ class cardHundredThree(unittest.TestCase):
 		self.assertTrue(app.map["Lebanon"].governance == 3)
 		self.assertTrue(app.map["Lebanon"].alignment == "Neutral")
 		
+ 		#no countries
+ 		app = Labyrinth(1, 1, testBlankScenarioSetup, ["Iraq"])
+		app.deck["103"].playEvent("US", app)
+		
+		#one country
  		app = Labyrinth(1, 1, testBlankScenarioSetup, ["Iraq"])
  		app.testCountry("Iraq")
  		app.map["Iraq"].sleeperCells = 1
@@ -9186,7 +9191,7 @@ class cardHundredThree(unittest.TestCase):
  		app.map["Gulf States"].sleeperCells = 1
 		app.deck["103"].playEvent("US", app)
 		self.assertTrue(app.map["Iraq"].sleeperCells == 0)
-		
+				
 class cardHundredFour(unittest.TestCase):
 	'''Iran'''
 

@@ -2,7 +2,7 @@
 LWOTai - A Python implementation of the Single-Player AI for Labyrinth: the War on Terror by GMT Games.
 Mike Houser, 2011
 
-Release 1.05042011.1
+Release 1.06072011.1
 '''
 
 import cmd
@@ -1697,6 +1697,7 @@ class Card:
 							possibles.append(country)
 					if len(possibles) <= 0:
 						app.outputToHistory("No Shia-Mix countries with cells within 3 countries of Lebanon.", True)
+						target = None
 					elif len(possibles) == 1:
 						target = possibles[0]
 					else:
@@ -1714,8 +1715,9 @@ class Card:
 									print ""
 								else:
 									target = input
-					app.removeCell(target)
-					app.outputToHistory(app.map[target].countryStr(), True)
+					if target:
+						app.removeCell(target)
+						app.outputToHistory(app.map[target].countryStr(), True)
 				else:
 					app.testCountry("Lebanon")
 					app.map["Lebanon"].governance = 3
@@ -4209,11 +4211,10 @@ class Labyrinth(cmd.Cmd):
 				self.outputToHistory("US Posture now %s" % self.map["United States"].posture, True)	
 		elif self.map[country].type != "Non-Muslim":
 			if not isBacklash:
-				self.funding += 1
 				if self.map[country].governance == 1:
-					self.funding += 1
-				if self.funding > 9:
-					self.funding = 9
+					self.changeFunding(2)
+				else:
+					self.changeFunding(1)
 				self.outputToHistory("Jihadist Funding now %d" % self.funding, False)
 			else:
 				if plotType == "WMD":
@@ -4261,11 +4262,10 @@ class Labyrinth(cmd.Cmd):
 			if plotType == "WMD":
 				self.funding = 9
 			else:
-				self.funding += plotType
 				if self.map[country].governance == 1:
-					self.funding += plotType
-				if self.funding > 9:
-					self.funding = 9
+					self.changeFunding(plotType * 2)
+				else:
+					self.changeFunding(plotType)
 			self.outputToHistory("Jihadist Funding now %d" % self.funding, False)
 			if postureRoll <= 4:
 				self.map[country].posture = "Soft"
