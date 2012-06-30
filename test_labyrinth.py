@@ -8963,8 +8963,14 @@ class card95(unittest.TestCase):
 
 	def testEvent(self):
  		app = Labyrinth(1, 1, testBlankScenarioSetup)
+ 		app.map["Saudi Arabia"].governance = 3
 		app.deck["95"].playEvent("Jihadist", app)
 		self.assertTrue(app.funding == 8)
+
+ 		app = Labyrinth(1, 1, testBlankScenarioSetup)
+ 		app.map["Saudi Arabia"].governance = 2
+		app.deck["95"].playEvent("Jihadist", app)
+		self.assertTrue(app.funding == 7)
 
  		app = Labyrinth(1, 1, testBlankScenarioSetup)
  		app.testCountry("Saudi Arabia")
@@ -8973,9 +8979,10 @@ class card95(unittest.TestCase):
 		self.assertTrue(app.funding == 9)
 
  		app = Labyrinth(1, 1, testBlankScenarioSetup)
+ 		# This should not change anything - checking for bugged initial implementation of Wahhabism.
  		app.lapsing.append("Oil Price Spike")
 		app.deck["95"].playEvent("Jihadist", app)
-		self.assertTrue(app.funding == 9)
+		self.assertTrue(app.funding == 8)
 
 class card96(unittest.TestCase):
 	'''Danish Cartoons'''

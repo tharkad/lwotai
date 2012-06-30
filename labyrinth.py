@@ -1616,7 +1616,7 @@ class Card:
 				if app.map["Saudi Arabia"].governance == 4:
 					app.changeFunding(9)
 				else:
-					app.changeFunding(app.countryResources("Saudi Arabia"))
+					app.changeFunding(app.map["Saudi Arabia"].governance)
 		else:
 			if self.number == 96: # Danish Cartoons
 				posStr = app.getPostureFromUser("Select Scandinavia's Posture (hard or soft): ")
