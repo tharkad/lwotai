@@ -111,6 +111,13 @@ def testBlankScenarioSetup(self):
 	self.troops = 9
 	self.funding = 5
 	self.cells = 11
+	
+class Scenarios(unittest.TestCase):
+	'''Scenarios'''
+	
+	def testScenario4(self):
+		app = Labyrinth(4,1)
+		self.assertTrue(app.map["United Kingdom"].posture == "Hard")
 
 class Map(unittest.TestCase):
 	'''Map'''
