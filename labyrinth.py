@@ -2530,10 +2530,13 @@ class Labyrinth(cmd.Cmd):
 			self.map["Philippines"].posture = "Soft"
 			self.map["Philippines"].troopCubes = 2
 			self.map["Philippines"].sleeperCells = 1
-			self.map["United Kingdom"].posture = "Soft"
+			self.map["United Kingdom"].posture = "Hard"
 			self.markers.append("Abu Sayyaf")
 			self.markers.append("Patriot Act")
 			self.markers.append("NEST")
+			self.markers.append("Enhanced Measures")
+			self.markers.append("Renditions")
+			self.markers.append("Wiretapping")
 			possibles = []
 			for country in self.map:
 				if self.map[country].schengen:
