@@ -2,7 +2,7 @@
 LWOTai - A Python implementation of the Single-Player AI for Labyrinth: the War on Terror by GMT Games.
 Mike Houser, 2011
 '''
-from labyrinth import Labyrinth
+from lwotai import Labyrinth
 import unittest
 
 def testScenarioSetup(self):
@@ -8979,10 +8979,11 @@ class card95(unittest.TestCase):
 		self.assertTrue(app.funding == 9)
 
  		app = Labyrinth(1, 1, testBlankScenarioSetup)
- 		# This should not change anything - checking for bugged initial implementation of Wahhabism.
- 		app.lapsing.append("Oil Price Spike")
+ 		app.testCountry("Saudi Arabia")
+ 		app.map["Saudi Arabia"].governance = 4
+ 		app.funding = 2
 		app.deck["95"].playEvent("Jihadist", app)
-		self.assertTrue(app.funding == 8)
+		self.assertTrue(app.funding == 9)
 
 class card96(unittest.TestCase):
 	'''Danish Cartoons'''
