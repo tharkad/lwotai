@@ -2,11 +2,30 @@
 LWOTai - A Python implementation of the Single-Player AI for Labyrinth: the War on Terror by GMT Games.
 Mike Houser, 2011
 
-Release 1.06072011.1
+Thanks to Dave Horn for implementing the Save and Undo system.
+
+1. A save game is created after every single command whether you want it or not. If someone screws up and closes the window, pc battery dies, crashes, whatever, no problem, load it up again and you will be asked if you want to load the suspended game.
+
+2. Rollback files are created at the beginning of each turn. You can rollback to any previous turn using 'roll' or 'rollback' command. You will be prompted to enter which turn you want to rollback to.
+
+3. An undo file is created after every card played. Player can undo to the last card at any time (two exceptions) by typing 'undo'. Exceptions are when you load from a previously suspended game or after executing a rollback. The undo file is removed at that exact point to prevent player from undoing themselves to some other game in the past!
+
+Release 1.08112011.1
 '''
 
+SUSPEND_FILE = "suspend.lwot"
+UNDO_FILE = "undo.lwot"
+ROLLBACK_FILE = "turn."
+
+import sys
 import cmd
 import random
+import shutil
+try:
+   import cPickle as pickle
+except:
+   import pickle
+import os.path
 
 class Country:
 	app = None
@@ -417,7 +436,7 @@ class Card:
 			elif self.number == 83: # Kashmir
 				return "Indo-Pakistani Talks" not in app.markers
 			elif self.number == 84 or self.number == 85: # Leak
-				return ("Enhanced Measures" in app.markers) or ("Reditions" in app.markers) or ("Wiretapping" in app.markers)
+				return ("Enhanced Measures" in app.markers) or ("Renditions" in app.markers) or ("Wiretapping" in app.markers)
 			elif self.number == 86: # Lebanon War
 				return True
 			elif self.number == 87 or self.number == 88 or self.number == 89: # Martyrdom Operation
@@ -779,6 +798,7 @@ class Card:
 						else:
 							app.map["Syria"].aid = 1
 							app.outputToHistory("Aid in Syria.", False)
+					app.changePrestige(1, False)
 					print ""
 				else:
 					return False
@@ -868,7 +888,7 @@ class Card:
 						app.outputToHistory("There are no cells in Russia or Central Asia.", False)	
 				app.outputToHistory("Shuffle Jihadist hand.", True)
 			elif self.number == 18: # Intel Community
-				app.outputToHistory("Examine Jihadist hand then shuffle it.", False)
+				app.outputToHistory("Examine Jihadist hand.  Do not change order of cards.", False)
 				app.outputToHistory("Conduct a 1-value operation (Use commands: alert, deploy, disrupt, reassessment, regime, withdraw, or woi).", False)
 				app.outputToHistory("You may now interrupt this action phase to play another card (Use the u command).", True)
 			elif self.number == 19: # Kemalist Republic
@@ -885,7 +905,7 @@ class Card:
 				app.changeFunding(-1)
 			elif self.number == 21: # Let's Roll
 				while True:
-					plotCountry = app.getCountryFromUser("Choose an Ally or Good country to remove a plot from (? for list): ", "XXX", app.listGoodAllyPlotCountries)
+					plotCountry = app.getCountryFromUser("Draw a card.  Choose an Ally or Good country to remove a plot from (? for list): ", "XXX", app.listGoodAllyPlotCountries)
 					if plotCountry == "":
 						print ""
 						return
@@ -1521,10 +1541,11 @@ class Card:
 				random.shuffle(possibles)
 				for i in range(3):
 					app.testCountry(possibles[i])
-					if app.cells > 0:
-						rolls = []
-						rolls.append(random.randint(1,6))
-						app.executeRecruit(possibles[i], 1, rolls, False, True)
+					# number of available cells does not matter for Jihadist Videos
+					# if app.cells > 0:
+					rolls = []
+					rolls.append(random.randint(1,6))
+					app.executeRecruit(possibles[i], 1, rolls, False, True)
 			elif self.number == 83: # Kashmir
 				app.placeCells("Pakistan", 1)
 				if app.map["Pakistan"].alignment == "Ally":
@@ -1537,8 +1558,8 @@ class Card:
 				possibles = []
 				if "Enhanced Measures" in app.markers:
 					possibles.append("Enhanced Measures")
-				if "Reditions" in app.markers:
-					possibles.append("Reditions")
+				if "Renditions" in app.markers:
+					possibles.append("Renditions")
 				if "Wiretapping" in app.markers:
 					possibles.append("Wiretapping")
 				target = random.choice(possibles)
@@ -1794,12 +1815,18 @@ class Card:
 						else:
 							app.outputToHistory("No Good or Fair countries to Jihad in.", True)
 							return
+					app.outputToHistory("%s selected for jihad rolls." % target, False)
 					for i in range(2):
-						if random.randint(1,6) <= app.map[target].governance:
+						droll = random.randint(1,6)
+						app.outputToHistory("Rolled: " + str(droll), False)
+						if droll <= app.map[target].governance:
 							if app.map[target].governance < 3:
 								app.map[target].governance += 1
 								app.outputToHistory("Governance worsened in %s." % target, False)
 								app.outputToHistory(app.map[target].countryStr(), True)
+						else:
+							app.outputToHistory("Roll failed.  No change to governance in %s." % target, False)
+							
 			elif self.number == 106: # Jaysh al-Mahdi
 				if side == "US":
 					target = None
@@ -1949,6 +1976,7 @@ class Card:
 			elif self.number == 110: # Zarqawi
 				if side == "US":
 					app.changePrestige(3)
+					app.outputToHistory("Remove card from game.", False)
 				else:
 					possibles = []
 					for country in ["Iraq", "Syria", "Lebanon", "Jordan"]:
@@ -1970,6 +1998,8 @@ class Card:
 			elif self.number == 112: # Bin Ladin
 				if side == "US":
 					app.changeFunding(-4)
+					app.changePrestige(1)
+					app.outputToHistory("Remove card from game.", False)
 				else:
 					if app.numIslamicRule() > 0:
 						app.changePrestige(-4)
@@ -2104,6 +2134,9 @@ class Card:
 class Labyrinth(cmd.Cmd):
 
 	map = {}
+	undo = False
+	rollturn = -1
+	
 	scenario = 0
 	ideology = 0
 	prestige = 0
@@ -2181,6 +2214,20 @@ class Labyrinth(cmd.Cmd):
 		self.deckSetup()
 		
 	def postcmd(self, stop, line):
+		
+		self.Save(SUSPEND_FILE)
+
+		if line == "quit":
+			return True
+
+		if self.undo:
+			return True
+			
+		if self.rollturn >= 0:
+			return True
+
+		
+				
 	# Cells test
 		cellCount = 0
 		for country in self.map:
@@ -2913,27 +2960,35 @@ class Labyrinth(cmd.Cmd):
 		
 		if self.prestige <= 3:
 			modRoll -= 1
+			self.outputToHistory("-1 for Prestige", False)
 		elif self.prestige >= 7 and self.prestige <=9:
 			modRoll += 1
+			self.outputToHistory("+1 for Prestige", False)
 		elif self.prestige >= 10:
 			modRoll += 2
+			self.outputToHistory("+2 for Prestige", False)
 		#print "DEBUG: w/prestige mod:%d" % modRoll
 		
 		if self.map[country].alignment == "Ally" and self.map[country].governance == 2:
 			modRoll -= 1
+			self.outputToHistory("-1 for Attempt to shift to Good", False)
 		#print "DEBUG: w/to good mod:%d" % modRoll
 		
 		if useGWOTPenalty:
 			modRoll += self.gwotPenalty()
+			if self.gwotPenalty() <> 0:
+				self.outputToHistory("-1 for GWOT Relations Penalty", False)
 		#print "DEBUG: w/GWOT penalty:%d" % modRoll
 		
 		if self.map[country].aid > 0:
 			modRoll += 1
+			self.outputToHistory("+1 for Aid", False)
 		#print "DEBUG: w/aid:%d" % modRoll
 		
 		for adj in self.map[country].links:
 			if adj.alignment == "Ally" and adj.governance == 1:
 				modRoll += 1
+				self.outputToHistory("+1 for Adjacent Good Ally", False)
 				break
 		#print "DEBUG: w/adj good:%d" % modRoll
 		return modRoll
@@ -3035,8 +3090,12 @@ class Labyrinth(cmd.Cmd):
 		if self.map[country].governance >= 4:
 			self.map[country].governance = 3
 
-	def numCellsAvailable(self):
+	def numCellsAvailable(self, ignoreFunding = False):
+		
 		retVal = self.cells
+		if ignoreFunding:
+			return retVal
+		
 		if self.funding <= 3:
 			retVal -= 10
 		elif self.funding <= 6:
@@ -3282,13 +3341,14 @@ class Labyrinth(cmd.Cmd):
 			else:
 				failures += 1
 		isMajorJihad = country in self.majorJihadPossible(len(rollList))
+		self.outputToHistory("Jihad operation.  %d Successes rolled, %d Failures rolled" % (successes, failures), False)
 		if isMajorJihad: # all cells go active
 			self.outputToHistory("* Major Jihad attempt in %s" % country, False) 
 			sleepers = self.map[country].sleeperCells
 			self.map[country].sleeperCells = 0
 			self.map[country].activeCells += sleepers
 			self.outputToHistory("All cells go Active", False)
-			if failures == 3 and self.map[country].governance == 3:
+			if ((failures >= 2  and self.map[country].besieged == 0) or (failures == 3 and self.map[country].besieged == 1))  and (len(rollList) == 3) and self.map[country].governance == 3:
 				self.outputToHistory("Major Jihad Failure", False) 
 				self.map[country].besieged = 1
 				self.outputToHistory("Besieged Regime", False) 
@@ -3303,11 +3363,11 @@ class Labyrinth(cmd.Cmd):
 				self.outputToHistory("Cell goes Active", False)
 				self.map[country].sleeperCells -= 1
 				self.map[country].activeCells += 1
-		self.outputToHistory("%d Successes rolled, %d Failures rolled" % (successes, failures), False)
 		while successes > 0 and self.map[country].governance < 3:
 			self.map[country].governance += 1
 			successes -= 1
 			self.outputToHistory("Governance to %s" % self.map[country].govStr(), False)
+			self.map[country].aid = 0
 		if isMajorJihad and ((successes >= 2) or ((self.map[country].besieged > 0) and (successes >= 1))) : # Major Jihad
 			self.outputToHistory("Islamic Revolution in %s" % country, False) 
 			self.map[country].governance = 4
@@ -3315,6 +3375,9 @@ class Labyrinth(cmd.Cmd):
 			self.map[country].alignment = "Adversary"
 			self.outputToHistory("Alingment to Adversary", False) 
 			self.map[country].regimeChange = 0
+			if self.map[country].besieged > 0:
+				self.outputToHistory("Besieged Regime marker removed.", False) 
+				
 			self.map[country].besieged = 0
 			self.map[country].aid = 0
 			self.funding = min(9, self.funding + self.countryResources(country))
@@ -3468,12 +3531,14 @@ class Labyrinth(cmd.Cmd):
 		else:
 			return countryOrder[0][2]
 	
-	def executeRecruit(self, country, ops, rolls, recruitOverride = None, isJihadistVideos = False):
+	def executeRecruit(self, country, ops, rolls, recruitOverride = None, isJihadistVideos = False, isMadrassas = False):
 		self.outputToHistory("* Recruit to %s" % country)
 		cellsRequested = ops
 		if self.ideology >= 2:
 			cellsRequested = ops * 2
-		cells = self.numCellsAvailable()
+
+		cells = self.numCellsAvailable(isMadrassas or isJihadistVideos)
+
 		cellsToRecruit = min(cellsRequested, cells)
 		if (self.map[country].regimeChange or self.map[country].governance == 4):
 			if self.map[country].regimeChange:
@@ -3482,7 +3547,15 @@ class Labyrinth(cmd.Cmd):
 				self.outputToHistory("Recruit to Islamic Rule country automatically successful.", False)
 			self.cells -= cellsToRecruit
 			self.map[country].sleeperCells += cellsToRecruit
-			self.map[country].cadre = 0
+			
+			if cellsToRecruit == 0 and isJihadistVideos:
+				self.map[country].cadre = 1
+				self.outputToHistory("No cells available to recruit.  Cadre added.", False)
+				self.outputToHistory(self.map[country].countryStr(), True)
+				return ops - 1;
+			else:			
+				self.map[country].cadre = 0
+				
 			self.outputToHistory("%d sleeper cells recruited to %s." % (cellsToRecruit, country), False)
 			self.outputToHistory(self.map[country].countryStr(), True)
 			if self.ideology >= 2:
@@ -3492,31 +3565,38 @@ class Labyrinth(cmd.Cmd):
 		else:
 			opsRemaining = ops
 			i = 0
-			while self.numCellsAvailable() > 0 and opsRemaining > 0:
-				if recruitOverride:
-					recVal = recruitOverride
-				elif self.map[country].recruit > 0:
-					recVal = self.map[country].recruit
-				else:
-					recVal = self.map[country].governance
-				if rolls[i] <= recVal:
-					if self.ideology >= 2:
-						cellsMoving = min(self.numCellsAvailable(), 2)
+
+			if self.numCellsAvailable(isJihadistVideos) <= 0 and opsRemaining > 0:
+				self.map[country].cadre = 1
+				self.outputToHistory("No cells available to recruit.  Cadre added.", False)
+				self.outputToHistory(self.map[country].countryStr(), True)
+				return ops - 1;
+			else:			
+				while self.numCellsAvailable(isMadrassas or isJihadistVideos) > 0 and opsRemaining > 0:
+					if recruitOverride:
+						recVal = recruitOverride
+					elif self.map[country].recruit > 0:
+						recVal = self.map[country].recruit
 					else:
-						cellsMoving = min(self.numCellsAvailable(), 1)
-					self.cells -= cellsMoving
-					self.map[country].sleeperCells += cellsMoving
-					self.map[country].cadre = 0
-					self.outputToHistory("Roll successful, %d sleeper cell(s) recruited." % cellsMoving, False)
-				else:
-					self.outputToHistory("Roll failed.", False)
-					if isJihadistVideos:
-						self.map[country].cadre = 1
-						self.outputToHistory("Cadre added.", False)
-				opsRemaining -= 1
-				i += 1
-			self.outputToHistory(self.map[country].countryStr(), True)
-			return opsRemaining
+						recVal = self.map[country].governance
+					if rolls[i] <= recVal:
+						if self.ideology >= 2:
+							cellsMoving = min(self.numCellsAvailable(isMadrassas or isJihadistVideos), 2)
+						else:
+							cellsMoving = min(self.numCellsAvailable(isMadrassas or isJihadistVideos), 1)
+						self.cells -= cellsMoving
+						self.map[country].sleeperCells += cellsMoving
+						self.map[country].cadre = 0
+						self.outputToHistory("Roll successful, %d sleeper cell(s) recruited." % cellsMoving, False)
+					else:
+						self.outputToHistory("Roll failed.", False)
+						if isJihadistVideos:
+							self.map[country].cadre = 1
+							self.outputToHistory("Cadre added.", False)
+					opsRemaining -= 1
+					i += 1
+				self.outputToHistory(self.map[country].countryStr(), True)
+				return opsRemaining
 					
 	def handleRecruit(self, ops, isMadrassas = False):
 		country = self.recruitChoice(isMadrassas)
@@ -3538,7 +3618,7 @@ class Labyrinth(cmd.Cmd):
 				rolls = []
 				for i in range(ops):
 					rolls.append(random.randint(1,6))
-				return self.executeRecruit(country, ops, rolls)
+				return self.executeRecruit(country, ops, rolls, None, False, isMadrassas)
 				
 	def isAdjacent(self, here, there):
 		if "Patriot Act" in self.markers:
@@ -4030,7 +4110,7 @@ class Labyrinth(cmd.Cmd):
 					self.map[country].activeCells += 1
 				self.map[country].plots += successes
 				self.outputToHistory("%d Plot(s) placed in %s." % (successes, country), False)
-				if "Abu Sayyaf" in self.markers and country == "Philippines" and self.map[country].troops() <= self.map[country].totalCells():
+				if "Abu Sayyaf" in self.markers and country == "Philippines" and self.map[country].troops() <= self.map[country].totalCells() and successes > 0:
 					self.outputToHistory("Prestige loss due to Abu Sayyaf.", False)
 					self.changePrestige(-successes)
 				if "NEST" in self.markers and country == "Unites States":
@@ -4641,6 +4721,33 @@ class Labyrinth(cmd.Cmd):
 						self.map[country].printCountry()
 
 	def do_status(self, rest):
+		
+		if rest:
+			goodCountry = False
+			possible = []
+			for country in self.map:
+				if rest.lower() == country.lower():
+					possible = []
+					possible.append(country)
+					break
+				elif rest.lower() in country.lower():
+					possible.append(country)
+			if len(possible) == 0:
+				print "Unrecognized country."
+				print ""
+			elif len(possible) > 1:
+				print "Be more specific", possible
+				print ""
+			else:
+				goodCountry = possible[0]
+			
+			if goodCountry:
+				self.map[goodCountry].printCountry()
+				return
+			else:
+				return
+			
+		
 		goodRes = 0
 		islamRes = 0
 		goodC = 0
@@ -4772,7 +4879,7 @@ class Labyrinth(cmd.Cmd):
 		print ""
 		
 	def help_status(self):
-		print "Display game status."
+		print "Display game status.  status [country] will print out status of single country."
 		print ""
 		
 	def do_sta(self, rest):
@@ -4782,12 +4889,19 @@ class Labyrinth(cmd.Cmd):
 		self.help_status()
 		
 	def do_history(self,rest):
+		
+		if rest == 'save':
+			f = open('history.txt','w')
+			for str in self.history:
+				f.write(str + "\r\n")
+			f.close()
+		
 		for str in self.history:
 			print str
 		print ""
 
 	def help_history(self):
-		print "Display Game History."
+		print "Display Game History.  Type 'history save' to save history to a file called history.txt."
 		print ""
 		
 	def do_his(self, rest):
@@ -4950,6 +5064,7 @@ class Labyrinth(cmd.Cmd):
 		else: # Muslim
 			woiRoll = self.getRollFromUser("Enter WoI roll or r to have program roll: ")
 			modRoll = self.modifiedWoIRoll(woiRoll, where)
+			self.outputToHistory("Modified Roll: %d" % modRoll)
 			self.handleMuslimWoI(modRoll, where)
 				
 	def help_woi(self):
@@ -5003,7 +5118,7 @@ class Labyrinth(cmd.Cmd):
 				print ""
 				return
 			else:
-				if self.map[input].governance == 4:
+				if (self.map[input].governance == 4) or (input == "Iraq" and "Iraqi WMD" in self.markers) or (input == "Libya" and "Libyan WMD" in self.markers):
 					where = input
 				else:
 					print "Country not Islamic Rule."
@@ -5129,8 +5244,10 @@ class Labyrinth(cmd.Cmd):
 			print "Enter j then the card number e.g. j 24"
 			print ""
 			return
+		self.SaveUndo()
 		self.outputToHistory("", False)
 		self.outputToHistory("== Jihadist plays %s - %d Ops ==" % (self.deck[str(cardNum)].name, self.deck[str(cardNum)].ops), True)
+
 		self.aiFlowChartTop(cardNum)
 		
 	''' test with timing system
@@ -5179,8 +5296,11 @@ class Labyrinth(cmd.Cmd):
 			print "Enter u then the card number e.g. u 24"
 			print ""
 			return
+		self.SaveUndo()
 		self.outputToHistory("", False)
 		self.outputToHistory("== US plays %s - %d Ops ==" % (self.deck[str(cardNum)].name, self.deck[str(cardNum)].ops), True)
+
+
 		if self.deck[str(cardNum)].playable("US", self):
 			self.outputToHistory("Playable %s Event" % self.deck[str(cardNum)].type, False)
 			if cardNum != 120:
@@ -5272,6 +5392,8 @@ class Labyrinth(cmd.Cmd):
 		print "Use this command after the US Action Phase to resolve any unblocked plots."
 
 	def do_turn(self, rest):
+		self.SaveTurn()
+		
 		self.outputToHistory("* End of Turn.", False)
 		if "Pirates" in self.markers and (self.map["Somalia"].governance == 4 or self.map["Yemen"].governance == 4):
 			self.outputToHistory("No funding drop due to Pirates.", False)
@@ -5353,6 +5475,83 @@ class Labyrinth(cmd.Cmd):
 		
 	def help_turn(self):
 		print "Use this command at the end of the turn."
+		
+	def help_undo(self):
+		print "Rolls back to last card played."
+
+	def do_undo(self, args):
+		self.undo = self.getYesNoFromUser("Undo to last card played? (y/n): ")
+	
+	def help_quit(self):
+		print "Quits game and prompt to save."
+
+	def do_quit(self, args):
+		if self.getYesNoFromUser("Save? (y/n): "):
+			print "Save suspend file."
+			self.Save(SUSPEND_FILE)
+
+		print "Exiting."
+
+
+	def Save(self, fname):
+		f = open(fname,'wb')
+		pickle.dump(self,f,2)
+		f.close()
+		
+	def SaveUndo(self):
+		self.Save(UNDO_FILE)
+		
+	def SaveTurn(self):
+		turnfile = ROLLBACK_FILE + str(self.turn) + ".lwot"
+		self.Save(turnfile)
+		
+	def do_roll(self, args):
+		self.do_rollback(args)
+	
+	def help_roll(self):
+		self.help_rollback()
+		
+	def help_rollback(self):
+		print "Roll back to any previous turn in the game."
+		
+	def do_rollback(self, args):
+		self.rollturn = -1
+		needTurn = True
+		while needTurn:
+			try:
+				lastturn = self.turn - 1
+				input = raw_input("Rollback to which turn valid turns are 0 through " + str(lastturn) + "? Q to cancel rollback: " )
+				
+				if input == "Q":
+					print "Cancel Rollback"
+					break
+				else:
+					input = int(input)
+					if input >= 0 and input <= lastturn:
+						self.rollturn = input
+						needTurn = False
+					else:
+						raise
+			except:
+				print "Entry error"
+				print ""
+		
+		
+def getUserYesNoResponse(prompt):
+	good = None
+	while not good:
+		try:
+			input = raw_input(prompt)
+			if input.lower() == "y" or input.lower() == "yes":
+				return True
+			elif input.lower() == "n" or input.lower() == "no":
+				return False
+			else:
+				print "Enter y or n."
+				print ""
+		except:
+			print "Enter y or n."
+			print ""
 					
 def main():
 	print ""
@@ -5360,45 +5559,106 @@ def main():
 	print ""
 	scenario = 0
 	ideology = 0
-	while scenario == 0:
-		try:
-			print "Choose Scenario"
-			print "(1) Let's Roll!"
-			print "(2) You Can Call Me Al"
-			print "(3) Anaconda"
-			print "(4) Mission Accomplished?"
-			input = raw_input("Enter choice: ")
-			input = int(input)
-			if input >= 1 and input <= 5:
-				scenario = input
+	loadfile = 0
+	
+	# Starting new session unlink undo save
+	if os.path.exists(UNDO_FILE):
+		os.remove(UNDO_FILE)
+		
+	# Starting new session unlink previous turn saves
+	for each in os.listdir(os.curdir):
+		if "turn." in each and ".lwot" in each:
+			os.remove(each)
+	
+	# Ask user if they want to continue previous game					
+	if os.path.exists(SUSPEND_FILE):
+		res = getUserYesNoResponse("Resume suspended game? (y/n): ")
+		if res:
+			loadfile = 1
+	
+	
+	if loadfile == 0:
+		while scenario == 0:
+			try:
+				print "Choose Scenario"
+				print "(1) Let's Roll!"
+				print "(2) You Can Call Me Al"
+				print "(3) Anaconda"
+				print "(4) Mission Accomplished?"
+				input = raw_input("Enter choice: ")
+				input = int(input)
+				if input >= 1 and input <= 5:
+					scenario = input
+					print ""
+				else:
+					raise
+			except:
+				print "Entry error"
 				print ""
-			else:
-				raise
-		except:
-			print "Entry error"
-			print ""
-
-	while ideology == 0:
-		try:
-			print "Choose Jihadist Ideology"
-			print "(1) Normal"
-			print "(2) Attractive (2 cells per recruit success)"
-			print "(3) Potent (+ Only 3 more cells than troops needed for Major Jihad)"
-			print "(4) Infectious (+ No program impact - US must remember to play all your cards)"
-			print "(5) Virulent (+ Failed Jihad rolls do not remove cells)"
-			input = raw_input("Enter choice: ")
-			input = int(input)
-			if input >= 1 and input <= 5:
-				ideology = input
+	
+		while ideology == 0:
+			try:
+				print "Choose Jihadist Ideology"
+				print "(1) Normal"
+				print "(2) Attractive (2 cells per recruit success)"
+				print "(3) Potent (+ Only 3 more cells than troops needed for Major Jihad)"
+				print "(4) Infectious (+ No program impact - US must remember to play all your cards)"
+				print "(5) Virulent (+ Failed Jihad rolls do not remove cells)"
+				input = raw_input("Enter choice: ")
+				input = int(input)
+				if input >= 1 and input <= 5:
+					ideology = input
+					print ""
+				else:
+					raise
+			except:
+				print "Entry error"
 				print ""
-			else:
-				raise
-		except:
-			print "Entry error"
-			print ""
+		
+		app = Labyrinth(scenario, ideology)
+		turnfile = ROLLBACK_FILE + "0.lwot"
+		app.Save(turnfile)
 
-	app = Labyrinth(scenario, ideology)
-	app.cmdloop()
+	else:
+		# Load previous game save
+		f = open(SUSPEND_FILE,'rb')
+		app = pickle.load(f)		
+		app.stdout = sys.stdout
+		f.close()          
+		
+	
+	rollback = True
+	while rollback == True:
+	
+		app.cmdloop()
+		
+		# exit out of cmdloop when user quits, want to undo, or rollback - prevents issues dealing with save/reloading within class instance
+		if app.undo:
+			print "Undo to last turn"
+			f = open(UNDO_FILE,'rb')
+			
+			app = pickle.load(f)
+			app.stdout = sys.stdout
+			
+			f.close()
+		elif app.rollturn >= 0:
+			print "Rolling back to turn " + str(app.rollturn)
+			turnfile = ROLLBACK_FILE + str(app.rollturn) + '.lwot'			
+			f = open(turnfile,'rb')
+			
+			app = pickle.load(f)
+			app.stdout = sys.stdout
+			
+			f.close()
+			# rollback invalidates undo save so delete it
+			if os.path.exists(UNDO_FILE):
+				os.remove(UNDO_FILE)
+			  
+		else:
+			rollback = False
+			    
+			
+		
 
 if __name__ == "__main__":
 	main()
