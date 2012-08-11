@@ -6,3 +6,11 @@ When you use a card for Ops you then use the command for the operation you want.
 There are two timekeeping function you have to remember to use. After the Jihadist Activity Phase each turn you must enter the "plot" command so that unblocked plots are handled. And at the end of a turn you must enter the "turn" command to handle all the end of turn activities.
 
 At any time you can use the "status" command to get a print out of the entire board position. And you can use the "history" command to see everything that has happened in the game.
+
+Thanks to Dave Horn for implementing the Save and Undo system.
+
+1. A save game is created after every single command whether you want it or not. If someone screws up and closes the window, pc battery dies, crashes, whatever, no problem, load it up again and you will be asked if you want to load the suspended game.
+
+2. Rollback files are created at the beginning of each turn. You can rollback to any previous turn using 'roll' or 'rollback' command. You will be prompted to enter which turn you want to rollback to.
+
+3. An undo file is created after every card played. Player can undo to the last card at any time (two exceptions) by typing 'undo'. Exceptions are when you load from a previously suspended game or after executing a rollback. The undo file is removed at that exact point to prevent player from undoing themselves to some other game in the past!
