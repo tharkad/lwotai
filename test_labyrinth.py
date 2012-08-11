@@ -1,6 +1,8 @@
 '''
 LWOTai - A Python implementation of the Single-Player AI for Labyrinth: the War on Terror by GMT Games.
 Mike Houser, 2011
+
+08112011.1
 '''
 from lwotai import Labyrinth
 import unittest

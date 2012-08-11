@@ -11,6 +11,7 @@ Thanks to Dave Horn for implementing the Save and Undo system.
 3. An undo file is created after every card played. Player can undo to the last card at any time (two exceptions) by typing 'undo'. Exceptions are when you load from a previously suspended game or after executing a rollback. The undo file is removed at that exact point to prevent player from undoing themselves to some other game in the past!
 
 Release 1.08112011.1
+
 '''
 
 SUSPEND_FILE = "suspend.lwot"
