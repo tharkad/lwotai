@@ -340,7 +340,7 @@ class Card:
 			if self.number == 48: # Adam Gadahn
 				if app.numCellsAvailable() <= 0:
 					return False
-				return app.getYesNoFromUser("Is this the 1st card of the Johadist Action Phase? (y/n): ")
+				return app.getYesNoFromUser("Is this the 1st card of the Jihadist Action Phase? (y/n): ")
 			elif self.number == 49: # Al-Ittihad al-Islami
 				return True
 			elif self.number == 50: # Ansar al-Islam
@@ -354,7 +354,7 @@ class Card:
 							return True
 				return False
 			elif self.number == 53: # Madrassas
-				return app.getYesNoFromUser("Is this the 1st card of the Johadist Action Phase? (y/n): ")
+				return app.getYesNoFromUser("Is this the 1st card of the Jihadist Action Phase? (y/n): ")
 			elif self.number == 54: # Moqtada al-Sadr
 				return app.map["Iraq"].troops() > 0
 			elif self.number == 55: # Uyghur Jihad
@@ -3300,17 +3300,17 @@ class Labyrinth(cmd.Cmd):
 					disStr = None
 					while not disStr:
 						if self.map[where].sleeperCells >= 2 and self.map[where].activeCells >= 2:
-							input = self.my_raw_input("You can disrupt two cells. Enter aa, as, or ss for active or slepper cells: ")
+							input = self.my_raw_input("You can disrupt two cells. Enter aa, as, or ss for active or sleeper cells: ")
 							input = input.lower()
 							if input == "aa" or input == "as" or input == "sa" or input == "ss":
 								disStr = input
 						elif self.map[where].sleeperCells >= 2:
-							input = self.my_raw_input("You can disrupt two cells. Enter as, or ss for active or slepper cells: ")
+							input = self.my_raw_input("You can disrupt two cells. Enter as, or ss for active or sleeper cells: ")
 							input = input.lower()
 							if input == "as" or input == "sa" or input == "ss":
 								disStr = input
 						elif self.map[where].activeCells >= 2:
-							input = self.my_raw_input("You can disrupt two cells. Enter aa, or as for active or slepper cells: ")
+							input = self.my_raw_input("You can disrupt two cells. Enter aa, or as for active or sleeper cells: ")
 							input = input.lower()
 							if input == "as" or input == "sa" or input == "aa":
 								disStr = input
