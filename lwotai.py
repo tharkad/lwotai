@@ -1593,6 +1593,7 @@ class Card:
 			elif self.number == 87 or self.number == 88 or self.number == 89: # Martyrdom Operation
 				if app.executePlot(1, False, [1], True) == 1:
 					app.outputToHistory("No plots could be placed.", True)
+					self.handleRadicalization(self.deck[str(self.number)].ops)			
 			elif self.number == 90: # Quagmire
 				app.map["United States"].posture = "Soft"
 				app.outputToHistory("US Posture now Soft.", False)
