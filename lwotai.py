@@ -138,6 +138,11 @@ class Country:
 			markersStr = "\n   Markers: %s" % ", ".join(self.markers)
 		if self.type == "Shia-Mix" or self.type == "Suni":
 			return "%s, %s %s, %d Resource(s)\n   Troops:%d Active:%d Sleeper:%d Cadre:%d Aid:%d Besieged:%d Reg Ch:%d Plots:%d %s" % (self.name, self.govStr(),self.alignment,self.app.countryResources(self.name),self.troops(),self.activeCells,self.sleeperCells, self.cadre, self.aid, self.besieged, self.regimeChange, self.plots, markersStr)
+
+		elif self.name == "Philippines":
+			return "%s - Posture:%s\n   Troops:%d Active:%d Sleeper:%d Cadre:%d Plots:%d %s" % (self.name,self.posture, self.troops(), self.activeCells,self.sleeperCells, self.cadre, self.plots, markersStr)
+
+
 		elif self.type == "Non-Muslim" and self.type != "United States":
 			return "%s - Posture:%s\n   Active:%d Sleeper:%d Cadre:%d Plots:%d %s" % (self.name,self.posture, self.activeCells,self.sleeperCells, self.cadre, self.plots, markersStr)
 		elif self.type == "Iran":
@@ -1593,7 +1598,7 @@ class Card:
 			elif self.number == 87 or self.number == 88 or self.number == 89: # Martyrdom Operation
 				if app.executePlot(1, False, [1], True) == 1:
 					app.outputToHistory("No plots could be placed.", True)
-					self.handleRadicalization(self.deck[str(self.number)].ops)			
+					app.handleRadicalization(app.deck[str(self.number)].ops)					
 			elif self.number == 90: # Quagmire
 				app.map["United States"].posture = "Soft"
 				app.outputToHistory("US Posture now Soft.", False)
@@ -3041,6 +3046,8 @@ class Labyrinth(cmd.Cmd):
 			self.testCountry(country)
 			cellsToMove = min(numCells, self.cells)
 			self.map[country].sleeperCells += cellsToMove
+			# remove cadre 
+			self.map[country].cadre = 0
 			self.cells -= cellsToMove
 			self.outputToHistory("%d Sleeper Cell(s) placed in %s" % (cellsToMove, country), False)
 			self.outputToHistory(self.map[country].countryStr(), True)
@@ -3503,21 +3510,34 @@ class Labyrinth(cmd.Cmd):
 					break
 			return returnList
 			
-	def recruitChoice(self, isMadrassas = False):
+	def recruitChoice(self, ops, isMadrassas = False):
+		
+		self.debugPrint("DEBUG: recruit with remaining %d ops" % ops)
+
+		self.debugPrint("DEBUG: recruit with remaining %d ops" % (2*ops))
+
+		
 		countryScores = {}
 		for country in self.map:
+			
+			
 			if (self.map[country].totalCells(True) > 0 or (self.map[country].cadre > 0)) or (isMadrassas and self.map[country].governance > 2):
-				countryScores[country] = 0
+				#countryScores[country] = 0
 				if (self.map[country].regimeChange > 0) and (self.map[country].troops() - self.map[country].totalCells(True)) >= 5:
-					countryScores[country] += 100000000
-				elif ((self.map[country].governance == 4) and (self.map[country].totalCells(True) < (2 * self.countryResources(country)))):
-					countryScores[country] += 10000000
+					self.debugPrint("a")
+					countryScores[country] = 100000000
+				elif ((self.map[country].governance == 4) and (self.map[country].totalCells(True) < (2 * ops))):
+					davex = self.map[country].totalCells(True)
+					self.debugPrint("here: recruit with remaining %d ops" % davex)
+					countryScores[country] = 10000000
 				elif (self.map[country].governance != 4) and (self.map[country].regimeChange <= 0):
+					self.debugPrint("b")
 					if self.map[country].recruit > 0:
-						countryScores[country] += (self.map[country].recruit * 1000000)
+						countryScores[country] = (self.map[country].recruit * 1000000)
 					else:
-						countryScores[country] += (self.map[country].governance * 1000000)
+						countryScores[country] = (self.map[country].governance * 1000000)
 		for country in countryScores:
+			self.debugPrint("c")
 			if self.map[country].besieged > 0:
 				countryScores[country] += 100000
 			countryScores[country] += (1000 * (self.map[country].troops() + self.map[country].totalCells(True)))
@@ -3525,12 +3545,16 @@ class Labyrinth(cmd.Cmd):
 			countryScores[country] += random.randint(1,99)
 		countryOrder = []
 		for country in countryScores:
-			countryOrder.append((countryScores[country], (self.map[country].totalCells(True)), country))
+			self.debugPrint("here: %d " % countryScores[country])
+			if countryScores[country] > 0:
+				countryOrder.append((countryScores[country], (self.map[country].totalCells(True)), country))
 		countryOrder.sort()
 		countryOrder.reverse()
 		if countryOrder == []:
+			self.debugPrint("d")
 			return False
 		else:
+			self.debugPrint("e")
 			return countryOrder[0][2]
 	
 	def executeRecruit(self, country, ops, rolls, recruitOverride = None, isJihadistVideos = False, isMadrassas = False):
@@ -3601,7 +3625,9 @@ class Labyrinth(cmd.Cmd):
 				return opsRemaining
 					
 	def handleRecruit(self, ops, isMadrassas = False):
-		country = self.recruitChoice(isMadrassas)
+		self.debugPrint("recruit ops: ")
+		self.debugPrint("DEBUG: recruit with remaining %d ops" % ops)
+		country = self.recruitChoice(ops, isMadrassas)
 		if not country:
 			self.outputToHistory("* No countries qualify to Recruit.", True)
 			return ops
@@ -4357,6 +4383,17 @@ class Labyrinth(cmd.Cmd):
 			else:
 				self.map[country].posture = "Hard"
 			self.outputToHistory("%s Posture now %s" % (country, self.map[country].posture), True)
+
+			if self.map[country].troops() > 0:
+				if plotType == "WMD":
+					self.prestige = 1
+				else:
+					self.prestige -= 1
+				if self.prestige < 1:
+					self.prestige = 1
+				self.outputToHistory("Troops present so US Prestige now %d" % self.prestige, False)
+
+
 			if self.map[country].schengen:
 				for i in range(len(schCountries)):
 					if schPostureRolls[i] <= 4:
@@ -5050,19 +5087,17 @@ class Labyrinth(cmd.Cmd):
 				self.outputToHistory("* War of Ideas in %s - Posture Hard" % where)
 				if self.map["United States"].posture == "Hard":
 					self.prestige += 1
-					if self.prestige > 9:
-						self.prestige = 9
-					else:
-						self.outputToHistory("US Prestige now %d" % self.prestige)
+					if self.prestige > 12:
+						self.prestige = 12
+					self.outputToHistory("US Prestige now %d" % self.prestige)
 			else:
 				self.map[where].posture = "Soft"
 				self.outputToHistory("* War of Ideas in %s - Posture Soft" % where)
 				if self.map["United States"].posture == "Soft":
 					self.prestige += 1
-					if self.prestige > 9:
-						self.prestige = 9
-					else:
-						self.outputToHistory("US Prestige now %d" % self.prestige)
+					if self.prestige > 12:
+						self.prestige = 12
+					self.outputToHistory("US Prestige now %d" % self.prestige)
 		else: # Muslim
 			woiRoll = self.getRollFromUser("Enter WoI roll or r to have program roll: ")
 			modRoll = self.modifiedWoIRoll(woiRoll, where)
