@@ -4601,7 +4601,7 @@ class Labyrinth(cmd.Cmd):
 		print "War of Ideas Eligible Countries"
 		print "-------------------------------"
 		for country in self.map:
-			if self.map[country].alignment == "Neutral" or self.map[country].alignment == "Ally":
+			if self.map[country].alignment == "Neutral" or self.map[country].alignment == "Ally" or self.map[country].governance == 0:
 				print "%s, %s %s - %d Active Cells, %d Sleeper Cells, %d Cadre, %d troops" % (country, self.map[country].govStr(), self.map[country].alignment, self.map[country].activeCells, self.map[country].sleeperCells, self.map[country].cadre, self.map[country].troops())
 		for country in self.map:
 			if self.map[country].type == "Non-Muslim" and country != "United States" and self.map[country].posture == "Hard":
@@ -5075,7 +5075,7 @@ class Labyrinth(cmd.Cmd):
 			else:
 				if self.map[input].type == "Non-Muslim" and input != "United States":
 					where = input
-				elif self.map[input].alignment == "Ally" or self.map[input].alignment == "Neutral":
+				elif self.map[input].alignment == "Ally" or self.map[input].alignment == "Neutral" or self.map[input].governance == 0:
 					where = input
 				else:
 					print "Country not elligable for War of Ideas."
@@ -5099,6 +5099,7 @@ class Labyrinth(cmd.Cmd):
 						self.prestige = 12
 					self.outputToHistory("US Prestige now %d" % self.prestige)
 		else: # Muslim
+			self.testCountry(where)
 			woiRoll = self.getRollFromUser("Enter WoI roll or r to have program roll: ")
 			modRoll = self.modifiedWoIRoll(woiRoll, where)
 			self.outputToHistory("Modified Roll: %d" % modRoll)
