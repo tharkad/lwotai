@@ -4378,11 +4378,12 @@ class Labyrinth(cmd.Cmd):
 				else:
 					self.changeFunding(plotType)
 			self.outputToHistory("Jihadist Funding now %d" % self.funding, False)
-			if postureRoll <= 4:
-				self.map[country].posture = "Soft"
-			else:
-				self.map[country].posture = "Hard"
-			self.outputToHistory("%s Posture now %s" % (country, self.map[country].posture), True)
+			if country != "Israel":
+				if postureRoll <= 4:
+					self.map[country].posture = "Soft"
+				else:
+					self.map[country].posture = "Hard"
+				self.outputToHistory("%s Posture now %s" % (country, self.map[country].posture), True)
 
 			if self.map[country].troops() > 0:
 				if plotType == "WMD":
@@ -5078,7 +5079,7 @@ class Labyrinth(cmd.Cmd):
 				elif self.map[input].alignment == "Ally" or self.map[input].alignment == "Neutral" or self.map[input].governance == 0:
 					where = input
 				else:
-					print "Country not elligable for War of Ideas."
+					print "Country not eligible for War of Ideas."
 					print ""
 		if self.map[where].type == "Non-Muslim" and input != "United States": # Non-Muslim
 			postureRoll = self.getRollFromUser("Enter Posture Roll or r to have program roll: ")
