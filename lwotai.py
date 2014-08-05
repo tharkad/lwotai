@@ -10,7 +10,7 @@ Thanks to Dave Horn for implementing the Save and Undo system.
 
 3. An undo file is created after every card played. Player can undo to the last card at any time (two exceptions) by typing 'undo'. Exceptions are when you load from a previously suspended game or after executing a rollback. The undo file is removed at that exact point to prevent player from undoing themselves to some other game in the past!
 
-Release 1.08112011.1
+Release 1.04082014.1
 
 '''
 
@@ -1302,13 +1302,13 @@ class Card:
 				cardNum = app.getCardNumFromUser("Enter the number of the next Jihadist card or none if there are none left: ")
 				if cardNum == "none":
 					app.outputToHistory("No cards left to recruit to US.", True)
-					app.outputToHistory("Jihadist Activity Phase findshed, enter plot command.", True)
+					app.outputToHistory("Jihadist Activity Phase finished, enter plot command.", True)
 					return
 				ops = app.deck[str(cardNum)].ops
 				rolls = []
 				for i in range(ops):
 					rolls.append(random.randint(1,6))
-				app.outputToHistory("Jihadist Activity Phase findshed, enter plot command.", True)
+				app.outputToHistory("Jihadist Activity Phase finished, enter plot command.", True)
 				app.executeRecruit("United States", ops, rolls, 2)
 			elif self.number == 49: # Al-Ittihad al-Islami
 				app.placeCells("Somalia", 1)
@@ -1330,11 +1330,11 @@ class Card:
 				cardNum = app.getCardNumFromUser("Enter the number of the next Jihadist card or none if there are none left: ")
 				if cardNum == "none":
 					app.outputToHistory("No cards left to recruit.", True)
-					app.outputToHistory("Jihadist Activity Phase findshed, enter plot command.", True)
+					app.outputToHistory("Jihadist Activity Phase finished, enter plot command.", True)
 					return
 				ops = app.deck[str(cardNum)].ops
 				app.handleRecruit(ops, True)		
-				app.outputToHistory("Jihadist Activity Phase findshed, enter plot command.", True)
+				app.outputToHistory("Jihadist Activity Phase finished, enter plot command.", True)
 			elif self.number == 54: # Moqtada al-Sadr
 				app.map["Iraq"].markers.append("Sadr")
 				app.outputToHistory("Sadr Maker added in Iraq", True)
@@ -1894,7 +1894,7 @@ class Card:
 						elif len(fairs) == 1:
 							target = fairs[0]
 						else:
-							app.outputToHistory("No Good or Fair countries to Jihad in.", True)
+							app.outputToHistory("No Good or Fair countries to worsen Governance in.", True)
 							return
 						if app.map[target].governance < 4:
 							app.map[target].governance += 1
@@ -1915,7 +1915,7 @@ class Card:
 					if app.map["Iraq"].governance != 0 and app.map["Iraq"].governance < 3:
 						possibles.append("Iraq")
 					if len(possibles) == 0:
-						app.outputToHistory("Iraq and Lebanon cannot have governance worssened.", True)
+						app.outputToHistory("Iraq and Turkey cannot have governance worsened.", True)
 						return
 					elif len(possibles) == 0:
 						target = possibles[0]
@@ -2028,10 +2028,10 @@ class Card:
 					app.outputToHistory("Sudan now Besieged Regime.", False)
 					if app.map["Sudan"].alignment == "Ally":
 						app.map["Sudan"].alignment = "Neutral"
-						app.outputToHistory("Sudan alignment worssened.", False)
+						app.outputToHistory("Sudan alignment worsened.", False)
 					elif app.map["Sudan"].alignment == "Neutral":
 						app.map["Sudan"].alignment = "Adversary"
-						app.outputToHistory("Sudan alignment worssened.", False)
+						app.outputToHistory("Sudan alignment worsened.", False)
 				app.outputToHistory(app.map["Sudan"].countryStr(), True)				
 			elif self.number == 114: # GTMO
 				app.lapsing.append("GTMO")
@@ -2126,7 +2126,7 @@ class Card:
 						app.map["Yemen"].alignment = "Neutral"
 					elif app.map["Yemen"].alignment == "Neutral":
 						app.map["Yemen"].alignment = "Adversary"
-					app.outputToHistory("Yemen Alignment worssened to %s." % app.map["Yemen"].alignment, False)
+					app.outputToHistory("Yemen Alignment worsened to %s." % app.map["Yemen"].alignment, False)
 					app.map["Yemen"].besieged = 1
 					app.outputToHistory("Yemen now Besieged Regime.", True)
 			elif self.number == 120: # US Election
@@ -2203,12 +2203,14 @@ class Labyrinth(cmd.Cmd):
 		if self.ideology == 1:
 			self.outputToHistory("Jihadist Ideology: Normal", False)
 		elif self.ideology == 2:
-			self.outputToHistory("Jihadist Ideology: Attractive", False)
+			self.outputToHistory("Jihadist Ideology: Coherent", False)
 		elif self.ideology == 3:
+			self.outputToHistory("Jihadist Ideology: Attractive", False)
+		elif self.ideology == 4:
 			self.outputToHistory("Jihadist Ideology: Potent", False)
 		elif self.ideology == 4:
 			self.outputToHistory("Jihadist Ideology: Infectious", False)
-		elif self.ideology == 5:
+		elif self.ideology == 6:
 			self.outputToHistory("Jihadist Ideology: Virulent", False)
 		
 		print ""
@@ -2692,7 +2694,7 @@ class Labyrinth(cmd.Cmd):
 		self.deck["3"] = Card(3,"US","CTR",1,False,True,False)
 		self.deck["4"] = Card(4,"US","Moro Talks",1,True,True,False)
 		self.deck["5"] = Card(5,"US","NEST",1,True,True,False)
-		self.deck["6"] = Card(6,"US","Sacntions",1,False,False,False)
+		self.deck["6"] = Card(6,"US","Sanctions",1,False,False,False)
 		self.deck["7"] = Card(7,"US","Sanctions",1,False,False,False)
 		self.deck["8"] = Card(8,"US","Special Forces",1,False,False,False)
 		self.deck["9"] = Card(9,"US","Special Forces",1,False,False,False)
@@ -2761,7 +2763,7 @@ class Labyrinth(cmd.Cmd):
 		self.deck["72"] = Card(72,"Jihadist","Opium",2,False,False,False)
 		self.deck["73"] = Card(73,"Jihadist","Pirates",2,True,True,False)
 		self.deck["74"] = Card(74,"Jihadist","Schengen Visas",2,False,False,False)
-		self.deck["75"] = Card(75,"Jihadist","Schroeder & Chirac",2,False,False,False)
+		self.deck["75"] = Card(75,"Jihadist","Schroeder & Chirac",2,True,False,False)
 		self.deck["76"] = Card(76,"Jihadist","Abu Ghurayb",3,True,False,False)
 		self.deck["77"] = Card(77,"Jihadist","Al Jazeera",3,False,False,False)
 		self.deck["78"] = Card(78,"Jihadist","Axis of Evil",3,False,False,False)
@@ -3382,7 +3384,7 @@ class Labyrinth(cmd.Cmd):
 			self.map[country].governance = 4
 			self.outputToHistory("Governance to Islamic Rule", False) 
 			self.map[country].alignment = "Adversary"
-			self.outputToHistory("Alingment to Adversary", False) 
+			self.outputToHistory("Alignment to Adversary", False) 
 			self.map[country].regimeChange = 0
 			if self.map[country].besieged > 0:
 				self.outputToHistory("Besieged Regime marker removed.", False) 
@@ -3394,7 +3396,7 @@ class Labyrinth(cmd.Cmd):
 			if self.map[country].troops() > 0:
 				self.prestige = 1
 				self.outputToHistory("Troops present so US Prestige now 1", False) 
-		if self.ideology <= 4:
+		if self.ideology <= 5:
 			for i in range(failures):
 				if self.map[country].numActiveCells() > 0:
 					self.map[country].removeActiveCell()
@@ -3423,7 +3425,7 @@ class Labyrinth(cmd.Cmd):
 
 	def extraCellsNeededForMajorJihad(self):
 		plusCellsNeeded = 5
-		if self.ideology >= 3:
+		if self.ideology >= 4:
 			plusCellsNeeded = 3
 		return plusCellsNeeded
 
@@ -3560,7 +3562,7 @@ class Labyrinth(cmd.Cmd):
 	def executeRecruit(self, country, ops, rolls, recruitOverride = None, isJihadistVideos = False, isMadrassas = False):
 		self.outputToHistory("* Recruit to %s" % country)
 		cellsRequested = ops
-		if self.ideology >= 2:
+		if self.ideology >= 3:
 			cellsRequested = ops * 2
 
 		cells = self.numCellsAvailable(isMadrassas or isJihadistVideos)
@@ -3584,7 +3586,7 @@ class Labyrinth(cmd.Cmd):
 				
 			self.outputToHistory("%d sleeper cells recruited to %s." % (cellsToRecruit, country), False)
 			self.outputToHistory(self.map[country].countryStr(), True)
-			if self.ideology >= 2:
+			if self.ideology >= 3:
 				return ops - ((cellsToRecruit / 2) + (cellsToRecruit % 2))
 			else:
 				return (ops - cellsToRecruit)
@@ -3606,7 +3608,7 @@ class Labyrinth(cmd.Cmd):
 					else:
 						recVal = self.map[country].governance
 					if rolls[i] <= recVal:
-						if self.ideology >= 2:
+						if self.ideology >= 3:
 							cellsMoving = min(self.numCellsAvailable(isMadrassas or isJihadistVideos), 2)
 						else:
 							cellsMoving = min(self.numCellsAvailable(isMadrassas or isJihadistVideos), 1)
@@ -4136,8 +4138,12 @@ class Labyrinth(cmd.Cmd):
 					self.outputToHistory("Cell goes Active", False)
 					self.map[country].sleeperCells -= 1
 					self.map[country].activeCells += 1
-				self.map[country].plots += successes
-				self.outputToHistory("%d Plot(s) placed in %s." % (successes, country), False)
+				if self.ideology == 1:
+					self.map[country].plots += successes
+					self.outputToHistory("%d Plot(s) placed in %s." % (successes, country), False)
+				if self.ideology >= 2:
+					self.map[country].plots += successes * 2
+					self.outputToHistory("%d Plot(s) placed in %s." % (successes * 2, country), False)
 				if "Abu Sayyaf" in self.markers and country == "Philippines" and self.map[country].troops() <= self.map[country].totalCells() and successes > 0:
 					self.outputToHistory("Prestige loss due to Abu Sayyaf.", False)
 					self.changePrestige(-successes)
@@ -5639,13 +5645,14 @@ def main():
 			try:
 				print "Choose Jihadist Ideology"
 				print "(1) Normal"
-				print "(2) Attractive (2 cells per recruit success)"
-				print "(3) Potent (+ Only 3 more cells than troops needed for Major Jihad)"
-				print "(4) Infectious (+ No program impact - US must remember to play all your cards)"
-				print "(5) Virulent (+ Failed Jihad rolls do not remove cells)"
+				print "(2) Coherent (2 plots per plot success)"
+				print "(3) Attractive (2 cells per recruit success)"
+				print "(4) Potent (+ Only 3 more cells than troops needed for Major Jihad)"
+				print "(5) Infectious (+ No program impact - US must remember to play all your cards)"
+				print "(6) Virulent (+ Failed Jihad rolls do not remove cells)"
 				input = raw_input("Enter choice: ")
 				input = int(input)
-				if input >= 1 and input <= 5:
+				if input >= 1 and input <= 6:
 					ideology = input
 					print ""
 				else:
