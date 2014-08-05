@@ -3,7 +3,7 @@ Set up the game as usual and pick the scenario and ideology. You will then be at
 
 When you use a card for Ops you then use the command for the operation you want. For instance if you want to disrupt you enter disrupt and the Command prompt. The program will then ask what it needs to know about the disrupt.
 
-There are two timekeeping function you have to remember to use. After the Jihadist Activity Phase each turn you must enter the "plot" command so that unblocked plots are handled. And at the end of a turn you must enter the "turn" command to handle all the end of turn activities.
+There are two timekeeping function you have to remember to use. After the US Activity Phase each turn you must enter the "plot" command so that unblocked plots are handled. And at the end of a turn you must enter the "turn" command to handle all the end of turn activities.
 
 At any time you can use the "status" command to get a print out of the entire board position. And you can use the "history" command to see everything that has happened in the game.
 
