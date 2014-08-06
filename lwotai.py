@@ -10,7 +10,7 @@ Thanks to Dave Horn for implementing the Save and Undo system.
 
 3. An undo file is created after every card played. Player can undo to the last card at any time (two exceptions) by typing 'undo'. Exceptions are when you load from a previously suspended game or after executing a rollback. The undo file is removed at that exact point to prevent player from undoing themselves to some other game in the past!
 
-Release 1.04082014.1
+Release 1.06082014.1
 
 '''
 
@@ -1302,13 +1302,13 @@ class Card:
 				cardNum = app.getCardNumFromUser("Enter the number of the next Jihadist card or none if there are none left: ")
 				if cardNum == "none":
 					app.outputToHistory("No cards left to recruit to US.", True)
-					app.outputToHistory("Jihadist Activity Phase finished, enter plot command.", True)
+					#app.outputToHistory("Jihadist Activity Phase finished, enter plot command.", True)
 					return
 				ops = app.deck[str(cardNum)].ops
 				rolls = []
 				for i in range(ops):
 					rolls.append(random.randint(1,6))
-				app.outputToHistory("Jihadist Activity Phase finished, enter plot command.", True)
+				#app.outputToHistory("Jihadist Activity Phase finished, enter plot command.", True)
 				app.executeRecruit("United States", ops, rolls, 2)
 			elif self.number == 49: # Al-Ittihad al-Islami
 				app.placeCells("Somalia", 1)
@@ -1330,11 +1330,11 @@ class Card:
 				cardNum = app.getCardNumFromUser("Enter the number of the next Jihadist card or none if there are none left: ")
 				if cardNum == "none":
 					app.outputToHistory("No cards left to recruit.", True)
-					app.outputToHistory("Jihadist Activity Phase finished, enter plot command.", True)
+					#app.outputToHistory("Jihadist Activity Phase finished, enter plot command.", True)
 					return
 				ops = app.deck[str(cardNum)].ops
 				app.handleRecruit(ops, True)		
-				app.outputToHistory("Jihadist Activity Phase finished, enter plot command.", True)
+				#app.outputToHistory("Jihadist Activity Phase finished, enter plot command.", True)
 			elif self.number == 54: # Moqtada al-Sadr
 				app.map["Iraq"].markers.append("Sadr")
 				app.outputToHistory("Sadr Maker added in Iraq", True)
