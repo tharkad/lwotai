@@ -1,6 +1,6 @@
 Version 1.06082014.3
 
-Remove card #58 fix temporarily
+Remove cards #84/85 fix temporarily
 
 
 Version 1.06082014.2
