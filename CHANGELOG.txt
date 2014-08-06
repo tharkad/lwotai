@@ -1,0 +1,12 @@
+Version 1.06082014.2
+
+Fix: cards #84/85 will now make you Shift Ally to Neutral, if possible.
+Fix: card #58 will now correctly Disrupt cadres if the event is in play
+
+
+Version 1.06082014.1
+
+Add: new Jihadist Ideology (9.7) Coherent. This was added to the rules after the initial printing.
+Fix: card #75 now displays 'Remove card from game' when it is played for the event.
+Fix: numerous typos
+Fix: remove all "Jihadist Activity Phase finished, enter plot command." as this is incorrect. It should always be done after the 2nd US Activity Phase.

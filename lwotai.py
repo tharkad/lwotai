@@ -10,7 +10,7 @@ Thanks to Dave Horn for implementing the Save and Undo system.
 
 3. An undo file is created after every card played. Player can undo to the last card at any time (two exceptions) by typing 'undo'. Exceptions are when you load from a previously suspended game or after executing a rollback. The undo file is removed at that exact point to prevent player from undoing themselves to some other game in the past!
 
-Release 1.06082014.1
+Release 1.06082014.2
 
 '''
 
@@ -1585,7 +1585,14 @@ class Card:
 					app.map["United States"].posture = "Soft"
 				else:
 					app.map["United States"].posture = "Hard"
-				app.outputToHistory("US Posture now %s" % app.map["United States"].posture, True)	
+				app.outputToHistory("US Posture now %s" % app.map["United States"].posture, True)
+				allys = app.minorJihadInGoodFairChoice(1, True)
+            	if not allys:
+                	app.outputToHistory("No Allys to shift.", True)
+           		else:
+                	target = allys[0][0]
+                	app.map[target].alignment = "Neutral"
+                	app.outputToHistory("%s Alignment shifted to Neutral." % target, True)
 			elif self.number == 86: # Lebanon War
 				app.outputToHistory("US discards a random card.", False)	
 				app.changePrestige(-1, False)
@@ -3253,7 +3260,7 @@ class Labyrinth(cmd.Cmd):
 		elif self.map[where].troops() >= 2 or self.map[where].posture == "Hard":
 			numToDisrupt = min(2, self.map[where].totalCells(False))
 		if self.map[where].totalCells(False) <= 0 and self.map[where].cadre > 0:
-			if "Al-Anbar" not in self.markers:
+			if "Al-Anbar" not in self.markers or (where != "Iraq" and where != "Syria"):
 				self.outputToHistory("* Cadre removed in %s" % where)
 				self.map[where].cadre = 0
 		elif self.map[where].totalCells(False) <= numToDisrupt:
