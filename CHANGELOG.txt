@@ -1,8 +1,3 @@
-Version 1.06082014.3
-
-Remove cards #84/85 fix temporarily
-
-
 Version 1.06082014.2
 
 Fix: cards #84/85 will now make you Shift Ally to Neutral, if possible.

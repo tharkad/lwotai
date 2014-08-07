@@ -1576,7 +1576,6 @@ class Card:
 				for i in range(3):
 					usPrestigeRolls.append(random.randint(1,6))
 				postureRoll = random.randint(1,6)
-
 				presMultiplier = 1
 				if usPrestigeRolls[0] <= 4:
 					presMultiplier = -1
@@ -1586,13 +1585,13 @@ class Card:
 				else:
 					app.map["United States"].posture = "Hard"
 				app.outputToHistory("US Posture now %s" % app.map["United States"].posture, True)
-				#allys = app.minorJihadInGoodFairChoice(1, True)
-            	#if not allys:
-                #	app.outputToHistory("No Allys to shift.", True)
-           		#else:
-                #	target = allys[0][0]
-                #	app.map[target].alignment = "Neutral"
-                #	app.outputToHistory("%s Alignment shifted to Neutral." % target, True)
+				allies = app.minorJihadInGoodFairChoice(1, True)
+				if not allies:
+					app.outputToHistory("No Allies to shift.", True)
+				else:
+					target = allies[0][0]
+					app.map[target].alignment = "Neutral"
+					app.outputToHistory("%s Alignment shifted to Neutral." % target, True)
 			elif self.number == 86: # Lebanon War
 				app.outputToHistory("US discards a random card.", False)	
 				app.changePrestige(-1, False)
