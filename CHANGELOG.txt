@@ -1,10 +1,16 @@
-Version 1.06082014.2
+Version 1.11082014.1 (by sgwestrip)
+
+Changed wording for Jihadist Ideology choices. The wording is now as per the rulebook.
+Added: release number displays when you first run the program.
+
+
+Version 1.06082014.2 (by ragam)
 
 Fix: cards #84/85 will now make you Shift Ally to Neutral, if possible.
 Fix: card #58 will now correctly Disrupt cadres if the event is in play
 
 
-Version 1.04082014.1
+Version 1.04082014.1 (by sgwestrip)
 
 Add: new Jihadist Ideology (9.7) Coherent. This was added to the rules after the initial printing.
 Fix: card #75 now displays 'Remove card from game' when it is played for the event.
