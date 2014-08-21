@@ -10,13 +10,12 @@ Thanks to Dave Horn for implementing the Save and Undo system.
 
 3. An undo file is created after every card played. Player can undo to the last card at any time (two exceptions) by typing 'undo'. Exceptions are when you load from a previously suspended game or after executing a rollback. The undo file is removed at that exact point to prevent player from undoing themselves to some other game in the past!
 
-Release 1.06082014.3
-
 '''
 
 SUSPEND_FILE = "suspend.lwot"
 UNDO_FILE = "undo.lwot"
 ROLLBACK_FILE = "turn."
+RELEASE = "1.11082014.1"
 
 import sys
 import cmd
@@ -5608,6 +5607,8 @@ def main():
 	print ""
 	print "Labyrinth: The War on Terror AI Player"
 	print ""
+	print "Release", RELEASE
+	print ""
 	scenario = 0
 	ideology = 0
 	loadfile = 0
@@ -5651,11 +5652,11 @@ def main():
 			try:
 				print "Choose Jihadist Ideology"
 				print "(1) Normal"
-				print "(2) Coherent (2 plots per plot success)"
-				print "(3) Attractive (2 cells per recruit success)"
-				print "(4) Potent (+ Only 3 more cells than troops needed for Major Jihad)"
-				print "(5) Infectious (+ No program impact - US must remember to play all your cards)"
-				print "(6) Virulent (+ Failed Jihad rolls do not remove cells)"
+				print "(2) Coherent: Plot success places 2 Plots"
+				print "(3) Attractive: ...and Recruit success places 2 cells"
+				print "(4) Potent: ...and Major Jihad if 3 or more cells than troops"
+				print "(5) Infectious: ...and US plays all its cards (not enforced by program)"
+				print "(6) Virulent: ...and Jihad failure does not remove cells"
 				input = raw_input("Enter choice: ")
 				input = int(input)
 				if input >= 1 and input <= 6:
