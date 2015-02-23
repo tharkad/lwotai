@@ -14,3 +14,7 @@ Thanks to Dave Horn for implementing the Save and Undo system.
 2. Rollback files are created at the beginning of each turn. You can rollback to any previous turn using 'roll' or 'rollback' command. You will be prompted to enter which turn you want to rollback to.
 
 3. An undo file is created after every card played. Player can undo to the last card at any time (two exceptions) by typing 'undo'. Exceptions are when you load from a previously suspended game or after executing a rollback. The undo file is removed at that exact point to prevent player from undoing themselves to some other game in the past!
+
+Thanks to Peter Shaw for implementing the Adjust system and to bunch of bug fixes and cleanup.
+
+
