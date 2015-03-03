@@ -15,8 +15,10 @@ Thanks to Peter Shaw for implementing the Adjust system and to bunch of bug fixe
 '''
 
 
+#	Change indicated by comment with 20150303PS:
+#	1. Prevent double processing when major jihad failure sets besieged status (reported by Magnus Kvevlander)
 #
-#	Changes indicated by comment with 20150131PS
+#	Changes indicated by comment with 20150131PS:
 #	1. Fixed spelling of besieged in Country class
 #	2. Added untested countries with data to 'status' command so that 'status' can be used to reconstruct the board
 #	3. Fixed 'help dep'
@@ -36,7 +38,7 @@ Thanks to Peter Shaw for implementing the Adjust system and to bunch of bug fixe
 SUSPEND_FILE = "suspend.lwot"
 UNDO_FILE = "undo.lwot"
 ROLLBACK_FILE = "turn."
-RELEASE = "1.31012015.1"
+RELEASE = "1.03032015.1"
 
 
 import sys
@@ -3434,6 +3436,7 @@ class Labyrinth(cmd.Cmd):
 	def executeJihad(self, country, rollList):
 		successes = 0
 		failures = 0
+		originalBesieged = self.map[country].besieged	#20150303PS save besieged status in case changed by major jihad failure
 		for roll in rollList:
 			if roll <= self.map[country].governance:
 				successes += 1
@@ -3468,7 +3471,7 @@ class Labyrinth(cmd.Cmd):
 			self.outputToHistory("Governance to %s" % self.map[country].govStr(), False)
 			if self.map[country].aid > 0:		#20150131PS reduce by 1 rather than set to 0
 				self.map[country].aid -= 1
-		if isMajorJihad and ((successes >= 2) or ((self.map[country].besieged > 0) and (successes >= 1))) : # Major Jihad
+		if isMajorJihad and ((successes >= 2) or ((originalBesieged > 0) and (successes >= 1))) : # Major Jihad
 			self.outputToHistory("Islamic Revolution in %s" % country, False) 
 			self.map[country].governance = 4
 			self.outputToHistory("Governance to Islamic Rule", False) 
