@@ -515,6 +515,7 @@ class Card:
 				return True
 			elif self.number == 101: # Kosovo
 				return True
+			elif self.number == 102: # Former Soviet Union
 				return True
 			elif self.number == 103: # Hizballah
 				return True
