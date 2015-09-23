@@ -14,7 +14,12 @@ Thanks to Peter Shaw for implementing the Adjust system and to bunch of bug fixe
 
 '''
 
-
+#	Change indicated by comment with 20150616PS:
+#	1. Made use of CTR consistent - was adding CRT but testing for CTR (reported by Morten Kristensen)
+#
+#	Change indicated by comment with 20150312PS:
+#	1. Fixed missing line for card 102 (reported by Thomas Chipman)
+#
 #	Change indicated by comment with 20150303PS:
 #	1. Prevent double processing when major jihad failure sets besieged status (reported by Magnus Kvevlander)
 #
@@ -38,7 +43,7 @@ Thanks to Peter Shaw for implementing the Adjust system and to bunch of bug fixe
 SUSPEND_FILE = "suspend.lwot"
 UNDO_FILE = "undo.lwot"
 ROLLBACK_FILE = "turn."
-RELEASE = "1.03032015.1"
+RELEASE = "1.06162015.1"
 
 
 import sys
@@ -206,7 +211,7 @@ class Card:
 				return False
 			elif self.number == 2: # Biometrics
 				return True
-			elif self.number == 3: # CRT
+			elif self.number == 3: # CTR	20150616PS
 				return app.map["United States"].posture == "Soft"
 			elif self.number == 2: # Biometrics
 				return True
@@ -515,7 +520,7 @@ class Card:
 				return True
 			elif self.number == 101: # Kosovo
 				return True
-			elif self.number == 102: # Former Soviet Union
+			elif self.number == 102: # Former Soviet Union	#20150312PS
 				return True
 			elif self.number == 103: # Hizballah
 				return True
@@ -748,12 +753,12 @@ class Card:
 			elif self.number == 2: # Biometrics
 				app.lapsing.append("Biometrics")
 				app.outputToHistory("Biometrics in play. This turn, travel to adjacent Good countries must roll to succeed and no non-adjacent travel.", True)
-			elif self.number == 3: # CRT
-				app.map["Russia"].markers.append("CRT")
-				app.outputToHistory("CRT Maker added in Russia", True)
+			elif self.number == 3: # CTR	20150616PS
+				app.map["Russia"].markers.append("CTR")	# 20150616PS
+				app.outputToHistory("CTR Marker added Russia", True)	# 20150616PS
 				if (app.map["Central Asia"].alignment == "Ally") or (app.map["Central Asia"].alignment == "Neutral"):
-					app.map["Central Asia"].markers.append("CRT")
-					app.outputToHistory("CRT Maker added in Central Asia", True)
+					app.map["Central Asia"].markers.append("CTR")	# 20150616PS
+					app.outputToHistory("CTR Marker added in Central Asia", True)	# 20150616PS
 			elif self.number == 4: # Moro Talks
 				app.markers.append("Moro Talks")
 				app.outputToHistory("Moro Talks in play.", False)
@@ -2875,7 +2880,7 @@ class Labyrinth(cmd.Cmd):
 		self.validGlobalMarkers.append("Leak-Enhanced Measures")
 		self.validGlobalMarkers.append("Leak-Wiretapping")
 		self.validGlobalMarkers.append("Leak-Renditions")
-		self.validCountryMarkers.append("CRT")
+		self.validCountryMarkers.append("CTR")	#20150616PS
 		self.validCountryMarkers.append("NATO")
 		self.validCountryMarkers.append("Sadr")
 		self.validCountryMarkers.append("FATA")
