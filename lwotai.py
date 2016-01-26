@@ -1647,8 +1647,12 @@ class Card:
 						if app.map[country].governance == 0:
 							possibles.append(country)
 				random.shuffle(possibles)
-				app.placeCells(possibles[0], 1)
-				app.placeCells(possibles[1], 1)
+				if app.numIslamicRule() > 0:
+					app.placeCells(possibles[0], 2)
+					app.placeCells(possibles[1], 2)
+				else:
+					app.placeCells(possibles[0], 1)
+					app.placeCells(possibles[1], 1)
 			elif self.number == 92: # Saddam
 				app.funding = 9
 				app.outputToHistory("Jihadist Funding now 9.", True)
