@@ -617,7 +617,7 @@ class majorJihadChoice(unittest.TestCase):
 	'''Major Jihad possible?'''
 	# For Major Jihad to be possible you need:
 	# - A muslim country
-	# - Not under Islamic Rule
+	# - Not under Islamist Rule
 	# - with at least 5 more cells than troops
 	# - At least 2 rolls if the country is poor and not besieged
 	# - At least 1 roll if the country is poor and is besieged
@@ -853,10 +853,10 @@ class handleJihad(unittest.TestCase):
 class executeJihad(unittest.TestCase):
 	'''Execute Major Jihad'''
 	# A Major jihad needs:
-	# - Muslim country not under Islamic Rule
+	# - Muslim country not under Islamist Rule
 	# - 5 more cells than troops
-	# - Then if gov at Poor and not besieged 2 more successes causes Islamic Revolution
-	# - Or if gov at Poor and is besieged 1 more success causses Islamic Revolution
+	# - Then if gov at Poor and not besieged 2 more successes causes Islamist Revolution
+	# - Or if gov at Poor and is besieged 1 more success causes Islamist Revolution
 	# Jihad does:
 	# - Each success worsens gov
 	# - Any failure roll sends a cell to the funding track
@@ -864,8 +864,8 @@ class executeJihad(unittest.TestCase):
 	# - Three Failure rolls in a Poor country shifts alignment one toward Ally and places Besieged regime
 	# A Major jihad does:
 	# - All cells go active
-	# Islamic Revolution causes:
-	# - Gov to Islamic Rule
+	# Islamist Revolution causes:
+	# - Gov to Islamist Rule
 	# - Alignment to Adversary
 	# - Remove Regime Change, Beseiged and Aid
 	# - Add country's resources to Funding track
@@ -926,8 +926,8 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
-		app.executeJihad("Gulf States", [3,3]) # Islamic Revolution
-		self.assertEqual(app.map["Gulf States"].governance, 4) # islamic rule
+		app.executeJihad("Gulf States", [3,3]) # Islamist Revolution
+		self.assertEqual(app.map["Gulf States"].governance, 4) # islamist rule
 		self.assertEqual(app.map["Gulf States"].sleeperCells, 0) # all cells active
 		self.assertEqual(app.map["Gulf States"].activeCells, 9) # lost no cells to the to failure rolls
 		self.assertEqual(app.map["Gulf States"].regimeChange, 0) # removed
@@ -1027,8 +1027,8 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
-		app.executeJihad("Gulf States", [3,3,4]) # Islamic 		Revolution
-		self.assertEqual(app.map["Gulf States"].governance, 4) # islamic rule
+		app.executeJihad("Gulf States", [3,3,4]) # Islamist Revolution
+		self.assertEqual(app.map["Gulf States"].governance, 4) # islamist rule
 		self.assertEqual(app.map["Gulf States"].sleeperCells, 0) # all cells active
 		self.assertEqual(app.map["Gulf States"].activeCells, 8) # lost one cells to the to failure rolls
 		self.assertEqual(app.map["Gulf States"].regimeChange, 0) # removed
@@ -1048,8 +1048,8 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
-		app.executeJihad("Gulf States", [3,3,4]) # Islamic Revolution
-		self.assertEqual(app.map["Gulf States"].governance, 4) # islamic rule
+		app.executeJihad("Gulf States", [3,3,4]) # Islamist Revolution
+		self.assertEqual(app.map["Gulf States"].governance, 4) # islamist rule
 		self.assertEqual(app.map["Gulf States"].sleeperCells, 0) # all cells active
 		self.assertEqual(app.map["Gulf States"].activeCells, 8) # lost one cells to the to failure rolls
 		self.assertEqual(app.map["Gulf States"].regimeChange, 0) # removed
@@ -1069,8 +1069,8 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
-		app.executeJihad("Gulf States", [3,3,3]) # Islamic Revolution
-		self.assertEqual(app.map["Gulf States"].governance, 4) # islamic rule
+		app.executeJihad("Gulf States", [3,3,3]) # Islamist Revolution
+		self.assertEqual(app.map["Gulf States"].governance, 4) # islamist rule
 		self.assertEqual(app.map["Gulf States"].sleeperCells, 0) # all cells active
 		self.assertEqual(app.map["Gulf States"].activeCells, 9) # lost no cells to the to failure rolls
 		self.assertEqual(app.map["Gulf States"].regimeChange, 0) # removed
@@ -1090,8 +1090,8 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
-		app.executeJihad("Gulf States", [3,3,3]) # Islamic Revolution
-		self.assertEqual(app.map["Gulf States"].governance, 4) # islamic rule
+		app.executeJihad("Gulf States", [3,3,3]) # Islamist Revolution
+		self.assertEqual(app.map["Gulf States"].governance, 4) # islamist rule
 		self.assertEqual(app.map["Gulf States"].sleeperCells, 0) # all cells active
 		self.assertEqual(app.map["Gulf States"].activeCells, 9) # lost no cells to the to failure rolls
 		self.assertEqual(app.map["Gulf States"].regimeChange, 0) # removed
@@ -1114,7 +1114,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
 		app.executeJihad("Gulf States", [3]) # Revolution in besiged
-		self.assertEqual(app.map["Gulf States"].governance, 4) # islamic rule
+		self.assertEqual(app.map["Gulf States"].governance, 4) # islamist rule
 		self.assertEqual(app.map["Gulf States"].sleeperCells, 0) # all cells active
 		self.assertEqual(app.map["Gulf States"].activeCells, 9) # lost no cells to the to failure rolls
 		self.assertEqual(app.map["Gulf States"].regimeChange, 0) # removed
@@ -1154,7 +1154,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
 		app.executeJihad("Gulf States", [3,3]) # Revolution in besiged
-		self.assertEqual(app.map["Gulf States"].governance, 4) # islamic rule
+		self.assertEqual(app.map["Gulf States"].governance, 4) # islamist rule
 		self.assertEqual(app.map["Gulf States"].sleeperCells, 0) # all cells active
 		self.assertEqual(app.map["Gulf States"].activeCells, 9) # lost no cells to the to failure rolls
 		self.assertEqual(app.map["Gulf States"].regimeChange, 0) # removed
@@ -1174,7 +1174,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
 		app.executeJihad("Gulf States", [3,4]) # Revolution in besiged
-		self.assertEqual(app.map["Gulf States"].governance, 4) # islamic rule
+		self.assertEqual(app.map["Gulf States"].governance, 4) # islamist rule
 		self.assertEqual(app.map["Gulf States"].sleeperCells, 0) # all cells active
 		self.assertEqual(app.map["Gulf States"].activeCells, 8) # lost one cells to the to failure rolls
 		self.assertEqual(app.map["Gulf States"].regimeChange, 0) # removed
@@ -1214,7 +1214,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
 		app.executeJihad("Gulf States", [3,3,3]) # Revolution in besiged
-		self.assertEqual(app.map["Gulf States"].governance, 4) # islamic rule
+		self.assertEqual(app.map["Gulf States"].governance, 4) # islamist rule
 		self.assertEqual(app.map["Gulf States"].sleeperCells, 0) # all cells active
 		self.assertEqual(app.map["Gulf States"].activeCells, 9) # lost no cells to the to failure rolls
 		self.assertEqual(app.map["Gulf States"].regimeChange, 0) # removed
@@ -1234,7 +1234,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
 		app.executeJihad("Gulf States", [3,3,4]) # Revolution in besiged
-		self.assertEqual(app.map["Gulf States"].governance, 4) # islamic rule
+		self.assertEqual(app.map["Gulf States"].governance, 4) # islamist rule
 		self.assertEqual(app.map["Gulf States"].sleeperCells, 0) # all cells active
 		self.assertEqual(app.map["Gulf States"].activeCells, 8) # lost one cells to the to failure rolls
 		self.assertEqual(app.map["Gulf States"].regimeChange, 0) # removed
@@ -1254,7 +1254,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
 		app.executeJihad("Gulf States", [3,4,4]) # Revolution in besiged
-		self.assertEqual(app.map["Gulf States"].governance, 4) # islamic rule
+		self.assertEqual(app.map["Gulf States"].governance, 4) # islamist rule
 		self.assertEqual(app.map["Gulf States"].sleeperCells, 0) # all cells active
 		self.assertEqual(app.map["Gulf States"].activeCells, 7) # lost two cells to the to failure rolls
 		self.assertEqual(app.map["Gulf States"].regimeChange, 0) # removed
@@ -1457,7 +1457,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
-		app.executeJihad("Gulf States", [2,2,3]) # Islamic Revolution
+		app.executeJihad("Gulf States", [2,2,3]) # Islamist Revolution
 		self.assertEqual(app.map["Gulf States"].governance, 3) # gov to 3
 		self.assertEqual(app.map["Gulf States"].sleeperCells, 0) # all cells active
 		self.assertEqual(app.map["Gulf States"].activeCells, 8) # lost one cells to the to failure rolls
@@ -1478,8 +1478,8 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
-		app.executeJihad("Gulf States", [2,2,2]) # Islamic Revolution
-		self.assertEqual(app.map["Gulf States"].governance, 4) # islamic rule
+		app.executeJihad("Gulf States", [2,2,2]) # Islamist Revolution
+		self.assertEqual(app.map["Gulf States"].governance, 4) # islamist rule
 		self.assertEqual(app.map["Gulf States"].sleeperCells, 0) # all cells active
 		self.assertEqual(app.map["Gulf States"].activeCells, 9) # lost no cells to the to failure rolls
 		self.assertEqual(app.map["Gulf States"].regimeChange, 0) # removed
@@ -1499,8 +1499,8 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
-		app.executeJihad("Gulf States", [2,2,2]) # Islamic Revolution
-		self.assertEqual(app.map["Gulf States"].governance, 4) # islamic rule
+		app.executeJihad("Gulf States", [2,2,2]) # Islamist Revolution
+		self.assertEqual(app.map["Gulf States"].governance, 4) # islamist rule
 		self.assertEqual(app.map["Gulf States"].sleeperCells, 0) # all cells active
 		self.assertEqual(app.map["Gulf States"].activeCells, 9) # lost no cells to the to failure rolls
 		self.assertEqual(app.map["Gulf States"].regimeChange, 0) # removed
@@ -1564,7 +1564,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
 		app.executeJihad("Gulf States", [2,2]) # Revolution in besieged
-		self.assertEqual(app.map["Gulf States"].governance, 4) # islamic rule
+		self.assertEqual(app.map["Gulf States"].governance, 4) # islamist rule
 		self.assertEqual(app.map["Gulf States"].sleeperCells, 0) # all cells active
 		self.assertEqual(app.map["Gulf States"].activeCells, 9) # lost no cells to the to failure rolls
 		self.assertEqual(app.map["Gulf States"].regimeChange, 0) # removed
@@ -1624,7 +1624,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
 		app.executeJihad("Gulf States", [2,2,2]) # Revolution in besiged
-		self.assertEqual(app.map["Gulf States"].governance, 4) # islamic rule
+		self.assertEqual(app.map["Gulf States"].governance, 4) # islamist rule
 		self.assertEqual(app.map["Gulf States"].sleeperCells, 0) # all cells active
 		self.assertEqual(app.map["Gulf States"].activeCells, 9) # lost no cells to the to failure rolls
 		self.assertEqual(app.map["Gulf States"].regimeChange, 0) # removed
@@ -1644,7 +1644,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
 		app.executeJihad("Gulf States", [2,2,3]) # Revolution in besiged
-		self.assertEqual(app.map["Gulf States"].governance, 4) # islamic rule
+		self.assertEqual(app.map["Gulf States"].governance, 4) # islamist rule
 		self.assertEqual(app.map["Gulf States"].sleeperCells, 0) # all cells active
 		self.assertEqual(app.map["Gulf States"].activeCells, 8) # lost one cells to the to failure rolls
 		self.assertEqual(app.map["Gulf States"].regimeChange, 0) # removed
@@ -2011,7 +2011,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
 		app.executeJihad("Gulf States", [1,1,1]) # Revolution in besiged
-		self.assertEqual(app.map["Gulf States"].governance, 4) # islamic rule
+		self.assertEqual(app.map["Gulf States"].governance, 4) # islamist rule
 		self.assertEqual(app.map["Gulf States"].sleeperCells, 0) # all cells active
 		self.assertEqual(app.map["Gulf States"].activeCells, 9) # lost no cells to the to failure rolls
 		self.assertEqual(app.map["Gulf States"].regimeChange, 0) # removed
@@ -2136,7 +2136,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
-		app.executeJihad("Gulf States", [3,3]) # Islamic Revolution
+		app.executeJihad("Gulf States", [3,3]) # Islamist Revolution
 		self.assertEqual(app.map["Gulf States"].governance, 3) # gov still 3
 		self.assertEqual(app.map["Gulf States"].sleeperCells, 1) # major jihad not possible
 		self.assertEqual(app.map["Gulf States"].activeCells, 3) # lost no cells to the to failure rolls
@@ -2709,7 +2709,7 @@ class executeJihad(unittest.TestCase):
 		app.map["Gulf States"].besieged = 0
 		app.map["Gulf States"].regimeChange = 1
 		app.map["Gulf States"].aid = 1
-		app.executeJihad("Gulf States", [2,2,2]) # Islamic Revolution
+		app.executeJihad("Gulf States", [2,2,2]) # Islamist Revolution
 		self.assertEqual(app.map["Gulf States"].governance, 3) # gov to 3
 		self.assertEqual(app.map["Gulf States"].sleeperCells, 1) # major jihad not possible
 		self.assertEqual(app.map["Gulf States"].activeCells, 3) # lost no cells to the to failure rolls
@@ -4368,7 +4368,7 @@ class minorJihadChoice(unittest.TestCase):
 # one cell in each country, one ops case	
 
 		app = Labyrinth(1, 1, test3ScenarioSetup)
-	# only Islamic rule has cells	
+	# only Islamist rule has cells
 		app.map["Gulf States"].activeCells = 0
 		app.map["Gulf States"].sleeperCells = 0
 		app.map["Pakistan"].activeCells = 0
@@ -4409,7 +4409,7 @@ class minorJihadChoice(unittest.TestCase):
 # one cell in each country, two ops case	
 
 		app = Labyrinth(1, 1, test3ScenarioSetup)
-	# only Islamic rule has cells	
+	# only Islamist rule has cells
 		app.map["Gulf States"].activeCells = 0
 		app.map["Gulf States"].sleeperCells = 0
 		app.map["Pakistan"].activeCells = 0
@@ -4449,7 +4449,7 @@ class minorJihadChoice(unittest.TestCase):
 # one cell in each country, three ops case	
 
 		app = Labyrinth(1, 1, test3ScenarioSetup)
-	# only Islamic rule has cells	
+	# only Islamist rule has cells
 		app.map["Gulf States"].activeCells = 0
 		app.map["Gulf States"].sleeperCells = 0
 		app.map["Pakistan"].activeCells = 0
@@ -4488,7 +4488,7 @@ class minorJihadChoice(unittest.TestCase):
 # two cells in each country, one ops case	
 
 		app = Labyrinth(1, 1, test3ScenarioSetup)
-	# only Islamic rule has cells	
+	# only Islamist rule has cells
 		app.map["Gulf States"].activeCells = 0
 		app.map["Gulf States"].sleeperCells = 0
 		app.map["Pakistan"].activeCells = 0
@@ -4529,7 +4529,7 @@ class minorJihadChoice(unittest.TestCase):
 # two cell in each country, two ops case	
 
 		app = Labyrinth(1, 1, test3ScenarioSetup)
-	# only Islamic rule has cells	
+	# only Islamist rule has cells
 		app.map["Gulf States"].activeCells = 0
 		app.map["Gulf States"].sleeperCells = 0
 		app.map["Pakistan"].activeCells = 0
@@ -4570,7 +4570,7 @@ class minorJihadChoice(unittest.TestCase):
 # two cell in each country, three ops case	
 
 		app = Labyrinth(1, 1, test3ScenarioSetup)
-	# only Islamic rule has cells	
+	# only Islamist rule has cells
 		app.map["Gulf States"].activeCells = 0
 		app.map["Gulf States"].sleeperCells = 0
 		app.map["Pakistan"].activeCells = 0
@@ -4611,7 +4611,7 @@ class minorJihadChoice(unittest.TestCase):
 # three cells in each country, one ops case	
 
 		app = Labyrinth(1, 1, test3ScenarioSetup)
-	# only Islamic rule has cells	
+	# only Islamist rule has cells
 		app.map["Gulf States"].activeCells = 0
 		app.map["Gulf States"].sleeperCells = 0
 		app.map["Pakistan"].activeCells = 0
@@ -4659,7 +4659,7 @@ class minorJihadChoice(unittest.TestCase):
 # three cell in each country, two ops case	
 
 		app = Labyrinth(1, 1, test3ScenarioSetup)
-	# only Islamic rule has cells	
+	# only Islamist rule has cells
 		app.map["Gulf States"].activeCells = 0
 		app.map["Gulf States"].sleeperCells = 0
 		app.map["Pakistan"].activeCells = 0
@@ -4700,7 +4700,7 @@ class minorJihadChoice(unittest.TestCase):
 # three cell in each country, three ops case	
 
 		app = Labyrinth(1, 1, test3ScenarioSetup)
-	# only Islamic rule has cells	
+	# only Islamist rule has cells
 		app.map["Gulf States"].activeCells = 0
 		app.map["Gulf States"].sleeperCells = 0
 		app.map["Pakistan"].activeCells = 0
