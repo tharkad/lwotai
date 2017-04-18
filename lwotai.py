@@ -30,7 +30,7 @@ Thanks to Peter Shaw for implementing the Adjust system and to bunch of bug fixe
 #	4. Added valid global markers, country markers and lapsing markers for use by 'adjust' command
 #	5. Added 'adjust' command for ideology, prestige, funding, event markers, lapsing markers and country data
 #	6. Additional changes for multiple aid markers when adding or removing
-#	7. In plot resolution, remove one aid for each successfull roll
+#	7. In plot resolution, remove one aid for each successful roll
 #	8. In WOI roll adjustment, add 1 to modifiers for each aid marker
 #	9. Ignore "The door of Itjihad is closed" when checking playable if playing as US (reported by Dave Horn)
 #	10. Changed removeCell to remove sleeper then Sadr then active if playing as US; but active then sleeper then Sadr if Jihadist
@@ -149,7 +149,7 @@ class Country:
 		elif self.governance == 3:
 			return "Poor"
 		elif self.governance == 4:
-			return "Islamic Rule"
+			return "Islamist Rule"
 
 	def typePretty(self, theType):
 		if theType == "Non-Muslim":
@@ -320,7 +320,7 @@ class Card:
 					return False
 				return app.numDisruptable() > 0
 			elif self.number == 35: # Hajib
-				return app.numIslamicRule() == 0
+				return app.numIslamistRule() == 0
 			elif self.number == 36: # Indo-Pakistani Talks
 				if app.map['Pakistan'].governance == 1 or app.map['Pakistan'].governance == 2:
 					return True
@@ -349,7 +349,7 @@ class Card:
 			elif self.number == 44: # Renditions
 				return (app.map["United States"].posture == "Hard") and ("Leak-Renditions" not in app.markers)
 			elif self.number == 45: # Safer Now
-				if app.numIslamicRule() > 0:
+				if app.numIslamistRule() > 0:
 					return False
 				for country in app.map:
 					if app.map[country].governance == 1:
@@ -552,7 +552,7 @@ class Card:
 						return False
 					if "Al-Anbar" in app.markers:
 						return False
-					return app.numIslamicRule() == 0
+					return app.numIslamistRule() == 0
 				else:
 					return True
 			elif self.number == 112: # Bin Ladin
@@ -561,7 +561,7 @@ class Card:
 						return False
 					if "Al-Anbar" in app.markers:
 						return False
-					return app.numIslamicRule() == 0
+					return app.numIslamistRule() == 0
 				else:
 					return True
 			elif self.number == 113: # Darfur
@@ -810,7 +810,7 @@ class Card:
 					app.changeFunding(-2, True)
 			elif self.number == 12: # Al-Azhar
 				app.testCountry("Egypt")
-				numIR = app.numIslamicRule()
+				numIR = app.numIslamistRule()
 				if numIR <= 0:
 					app.changeFunding(-4, True)
 				else:
@@ -879,7 +879,7 @@ class Card:
 						app.outputToHistory("Somalia now Poor Neutral.", False)
 						app.outputToHistory(app.map["Somalia"].countryStr(), True)
 					else:
-						print "Both Somalia and Sudan are under Islamic Rule."
+						print "Both Somalia and Sudan are under Islamist Rule."
 						if app.getYesNoFromUser("Do you want Somalia to be set to Poor Neutral? (y/n): "):
 							app.map["Somalia"].governance = 3
 							app.map["Somalia"].alignment = "Neutral"
@@ -1647,7 +1647,7 @@ class Card:
 						if app.map[country].governance == 0:
 							possibles.append(country)
 				random.shuffle(possibles)
-				if app.numIslamicRule() > 0:
+				if app.numIslamistRule() > 0:
 					app.placeCells(possibles[0], 2)
 					app.placeCells(possibles[1], 2)
 				else:
@@ -1697,7 +1697,7 @@ class Card:
 							possibles.append(country)
 				target = random.choice(possibles)
 				app.testCountry(target)
-				if app.numIslamicRule() > 0:
+				if app.numIslamistRule() > 0:
 					app.outputToHistory("Place any available plot in %s." % target, False)
 				else:
 					app.outputToHistory("Place a Plot 1 in %s." % target, False)
@@ -2038,7 +2038,7 @@ class Card:
 				if side == "US":
 					app.changeFunding(-2)
 				else:
-					if app.numIslamicRule() > 0:
+					if app.numIslamistRule() > 0:
 						app.changePrestige(-3)
 					else:
 						app.changePrestige(-1)
@@ -2048,7 +2048,7 @@ class Card:
 					app.changePrestige(1)
 					app.outputToHistory("Remove card from game.", False)
 				else:
-					if app.numIslamicRule() > 0:
+					if app.numIslamistRule() > 0:
 						app.changePrestige(-4)
 					else:
 						app.changePrestige(-2)
@@ -2672,10 +2672,10 @@ class Labyrinth(cmd.Cmd):
 				elif self.map[country].posture == "Soft":
 					worldPos -= 1
 		print "Good Resources   : %d" % goodRes
-		print "Islamic Resources: %d" % islamRes
+		print "Islamist Resources: %d" % islamRes
 		print "---"
 		print "Good/Fair Countries   : %d" % goodC
-		print "Poor/Islamic Countries: %d" % islamC
+		print "Poor/Islamist Countries: %d" % islamC
 		print ""
 		print "GWOT"
 		print "US Posture: %s" % self.map["United States"].posture
@@ -3212,7 +3212,7 @@ class Labyrinth(cmd.Cmd):
 			retVal -= 5
 		return max(retVal, 0)
 		
-	def numIslamicRule(self):
+	def numIslamistRule(self):
 		numIR = 0
 		for country in self.map:
 			if self.map[country].governance == 4:
@@ -3482,9 +3482,9 @@ class Labyrinth(cmd.Cmd):
 			if self.map[country].aid > 0:		#20150131PS reduce by 1 rather than set to 0
 				self.map[country].aid -= 1
 		if isMajorJihad and ((successes >= 2) or ((originalBesieged > 0) and (successes >= 1))) : # Major Jihad
-			self.outputToHistory("Islamic Revolution in %s" % country, False) 
+			self.outputToHistory("Islamist Revolution in %s" % country, False)
 			self.map[country].governance = 4
-			self.outputToHistory("Governance to Islamic Rule", False) 
+			self.outputToHistory("Governance to Islamist Rule", False)
 			self.map[country].alignment = "Adversary"
 			self.outputToHistory("Alignment to Adversary", False) 
 			self.map[country].regimeChange = 0
@@ -3674,7 +3674,7 @@ class Labyrinth(cmd.Cmd):
 			if self.map[country].regimeChange:
 				self.outputToHistory("Recruit to Regime Change country automatically successful.", False)
 			else:
-				self.outputToHistory("Recruit to Islamic Rule country automatically successful.", False)
+				self.outputToHistory("Recruit to Islamist Rule country automatically successful.", False)
 			self.cells -= cellsToRecruit
 			self.map[country].sleeperCells += cellsToRecruit
 			
@@ -4628,7 +4628,7 @@ class Labyrinth(cmd.Cmd):
 				
 	def executeCardEuroIslam(self, posStr):
 		self.map["Benelux"].posture = posStr
-		if self.numIslamicRule() == 0:
+		if self.numIslamistRule() == 0:
 			self.funding -= 1
 			if self.funding < 1:
 				self.funding = 1
@@ -4733,9 +4733,9 @@ class Labyrinth(cmd.Cmd):
 				self.map[country].printCountry()
 		print ""
 		
-	def listIslamicCountries(self, na = None):
+	def listIslamistCountries(self, na = None):
 		print ""
-		print "Islamic Rule Countries"
+		print "Islamist Rule Countries"
 		print "----------------------"
 		for country in self.map:
 			if self.map[country].governance == 4:
@@ -4948,7 +4948,7 @@ class Labyrinth(cmd.Cmd):
 		if not num:
 			print "none"
 		print ""
-		print "ISLAMIC RULE"
+		print "ISLAMIST RULE"
 		num = 0
 		for country in self.map:
 			if self.map[country].type != "Non-Muslim" and self.map[country].governance == 4:
@@ -5010,10 +5010,10 @@ class Labyrinth(cmd.Cmd):
 		print ""
 		print "VICTORY"
 		print "Good Resources   : %d" % goodRes
-		print "Islamic Resources: %d" % islamRes
+		print "Islamist Resources: %d" % islamRes
 		print "---"
 		print "Good/Fair Countries   : %d" % goodC
-		print "Poor/Islamic Countries: %d" % islamC
+		print "Poor/Islamist Countries: %d" % islamC
 		print ""
 		print "GWOT"
 		print "US Posture: %s" % self.map["United States"].posture
@@ -5103,8 +5103,8 @@ class Labyrinth(cmd.Cmd):
 			print "Jihadist Ideology: Virulent"
 		print ""
 		print "VICTORY"
-		print "Good Resources: %d    Islamic Resources: %d" % (goodRes, islamRes)
-		print "Good/Fair Countries: %d   Poor/Islamic Countries: %d" % (goodC, islamC)
+		print "Good Resources: %d    Islamist Resources: %d" % (goodRes, islamRes)
+		print "Good/Fair Countries: %d   Poor/Islamist Countries: %d" % (goodC, islamC)
 		print ""
 		if worldPos > 0:
 			worldPosStr = "Hard"
@@ -5861,7 +5861,7 @@ class Labyrinth(cmd.Cmd):
 			return
 		where = None
 		while not where:
-			input = self.getCountryFromUser("Regime Change in what country?  (? for list): ", "XXX", self.listIslamicCountries)
+			input = self.getCountryFromUser("Regime Change in what country?  (? for list): ", "XXX", self.listIslamistCountries)
 			if input == "":
 				print ""
 				return
@@ -5869,7 +5869,7 @@ class Labyrinth(cmd.Cmd):
 				if (self.map[input].governance == 4) or (input == "Iraq" and "Iraqi WMD" in self.markers) or (input == "Libya" and "Libyan WMD" in self.markers):
 					where = input
 				else:
-					print "Country not Islamic Rule."
+					print "Country not Islamist Rule."
 					print ""
 		moveFrom = None
 		available = 0
@@ -6159,9 +6159,9 @@ class Labyrinth(cmd.Cmd):
 			self.prestige -= 1
 			if self.prestige < 1:
 				self.prestige = 1
-				self.outputToHistory("Islamic Rule - US Prestige now %d" % self.prestige, False)
+				self.outputToHistory("Islamist Rule - US Prestige now %d" % self.prestige, False)
 		else:
-			self.outputToHistory("No Islamic Rule - US Prestige stays at %d" % self.prestige, False)	#20150131PS - added
+			self.outputToHistory("No Islamist Rule - US Prestige stays at %d" % self.prestige, False)	#20150131PS - added
 		worldPos = 0
 		for country in self.map:
 			if not (self.map[country].type == "Shia-Mix" or self.map[country].type == "Suni") and self.map[country].type != "Iran" and self.map[country].name != "United States":
@@ -6196,10 +6196,10 @@ class Labyrinth(cmd.Cmd):
 					islamRes += self.countryResources(country)
 		self.outputToHistory("---", False)
 		self.outputToHistory("Good Resources   : %d" % goodRes, False)
-		self.outputToHistory("Islamic Resources: %d" % islamRes, False)
+		self.outputToHistory("Islamist Resources: %d" % islamRes, False)
 		self.outputToHistory("---", False)
 		self.outputToHistory("Good/Fair Countries   : %d" % goodC, False)
-		self.outputToHistory("Poor/Islamic Countries: %d" % islamC, False)
+		self.outputToHistory("Poor/Islamist Countries: %d" % islamC, False)
 		self.turn += 1
 		self.outputToHistory("---", False)
 		self.outputToHistory("", False)
