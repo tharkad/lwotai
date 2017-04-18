@@ -30,7 +30,7 @@ Thanks to Peter Shaw for implementing the Adjust system and to bunch of bug fixe
 #	4. Added valid global markers, country markers and lapsing markers for use by 'adjust' command
 #	5. Added 'adjust' command for ideology, prestige, funding, event markers, lapsing markers and country data
 #	6. Additional changes for multiple aid markers when adding or removing
-#	7. In plot resolution, remove one aid for each successfull roll
+#	7. In plot resolution, remove one aid for each successful roll
 #	8. In WOI roll adjustment, add 1 to modifiers for each aid marker
 #	9. Ignore "The door of Itjihad is closed" when checking playable if playing as US (reported by Dave Horn)
 #	10. Changed removeCell to remove sleeper then Sadr then active if playing as US; but active then sleeper then Sadr if Jihadist
