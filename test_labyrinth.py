@@ -873,7 +873,7 @@ class executeJihad(unittest.TestCase):
     
 # 5 MORE CELLS THAN TROOPS - Major Jihad possible
 
-    def testJihadEnoughCellsPoorGovNotBeseiged(self):
+    def testJihadEnoughCellsPoorGovNotBesieged(self):
 
 # Poor Gov
 # Not Besieged
@@ -893,7 +893,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 1) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -913,7 +913,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 1) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -953,7 +953,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 1) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -973,7 +973,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 1) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -1142,7 +1142,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 1) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 1) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -1202,7 +1202,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 1) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 1) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -1305,7 +1305,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 0) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -1325,7 +1325,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 1) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -1345,7 +1345,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 0) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -1365,7 +1365,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 0) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -1385,7 +1385,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 1) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -1405,7 +1405,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 0) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
         
@@ -1425,7 +1425,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 0) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
                 
@@ -1466,7 +1466,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 0) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
         
@@ -1592,7 +1592,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 0) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 1) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
         
@@ -1612,7 +1612,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 1) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 1) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -1672,7 +1672,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 0) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 1) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
         
@@ -1735,7 +1735,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 1) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -1755,7 +1755,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 0) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -1775,7 +1775,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 0) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -1795,7 +1795,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 1) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -1815,7 +1815,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 0) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
         
@@ -1835,7 +1835,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 0) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
                 
@@ -1875,7 +1875,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 0) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -1895,7 +1895,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 0) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -1919,7 +1919,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 0) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 1) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
         
@@ -1939,7 +1939,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 1) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 1) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -1959,7 +1959,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 0) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 1) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -1979,7 +1979,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 0) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 1) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
         
@@ -1999,7 +1999,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 1) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 1) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -2039,7 +2039,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 0) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 1) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
         
@@ -2059,7 +2059,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 0) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 1) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
         
@@ -2105,7 +2105,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 1) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -2125,7 +2125,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 1) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -2145,7 +2145,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 1) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -2165,7 +2165,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 1) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -2185,7 +2185,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 1) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -2205,7 +2205,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 1) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
                 
@@ -2246,7 +2246,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 1) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
         
@@ -2267,7 +2267,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 1) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -2288,7 +2288,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 1) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
         
@@ -2309,7 +2309,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 1) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -2332,7 +2332,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 1) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 1) # 
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
         
@@ -2352,7 +2352,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 1) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 1) # 
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -2372,7 +2372,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 1) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 1) # 
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -2392,7 +2392,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 1) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 1) # 
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
         
@@ -2412,7 +2412,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 1) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 1) # 
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -2432,7 +2432,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 1) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 1) # 
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
         
@@ -2452,7 +2452,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 1) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 1) # 
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
         
@@ -2472,7 +2472,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 1) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 1) # 
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
         
@@ -2492,7 +2492,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 1) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 1) # 
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -2515,7 +2515,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 0) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -2535,7 +2535,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 1) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -2555,7 +2555,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 0) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -2575,7 +2575,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 0) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -2595,7 +2595,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 1) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -2615,7 +2615,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 0) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
         
@@ -2635,7 +2635,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 0) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
                 
@@ -2655,7 +2655,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 1) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
         
@@ -2676,7 +2676,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 0) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
         
@@ -2697,7 +2697,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 0) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
         
@@ -2718,7 +2718,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 0) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
         
@@ -2742,7 +2742,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 0) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 1) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
         
@@ -2762,7 +2762,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 1) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 1) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -2782,7 +2782,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 0) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 1) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -2802,7 +2802,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 0) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 1) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
         
@@ -2822,7 +2822,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 1) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 1) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -2842,7 +2842,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 0) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 1) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
         
@@ -2862,7 +2862,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 0) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 1) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
         
@@ -2882,7 +2882,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 0) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 1) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
         
@@ -2902,7 +2902,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 1) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 1) # major failure
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -2925,7 +2925,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 0) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -2945,7 +2945,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 1) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -2965,7 +2965,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 0) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -2985,7 +2985,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 0) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -3005,7 +3005,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 1) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -3025,7 +3025,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 0) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
         
@@ -3045,7 +3045,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 0) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
                 
@@ -3065,7 +3065,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 1) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
         
@@ -3085,7 +3085,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 0) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -3105,7 +3105,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 0) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -3129,7 +3129,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 0) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 1) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
         
@@ -3149,7 +3149,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 1) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 1) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -3169,7 +3169,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 0) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 1) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -3189,7 +3189,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 0) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 1) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
         
@@ -3209,7 +3209,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 1) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 1) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -3229,7 +3229,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 0) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 1) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
         
@@ -3249,7 +3249,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 0) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 1) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
         
@@ -3269,7 +3269,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 0) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 1) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
         
@@ -3289,7 +3289,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 1) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 1) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -3312,7 +3312,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 1) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -3332,7 +3332,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 1) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -3353,7 +3353,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 1) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -3373,7 +3373,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 1) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -3393,7 +3393,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 1) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -3413,7 +3413,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 1) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -3433,7 +3433,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 1) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -3454,7 +3454,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 1) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -3474,7 +3474,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 1) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -3494,7 +3494,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 1) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -3514,7 +3514,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 1) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -3534,7 +3534,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 1) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -3555,7 +3555,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 1) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -3575,7 +3575,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 1) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -3595,7 +3595,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 1) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -3615,7 +3615,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 1) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -3635,7 +3635,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 1) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -3656,7 +3656,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 1) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -3676,7 +3676,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 1) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -3696,7 +3696,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 1) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -3716,7 +3716,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 1) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -3736,7 +3736,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 1) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -3756,7 +3756,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 1) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -3776,7 +3776,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 1) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -3796,7 +3796,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 1) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -3816,7 +3816,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 1) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -3837,7 +3837,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 1) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -3857,7 +3857,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 1) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -3877,7 +3877,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 1) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -3897,7 +3897,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 1) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -3917,7 +3917,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 1) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -3937,7 +3937,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 1) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -3957,7 +3957,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 1) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -3977,7 +3977,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 1) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -3997,7 +3997,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 1) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -4018,7 +4018,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 1) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -4038,7 +4038,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 1) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -4058,7 +4058,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 1) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -4078,7 +4078,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 1) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -4098,7 +4098,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 1) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -4118,7 +4118,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 1) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -4138,7 +4138,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 1) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -4158,7 +4158,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 1) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -4178,7 +4178,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 1) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -4199,7 +4199,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 1) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -4219,7 +4219,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 1) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -4239,7 +4239,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 1) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -4259,7 +4259,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 1) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -4279,7 +4279,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 1) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -4299,7 +4299,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 1) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -4319,7 +4319,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 1) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -4339,7 +4339,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 1) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -4359,7 +4359,7 @@ class executeJihad(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
         self.assertEqual(app.map["Gulf States"].aid, 1) # still there
         self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alingment
+        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
