@@ -38,13 +38,11 @@ Thanks to Peter Shaw for implementing the Adjust system and to bunch of bug fixe
 #    12. Added 'summary' command to display state of each track
 #    13. Changed message if no Islamist Rule countries at 'turn'
 #    14. Changed message when card 1 event activated
-#
 
 SUSPEND_FILE = "suspend.lwot"
 UNDO_FILE = "undo.lwot"
 ROLLBACK_FILE = "turn."
 RELEASE = "1.06162015.1"
-
 
 import sys
 import cmd
@@ -56,12 +54,52 @@ except:
     import pickle
 import os.path
 
+class Alignment:
+    """
+    The alignment of a country relative to the US.
+    :param name the display name of this alignment
+    """
+    def __init__(self, name):
+        self.__name = name
+        
+    def __repr__(self):
+        return self.__name
+        
+    def __str__(self):
+        return self.__name
+
+# The possible alignments (or None)
+ADVERSARY = Alignment("Adversary")
+ALLY = Alignment("Ally")
+NEUTRAL = Alignment("Neutral")
+
+def require_type_or_none(value, required_type):
+    """
+    Asserts that the given value is either of the given type or is None
+    :param value: the value to check
+    :param required_type: the required type
+    :return: the checked value
+    """
+    if value is None:
+        return value
+    return require_type(value, required_type)
+
+def require_type(value, required_type):
+    """
+    Asserts that the given value is of the given type
+    :param value: the value to check
+    :param required_type: the required type
+    :return: the checked value
+    """
+    assert isinstance(value, required_type)
+    return value
+
 class Country:
+    __alignment = None
     app = None
     name = ""
     type = ""
     posture = ""
-    alignment = ""
     governance = 0
     schengen = False
     recruit = 0
@@ -79,12 +117,11 @@ class Country:
     cadre = 0
     plots = 0
     
-    def __init__(self, theApp, theName, theType, thePosture, theAlignment, theGovernance, theSchengen, theRecruit, no1,no2,no3, theOil, theResources):
+    def __init__(self, theApp, theName, theType, thePosture, theGovernance, theSchengen, theRecruit, no1, no2, no3, theOil, theResources):
         self.app = theApp
         self.name = theName
         self.type = theType
         self.posture = thePosture
-        self.alignment = theAlignment
         self.governance = theGovernance
         self.schengen = theSchengen
         self.recruit = theRecruit
@@ -101,7 +138,34 @@ class Country:
         self.links = []
         self.markers = []
         self.schengenLink = False
-        
+
+    def alignment(self):
+        return self.__alignment
+
+    def is_adversary(self):
+        return self.__alignment == ADVERSARY
+    
+    def is_ally(self):
+        return self.__alignment == ALLY
+    
+    def is_neutral(self):
+        return self.__alignment == NEUTRAL
+    
+    def is_aligned(self):
+        return self.__alignment is not None
+
+    def is_unaligned(self):
+        return self.__alignment is None
+
+    def make_adversary(self):
+        self.__alignment = ADVERSARY
+    
+    def make_ally(self):
+        self.__alignment = ALLY
+    
+    def make_neutral(self):
+        self.__alignment = NEUTRAL
+       
     def totalCells(self, includeSadr = False):
         total = self.activeCells + self.sleeperCells
         if includeSadr and "Sadr" in self.markers:
@@ -166,16 +230,13 @@ class Country:
         if len(self.markers) != 0:
             markersStr = "\n   Markers: %s" % ", ".join(self.markers)
         if self.type == "Shia-Mix" or self.type == "Suni":
-            return "%s, %s %s, %d Resource(s)\n   Troops:%d Active:%d Sleeper:%d Cadre:%d Aid:%d Besieged:%d Reg Ch:%d Plots:%d %s" % (self.name, self.govStr(),self.alignment,self.app.countryResources(self.name),self.troops(),self.activeCells,self.sleeperCells, self.cadre, self.aid, self.besieged, self.regimeChange, self.plots, markersStr)
-
+            return "%s, %s %s, %d Resource(s)\n   Troops:%d Active:%d Sleeper:%d Cadre:%d Aid:%d Besieged:%d Reg Ch:%d Plots:%d %s" % (self.name, self.govStr(), self.__alignment, self.app.countryResources(self.name), self.troops(), self.activeCells, self.sleeperCells, self.cadre, self.aid, self.besieged, self.regimeChange, self.plots, markersStr)
         elif self.name == "Philippines":
-            return "%s - Posture:%s\n   Troops:%d Active:%d Sleeper:%d Cadre:%d Plots:%d %s" % (self.name,self.posture, self.troops(), self.activeCells,self.sleeperCells, self.cadre, self.plots, markersStr)
-
-
+            return "%s - Posture:%s\n   Troops:%d Active:%d Sleeper:%d Cadre:%d Plots:%d %s" % (self.name, self.posture, self.troops(), self.activeCells, self.sleeperCells, self.cadre, self.plots, markersStr)
         elif self.type == "Non-Muslim" and self.type != "United States":    # 20150131PS This is illogical but does no harm
-            return "%s - Posture:%s\n   Active:%d Sleeper:%d Cadre:%d Plots:%d %s" % (self.name,self.posture, self.activeCells,self.sleeperCells, self.cadre, self.plots, markersStr)
+            return "%s - Posture:%s\n   Active:%d Sleeper:%d Cadre:%d Plots:%d %s" % (self.name, self.posture, self.activeCells, self.sleeperCells, self.cadre, self.plots, markersStr)
         elif self.type == "Iran":
-            return "%s, %s\n   Active:%d Sleeper:%d Cadre:%d Plots:%d %s" % (self.name, self.govStr(),self.activeCells,self.sleeperCells, self.cadre, self.plots, markersStr)
+            return "%s, %s\n   Active:%d Sleeper:%d Cadre:%d Plots:%d %s" % (self.name, self.govStr(), self.activeCells, self.sleeperCells, self.cadre, self.plots, markersStr)
             
     def printCountry(self):
         print self.countryStr()
@@ -237,7 +298,7 @@ class Card:
                 return (app.map["Iraq"].troops() > 0) or (app.map["Syria"].troops() > 0)
             elif self.number == 14: # Covert Action
                 for country in app.map:
-                    if app.map[country].alignment == "Adversary":
+                    if app.map[country].is_adversary():
                         return True
                 return False
             elif self.number == 15: # Ethiopia Strikes
@@ -256,7 +317,7 @@ class Card:
                 allyGoodPlotCountries = 0
                 for country in app.map:
                     if app.map[country].plots > 0:
-                        if app.map[country].alignment == "Ally" or app.map[country].governance == 1:
+                        if app.map[country].is_ally() or app.map[country].governance == 1:
                             allyGoodPlotCountries += 1
                 return allyGoodPlotCountries > 0
             elif self.number == 22: # Mossad and Shin Bet
@@ -326,16 +387,16 @@ class Card:
                     return True
                 return False
             elif self.number == 37: # Iraqi WMD
-                if app.map["United States"].posture == "Hard" and app.map["Iraq"].alignment == "Adversary":
+                if app.map["United States"].posture == "Hard" and app.map["Iraq"].is_adversary():
                     return True
                 return False
             elif self.number == 38: # Libyan Deal
                 if app.map["Libya"].governance == 3:
-                    if app.map["Iraq"].alignment == "Ally" or app.map["Syria"].alignment == "Ally":
+                    if app.map["Iraq"].is_ally() or app.map["Syria"].is_ally():
                         return True
                 return False
             elif self.number == 39: # Libyan WMD
-                if app.map["United States"].posture == "Hard" and app.map["Libya"].alignment == "Adversary" and "Libyan Deal" not in app.markers:
+                if app.map["United States"].posture == "Hard" and app.map["Libya"].is_adversary() and "Libyan Deal" not in app.markers:
                     return True
                 return False
             elif self.number == 40: # Mass Turnout
@@ -343,7 +404,7 @@ class Card:
             elif self.number == 41: # NATO
                 return (app.numRegimeChange() > 0) and (app.gwotPenalty() >= 0)
             elif self.number == 42: # Pakistani Offensive
-                return (app.map["Pakistan"].alignment == "Ally") and ("FATA" in app.map["Pakistan"].markers)
+                return (app.map["Pakistan"].is_ally()) and ("FATA" in app.map["Pakistan"].markers)
             elif self.number == 43: # Patriot Act
                 return True
             elif self.number == 44: # Renditions
@@ -498,7 +559,7 @@ class Card:
             elif self.number == 92: # Saddam
                 if "Saddam Captured" in app.markers:
                     return False
-                return (app.map["Iraq"].governance == 3) and (app.map["Iraq"].alignment == "Adversary")
+                return (app.map["Iraq"].governance == 3) and (app.map["Iraq"].is_adversary())
             elif self.number == 93: # Taliban
                 return True
             elif self.number == 94: # The door of Itjihad was closed
@@ -578,13 +639,13 @@ class Card:
                             if app.map[country].posture == "Hard":
                                 return True
                         else:
-                            if app.map[country].alignment == "Ally":
+                            if app.map[country].is_ally():
                                 return True
             elif self.number == 116: # KSM
                 if side == "US":
                     for country in app.map:
                         if app.map[country].plots > 0:
-                            if app.map[country].type == "Non-Muslim" or app.map[country].alignment == "Ally":
+                            if app.map[country].type == "Non-Muslim" or app.map[country].is_ally():
                                 return True
                     return False
                 else:
@@ -756,7 +817,7 @@ class Card:
             elif self.number == 3: # CTR    20150616PS
                 app.map["Russia"].markers.append("CTR")    # 20150616PS
                 app.outputToHistory("CTR Marker added Russia", True)    # 20150616PS
-                if (app.map["Central Asia"].alignment == "Ally") or (app.map["Central Asia"].alignment == "Neutral"):
+                if (app.map["Central Asia"].is_ally()) or (app.map["Central Asia"].is_neutral()):
                     app.map["Central Asia"].markers.append("CTR")    # 20150616PS
                     app.outputToHistory("CTR Marker added in Central Asia", True)    # 20150616PS
             elif self.number == 4: # Moro Talks
@@ -841,7 +902,7 @@ class Card:
                 targetCountry = ""
                 numAdv = 0
                 for country in app.map:
-                    if app.map[country].alignment == "Adversary":
+                    if app.map[country].is_adversary():
                         targetCountry = country
                         numAdv += 1
                 if numAdv == 0:
@@ -852,16 +913,15 @@ class Card:
                         if input == "":
                             print ""
                             return
+                        elif app.map[input].is_adversary():
+                            targetCountry = input
+                            break
                         else:
-                            if app.map[input].alignment != "Adversary":
-                                print "%s is not an Adversary." % input
-                                print ""
-                            else:
-                                targetCountry = input
-                                break
+                            print "%s is not an Adversary." % input
+                            print ""
                 actionRoll = app.getRollFromUser("Enter Covert Action roll or r to have program roll: ")
                 if actionRoll >= 4:
-                    app.map[targetCountry].alignment = "Neutral"
+                    app.map[targetCountry].make_neutral()
                     app.outputToHistory("Covert Action successful, %s now Neutral." % targetCountry, False)
                     app.outputToHistory(app.map[input].countryStr(), True)
                 else:
@@ -870,24 +930,24 @@ class Card:
                 if (app.map["Somalia"].governance == 4) or (app.map["Sudan"].governance == 4):
                     if app.map["Somalia"].governance != 4:
                         app.map["Sudan"].governance = 3
-                        app.map["Sudan"].alignment = "Neutral"
+                        app.map["Sudan"].make_neutral()
                         app.outputToHistory("Sudan now Poor Neutral.", False)
                         app.outputToHistory(app.map["Sudan"].countryStr(), True)
                     elif app.map["Sudan"].governance != 4:
                         app.map["Somalia"].governance = 3
-                        app.map["Somalia"].alignment = "Neutral"
+                        app.map["Somalia"].make_neutral()
                         app.outputToHistory("Somalia now Poor Neutral.", False)
                         app.outputToHistory(app.map["Somalia"].countryStr(), True)
                     else:
                         print "Both Somalia and Sudan are under Islamist Rule."
                         if app.getYesNoFromUser("Do you want Somalia to be set to Poor Neutral? (y/n): "):
                             app.map["Somalia"].governance = 3
-                            app.map["Somalia"].alignment = "Neutral"
+                            app.map["Somalia"].make_neutral()
                             app.outputToHistory("Somalia now Poor Neutral.", False)
                             app.outputToHistory(app.map["Somalia"].countryStr(), True)
                         else:
                             app.map["Sudan"].governance = 3
-                            app.map["Sudan"].alignment = "Neutral"
+                            app.map["Sudan"].make_neutral()
                             app.outputToHistory("Sudan now Poor Neutral.", False)
                             app.outputToHistory(app.map["Sudan"].countryStr(), True)
                     print ""
@@ -929,12 +989,12 @@ class Card:
             elif self.number == 19: # Kemalist Republic
                 app.outputToHistory("Turkey now a Fair Ally.", False)
                 app.map["Turkey"].governance = 2
-                app.map["Turkey"].alignment = "Ally"
+                app.map["Turkey"].make_ally()
                 app.outputToHistory(app.map["Turkey"].countryStr(), True)
             elif self.number == 20: # King Abdullah
                 app.outputToHistory("Jordan now a Fair Ally.", False)
                 app.map["Jordan"].governance = 2
-                app.map["Jordan"].alignment = "Ally"
+                app.map["Jordan"].make_ally()
                 app.outputToHistory(app.map["Jordan"].countryStr(), True)
                 app.changePrestige(1)
                 app.changeFunding(-1)
@@ -945,7 +1005,7 @@ class Card:
                         print ""
                         return
                     else:
-                        if app.map[plotCountry].governance != 1 and app.map[plotCountry].alignment != "Ally":
+                        if app.map[plotCountry].governance != 1 and not app.map[plotCountry].is_ally():
                             print "%s is not Good or an Ally." % plotCountry
                             print ""
                         elif app.map[plotCountry].plots <= 0:
@@ -1132,11 +1192,11 @@ class Card:
                             print ""
                             return False
                         else:
-                            if app.map[input].alignment != "Adversary":
+                            if not app.map[input].is_adversary():
                                 print "%s is not a Adversary country." % input
                                 print ""
                             else:
-                                app.map[input].alignment = "Neutral"
+                                app.map[input].make_neutral()
                                 app.outputToHistory("%s now Neutral" % input, False)
                                 app.map[input].aid += 1
                                 app.outputToHistory("Aid added to %s." % input, False)
@@ -1168,7 +1228,7 @@ class Card:
             elif self.number == 36: # Indo-Pakistani Talks
                 app.markers.append("Indo-Pakistani Talks")
                 app.outputToHistory("Indo-Pakistani Talks in Play.", False)
-                app.map['Pakistan'].alignment = "Ally"
+                app.map['Pakistan'].make_ally()
                 app.outputToHistory("Pakistan now Ally", False)
                 posStr = app.getPostureFromUser("Select India's Posture (hard or soft): ")
                 app.map["India"].posture = posStr
@@ -1181,7 +1241,7 @@ class Card:
             elif self.number == 38: # Libyan Deal
                 app.markers.append("Libyan Deal")
                 app.outputToHistory("Libyan Deal in Play.", False)
-                app.map["Libya"].alignment == "Ally"
+                app.map["Libya"].is_ally()
                 app.outputToHistory("Libya now Ally", False)
                 app.changePrestige(1)
                 print "Select the Posture of 2 Schengen countries."
@@ -1445,11 +1505,11 @@ class Card:
                         app.outputToHistory(app.map["Caucasus"].countryStr(), True)
                     else:
                         app.testCountry("Central Asia")
-                        if app.map["Central Asia"].alignment == "Ally":
-                            app.map["Central Asia"].alignment = "Neutral"
+                        if app.map["Central Asia"].is_ally():
+                            app.map["Central Asia"].make_neutral()
                             app.outputToHistory("Central Asia now Neutral.", True)
-                        elif app.map["Central Asia"].alignment == "Neutral":
-                            app.map["Central Asia"].alignment = "Adversary"
+                        elif app.map["Central Asia"].is_neutral():
+                            app.map["Central Asia"].make_adversary()
                             app.outputToHistory("Central Asia now Adversary.", True)
                         app.outputToHistory(app.map["Central Asia"].countryStr(), True)
             elif self.number == 63: # Gaza War
@@ -1459,7 +1519,7 @@ class Card:
             elif self.number == 64: # Hariri Killed
                 app.testCountry("Lebanon")
                 app.testCountry("Syria")
-                app.map["Syria"].alignment = "Adversary"
+                app.map["Syria"].make_adversary()
                 app.outputToHistory("Syria now Adversary.", False)
                 if app.map["Syria"].governance < 3:
                     app.worsenGovernance("Syria")
@@ -1520,7 +1580,7 @@ class Card:
                     app.outputToHistory("No Allys to shift.", True)
                 else:
                     target = allys[0][0]
-                    app.map[target].alignment = "Neutral"
+                    app.map[target].make_neutral()
                     app.outputToHistory("%s Alignment shifted to Neutral." % target, True)
             elif self.number == 77: # Al Jazeera
                 choices = app.minorJihadInGoodFairChoice(1, False, True)
@@ -1528,11 +1588,11 @@ class Card:
                     app.outputToHistory("No countries to shift.", True)
                 else:
                     target = choices[0][0]
-                    if app.map[target].alignment == "Ally":
-                        app.map[target].alignment = "Neutral"
-                    elif app.map[target].alignment == "Neutral":    
-                        app.map[target].alignment = "Adversary"
-                    app.outputToHistory("%s Alignment shifted to %s." % (target, app.map[target].alignment), True)
+                    if app.map[target].is_ally():
+                        app.map[target].make_neutral()
+                    elif app.map[target].is_neutral():    
+                        app.map[target].make_adversary()
+                    app.outputToHistory("%s Alignment shifted to %s." % (target, app.map[target].alignment()), True)
             elif self.number == 78: # Axis of Evil
                 app.outputToHistory("US discards any Iran, Hizballah, or Jaysh al-Mahdi cards from hand.", False)
                 if app.map["United States"].posture == "Soft":
@@ -1584,11 +1644,11 @@ class Card:
                     app.executeRecruit(possibles[i], 1, rolls, False, True)
             elif self.number == 83: # Kashmir
                 app.placeCells("Pakistan", 1)
-                if app.map["Pakistan"].alignment == "Ally":
-                    app.map["Pakistan"].alignment = "Neutral"
-                elif app.map["Pakistan"].alignment == "Neutral":    
-                    app.map["Pakistan"].alignment = "Adversary"
-                app.outputToHistory("%s Alignment shifted to %s." % ("Pakistan", app.map["Pakistan"].alignment), True)
+                if app.map["Pakistan"].is_ally():
+                    app.map["Pakistan"].make_neutral()
+                elif app.map["Pakistan"].is_neutral():    
+                    app.map["Pakistan"].make_adversary()
+                app.outputToHistory("%s Alignment shifted to %s." % ("Pakistan", app.map["Pakistan"].alignment()), True)
                 app.outputToHistory(app.map["Pakistan"].countryStr(), True)
             elif self.number == 84 or self.number == 85: # Leak
                 possibles = []
@@ -1620,7 +1680,7 @@ class Card:
                     app.outputToHistory("No Allies to shift.", True)
                 else:
                     target = allies[0][0]
-                    app.map[target].alignment = "Neutral"
+                    app.map[target].make_neutral()
                     app.outputToHistory("%s Alignment shifted to Neutral." % target, True)
             elif self.number == 86: # Lebanon War
                 app.outputToHistory("US discards a random card.", False)    
@@ -1736,7 +1796,7 @@ class Card:
                     app.map["Central Asia"].governance = 3
                 else:
                     app.map["Central Asia"].governance = 2
-                app.map["Central Asia"].alignment = "Neutral"
+                app.map["Central Asia"].make_neutral()
                 app.outputToHistory("%s tested, governance %s" % (app.map["Central Asia"].name, app.map["Central Asia"].govStr()), False)
             elif self.number == 103: # Hizballah
                 if side == "US":
@@ -1790,7 +1850,7 @@ class Card:
                     app.testCountry("Lebanon")
                     app.map["Lebanon"].governance = 3
                     app.outputToHistory("Lebanon governance now Poor.", False)
-                    app.map["Lebanon"].alignment = "Neutral"
+                    app.map["Lebanon"].make_neutral()
                     app.outputToHistory("Lebanon alignment now Neutral.", True)
             elif self.number == 104 or self.number == 105: # Iran
                 if side == "US":
@@ -1981,7 +2041,7 @@ class Card:
             elif self.number == 108: # Musharraf
                 app.removeCell("Pakistan", side)    # 20150131PS added side
                 app.map["Pakistan"].governance = 3
-                app.map["Pakistan"].alignment = "Ally"
+                app.map["Pakistan"].make_ally()
                 app.outputToHistory("Pakistan now Poor Ally.", False)
                 app.outputToHistory(app.map["Pakistan"].countryStr(), True)
             elif self.number == 109: # Tora Bora
@@ -2057,20 +2117,20 @@ class Card:
                 if app.prestige >= 7:
                     app.map["Sudan"].aid += 1
                     app.outputToHistory("Aid added to Sudan.", False)
-                    if app.map["Sudan"].alignment == "Adversary":
-                        app.map["Sudan"].alignment = "Neutral"
+                    if app.map["Sudan"].is_adversary():
+                        app.map["Sudan"].make_neutral()
                         app.outputToHistory("Sudan alignment improved.", False)
-                    elif app.map["Sudan"].alignment == "Neutral":
-                        app.map["Sudan"].alignment = "Ally"
+                    elif app.map["Sudan"].is_neutral():
+                        app.map["Sudan"].make_ally()
                         app.outputToHistory("Sudan alignment improved.", False)
                 else:
                     app.map["Sudan"].besieged = 1
                     app.outputToHistory("Sudan now Besieged Regime.", False)
-                    if app.map["Sudan"].alignment == "Ally":
-                        app.map["Sudan"].alignment = "Neutral"
+                    if app.map["Sudan"].is_ally():
+                        app.map["Sudan"].make_neutral()
                         app.outputToHistory("Sudan alignment worsened.", False)
-                    elif app.map["Sudan"].alignment == "Neutral":
-                        app.map["Sudan"].alignment = "Adversary"
+                    elif app.map["Sudan"].is_neutral():
+                        app.map["Sudan"].make_adversary()
                         app.outputToHistory("Sudan alignment worsened.", False)
                 app.outputToHistory(app.map["Sudan"].countryStr(), True)                
             elif self.number == 114: # GTMO
@@ -2096,7 +2156,7 @@ class Card:
                                 if app.map[country].posture == "Hard":
                                     targets.append(country)
                             else:
-                                if app.map[country].alignment == "Ally":
+                                if app.map[country].is_ally():
                                     targets.append(country)
                     if len(targets) == 1:
                         target = targets[0]
@@ -2125,7 +2185,7 @@ class Card:
                                 if app.map[country].posture == "Hard":
                                     targets.append(country)
                             else:
-                                if app.map[country].alignment == "Ally":
+                                if app.map[country].is_ally():
                                     targets.append(country)
                     target = random.choice(targets)
                     app.map[target].plots += 1
@@ -2134,7 +2194,7 @@ class Card:
                 if side == "US":
                     for country in app.map:
                         if app.map[country].plots > 0:
-                            if app.map[country].alignment == "Ally" or app.map[country].type == "Non-Muslim":
+                            if app.map[country].is_ally() or app.map[country].type == "Non-Muslim":
                                 numPlots = app.map[country].plots
                                 app.map[country].plots = 0
                                 app.outputToHistory("%d Plots removed from %s." % (numPlots, country), False)
@@ -2154,19 +2214,19 @@ class Card:
                 app.testCountry("Yemen")
                 if side == "US":
                     if app.map["Yemen"].governance != 4:
-                        if app.map["Yemen"].alignment == "Adversary":
-                            app.map["Yemen"].alignment = "Neutral"
-                        elif app.map["Yemen"].alignment == "Neutral":
-                            app.map["Yemen"].alignment = "Ally"
-                        app.outputToHistory("Yemen Alignment improved to %s." % app.map["Yemen"].alignment, False)
+                        if app.map["Yemen"].is_adversary():
+                            app.map["Yemen"].make_neutral()
+                        elif app.map["Yemen"].is_neutral():
+                            app.map["Yemen"].make_ally()
+                        app.outputToHistory("Yemen Alignment improved to %s." % app.map["Yemen"].alignment(), False)
                         app.map["Yemen"].aid += 1
                         app.outputToHistory("Aid added to Yemen.", True)
                 else:
-                    if app.map["Yemen"].alignment == "Ally":
-                        app.map["Yemen"].alignment = "Neutral"
-                    elif app.map["Yemen"].alignment == "Neutral":
-                        app.map["Yemen"].alignment = "Adversary"
-                    app.outputToHistory("Yemen Alignment worsened to %s." % app.map["Yemen"].alignment, False)
+                    if app.map["Yemen"].is_ally():
+                        app.map["Yemen"].make_neutral()
+                    elif app.map["Yemen"].is_neutral():
+                        app.map["Yemen"].make_adversary()
+                    app.outputToHistory("Yemen Alignment worsened to %s." % app.map["Yemen"].alignment(), False)
                     app.map["Yemen"].besieged = 1
                     app.outputToHistory("Yemen now Besieged Regime.", True)
             elif self.number == 120: # US Election
@@ -2311,7 +2371,7 @@ class Labyrinth(cmd.Cmd):
                     if (self.map[country].posture == ""):
                         badCountry = True
                 elif self.map[country].type != "Iran":
-                    if (self.map[country].alignment == ""):
+                    if self.map[country].is_unaligned():
                         badCountry = True
             if badCountry:
                 print "DEBUG: UNTESTED COUNTRY"
@@ -2333,141 +2393,141 @@ class Labyrinth(cmd.Cmd):
             print ""
         
     def mapSetup(self):
-        self.map["Canada"] = Country(self, "Canada", "Non-Muslim", "", "", 1, False, 0, 0, 0, 0, False, 0)
-        self.map["United States"] = Country(self, "United States", "Non-Muslim", "Hard", "", 1, False, 0, 0, 0, 0, False, 0)
-        self.map["United Kingdom"] = Country(self, "United Kingdom", "Non-Muslim", "", "", 1, False, 3, 0, 0, 0, False, 0)
-        self.map["Serbia"] = Country(self, "Serbia", "Non-Muslim", "", "", 1, False, 0, 0, 0, 0, False, 0)
-        self.map["Israel"] = Country(self, "Israel", "Non-Muslim", "Hard", "", 1, False, 0, 0, 0, 0, False, 0)
-        self.map["India"] = Country(self, "India", "Non-Muslim", "", "", 1, False, 0, 0, 0, 0, False, 0)
-        self.map["Scandinavia"] = Country(self, "Scandinavia", "Non-Muslim", "", "", 1, True, 0, 0, 0, 0, False, 0)
-        self.map["Eastern Europe"] = Country(self, "Eastern Europe", "Non-Muslim", "", "", 1, True, 0, 0, 0, 0, False, 0)
-        self.map["Benelux"] = Country(self, "Benelux", "Non-Muslim", "", "", 1, True, 0, 0, 0, 0, False, 0)
-        self.map["Germany"] = Country(self, "Germany", "Non-Muslim", "", "", 1, True, 0, 0, 0, 0, False, 0)
-        self.map["France"] = Country(self, "France", "Non-Muslim", "", "", 1, True, 2, 0, 0, 0, False, 0)
-        self.map["Italy"] = Country(self, "Italy", "Non-Muslim", "", "", 1, True, 0, 0, 0, 0, False, 0)
-        self.map["Spain"] = Country(self, "Spain", "Non-Muslim", "", "", 1, True, 2, 0, 0, 0, False, 0)
-        self.map["Russia"] = Country(self, "Russia", "Non-Muslim", "", "", 2, False, 0, 0, 0, 0, False, 0)
-        self.map["Caucasus"] = Country(self, "Caucasus", "Non-Muslim", "", "", 2, False, 0, 0, 0, 0, False, 0)
-        self.map["China"] = Country(self, "China", "Non-Muslim", "", "", 2, False, 0, 0, 0, 0, False, 0)
-        self.map["Kenya/Tanzania"] = Country(self, "Kenya/Tanzania", "Non-Muslim", "", "", 2, False, 0, 0, 0, 0, False, 0)
-        self.map["Thailand"] = Country(self, "Thailand", "Non-Muslim", "", "", 2, False, 0, 0, 0, 0, False, 0)
-        self.map["Philippines"] = Country(self, "Philippines", "Non-Muslim", "", "", 2, False, 3, 0, 0, 0, False, 0)
-        self.map["Morocco"] = Country(self, "Morocco", "Suni", "", "", 0, False, 0, 0, 0, 0, False, 2)
-        self.map["Algeria/Tunisia"] = Country(self, "Algeria/Tunisia", "Suni", "", "", 0, False, 0, 0, 0, 0, True, 2)
-        self.map["Libya"] = Country(self, "Libya", "Suni", "", "", 0, False, 0, 0, 0, 0, True, 1)
-        self.map["Egypt"] = Country(self, "Egypt", "Suni", "", "", 0, False, 0, 0, 0, 0, False, 3)
-        self.map["Sudan"] = Country(self, "Sudan", "Suni", "", "", 0, False, 0, 0, 0, 0, True, 1)
-        self.map["Somalia"] = Country(self, "Somalia", "Suni", "", "", 0, False, 0, 0, 0, 0, False, 1)
-        self.map["Jordan"] = Country(self, "Jordan", "Suni", "", "", 0, False, 0, 0, 0, 0, False, 1)
-        self.map["Syria"] = Country(self, "Syria", "Suni", "", 0, 0, False, 0, 0, 0, 0, False, 2)
-        self.map["Central Asia"] = Country(self, "Central Asia", "Suni", "", "", 0, False, 0, 0, 0, 0, False, 2)
-        self.map["Indonesia/Malaysia"] = Country(self, "Indonesia/Malaysia", "Suni", "", "", 0, False, 0, 0, 0, 0, True, 3)
-        self.map["Turkey"] = Country(self, "Turkey", "Shia-Mix", "", "", 0, False, 0, 0, 0, 0, False, 2)
-        self.map["Lebanon"] = Country(self, "Lebanon", "Shia-Mix", "", "", 0, False, 0, 0, 0, 0, False, 1)
-        self.map["Yemen"] = Country(self, "Yemen", "Shia-Mix", "", "", 0, False, 0, 0, 0, 0, False, 1)
-        self.map["Iraq"] = Country(self, "Iraq", "Shia-Mix", "", "", 0, False, 0, 0, 0, 0, True, 3)
-        self.map["Saudi Arabia"] = Country(self, "Saudi Arabia", "Shia-Mix", "", "", 0, False, 0, 2, 0, 0, True, 3)
-        self.map["Gulf States"] = Country(self, "Gulf States", "Shia-Mix", "", "", 0, False, 0, 2, 0, 0, True, 3)
-        self.map["Pakistan"] = Country(self, "Pakistan", "Shia-Mix", "", "", 0, False, 0, 0, 0, 0, False, 2)
-        self.map["Afghanistan"] = Country(self, "Afghanistan", "Shia-Mix", "", "", 0, False, 0, 0, 0, 0, False, 1)
-        self.map["Iran"] = Country(self, "Iran", "Iran", "", "Fair", 2, False, 0, 0, 0, 0, False, 0)
+        self.map["Canada"] = Country(self, "Canada", "Non-Muslim", "", 1, False, 0, 0, 0, 0, False, 0)
+        self.map["United States"] = Country(self, "United States", "Non-Muslim", "Hard", 1, False, 0, 0, 0, 0, False, 0)
+        self.map["United Kingdom"] = Country(self, "United Kingdom", "Non-Muslim", "", 1, False, 3, 0, 0, 0, False, 0)
+        self.map["Serbia"] = Country(self, "Serbia", "Non-Muslim", "", 1, False, 0, 0, 0, 0, False, 0)
+        self.map["Israel"] = Country(self, "Israel", "Non-Muslim", "Hard", 1, False, 0, 0, 0, 0, False, 0)
+        self.map["India"] = Country(self, "India", "Non-Muslim", "", 1, False, 0, 0, 0, 0, False, 0)
+        self.map["Scandinavia"] = Country(self, "Scandinavia", "Non-Muslim", "", 1, True, 0, 0, 0, 0, False, 0)
+        self.map["Eastern Europe"] = Country(self, "Eastern Europe", "Non-Muslim", "", 1, True, 0, 0, 0, 0, False, 0)
+        self.map["Benelux"] = Country(self, "Benelux", "Non-Muslim", "", 1, True, 0, 0, 0, 0, False, 0)
+        self.map["Germany"] = Country(self, "Germany", "Non-Muslim", "", 1, True, 0, 0, 0, 0, False, 0)
+        self.map["France"] = Country(self, "France", "Non-Muslim", "", 1, True, 2, 0, 0, 0, False, 0)
+        self.map["Italy"] = Country(self, "Italy", "Non-Muslim", "", 1, True, 0, 0, 0, 0, False, 0)
+        self.map["Spain"] = Country(self, "Spain", "Non-Muslim", "", 1, True, 2, 0, 0, 0, False, 0)
+        self.map["Russia"] = Country(self, "Russia", "Non-Muslim", "", 2, False, 0, 0, 0, 0, False, 0)
+        self.map["Caucasus"] = Country(self, "Caucasus", "Non-Muslim", "", 2, False, 0, 0, 0, 0, False, 0)
+        self.map["China"] = Country(self, "China", "Non-Muslim", "", 2, False, 0, 0, 0, 0, False, 0)
+        self.map["Kenya/Tanzania"] = Country(self, "Kenya/Tanzania", "Non-Muslim", "", 2, False, 0, 0, 0, 0, False, 0)
+        self.map["Thailand"] = Country(self, "Thailand", "Non-Muslim", "", 2, False, 0, 0, 0, 0, False, 0)
+        self.map["Philippines"] = Country(self, "Philippines", "Non-Muslim", "", 2, False, 3, 0, 0, 0, False, 0)
+        self.map["Morocco"] = Country(self, "Morocco", "Suni", "", 0, False, 0, 0, 0, 0, False, 2)
+        self.map["Algeria/Tunisia"] = Country(self, "Algeria/Tunisia", "Suni", "", 0, False, 0, 0, 0, 0, True, 2)
+        self.map["Libya"] = Country(self, "Libya", "Suni", "", 0, False, 0, 0, 0, 0, True, 1)
+        self.map["Egypt"] = Country(self, "Egypt", "Suni", "", 0, False, 0, 0, 0, 0, False, 3)
+        self.map["Sudan"] = Country(self, "Sudan", "Suni", "", 0, False, 0, 0, 0, 0, True, 1)
+        self.map["Somalia"] = Country(self, "Somalia", "Suni", "", 0, False, 0, 0, 0, 0, False, 1)
+        self.map["Jordan"] = Country(self, "Jordan", "Suni", "", 0, False, 0, 0, 0, 0, False, 1)
+        self.map["Syria"] = Country(self, "Syria", "Suni", "", 0, False, 0, 0, 0, 0, False, 2)
+        self.map["Central Asia"] = Country(self, "Central Asia", "Suni", "", 0, False, 0, 0, 0, 0, False, 2)
+        self.map["Indonesia/Malaysia"] = Country(self, "Indonesia/Malaysia", "Suni", "", 0, False, 0, 0, 0, 0, True, 3)
+        self.map["Turkey"] = Country(self, "Turkey", "Shia-Mix", "", 0, False, 0, 0, 0, 0, False, 2)
+        self.map["Lebanon"] = Country(self, "Lebanon", "Shia-Mix", "", 0, False, 0, 0, 0, 0, False, 1)
+        self.map["Yemen"] = Country(self, "Yemen", "Shia-Mix", "", 0, False, 0, 0, 0, 0, False, 1)
+        self.map["Iraq"] = Country(self, "Iraq", "Shia-Mix", "", 0, False, 0, 0, 0, 0, True, 3)
+        self.map["Saudi Arabia"] = Country(self, "Saudi Arabia", "Shia-Mix", "", 0, False, 0, 2, 0, 0, True, 3)
+        self.map["Gulf States"] = Country(self, "Gulf States", "Shia-Mix", "", 0, False, 0, 2, 0, 0, True, 3)
+        self.map["Pakistan"] = Country(self, "Pakistan", "Shia-Mix", "", 0, False, 0, 0, 0, 0, False, 2)
+        self.map["Afghanistan"] = Country(self, "Afghanistan", "Shia-Mix", "", 0, False, 0, 0, 0, 0, False, 1)
+        self.map["Iran"] = Country(self, "Iran", "Iran", "Fair", 2, False, 0, 0, 0, 0, False, 0)
     
-    #     self.map["Canada"] = Country("Canada", "Non-Muslim", "", "", 1, False, 0, 0, 0, 0, False, 0)
+        # Canada
         self.map["Canada"].links.append(self.map["United States"])
         self.map["Canada"].links.append(self.map["United Kingdom"])
         self.map["Canada"].schengenLink = True
-    #     self.map["United States"] = Country("United States", "Non-Muslim", "Hard", "", 1, False, 0, 0, 0, 0, False, 0)
+        # United States
         self.map["United States"].links.append(self.map["Canada"])
         self.map["United States"].links.append(self.map["United Kingdom"])
         self.map["United States"].links.append(self.map["Philippines"])
         self.map["United States"].schengenLink = True
-    #     self.map["United Kingdom"] = Country("United Kingdom", "Non-Muslim", "", "", 1, False, 3, 0, 0, 0, False, 0)
+        # United Kingdom
         self.map["United Kingdom"].links.append(self.map["Canada"])
         self.map["United Kingdom"].links.append(self.map["United States"])
         self.map["United Kingdom"].schengenLink = True
-    #     self.map["Serbia"] = Country("Serbia", "Non-Muslim", "", "", 1, False, 0, 0, 0, 0, False, 0)
+        # Serbia
         self.map["Serbia"].links.append(self.map["Russia"])
         self.map["Serbia"].links.append(self.map["Turkey"])
         self.map["Serbia"].schengenLink = True
-    #     self.map["Israel"] = Country("Israel", "Non-Muslim", "Hard", "", 1, False, 0, 0, 0, 0, False, 0)
+        # Israel
         self.map["Israel"].links.append(self.map["Lebanon"])
         self.map["Israel"].links.append(self.map["Jordan"])
         self.map["Israel"].links.append(self.map["Egypt"])
-    #     self.map["India"] = Country("India", "Non-Muslim", "", "", 1, False, 0, 0, 0, 0, False, 0)
+        # India
         self.map["India"].links.append(self.map["Pakistan"])
         self.map["India"].links.append(self.map["Indonesia/Malaysia"])
-    #     self.map["Russia"] = Country("Russia", "Non-Muslim", "", "", 2, True, 0, 0, 0, 0, False, 0)
+        # Russia
         self.map["Russia"].links.append(self.map["Serbia"])
         self.map["Russia"].links.append(self.map["Turkey"])
         self.map["Russia"].links.append(self.map["Caucasus"])
         self.map["Russia"].links.append(self.map["Central Asia"])
         self.map["Russia"].schengenLink = True
-    #     self.map["Caucasus"] = Country("Caucasus", "Non-Muslim", "", "", 2, True, 0, 0, 0, 0, False, 0)
+        # Caucasus
         self.map["Caucasus"].links.append(self.map["Russia"])
         self.map["Caucasus"].links.append(self.map["Turkey"])
         self.map["Caucasus"].links.append(self.map["Iran"])
         self.map["Caucasus"].links.append(self.map["Central Asia"])
-    #     self.map["China"] = Country("China", "Non-Muslim", "", "", 2, True, 0, 0, 0, 0, False, 0)
+        # China
         self.map["China"].links.append(self.map["Central Asia"])
         self.map["China"].links.append(self.map["Thailand"])
-    #     self.map["Kenya/Tanzania"] = Country("Kenya/Tanzania", "Non-Muslim", "", "", 2, True, 0, 0, 0, 0, False, 0)
+        # Kenya/Tanzania
         self.map["Kenya/Tanzania"].links.append(self.map["Sudan"])
         self.map["Kenya/Tanzania"].links.append(self.map["Somalia"])
-    #     self.map["Thailand"] = Country("Thailand", "Non-Muslim", "", "", 2, True, 0, 0, 0, 0, False, 0)
+        # Thailand
         self.map["Thailand"].links.append(self.map["China"])
         self.map["Thailand"].links.append(self.map["Philippines"])
         self.map["Thailand"].links.append(self.map["Indonesia/Malaysia"])
-    #     self.map["Philippines"] = Country("Philippines", "Non-Muslim", "", "", 2, True, 3, 0, 0, 0, False, 0)
+        # Philippines
         self.map["Philippines"].links.append(self.map["United States"])
         self.map["Philippines"].links.append(self.map["Thailand"])
         self.map["Philippines"].links.append(self.map["Indonesia/Malaysia"])
-    #     self.map["Morocco"] = Country("Morocco", "Suni", "", "", 0, False, 0, 0, 0, 0, False, 2)
+        # Morocco
         self.map["Morocco"].links.append(self.map["Algeria/Tunisia"])
         self.map["Morocco"].schengenLink = True
-    #     self.map["Algeria/Tunisia"] = Country("Algeria/Tunisia", "Suni", "", "", 0, False, 0, 0, 0, 0, True, 2)
+        # Algeria/Tunisia
         self.map["Algeria/Tunisia"].links.append(self.map["Morocco"])
         self.map["Algeria/Tunisia"].links.append(self.map["Libya"])
         self.map["Algeria/Tunisia"].schengenLink = True
-    #     self.map["Libya"] = Country("Libya", "Suni", "", "Adversary", 3, False, 0, 0, 0, 0, True, 1)
+        # Libya
         self.map["Libya"].links.append(self.map["Algeria/Tunisia"])
         self.map["Libya"].links.append(self.map["Egypt"])
         self.map["Libya"].links.append(self.map["Sudan"])
         self.map["Libya"].schengenLink = True
-    #     self.map["Egypt"] = Country("Egypt", "Suni", "", "", 0, False, 0, 0, 0, 0, False, 3)
+        # Egypt
         self.map["Egypt"].links.append(self.map["Libya"])
         self.map["Egypt"].links.append(self.map["Israel"])
         self.map["Egypt"].links.append(self.map["Sudan"])
-    #     self.map["Sudan"] = Country("Sudan", "Suni", "", "", 0, False, 0, 0, 0, 0, True, 1)
+        # Sudan
         self.map["Sudan"].links.append(self.map["Libya"])
         self.map["Sudan"].links.append(self.map["Egypt"])
         self.map["Sudan"].links.append(self.map["Kenya/Tanzania"])
         self.map["Sudan"].links.append(self.map["Somalia"])
-    #     self.map["Somalia"] = Country("Somalia", "Suni", "", "", 0, False, 0, 0, 0, 0, False, 1)
+        # Somalia
         self.map["Somalia"].links.append(self.map["Sudan"])
         self.map["Somalia"].links.append(self.map["Kenya/Tanzania"])
         self.map["Somalia"].links.append(self.map["Yemen"])
-    #     self.map["Jordan"] = Country("Jordan", "Suni", "", "", 0, False, 0, 0, 0, 0, False, 1)
+        # Jordan
         self.map["Jordan"].links.append(self.map["Israel"])
         self.map["Jordan"].links.append(self.map["Syria"])
         self.map["Jordan"].links.append(self.map["Iraq"])
         self.map["Jordan"].links.append(self.map["Saudi Arabia"])
-    #     self.map["Syria"] = Country("Syria", "Suni", "Adversary", "Fair", 2, False, 0, 0, 0, 0, False, 2)
+        # Syria
         self.map["Syria"].links.append(self.map["Turkey"])
         self.map["Syria"].links.append(self.map["Lebanon"])
         self.map["Syria"].links.append(self.map["Jordan"])
         self.map["Syria"].links.append(self.map["Iraq"])
-    #     self.map["Central Asia"] = Country("Central Asia", "Suni", "", "", 0, False, 0, 0, 0, 0, False, 2)
+        # Central Asia
         self.map["Central Asia"].links.append(self.map["Russia"])
         self.map["Central Asia"].links.append(self.map["Caucasus"])
         self.map["Central Asia"].links.append(self.map["Iran"])
         self.map["Central Asia"].links.append(self.map["Afghanistan"])
         self.map["Central Asia"].links.append(self.map["China"])
-    #     self.map["Indonesia/Malaysia"] = Country("Indonesia/Malaysia", "Suni", "", "", 0, False, 0, 0, 0, 0, True, 3)
+        # Indonesia/Malaysia
         self.map["Indonesia/Malaysia"].links.append(self.map["Thailand"])
         self.map["Indonesia/Malaysia"].links.append(self.map["India"])
         self.map["Indonesia/Malaysia"].links.append(self.map["Philippines"])
         self.map["Indonesia/Malaysia"].links.append(self.map["Pakistan"])
-    #     self.map["Turkey"] = Country("Turkey", "Shia-Mix", "", "", 0, False, 0, 0, 0, 0, False, 2)
+        # Turkey
         self.map["Turkey"].links.append(self.map["Serbia"])
         self.map["Turkey"].links.append(self.map["Russia"])
         self.map["Turkey"].links.append(self.map["Caucasus"])
@@ -2475,41 +2535,41 @@ class Labyrinth(cmd.Cmd):
         self.map["Turkey"].links.append(self.map["Syria"])
         self.map["Turkey"].links.append(self.map["Iraq"])
         self.map["Turkey"].schengenLink = True
-    #     self.map["Lebanon"] = Country("Lebanon", "Shia-Mix", "", "", 0, False, 0, 0, 0, 0, False, 1)
+        # Lebanon
         self.map["Lebanon"].links.append(self.map["Syria"])
         self.map["Lebanon"].links.append(self.map["Israel"])
         self.map["Lebanon"].schengenLink = True
-    #     self.map["Yemen"] = Country("Yemen", "Shia-Mix", "", "", 0, False, 0, 0, 0, 0, False, 1)
+        # Yemen
         self.map["Yemen"].links.append(self.map["Saudi Arabia"])
         self.map["Yemen"].links.append(self.map["Somalia"])
-    #     self.map["Iraq"] = Country("Iraq", "Shia-Mix", "", "Adversary", 3, False, 0, 0, 0, 0, True, 3)
+        # Iraq
         self.map["Iraq"].links.append(self.map["Syria"])
         self.map["Iraq"].links.append(self.map["Turkey"])
         self.map["Iraq"].links.append(self.map["Iran"])
         self.map["Iraq"].links.append(self.map["Gulf States"])
         self.map["Iraq"].links.append(self.map["Saudi Arabia"])
         self.map["Iraq"].links.append(self.map["Jordan"])
-    #     self.map["Saudi Arabia"] = Country("Saudi Arabia", "Shia-Mix", "", "Ally", 3, False, 0, 2, 0, 0, True, 3)
+        # Saudi Arabia
         self.map["Saudi Arabia"].links.append(self.map["Jordan"])
         self.map["Saudi Arabia"].links.append(self.map["Iraq"])
         self.map["Saudi Arabia"].links.append(self.map["Gulf States"])
         self.map["Saudi Arabia"].links.append(self.map["Yemen"])
-    #     self.map["Gulf States"] = Country("Gulf States", "Shia-Mix", "", "Ally", 2, False, 0, 2, 0, 0, True, 3)
+        # Gulf States
         self.map["Gulf States"].links.append(self.map["Iran"])
         self.map["Gulf States"].links.append(self.map["Pakistan"])
         self.map["Gulf States"].links.append(self.map["Saudi Arabia"])
         self.map["Gulf States"].links.append(self.map["Iraq"])
-    #     self.map["Pakistan"] = Country("Pakistan", "Shia-Mix", "", "Neutral", 2, False, 0, 0, 0, 0, False, 2)
+        # Pakistan
         self.map["Pakistan"].links.append(self.map["Iran"])
         self.map["Pakistan"].links.append(self.map["Afghanistan"])
         self.map["Pakistan"].links.append(self.map["India"])
         self.map["Pakistan"].links.append(self.map["Gulf States"])
         self.map["Pakistan"].links.append(self.map["Indonesia/Malaysia"])
-    #     self.map["Afghanistan"] = Country("Afghanistan", "Shia-Mix", "", "Adversary", 4, False, 0, 0, 0, 4, False, 1)
+        # Afghanistan
         self.map["Afghanistan"].links.append(self.map["Central Asia"])
         self.map["Afghanistan"].links.append(self.map["Pakistan"])
         self.map["Afghanistan"].links.append(self.map["Iran"])
-    #     self.map["Iran"] = Country("Iran", "Iran", "", "", 0, False, 0, 0, 0, 0, False, 0)
+        # Iran
         self.map["Iran"].links.append(self.map["Central Asia"])
         self.map["Iran"].links.append(self.map["Afghanistan"])
         self.map["Iran"].links.append(self.map["Pakistan"])
@@ -2528,21 +2588,21 @@ class Labyrinth(cmd.Cmd):
             self.cells = 11
             self.phase = "Jihadist Action Phase"
             self.map["Libya"].governance = 3
-            self.map["Libya"].alignment = "Adversary"
+            self.map["Libya"].make_adversary()
             self.map["Syria"].governance = 2
-            self.map["Syria"].alignment = "Adversary"
+            self.map["Syria"].make_adversary()
             self.map["Iraq"].governance = 3
-            self.map["Iraq"].alignment = "Adversary"
+            self.map["Iraq"].make_adversary()
             self.map["Saudi Arabia"].governance = 3
-            self.map["Saudi Arabia"].alignment = "Ally"
+            self.map["Saudi Arabia"].make_ally()
             self.map["Saudi Arabia"].troopCubes = 2
             self.map["Gulf States"].governance = 2
-            self.map["Gulf States"].alignment = "Ally"
+            self.map["Gulf States"].make_ally()
             self.map["Gulf States"].troopCubes = 2
             self.map["Pakistan"].governance = 2
-            self.map["Pakistan"].alignment = "Neutral"
+            self.map["Pakistan"].make_neutral()
             self.map["Afghanistan"].governance = 4
-            self.map["Afghanistan"].alignment = "Adversary"
+            self.map["Afghanistan"].make_adversary()
             self.map["Afghanistan"].sleeperCells = 4
             self.map["Somalia"].besieged = 1
             if self.scenario == 1:
@@ -2559,29 +2619,29 @@ class Labyrinth(cmd.Cmd):
             self.funding = 6
             self.cells = 13
             self.map["Libya"].governance = 3
-            self.map["Libya"].alignment = "Adversary"
+            self.map["Libya"].make_adversary()
             self.map["Syria"].governance = 2
-            self.map["Syria"].alignment = "Adversary"
+            self.map["Syria"].make_adversary()
             self.map["Iraq"].governance = 3
-            self.map["Iraq"].alignment = "Adversary"
+            self.map["Iraq"].make_adversary()
             self.map["Saudi Arabia"].governance = 3
-            self.map["Saudi Arabia"].alignment = "Ally"
+            self.map["Saudi Arabia"].make_ally()
             self.map["Saudi Arabia"].troopCubes = 2
             self.map["Gulf States"].governance = 2
-            self.map["Gulf States"].alignment = "Ally"
+            self.map["Gulf States"].make_ally()
             self.map["Gulf States"].troopCubes = 2
             self.map["Pakistan"].governance = 3
-            self.map["Pakistan"].alignment = "Ally"
+            self.map["Pakistan"].make_ally()
             self.map["Pakistan"].sleeperCells = 1
             self.map["Pakistan"].markers.append("FATA")
             self.map["Afghanistan"].governance = 3
-            self.map["Afghanistan"].alignment = "Ally"
+            self.map["Afghanistan"].make_ally()
             self.map["Afghanistan"].sleeperCells = 1
             self.map["Afghanistan"].troopCubes = 6
             self.map["Afghanistan"].regimeChange = 1
             self.map["Somalia"].besieged = 1
             self.map["Central Asia"].governance = 3
-            self.map["Central Asia"].alignment = "Ally"
+            self.map["Central Asia"].make_ally()
             self.markers.append("Patriot Act")
             possibles = []
             for country in self.map:
@@ -2601,36 +2661,36 @@ class Labyrinth(cmd.Cmd):
             self.funding = 5
             self.cells = 5
             self.map["Libya"].governance = 3
-            self.map["Libya"].alignment = "Adversary"
+            self.map["Libya"].make_adversary()
             self.map["Syria"].governance = 2
-            self.map["Syria"].alignment = "Adversary"
+            self.map["Syria"].make_adversary()
             self.map["Syria"].sleeperCells = 1
             self.map["Iraq"].governance = 3
-            self.map["Iraq"].alignment = "Ally"
+            self.map["Iraq"].make_ally()
             self.map["Iraq"].troopCubes = 6
             self.map["Iraq"].sleeperCells = 3
             self.map["Iraq"].regimeChange = 1
             self.map["Iran"].sleeperCells = 1
             self.map["Saudi Arabia"].governance = 3
-            self.map["Saudi Arabia"].alignment = "Ally"
+            self.map["Saudi Arabia"].make_ally()
             self.map["Saudi Arabia"].sleeperCells = 1
             self.map["Gulf States"].governance = 2
-            self.map["Gulf States"].alignment = "Ally"
+            self.map["Gulf States"].make_ally()
             self.map["Gulf States"].troopCubes = 2
             self.map["Pakistan"].governance = 2
-            self.map["Pakistan"].alignment = "Ally"
+            self.map["Pakistan"].make_ally()
             self.map["Pakistan"].sleeperCells = 1
             self.map["Pakistan"].markers.append("FATA")
             self.map["Afghanistan"].governance = 3
-            self.map["Afghanistan"].alignment = "Ally"
+            self.map["Afghanistan"].make_ally()
             self.map["Afghanistan"].sleeperCells = 1
             self.map["Afghanistan"].troopCubes = 5
             self.map["Afghanistan"].regimeChange = 1
             self.map["Somalia"].besieged = 1
             self.map["Central Asia"].governance = 2
-            self.map["Central Asia"].alignment = "Neutral"
+            self.map["Central Asia"].make_neutral()
             self.map["Indonesia/Malaysia"].governance = 2
-            self.map["Indonesia/Malaysia"].alignment = "Neutral"
+            self.map["Indonesia/Malaysia"].make_neutral()
             self.map["Indonesia/Malaysia"].sleeperCells = 1
             self.map["Philippines"].posture = "Soft"
             self.map["Philippines"].troopCubes = 2
@@ -2708,28 +2768,28 @@ class Labyrinth(cmd.Cmd):
             self.map["Germany"].sleeperCells = 1
             self.map["United States"].plots = 1
             self.map["Libya"].governance = 3
-            self.map["Libya"].alignment = "Adversary"
+            self.map["Libya"].make_adversary()
             self.map["Syria"].governance = 2
-            self.map["Syria"].alignment = "Adversary"
+            self.map["Syria"].make_adversary()
             self.map["Iraq"].governance = 3
-            self.map["Iraq"].alignment = "Adversary"
+            self.map["Iraq"].make_adversary()
             self.map["Iraq"].plots = 2
             self.map["Saudi Arabia"].governance = 3
-            self.map["Saudi Arabia"].alignment = "Ally"
+            self.map["Saudi Arabia"].make_ally()
             self.map["Saudi Arabia"].troopCubes = 2
             self.map["Pakistan"].governance = 3
-            self.map["Pakistan"].alignment = "Ally"
+            self.map["Pakistan"].make_ally()
             self.map["Pakistan"].troopCubes = 2
             self.map["Pakistan"].activeCells = 4
             self.map["Gulf States"].governance = 3
-            self.map["Gulf States"].alignment = "Ally"
+            self.map["Gulf States"].make_ally()
             self.map["Gulf States"].troopCubes = 2
             self.map["Gulf States"].sleeperCells = 10
             self.map["Gulf States"].activeCells = 4
             self.map["Pakistan"].governance = 2
-            self.map["Pakistan"].alignment = "Neutral"
+            self.map["Pakistan"].make_neutral()
             self.map["Afghanistan"].governance = 4
-            self.map["Afghanistan"].alignment = "Adversary"
+            self.map["Afghanistan"].make_adversary()
             self.map["Afghanistan"].sleeperCells = 4
             self.map["Somalia"].besieged = 1
             if self.scenario == 1:
@@ -3063,7 +3123,7 @@ class Labyrinth(cmd.Cmd):
             self.outputToHistory("+2 for Prestige", False)
         #print "DEBUG: w/prestige mod:%d" % modRoll
         
-        if self.map[country].alignment == "Ally" and self.map[country].governance == 2:
+        if self.map[country].is_ally() and self.map[country].governance == 2:
             modRoll -= 1
             self.outputToHistory("-1 for Attempt to shift to Good", False)
         #print "DEBUG: w/to good mod:%d" % modRoll
@@ -3080,7 +3140,7 @@ class Labyrinth(cmd.Cmd):
         #print "DEBUG: w/aid:%d" % modRoll
         
         for adj in self.map[country].links:
-            if adj.alignment == "Ally" and adj.governance == 1:
+            if adj.is_ally() and adj.governance == 1:
                 modRoll += 1
                 self.outputToHistory("+1 for Adjacent Good Ally", False)
                 break
@@ -3236,7 +3296,7 @@ class Labyrinth(cmd.Cmd):
     def numAdversary(self):
         numAdv = 0
         for country in self.map:
-            if self.map[country].alignment == "Adversary":
+            if self.map[country].is_adversary():
                 numAdv += 1
         return numAdv
         
@@ -3244,7 +3304,7 @@ class Labyrinth(cmd.Cmd):
         numDis = 0
         for country in self.map:
             if self.map[country].totalCells(False) > 0 or self.map[country].cadre > 0:
-                if self.map[country].troops() > 0 or self.map[country].type == "Non-Muslim" or self.map[country].alignment == "Ally":
+                if self.map[country].troops() > 0 or self.map[country].type == "Non-Muslim" or self.map[country].is_ally():
                     numDis += 1
         return numDis
         
@@ -3267,11 +3327,11 @@ class Labyrinth(cmd.Cmd):
                 self.outputToHistory("* WoI in %s adds Aid." % country, False)
                 self.outputToHistory(self.map[country].countryStr(), True)
         else:
-            if self.map[country].alignment == "Neutral":
-                self.map[country].alignment = "Ally"
+            if self.map[country].is_neutral():
+                self.map[country].make_ally()
                 self.outputToHistory("* WoI in %s succeeded - Alignment now Ally." % country, False)
                 self.outputToHistory(self.map[country].countryStr(), True)
-            elif self.map[country].alignment == "Ally":
+            elif self.map[country].is_ally():
                 self.improveGovernance(country)
                 self.outputToHistory("* WoI in %s succeeded - Governance now %s." % (country, self.map[country].govStr()), False)
                 self.outputToHistory(self.map[country].countryStr(), True)
@@ -3299,7 +3359,7 @@ class Labyrinth(cmd.Cmd):
         sleepers = self.map[where].sleeperCells
         self.map[where].sleeperCells = 0
         self.map[where].activeCells += sleepers
-        self.map[where].alignment = "Ally"
+        self.map[where].make_ally()
         if govRoll <= 4:
             self.map[where].governance = 3
         else:
@@ -3464,11 +3524,11 @@ class Labyrinth(cmd.Cmd):
                 self.outputToHistory("Major Jihad Failure", False) 
                 self.map[country].besieged = 1
                 self.outputToHistory("Besieged Regime", False) 
-                if self.map[country].alignment == "Adversary":
-                    self.map[country].alignment = "Neutral"
-                elif self.map[country].alignment == "Neutral":
-                    self.map[country].alignment = "Ally"
-                self.outputToHistory("Alignment %s" % self.map[country].alignment, False)
+                if self.map[country].is_adversary():
+                    self.map[country].make_neutral()
+                elif self.map[country].is_neutral():
+                    self.map[country].make_ally()
+                self.outputToHistory("Alignment %s" % self.map[country].alignment(), False)
         else: # a cell is active for each roll
             self.outputToHistory("* Minor Jihad attempt in %s" % country, False) 
             for i in range(len(rollList) - self.map[country].numActiveCells()):
@@ -3485,7 +3545,7 @@ class Labyrinth(cmd.Cmd):
             self.outputToHistory("Islamist Revolution in %s" % country, False)
             self.map[country].governance = 4
             self.outputToHistory("Governance to Islamist Rule", False)
-            self.map[country].alignment = "Adversary"
+            self.map[country].make_adversary()
             self.outputToHistory("Alignment to Adversary", False) 
             self.map[country].regimeChange = 0
             if self.map[country].besieged > 0:
@@ -3572,7 +3632,7 @@ class Labyrinth(cmd.Cmd):
         possible = []
         for country in self.map:
             if isAbuGhurayb:
-                if self.map[country].alignment == "Ally" and self.map[country].governance != 4:
+                if self.map[country].is_ally() and self.map[country].governance != 4:
                     possible.append(country)
             elif isAlJazeera:
                 if country == "Saudi Arabia" or self.isAdjacent(country, "Saudi Arabia"):
@@ -4061,7 +4121,7 @@ class Labyrinth(cmd.Cmd):
                 self.map[country].governance = 3
             else:
                 self.map[country].governance = 2
-            self.map[country].alignment = "Neutral"
+            self.map[country].make_neutral()
             self.outputToHistory("%s tested, governance %s" % (self.map[country].name, self.map[country].govStr()), False)
             
     def getCountriesWithUSPostureByGovernance(self):
@@ -4522,7 +4582,6 @@ class Labyrinth(cmd.Cmd):
         
     def playableNonUSEvent(self, cardNum):
         return self.deck[str(cardNum)].type != "US" and  self.deck[str(cardNum)].playable("Jihadist", self, False)
-        return False
 
     def playableUSEvent(self, cardNum):
         return self.deck[str(cardNum)].type == "US" and  self.deck[str(cardNum)].playable("US", self, False)
@@ -4687,7 +4746,7 @@ class Labyrinth(cmd.Cmd):
         print "Deploy Options"
         print "--------------"
         for country in self.map:
-            if self.map[country].alignment == "Ally" or ("Abu Sayyaf" in self.markers and country == "Philippines"):
+            if self.map[country].is_ally() or ("Abu Sayyaf" in self.markers and country == "Philippines"):
                 print "%s: %d troops" % (country, self.map[country].troops())
         print ""
 
@@ -4697,7 +4756,7 @@ class Labyrinth(cmd.Cmd):
         print "--------------------"
         for country in self.map:
             if self.map[country].sleeperCells + self.map[country].activeCells > 0 or self.map[country].cadre > 0:
-                if self.map[country].troops() > 0 or self.map[country].type == "Non-Muslim" or self.map[country].alignment == "Ally":
+                if self.map[country].troops() > 0 or self.map[country].type == "Non-Muslim" or self.map[country].is_ally():
                     postureStr = ""
                     troopsStr = ""
                     if self.map[country].type == "Non-Muslim":
@@ -4712,8 +4771,8 @@ class Labyrinth(cmd.Cmd):
         print "War of Ideas Eligible Countries"
         print "-------------------------------"
         for country in self.map:
-            if self.map[country].alignment == "Neutral" or self.map[country].alignment == "Ally" or self.map[country].governance == 0:
-                print "%s, %s %s - %d Active Cells, %d Sleeper Cells, %d Cadre, %d troops" % (country, self.map[country].govStr(), self.map[country].alignment, self.map[country].activeCells, self.map[country].sleeperCells, self.map[country].cadre, self.map[country].troops())
+            if self.map[country].is_neutral() or self.map[country].is_ally() or self.map[country].governance == 0:
+                print "%s, %s %s - %d Active Cells, %d Sleeper Cells, %d Cadre, %d troops" % (country, self.map[country].govStr(), self.map[country].__alignment, self.map[country].activeCells, self.map[country].sleeperCells, self.map[country].cadre, self.map[country].troops())
         for country in self.map:
             if self.map[country].type == "Non-Muslim" and country != "United States" and self.map[country].posture == "Hard":
                 print "%s, Posture %s" % (country, self.map[country].posture)
@@ -4782,7 +4841,7 @@ class Labyrinth(cmd.Cmd):
         print "Adversary Countries"
         print "-------------------"
         for country in self.map:
-            if self.map[country].alignment == "Adversary":
+            if self.map[country].is_adversary():
                 self.map[country].printCountry()
         print ""
         
@@ -4792,7 +4851,7 @@ class Labyrinth(cmd.Cmd):
         print "---------------------------------"
         for country in self.map:
             if self.map[country].plots > 0:
-                if self.map[country].alignment == "Ally" or self.map[country].governance == 1:
+                if self.map[country].is_ally() or self.map[country].governance == 1:
                     self.map[country].printCountry()
         print ""
 
@@ -4867,7 +4926,7 @@ class Labyrinth(cmd.Cmd):
                     if self.map[country].posture == "Hard":
                         self.map[country].printCountry()
                 else:
-                    if self.map[country].alignment == "Ally":
+                    if self.map[country].is_ally():
                         self.map[country].printCountry()
 
     def do_status(self, rest):
@@ -5337,7 +5396,7 @@ class Labyrinth(cmd.Cmd):
                     print "Changing governance to ", input
                     self.map[country].governance = input
                     if input == 0:
-                        self.map[country].alignment = ""
+                        self.map[country].governance = ""
                     return True
             except:
                 print "Invalid governance value - ", input
@@ -5348,12 +5407,19 @@ class Labyrinth(cmd.Cmd):
             input = self.my_raw_input("Enter alignment ('Ally', 'Neutral', 'Adversary'): ")
             if input == "":
                 return False
-            if input == "Ally" or input == "Neutral" or input == "Adversary":
+            if input == "Adversary":
                 print "Changing alignment to ", input
-                self.map[country].alignment = input
+                self.map[country].make_adversary()
                 return True
-            else:
-                print "Invalid alighment value - ", input
+            if input == "Ally":
+                print "Changing alignment to ", input
+                self.map[country].make_ally()
+                return True
+            if input == "Neutral":
+                print "Changing alignment to ", input
+                self.map[country].make_neutral()
+                return True
+            print "Invalid alignment value - ", input
     
     def adjustCountryPosture(self, country):
         print "Adjusting posture for - ", country
@@ -5583,7 +5649,7 @@ class Labyrinth(cmd.Cmd):
                 if input == "governance":
                     adjustSuccess = self.adjustCountryGovernance(country)
                 elif input == "alignment":
-                    adjustSuccess =    self.adjustCountryAlignment(country)
+                    adjustSuccess = self.adjustCountryAlignment(country)
                 elif input == "posture":
                     adjustSuccess = self.adjustCountryPosture(country)
                 elif input == "troops":
@@ -5754,7 +5820,7 @@ class Labyrinth(cmd.Cmd):
                 elif "FATA" in self.map[input].markers and self.map[input].regimeChange == 0:
                     print "No disrupt allowed due to FATA."
                     print ""
-                elif self.map[input].troops() > 0 or self.map[input].type == "Non-Muslim" or self.map[input].alignment == "Ally":
+                elif self.map[input].troops() > 0 or self.map[input].type == "Non-Muslim" or self.map[input].is_ally():
                     #print "Disrupt in %s - %d Active Cells, %d Sleeper Cells" % (input, self.map[input].activeCells, self.map[input].sleeperCells)
                     print ""
                     where = input
@@ -5785,7 +5851,7 @@ class Labyrinth(cmd.Cmd):
             else:
                 if self.map[input].type == "Non-Muslim" and input != "United States":
                     where = input
-                elif self.map[input].alignment == "Ally" or self.map[input].alignment == "Neutral" or self.map[input].governance == 0:
+                elif self.map[input].is_ally() or self.map[input].is_neutral() or self.map[input].governance == 0:
                     where = input
                 else:
                     print "Country not eligible for War of Ideas."
