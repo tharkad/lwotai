@@ -82,6 +82,15 @@ class Utils:
         assert isinstance(value, required_type)
         return value
 
+    @staticmethod
+    def count(iterable, predicate):
+        """
+        Counts the items in the given iterable that match the given predicate
+        :param iterable the iterable to filter
+        :param predicate a function that takes one item and returns a boolean
+        """
+        return sum(1 for item in iterable if predicate(item))
+
 
 class Alignment:
     """
@@ -596,7 +605,7 @@ class Card:
             elif self.number == 34: # Enhanced Measures
                 if "Leak-Enhanced Measures" in app.markers or app.map["United States"].posture == "Soft":
                     return False
-                return app.numDisruptable() > 0
+                return app.num_disruptable() > 0
             elif self.number == 35: # Hajib
                 return app.numIslamistRule() == 0
             elif self.number == 36: # Indo-Pakistani Talks
@@ -1547,7 +1556,7 @@ class Card:
                 app.markers.append("Renditions")
                 app.outputToHistory("Renditions in Play.", False)
                 app.outputToHistory("Discard a random card from the Jihadist hand.", False)
-                if app.numDisruptable() > 0:
+                if app.num_disruptable() > 0:
                     app.do_disrupt("")
                 app.outputToHistory("", False)
             elif self.number == 45: # Safer Now
@@ -3502,14 +3511,10 @@ class Labyrinth(cmd.Cmd):
                 numAdv += 1
         return numAdv
         
-    def numDisruptable(self):
-        numDis = 0
-        for country in self.map:
-            if self.map[country].totalCells(False) > 0 or self.map[country].cadre > 0:
-                if self.map[country].troops() > 0 or self.map[country].type == "Non-Muslim" or self.map[country].is_ally():
-                    numDis += 1
-        return numDis
-        
+    def num_disruptable(self):
+        """Returns the number of countries in which the US player can Disrupt"""
+        return Utils.count(self.map.values(), Country.is_disruptable)
+
     def countryResources(self, country):
         res = self.map[country].resources
         if self.map[country].oil:
