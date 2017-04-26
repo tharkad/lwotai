@@ -39,41 +39,49 @@ Thanks to Peter Shaw for implementing the Adjust system and to bunch of bug fixe
 #    13. Changed message if no Islamist Rule countries at 'turn'
 #    14. Changed message when card 1 event activated
 
-SUSPEND_FILE = "suspend.lwot"
-UNDO_FILE = "undo.lwot"
-ROLLBACK_FILE = "turn."
-RELEASE = "1.06162015.1"
-
-import sys
 import cmd
+import os.path
 import random
+import sys
 import shutil
 try:
     import cPickle as pickle
 except:
     import pickle
-import os.path
 
-def require_type_or_none(value, required_type):
-    """
-    Asserts that the given value is either of the given type or is None
-    :param value: the value to check
-    :param required_type: the required type
-    :return: the checked value
-    """
-    if value is None:
+SUSPEND_FILE = "suspend.lwot"
+UNDO_FILE = "undo.lwot"
+ROLLBACK_FILE = "turn."
+RELEASE = "1.06162015.1"
+
+
+class Utils:
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def require_type_or_none(value, required_type):
+        """
+        Asserts that the given value is either of the given type or is None
+        :param value: the value to check
+        :param required_type: the required type
+        :return: the checked value
+        """
+        if value is None:
+            return value
+        return Utils.require_type(value, required_type)
+
+    @staticmethod
+    def require_type(value, required_type):
+        """
+        Asserts that the given value is of the given type
+        :param value: the value to check
+        :param required_type: the required type
+        :return: the checked value
+        """
+        assert isinstance(value, required_type)
         return value
-    return require_type(value, required_type)
 
-def require_type(value, required_type):
-    """
-    Asserts that the given value is of the given type
-    :param value: the value to check
-    :param required_type: the required type
-    :return: the checked value
-    """
-    assert isinstance(value, required_type)
-    return value
 
 class Alignment:
     """
@@ -81,7 +89,7 @@ class Alignment:
     :param name the display name of this alignment
     """
     def __init__(self, name):
-        self.__name = require_type(name, str)
+        self.__name = Utils.require_type(name, str)
         
     def __repr__(self):
         return self.__name
@@ -89,18 +97,23 @@ class Alignment:
     def __str__(self):
         return self.__name
 
+
 # The possible alignments (or None)
 # noinspection PyGlobalUndefined
 class Alignments:
+    def __init__(self):
+        pass
+
     global ADVERSARY, ALLY, NEUTRAL
     ADVERSARY = Alignment("Adversary")
     ALLY = Alignment("Ally")
     NEUTRAL = Alignment("Neutral")
 
+
 class Governance:
     def __init__(self, name, max_success_roll, levels_above_poor):
-        self.__name = require_type(name, str)
-        self.__max_success_roll = require_type(max_success_roll, int)
+        self.__name = Utils.require_type(name, str)
+        self.__max_success_roll = Utils.require_type(max_success_roll, int)
         self.__levels_above_poor = levels_above_poor
 
     def __eq__(self, other):
@@ -125,8 +138,8 @@ class Governance:
         return roll <= self.max_success_roll()
 
     def set_next_better_and_worse(self, next_better, next_worse):
-        self.__next_better = require_type_or_none(next_better, Governance)
-        self.__next_worse = require_type_or_none(next_worse, Governance)
+        self.__next_better = Utils.require_type_or_none(next_better, Governance)
+        self.__next_worse = Utils.require_type_or_none(next_worse, Governance)
 
     def improve(self):
         if self.__next_better is None:
@@ -150,8 +163,12 @@ class Governance:
     def min_us_ops(self):
         return self.__max_success_roll
 
+
 # The possible Governances (or None)
 class Governances:
+    def __init__(self):
+        pass
+
     global GOOD, FAIR, POOR, ISLAMIST_RULE
     GOOD = Governance("Good", 1, 2)
     FAIR = Governance("Fair", 2, 1)
@@ -176,6 +193,7 @@ class Governances:
             return cls.__values[index]
         except KeyError:
             raise ValueError("Invalid governance value - {}".format(index))
+
 
 class Country:
     __alignment = None
@@ -283,7 +301,7 @@ class Country:
         self.__governance = None
 
     def make_governance(self, governance):
-        self.__governance = require_type_or_none(governance, Governance)
+        self.__governance = Utils.require_type_or_none(governance, Governance)
 
     def is_non_recruit_success(self, roll):
         return self.is_governed() and self.__governance.is_success(roll)
@@ -438,7 +456,8 @@ class Country:
             
     def printCountry(self):
         print self.countryStr()
-        
+
+
 class Card:
     number = 0
     name = ""
@@ -448,14 +467,14 @@ class Card:
     mark = False
     lapsing = False
     
-    def __init__(self, theNumber, theType, theName, theOps, theRemove, theMark, theLapsing):
-        self.number = theNumber
-        self.name = theName
-        self.type = theType
-        self.ops = theOps
-        self.remove = theRemove
-        self.mark = theMark
-        self.lapsing = theLapsing
+    def __init__(self, number, card_type, name, ops, remove, mark, lapsing):
+        self.number = number
+        self.name = name
+        self.type = card_type
+        self.ops = ops
+        self.remove = remove
+        self.mark = mark
+        self.lapsing = lapsing
         
     def playable(self, side, app, ignoreItjihad):
         if self.type == "US" and side == "Jihadist":
@@ -2432,13 +2451,13 @@ class Card:
             app.outputToHistory("Place marker for card.", True)
         if self.lapsing:
             app.outputToHistory("Place card in Lapsing.", True)
-                
+
+
 class Labyrinth(cmd.Cmd):
 
     map = {}
     undo = False
     rollturn = -1
-    
     scenario = 0
     ideology = 0
     prestige = 0
@@ -2462,10 +2481,10 @@ class Labyrinth(cmd.Cmd):
     backlashInPlay = False
     testUserInput = []
 
-    def __init__(self, theScenario, theIdeology, setupFuntion = None, testUserInput = []):
+    def __init__(self, scenario, ideology, setup_function = None, test_user_input = []):
         cmd.Cmd.__init__(self)
-        self.scenario = theScenario
-        self.ideology = theIdeology
+        self.scenario = scenario
+        self.ideology = ideology
         self.prestige = 0
         self.troops = 0
         self.cells = 0
@@ -2484,12 +2503,11 @@ class Labyrinth(cmd.Cmd):
         self.validCountryMarkers = []
         self.validLapsingMarkers = []
         self.whichPlayer= ""
-        self.testUserInput = testUserInput
-        if setupFuntion:
-            setupFuntion(self)
+        self.testUserInput = test_user_input
+        if setup_function:
+            setup_function(self)
         else:
             self.scenarioSetup()
-            #self.testScenarioSetup()
         self.prompt = "Command: "
         self.gameOver = False
         self.backlashInPlay = False
@@ -2511,7 +2529,7 @@ class Labyrinth(cmd.Cmd):
             self.outputToHistory("Jihadist Ideology: Attractive", False)
         elif self.ideology == 4:
             self.outputToHistory("Jihadist Ideology: Potent", False)
-        elif self.ideology == 5:    #20150131PS - should be 5
+        elif self.ideology == 5:    # 20150131PS - should be 5
             self.outputToHistory("Jihadist Ideology: Infectious", False)
         elif self.ideology == 6:
             self.outputToHistory("Jihadist Ideology: Virulent", False)
@@ -2521,10 +2539,9 @@ class Labyrinth(cmd.Cmd):
         self.outputToHistory("Game Start")
         self.outputToHistory("")
         self.outputToHistory("[[ %d (Turn %s) ]]" % (self.startYear + (self.turn - 1), self.turn), True)
-        #self.outputToHistory(self.phase)
         self.deck = {}
         self.deckSetup()
-        self.validMarkersSetup() #20150131PS - added
+        self.validMarkersSetup() # 20150131PS - added
         
     def postcmd(self, stop, line):
         
@@ -2539,8 +2556,6 @@ class Labyrinth(cmd.Cmd):
         if self.rollturn >= 0:
             return True
 
-        
-                
     # Cells test
         cellCount = 0
         for country in self.map:
@@ -2559,11 +2574,11 @@ class Labyrinth(cmd.Cmd):
     # Countries tested test
         for country in self.map:
             badCountry = False
-            if (self.map[country].sleeperCells > 0) or (self.map[country].activeCells > 0) or (self.map[country].troopCubes > 0) or (self.map[country].aid > 0) or  (self.map[country].regimeChange > 0) or (self.map[country].cadre > 0) or (self.map[country].plots > 0):
-                if (self.map[country].is_ungoverned()):
+            if (self.map[country].sleeperCells > 0) or (self.map[country].activeCells > 0) or (self.map[country].troopCubes > 0) or (self.map[country].aid > 0) or (self.map[country].regimeChange > 0) or (self.map[country].cadre > 0) or (self.map[country].plots > 0):
+                if self.map[country].is_ungoverned():
                     badCountry = True
                 if self.map[country].type == "Non-Muslim":
-                    if (self.map[country].posture == ""):
+                    if self.map[country].posture == "":
                         badCountry = True
                 elif self.map[country].type != "Iran":
                     if self.map[country].is_unaligned():
@@ -2574,7 +2589,6 @@ class Labyrinth(cmd.Cmd):
                 
     def emptyline(self):
         print "%d (Turn %s)" % (self.startYear + (self.turn - 1), self.turn)
-        #print "Enter help for a list of commands."
         print ""
             
     def debugPrint(self, str):
@@ -5845,8 +5859,6 @@ class Labyrinth(cmd.Cmd):
     def do_adj(self, rest):
         self.do_adjust(rest)
 
-# 20150131PS end
-
     def do_history(self,rest):
         
         if rest == 'save':
@@ -5965,7 +5977,6 @@ class Labyrinth(cmd.Cmd):
                     print "No disrupt allowed due to FATA."
                     print ""
                 elif self.map[input].troops() > 0 or self.map[input].type == "Non-Muslim" or self.map[input].is_ally():
-                    #print "Disrupt in %s - %d Active Cells, %d Sleeper Cells" % (input, self.map[input].activeCells, self.map[input].sleeperCells)
                     print ""
                     where = input
                     sleepers = self.map[input].sleeperCells
@@ -6065,7 +6076,7 @@ class Labyrinth(cmd.Cmd):
         self.help_reassessment()
 
     def do_regime(self, rest):
-        if     self.map["United States"].posture == "Soft":
+        if self.map["United States"].posture == "Soft":
             print "No Regime Change with US Posture Soft"
             print ""
             return
@@ -6257,7 +6268,6 @@ class Labyrinth(cmd.Cmd):
         self.SaveUndo()
         self.outputToHistory("", False)
         self.outputToHistory("== US plays %s - %d Ops ==" % (self.deck[str(cardNum)].name, self.deck[str(cardNum)].ops), True)
-
 
         if self.deck[str(cardNum)].playable("US", self, True):
             self.outputToHistory("Playable %s Event" % self.deck[str(cardNum)].type, False)
@@ -6452,7 +6462,6 @@ class Labyrinth(cmd.Cmd):
 
         print "Exiting."
 
-
     def Save(self, fname):
         f = open(fname,'wb')
         pickle.dump(self,f,2)
@@ -6512,7 +6521,8 @@ def getUserYesNoResponse(prompt):
         except:
             print "Enter y or n."
             print ""
-                    
+
+
 def main():
     print ""
     print "Labyrinth: The War on Terror AI Player"
