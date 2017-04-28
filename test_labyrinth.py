@@ -1,9 +1,9 @@
-'''
+"""
 LWOTai - A Python implementation of the Single-Player AI for Labyrinth: the War on Terror by GMT Games.
 Mike Houser, 2011
 
 08112011.1
-'''
+"""
 from lwotai import Country
 from lwotai import GOOD
 from lwotai import FAIR
@@ -12,6 +12,7 @@ from lwotai import Governance
 from lwotai import Governances
 from lwotai import Labyrinth
 import unittest
+
 
 def testScenarioSetup(self):
     self.prestige = 7
@@ -42,6 +43,7 @@ def testScenarioSetup(self):
     self.map["Afghanistan"].sleeperCells = 4
     self.map["Somalia"].besieged = 1
     self.map["United States"].posture = "Hard"
+
 
 def test2ScenarioSetup(self):
     self.prestige = 7
@@ -76,6 +78,7 @@ def test2ScenarioSetup(self):
     self.map["Afghanistan"].besieged = 0
     self.map["Somalia"].besieged = 1
     self.map["United States"].posture = "Hard"
+
 
 def test3ScenarioSetup(self):
     self.prestige = 7
@@ -113,116 +116,122 @@ def test3ScenarioSetup(self):
     self.map["Germany"].posture = "Hard"
     self.map["Germany"].activeCells = 1
     self.map["Germany"].sleeperCells = 1
-    
+
+
 def testBlankScenarioSetup(self):
     self.prestige = 7
     self.troops = 9
     self.funding = 5
     self.cells = 11
-    
+
+
 class Scenarios(unittest.TestCase):
-    '''Scenarios'''
-    
+    """Scenarios"""
+
     def testScenario4(self):
-        app = Labyrinth(4,1)
+        app = Labyrinth(4, 1)
         self.assertTrue(app.map["United Kingdom"].posture == "Hard")
 
+
 class Map(unittest.TestCase):
-    '''Map'''
-        
+    """Map"""
+
     def testDeck(self):
-        '''Test Map'''
+        """Test Map"""
         app = Labyrinth(1, 1, testScenarioSetup)
         for country in app.map:
             for link in app.map[country].links:
                 self.assertTrue(app.map[country] in link.links)
 
+
 class Deck(unittest.TestCase):
-    '''Deck tests'''
-        
+    """Deck tests"""
+
     def testDeck(self):
-        '''Test Deck'''
+        """Test Deck"""
         app = Labyrinth(1, 1, testScenarioSetup)
         for i in range(121):
             if i > 0:
                 self.assertEqual(i, app.deck[str(i)].number)
 
+
 class WOIRollModifiers(unittest.TestCase):
-    '''Test War of Ideas Roll Modifires'''
-        
+    """Test War of Ideas Roll Modifiers"""
+
     def testPrestige(self):
-        '''Prestige'''
+        """Prestige"""
         app = Labyrinth(1, 1, testScenarioSetup)
         app.prestige = 1
-        self.assertEqual(app.modifiedWoIRoll(3,"Gulf States"), 1)
+        self.assertEqual(app.modifiedWoIRoll(3, "Gulf States"), 1)
         app.prestige = 2
-        self.assertEqual(app.modifiedWoIRoll(3,"Gulf States"), 1)
+        self.assertEqual(app.modifiedWoIRoll(3, "Gulf States"), 1)
         app.prestige = 3
-        self.assertEqual(app.modifiedWoIRoll(3,"Gulf States"), 1)
+        self.assertEqual(app.modifiedWoIRoll(3, "Gulf States"), 1)
         app.prestige = 4
-        self.assertEqual(app.modifiedWoIRoll(3,"Gulf States"), 2)
+        self.assertEqual(app.modifiedWoIRoll(3, "Gulf States"), 2)
         app.prestige = 5
-        self.assertEqual(app.modifiedWoIRoll(3,"Gulf States"), 2)
+        self.assertEqual(app.modifiedWoIRoll(3, "Gulf States"), 2)
         app.prestige = 6
-        self.assertEqual(app.modifiedWoIRoll(3,"Gulf States"), 2)
+        self.assertEqual(app.modifiedWoIRoll(3, "Gulf States"), 2)
         app.prestige = 7
-        self.assertEqual(app.modifiedWoIRoll(3,"Gulf States"), 3)
+        self.assertEqual(app.modifiedWoIRoll(3, "Gulf States"), 3)
         app.prestige = 8
-        self.assertEqual(app.modifiedWoIRoll(3,"Gulf States"), 3)
+        self.assertEqual(app.modifiedWoIRoll(3, "Gulf States"), 3)
         app.prestige = 9
-        self.assertEqual(app.modifiedWoIRoll(3,"Gulf States"), 3)
+        self.assertEqual(app.modifiedWoIRoll(3, "Gulf States"), 3)
         app.prestige = 10
-        self.assertEqual(app.modifiedWoIRoll(3,"Gulf States"), 4)
+        self.assertEqual(app.modifiedWoIRoll(3, "Gulf States"), 4)
         app.prestige = 11
-        self.assertEqual(app.modifiedWoIRoll(3,"Gulf States"), 4)
+        self.assertEqual(app.modifiedWoIRoll(3, "Gulf States"), 4)
         app.prestige = 12
-        self.assertEqual(app.modifiedWoIRoll(3,"Gulf States"), 4)
+        self.assertEqual(app.modifiedWoIRoll(3, "Gulf States"), 4)
 
     def testAid(self):
-        '''Aid'''
+        """Aid"""
         app = Labyrinth(1, 1, testScenarioSetup)
-        self.assertEqual(app.modifiedWoIRoll(3,"Gulf States"), 3)
+        self.assertEqual(app.modifiedWoIRoll(3, "Gulf States"), 3)
         app.map["Gulf States"].aid = 1
-        self.assertEqual(app.modifiedWoIRoll(3,"Gulf States"), 4)
-        
+        self.assertEqual(app.modifiedWoIRoll(3, "Gulf States"), 4)
+
     def testToGood(self):
-        '''Going to Good'''
+        """Going to Good"""
         app = Labyrinth(1, 1, testScenarioSetup)
-        self.assertEqual(app.modifiedWoIRoll(3,"Gulf States"), 3)
+        self.assertEqual(app.modifiedWoIRoll(3, "Gulf States"), 3)
         app.map["Gulf States"].make_poor()
-        self.assertEqual(app.modifiedWoIRoll(3,"Gulf States"), 4)
+        self.assertEqual(app.modifiedWoIRoll(3, "Gulf States"), 4)
         app.map["Gulf States"].make_fair()
         app.map["Gulf States"].make_neutral()
-        self.assertEqual(app.modifiedWoIRoll(3,"Gulf States"), 4)
+        self.assertEqual(app.modifiedWoIRoll(3, "Gulf States"), 4)
 
     def testGWOTPenalty(self):
-        '''GWOT Penalty'''
+        """GWOT Penalty"""
         app = Labyrinth(1, 1, testScenarioSetup)
-        self.assertEqual(app.modifiedWoIRoll(3,"Gulf States"), 3)
+        self.assertEqual(app.modifiedWoIRoll(3, "Gulf States"), 3)
         app.map["United States"].posture = "Soft"
-        self.assertEqual(app.modifiedWoIRoll(3,"Gulf States"), 2)
+        self.assertEqual(app.modifiedWoIRoll(3, "Gulf States"), 2)
         app.map["Canada"].posture = "Hard"
-        self.assertEqual(app.modifiedWoIRoll(3,"Gulf States"), 1)
+        self.assertEqual(app.modifiedWoIRoll(3, "Gulf States"), 1)
         app.map["France"].posture = "Hard"
-        self.assertEqual(app.modifiedWoIRoll(3,"Gulf States"), 0)
+        self.assertEqual(app.modifiedWoIRoll(3, "Gulf States"), 0)
         app.map["Germany"].posture = "Hard"
-        self.assertEqual(app.modifiedWoIRoll(3,"Gulf States"), 0)
-        
+        self.assertEqual(app.modifiedWoIRoll(3, "Gulf States"), 0)
+
     def testAdjCountries(self):
-        '''Adjacent countries Ally Good'''
+        """Adjacent countries Ally Good"""
         app = Labyrinth(1, 1, testScenarioSetup)
-        self.assertEqual(app.modifiedWoIRoll(3,"Gulf States"), 3)
+        self.assertEqual(app.modifiedWoIRoll(3, "Gulf States"), 3)
         app.map['Pakistan'].make_good()
         app.map['Pakistan'].make_neutral()
-        self.assertEqual(app.modifiedWoIRoll(3,"Gulf States"), 3)
+        self.assertEqual(app.modifiedWoIRoll(3, "Gulf States"), 3)
         app.map['Pakistan'].make_ally()
-        self.assertEqual(app.modifiedWoIRoll(3,"Gulf States"), 4)
+        self.assertEqual(app.modifiedWoIRoll(3, "Gulf States"), 4)
         app.map['Iraq'].make_good()
         app.map['Iraq'].make_ally()
-        self.assertEqual(app.modifiedWoIRoll(3,"Gulf States"), 4)
+        self.assertEqual(app.modifiedWoIRoll(3, "Gulf States"), 4)
+
 
 class WOIhandler(unittest.TestCase):
-    '''Test War of Ideas Handler'''
+    """Test War of Ideas Handler"""
 
     def testFailRolls(self):
         app = Labyrinth(1, 1, testScenarioSetup)
@@ -233,7 +242,7 @@ class WOIhandler(unittest.TestCase):
         self.assertTrue(app.map["Gulf States"].is_fair())
         self.assertTrue(app.map["Gulf States"].is_ally())
         self.assertEqual(app.map["Gulf States"].aid, 0)
-    
+
         app = Labyrinth(1, 1, testScenarioSetup)
         self.assertTrue(app.map["Gulf States"].is_fair())
         self.assertTrue(app.map["Gulf States"].is_ally())
@@ -251,7 +260,7 @@ class WOIhandler(unittest.TestCase):
         self.assertTrue(app.map["Gulf States"].is_fair())
         self.assertTrue(app.map["Gulf States"].is_ally())
         self.assertEqual(app.map["Gulf States"].aid, 0)
-        
+
         app = Labyrinth(1, 1, testScenarioSetup)
         self.assertTrue(app.map["Gulf States"].is_fair())
         self.assertTrue(app.map["Gulf States"].is_ally())
@@ -260,7 +269,7 @@ class WOIhandler(unittest.TestCase):
         self.assertTrue(app.map["Gulf States"].is_fair())
         self.assertTrue(app.map["Gulf States"].is_ally())
         self.assertEqual(app.map["Gulf States"].aid, 1)
-        
+
         app = Labyrinth(1, 1, testScenarioSetup)
         self.assertTrue(app.map["Gulf States"].is_fair())
         self.assertTrue(app.map["Gulf States"].is_ally())
@@ -269,7 +278,7 @@ class WOIhandler(unittest.TestCase):
         self.assertTrue(app.map["Gulf States"].is_good())
         self.assertTrue(app.map["Gulf States"].is_ally())
         self.assertEqual(app.map["Gulf States"].aid, 0)
-        
+
         app = Labyrinth(1, 1, testScenarioSetup)
         self.assertTrue(app.map["Gulf States"].is_fair())
         self.assertTrue(app.map["Gulf States"].is_ally())
@@ -278,7 +287,7 @@ class WOIhandler(unittest.TestCase):
         self.assertTrue(app.map["Gulf States"].is_good())
         self.assertTrue(app.map["Gulf States"].is_ally())
         self.assertEqual(app.map["Gulf States"].aid, 0)
-#///
+
         app = Labyrinth(1, 1, testScenarioSetup)
         self.assertTrue(app.map["Pakistan"].is_fair())
         self.assertTrue(app.map["Pakistan"].is_neutral())
@@ -287,7 +296,7 @@ class WOIhandler(unittest.TestCase):
         self.assertTrue(app.map["Pakistan"].is_fair())
         self.assertTrue(app.map["Pakistan"].is_neutral())
         self.assertEqual(app.map["Pakistan"].aid, 0)
-    
+
         app = Labyrinth(1, 1, testScenarioSetup)
         self.assertTrue(app.map["Pakistan"].is_fair())
         self.assertTrue(app.map["Pakistan"].is_neutral())
@@ -296,7 +305,7 @@ class WOIhandler(unittest.TestCase):
         self.assertTrue(app.map["Pakistan"].is_fair())
         self.assertTrue(app.map["Pakistan"].is_neutral())
         self.assertEqual(app.map["Pakistan"].aid, 0)
-    
+
         app = Labyrinth(1, 1, testScenarioSetup)
         self.assertTrue(app.map["Pakistan"].is_fair())
         self.assertTrue(app.map["Pakistan"].is_neutral())
@@ -305,7 +314,7 @@ class WOIhandler(unittest.TestCase):
         self.assertTrue(app.map["Pakistan"].is_fair())
         self.assertTrue(app.map["Pakistan"].is_neutral())
         self.assertEqual(app.map["Pakistan"].aid, 0)
-    
+
         app = Labyrinth(1, 1, testScenarioSetup)
         self.assertTrue(app.map["Pakistan"].is_fair())
         self.assertTrue(app.map["Pakistan"].is_neutral())
@@ -314,7 +323,7 @@ class WOIhandler(unittest.TestCase):
         self.assertTrue(app.map["Pakistan"].is_fair())
         self.assertTrue(app.map["Pakistan"].is_neutral())
         self.assertEqual(app.map["Pakistan"].aid, 1)
-    
+
         app = Labyrinth(1, 1, testScenarioSetup)
         self.assertTrue(app.map["Pakistan"].is_fair())
         self.assertTrue(app.map["Pakistan"].is_neutral())
@@ -323,7 +332,7 @@ class WOIhandler(unittest.TestCase):
         self.assertTrue(app.map["Pakistan"].is_fair())
         self.assertTrue(app.map["Pakistan"].is_ally())
         self.assertEqual(app.map["Pakistan"].aid, 0)
-    
+
         app = Labyrinth(1, 1, testScenarioSetup)
         self.assertTrue(app.map["Pakistan"].is_fair())
         self.assertTrue(app.map["Pakistan"].is_neutral())
@@ -332,7 +341,7 @@ class WOIhandler(unittest.TestCase):
         self.assertTrue(app.map["Pakistan"].is_fair())
         self.assertTrue(app.map["Pakistan"].is_ally())
         self.assertEqual(app.map["Pakistan"].aid, 0)
-#///
+
         app = Labyrinth(1, 1, testScenarioSetup)
         self.assertTrue(app.map["Saudi Arabia"].is_poor())
         self.assertTrue(app.map["Saudi Arabia"].is_ally())
@@ -341,7 +350,7 @@ class WOIhandler(unittest.TestCase):
         self.assertTrue(app.map["Saudi Arabia"].is_poor())
         self.assertTrue(app.map["Saudi Arabia"].is_ally())
         self.assertEqual(app.map["Saudi Arabia"].aid, 0)
-    
+
         app = Labyrinth(1, 1, testScenarioSetup)
         self.assertTrue(app.map["Saudi Arabia"].is_poor())
         self.assertTrue(app.map["Saudi Arabia"].is_ally())
@@ -350,7 +359,7 @@ class WOIhandler(unittest.TestCase):
         self.assertTrue(app.map["Saudi Arabia"].is_poor())
         self.assertTrue(app.map["Saudi Arabia"].is_ally())
         self.assertEqual(app.map["Saudi Arabia"].aid, 0)
-    
+
         app = Labyrinth(1, 1, testScenarioSetup)
         self.assertTrue(app.map["Saudi Arabia"].is_poor())
         self.assertTrue(app.map["Saudi Arabia"].is_ally())
@@ -359,7 +368,7 @@ class WOIhandler(unittest.TestCase):
         self.assertTrue(app.map["Saudi Arabia"].is_poor())
         self.assertTrue(app.map["Saudi Arabia"].is_ally())
         self.assertEqual(app.map["Saudi Arabia"].aid, 0)
-    
+
         app = Labyrinth(1, 1, testScenarioSetup)
         self.assertTrue(app.map["Saudi Arabia"].is_poor())
         self.assertTrue(app.map["Saudi Arabia"].is_ally())
@@ -368,7 +377,7 @@ class WOIhandler(unittest.TestCase):
         self.assertTrue(app.map["Saudi Arabia"].is_poor())
         self.assertTrue(app.map["Saudi Arabia"].is_ally())
         self.assertEqual(app.map["Saudi Arabia"].aid, 1)
-    
+
         app = Labyrinth(1, 1, testScenarioSetup)
         self.assertTrue(app.map["Saudi Arabia"].is_poor())
         self.assertTrue(app.map["Saudi Arabia"].is_ally())
@@ -377,7 +386,7 @@ class WOIhandler(unittest.TestCase):
         self.assertTrue(app.map["Saudi Arabia"].is_fair())
         self.assertTrue(app.map["Saudi Arabia"].is_ally())
         self.assertEqual(app.map["Saudi Arabia"].aid, 0)
-    
+
         app = Labyrinth(1, 1, testScenarioSetup)
         self.assertTrue(app.map["Saudi Arabia"].is_poor())
         self.assertTrue(app.map["Saudi Arabia"].is_ally())
@@ -386,10 +395,11 @@ class WOIhandler(unittest.TestCase):
         self.assertTrue(app.map["Saudi Arabia"].is_fair())
         self.assertTrue(app.map["Saudi Arabia"].is_ally())
         self.assertEqual(app.map["Saudi Arabia"].aid, 0)
-    
-class alertHandler(unittest.TestCase):
-    '''Test Alert'''
-    
+
+
+class AlertHandler(unittest.TestCase):
+    """Test Alert"""
+
     def testAlert(self):
         app = Labyrinth(1, 1, testScenarioSetup)
         self.assertEqual(app.map["Iraq"].plots, 2)
@@ -400,9 +410,10 @@ class alertHandler(unittest.TestCase):
         app.handleAlert("Iraq")
         self.assertEqual(app.map["Iraq"].plots, 0)
 
-class reassessmentHandler(unittest.TestCase):
-    '''Test Reassessment'''
-    
+
+class ReassessmentHandler(unittest.TestCase):
+    """Test Reassessment"""
+
     def testAlert(self):
         app = Labyrinth(1, 1, testScenarioSetup)
         self.assertEqual(app.map["United States"].posture, "Hard")
@@ -411,9 +422,10 @@ class reassessmentHandler(unittest.TestCase):
         app.handleReassessment()
         self.assertEqual(app.map["United States"].posture, "Hard")
 
-class regimeChangeHandler(unittest.TestCase):
-    '''Test Regime Change'''
-    
+
+class RegimeChangeHandler(unittest.TestCase):
+    """Test Regime Change"""
+
     def testRegimeChange(self):
         app = Labyrinth(1, 1, testScenarioSetup)
         app.map["United States"].posture = "Soft"
@@ -426,7 +438,7 @@ class regimeChangeHandler(unittest.TestCase):
         self.assertEqual(app.prestige, 7)
         self.assertEqual(app.troops, 9)
         govRoll = 4
-        prestigeRolls = (3,2,5)
+        prestigeRolls = (3, 2, 5)
         app.handleRegimeChange("Afghanistan", "track", 6, govRoll, prestigeRolls)
         self.assertTrue(app.map["Afghanistan"].is_islamist_rule())
         self.assertTrue(app.map["Afghanistan"].is_adversary())
@@ -448,7 +460,7 @@ class regimeChangeHandler(unittest.TestCase):
         self.assertEqual(app.prestige, 7)
         self.assertEqual(app.troops, 9)
         govRoll = 4
-        prestigeRolls = (3,2,5)
+        prestigeRolls = (3, 2, 5)
         app.handleRegimeChange("Afghanistan", "track", 6, govRoll, prestigeRolls)
         self.assertTrue(app.map["Afghanistan"].is_poor())
         self.assertTrue(app.map["Afghanistan"].is_ally())
@@ -458,7 +470,7 @@ class regimeChangeHandler(unittest.TestCase):
         self.assertEqual(app.map["Afghanistan"].regimeChange, 1)
         self.assertEqual(app.prestige, 5)
         self.assertEqual(app.troops, 3)
-    
+
         app = Labyrinth(1, 1, testScenarioSetup)
         app.map["United States"].posture = "Hard"
         self.assertTrue(app.map["Afghanistan"].is_islamist_rule())
@@ -470,7 +482,7 @@ class regimeChangeHandler(unittest.TestCase):
         self.assertEqual(app.prestige, 7)
         self.assertEqual(app.troops, 9)
         govRoll = 5
-        prestigeRolls = (3,2,5)
+        prestigeRolls = (3, 2, 5)
         app.handleRegimeChange("Afghanistan", "track", 6, govRoll, prestigeRolls)
         self.assertTrue(app.map["Afghanistan"].is_fair())
         self.assertTrue(app.map["Afghanistan"].is_ally())
@@ -480,7 +492,7 @@ class regimeChangeHandler(unittest.TestCase):
         self.assertEqual(app.map["Afghanistan"].regimeChange, 1)
         self.assertEqual(app.prestige, 5)
         self.assertEqual(app.troops, 3)
-    
+
         app = Labyrinth(1, 1, testScenarioSetup)
         app.map["United States"].posture = "Hard"
         self.assertTrue(app.map["Afghanistan"].is_islamist_rule())
@@ -492,7 +504,7 @@ class regimeChangeHandler(unittest.TestCase):
         self.assertEqual(app.prestige, 7)
         self.assertEqual(app.troops, 9)
         govRoll = 5
-        prestigeRolls = (5,2,5)
+        prestigeRolls = (5, 2, 5)
         app.handleRegimeChange("Afghanistan", "track", 6, govRoll, prestigeRolls)
         self.assertTrue(app.map["Afghanistan"].is_fair())
         self.assertTrue(app.map["Afghanistan"].is_ally())
@@ -502,7 +514,7 @@ class regimeChangeHandler(unittest.TestCase):
         self.assertEqual(app.map["Afghanistan"].regimeChange, 1)
         self.assertEqual(app.prestige, 9)
         self.assertEqual(app.troops, 3)
-    
+
         app = Labyrinth(1, 1, testScenarioSetup)
         app.map["United States"].posture = "Hard"
         self.assertTrue(app.map["Afghanistan"].is_islamist_rule())
@@ -514,7 +526,7 @@ class regimeChangeHandler(unittest.TestCase):
         self.assertEqual(app.prestige, 7)
         self.assertEqual(app.troops, 9)
         govRoll = 5
-        prestigeRolls = (2,6,5)
+        prestigeRolls = (2, 6, 5)
         app.handleRegimeChange("Afghanistan", "track", 6, govRoll, prestigeRolls)
         self.assertTrue(app.map["Afghanistan"].is_fair())
         self.assertTrue(app.map["Afghanistan"].is_ally())
@@ -524,7 +536,7 @@ class regimeChangeHandler(unittest.TestCase):
         self.assertEqual(app.map["Afghanistan"].regimeChange, 1)
         self.assertEqual(app.prestige, 2)
         self.assertEqual(app.troops, 3)
-    
+
         app = Labyrinth(1, 1, testScenarioSetup)
         app.map["United States"].posture = "Hard"
         self.assertTrue(app.map["Afghanistan"].is_islamist_rule())
@@ -536,7 +548,7 @@ class regimeChangeHandler(unittest.TestCase):
         self.assertEqual(app.prestige, 7)
         self.assertEqual(app.troops, 9)
         govRoll = 5
-        prestigeRolls = (6,6,5)
+        prestigeRolls = (6, 6, 5)
         app.handleRegimeChange("Afghanistan", "track", 6, govRoll, prestigeRolls)
         self.assertTrue(app.map["Afghanistan"].is_fair())
         self.assertTrue(app.map["Afghanistan"].is_ally())
@@ -546,7 +558,7 @@ class regimeChangeHandler(unittest.TestCase):
         self.assertEqual(app.map["Afghanistan"].regimeChange, 1)
         self.assertEqual(app.prestige, 12)
         self.assertEqual(app.troops, 3)
-    
+
         app = Labyrinth(1, 1, testScenarioSetup)
         app.troops -= 8
         app.map["Pakistan"].changeTroops(8)
@@ -561,7 +573,7 @@ class regimeChangeHandler(unittest.TestCase):
         self.assertEqual(app.troops, 1)
         self.assertEqual(app.map["Pakistan"].troops(), 10)
         govRoll = 5
-        prestigeRolls = (6,6,5)
+        prestigeRolls = (6, 6, 5)
         app.handleRegimeChange("Afghanistan", "Pakistan", 7, govRoll, prestigeRolls)
         self.assertTrue(app.map["Afghanistan"].is_fair())
         self.assertTrue(app.map["Afghanistan"].is_ally())
@@ -573,9 +585,10 @@ class regimeChangeHandler(unittest.TestCase):
         self.assertEqual(app.troops, 1)
         self.assertEqual(app.map["Pakistan"].troops(), 3)
 
-class withdrawHandler(unittest.TestCase):
-    '''Test Withdraw'''
-    
+
+class WithdrawHandler(unittest.TestCase):
+    """Test Withdraw"""
+
     def testWithdraw(self):
         app = Labyrinth(1, 1, test2ScenarioSetup)
         app.map["United States"].posture = "Soft"    
@@ -587,7 +600,7 @@ class withdrawHandler(unittest.TestCase):
         self.assertEqual(app.map["Saudi Arabia"].troops(), 2)
         self.assertEqual(app.prestige, 7)
         self.assertEqual(app.troops, 3)
-        prestigeRolls = (5,2,5)
+        prestigeRolls = (5, 2, 5)
         app.handleWithdraw("Afghanistan", "Saudi Arabia", 4, prestigeRolls)
         self.assertTrue(app.map["Afghanistan"].is_good())
         self.assertTrue(app.map["Afghanistan"].is_ally())
@@ -608,7 +621,7 @@ class withdrawHandler(unittest.TestCase):
         self.assertEqual(app.map["Saudi Arabia"].troops(), 2)
         self.assertEqual(app.prestige, 7)
         self.assertEqual(app.troops, 3)
-        prestigeRolls = (2,3,5)
+        prestigeRolls = (2, 3, 5)
         app.handleWithdraw("Afghanistan", "track", 5, prestigeRolls)
         self.assertTrue(app.map["Afghanistan"].is_good())
         self.assertTrue(app.map["Afghanistan"].is_ally())
@@ -619,8 +632,9 @@ class withdrawHandler(unittest.TestCase):
         self.assertEqual(app.prestige, 4)
         self.assertEqual(app.troops, 8)
 
-class majorJihadChoice(unittest.TestCase):
-    '''Major Jihad possible?'''
+
+class MajorJihadChoice(unittest.TestCase):
+    """Major Jihad possible?"""
     # For Major Jihad to be possible you need:
     # - A muslim country
     # - Not under Islamist Rule
@@ -631,7 +645,7 @@ class majorJihadChoice(unittest.TestCase):
     # - At least 2 rolls if the country is fair and is besieged
     # - At least 3 rolls if the country is good and is besieged
     # - NOT possible if the country is good and not besieged
-    
+
     def testMajorJihadChoice(self):
         app = Labyrinth(1, 1, testScenarioSetup)
         self.assertEqual(app.majorJihadChoice(3), False)    # 3 Ops
@@ -676,26 +690,26 @@ class majorJihadChoice(unittest.TestCase):
         app.map["Afghanistan"].troopCubes = 1
         app.map["Afghanistan"].besieged = 0
 
-        self.assertEqual(app.majorJihadChoice(3), "Gulf States")    # 3 Ops
-        self.assertEqual(app.majorJihadChoice(2), "Gulf States")    # 2 Ops
-        self.assertEqual(app.majorJihadChoice(1), False)    # 1 Ops
-        
+        self.assertEqual(app.majorJihadChoice(3), "Gulf States")  # 3 Ops
+        self.assertEqual(app.majorJihadChoice(2), "Gulf States")  # 2 Ops
+        self.assertEqual(app.majorJihadChoice(1), False)  # 1 Ops
+
         app.map["Saudi Arabia"].make_poor()
         app.map["Saudi Arabia"].sleeperCells = 5
         app.map["Saudi Arabia"].activeCells = 4
         app.map["Saudi Arabia"].troopCubes = 4
         app.map["Saudi Arabia"].besieged = 0
 
-        self.assertTrue(app.majorJihadChoice(3) in ["Gulf States", "Saudi Arabia"])    # 3 Ops
-        self.assertTrue(app.majorJihadChoice(3) in ["Gulf States", "Saudi Arabia"])    # 3 Ops
-        self.assertTrue(app.majorJihadChoice(3) in ["Gulf States", "Saudi Arabia"])    # 3 Ops
-        self.assertTrue(app.majorJihadChoice(3) in ["Gulf States", "Saudi Arabia"])    # 3 Ops
-        self.assertTrue(app.majorJihadChoice(3) in ["Gulf States", "Saudi Arabia"])    # 3 Ops
-        self.assertTrue(app.majorJihadChoice(3) in ["Gulf States", "Saudi Arabia"])    # 3 Ops
-        self.assertTrue(app.majorJihadChoice(3) in ["Gulf States", "Saudi Arabia"])    # 3 Ops
-        self.assertTrue(app.majorJihadChoice(3) in ["Gulf States", "Saudi Arabia"])    # 3 Ops
-        self.assertTrue(app.majorJihadChoice(3) in ["Gulf States", "Saudi Arabia"])    # 3 Ops
-        self.assertTrue(app.majorJihadChoice(3) in ["Gulf States", "Saudi Arabia"])    # 3 Ops
+        self.assertTrue(app.majorJihadChoice(3) in ["Gulf States", "Saudi Arabia"])  # 3 Ops
+        self.assertTrue(app.majorJihadChoice(3) in ["Gulf States", "Saudi Arabia"])  # 3 Ops
+        self.assertTrue(app.majorJihadChoice(3) in ["Gulf States", "Saudi Arabia"])  # 3 Ops
+        self.assertTrue(app.majorJihadChoice(3) in ["Gulf States", "Saudi Arabia"])  # 3 Ops
+        self.assertTrue(app.majorJihadChoice(3) in ["Gulf States", "Saudi Arabia"])  # 3 Ops
+        self.assertTrue(app.majorJihadChoice(3) in ["Gulf States", "Saudi Arabia"])  # 3 Ops
+        self.assertTrue(app.majorJihadChoice(3) in ["Gulf States", "Saudi Arabia"])  # 3 Ops
+        self.assertTrue(app.majorJihadChoice(3) in ["Gulf States", "Saudi Arabia"])  # 3 Ops
+        self.assertTrue(app.majorJihadChoice(3) in ["Gulf States", "Saudi Arabia"])  # 3 Ops
+        self.assertTrue(app.majorJihadChoice(3) in ["Gulf States", "Saudi Arabia"])  # 3 Ops
 
         app.map["Pakistan"].make_poor()
         app.map["Pakistan"].sleeperCells = 5
@@ -706,12 +720,13 @@ class majorJihadChoice(unittest.TestCase):
         self.assertEqual(app.majorJihadChoice(3), "Pakistan")    # 3 Ops
         self.assertEqual(app.majorJihadChoice(2), "Pakistan")    # 2 Ops
         self.assertEqual(app.majorJihadChoice(1), False)    # 1 Ops
-        
-class handleJihad(unittest.TestCase):
-    '''Test handleJihad'''
-    
+
+
+class HandleJihad(unittest.TestCase):
+    """Test handleJihad"""
+
     def testHandleJihad(self):
-    # Many Cells
+        # Many Cells
         app = Labyrinth(1, 1, testScenarioSetup)
         app.map["Gulf States"].make_neutral()
         app.map["Gulf States"].make_poor()
@@ -723,7 +738,7 @@ class handleJihad(unittest.TestCase):
         app.map["Gulf States"].aid = 1
         opsLeft = app.handleJihad("Gulf States", 1)
         self.assertEqual(opsLeft, 0)
-        
+
         app = Labyrinth(1, 1, testScenarioSetup)
         app.map["Gulf States"].make_neutral()
         app.map["Gulf States"].make_poor()
@@ -735,7 +750,7 @@ class handleJihad(unittest.TestCase):
         app.map["Gulf States"].aid = 1
         opsLeft = app.handleJihad("Gulf States", 2)
         self.assertEqual(opsLeft, 0)
-        
+
         app = Labyrinth(1, 1, testScenarioSetup)
         app.map["Gulf States"].make_neutral()
         app.map["Gulf States"].make_poor()
@@ -747,8 +762,8 @@ class handleJihad(unittest.TestCase):
         app.map["Gulf States"].aid = 1
         opsLeft = app.handleJihad("Gulf States", 3)
         self.assertEqual(opsLeft, 0)
-    
-    # 1 cell
+
+        # 1 cell
         app = Labyrinth(1, 1, testScenarioSetup)
         app.map["Gulf States"].make_neutral()
         app.map["Gulf States"].make_poor()
@@ -783,8 +798,8 @@ class handleJihad(unittest.TestCase):
         app.map["Gulf States"].aid = 1
         opsLeft = app.handleJihad("Gulf States", 3)
         self.assertEqual(opsLeft, 2)
-        
-    # 2 cell
+
+        # 2 cell
         app = Labyrinth(1, 1, testScenarioSetup)
         app.map["Gulf States"].make_neutral()
         app.map["Gulf States"].make_poor()
@@ -819,8 +834,8 @@ class handleJihad(unittest.TestCase):
         app.map["Gulf States"].aid = 1
         opsLeft = app.handleJihad("Gulf States", 3)
         self.assertEqual(opsLeft, 1)
-        
-    # 3 cell
+
+        # 3 cell
         app = Labyrinth(1, 1, testScenarioSetup)
         app.map["Gulf States"].make_neutral()
         app.map["Gulf States"].make_poor()
@@ -855,9 +870,10 @@ class handleJihad(unittest.TestCase):
         app.map["Gulf States"].aid = 1
         opsLeft = app.handleJihad("Gulf States", 3)
         self.assertEqual(opsLeft, 0)    
-        
-class executeJihad(unittest.TestCase):
-    '''Execute Major Jihad'''
+
+
+class ExecuteJihad(unittest.TestCase):
+    """Execute Major Jihad"""
     # A Major jihad needs:
     # - Muslim country not under Islamist Rule
     # - 5 more cells than troops
@@ -876,13 +892,13 @@ class executeJihad(unittest.TestCase):
     # - Remove Regime Change, Beseiged and Aid
     # - Add country's resources to Funding track
     # - If troops in country US Prestige to 1
-    
-# 5 MORE CELLS THAN TROOPS - Major Jihad possible
+
+    # 5 MORE CELLS THAN TROOPS - Major Jihad possible
 
     def testJihadEnoughCellsPoorGovNotBesieged(self):
 
-# Poor Gov
-# Not Besieged
+        # Poor Gov
+        # Not Besieged
         app = Labyrinth(1, 1, testScenarioSetup)
         app.map["Gulf States"].make_neutral()
         app.map["Gulf States"].make_poor()
@@ -892,14 +908,14 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 0
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [3]) # Revolution fails
-        self.assertTrue(app.map["Gulf States"].is_poor()) # gov still 3
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 5) # major jihad not possible
-        self.assertEqual(app.map["Gulf States"].activeCells, 4) # lost no cells to the to failure rolls
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 1) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        app.executeJihad("Gulf States", [3])  # Revolution fails
+        self.assertTrue(app.map["Gulf States"].is_poor())  # gov still 3
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 5)  # major jihad not possible
+        self.assertEqual(app.map["Gulf States"].activeCells, 4)  # lost no cells to the to failure rolls
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -912,14 +928,14 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 0
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [4]) # Revolution fails
-        self.assertTrue(app.map["Gulf States"].is_poor()) # gov still 3
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 5) # major jihad not possible
-        self.assertEqual(app.map["Gulf States"].activeCells, 3) # lost one cells to the to failure rolls
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 1) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        app.executeJihad("Gulf States", [4])  # Revolution fails
+        self.assertTrue(app.map["Gulf States"].is_poor())  # gov still 3
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 5)  # major jihad not possible
+        self.assertEqual(app.map["Gulf States"].activeCells, 3)  # lost one cells to the to failure rolls
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -932,16 +948,16 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 0
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [3,3]) # Islamist Revolution
-        self.assertTrue(app.map["Gulf States"].is_islamist_rule()) # islamist rule
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 0) # all cells active
-        self.assertEqual(app.map["Gulf States"].activeCells, 9) # lost no cells to the to failure rolls
-        self.assertEqual(app.map["Gulf States"].regimeChange, 0) # removed
-        self.assertEqual(app.map["Gulf States"].aid, 0) # removed
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # removed
-        self.assertTrue(app.map["Gulf States"].is_adversary()) # due to revolution
-        self.assertEqual(app.funding, 8) # +3 from resources
-        self.assertEqual(app.prestige, 1) # to 1 due to troops present
+        app.executeJihad("Gulf States", [3, 3])  # Islamist Revolution
+        self.assertTrue(app.map["Gulf States"].is_islamist_rule())  # islamist rule
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 0)  # all cells active
+        self.assertEqual(app.map["Gulf States"].activeCells, 9)  # lost no cells to the to failure rolls
+        self.assertEqual(app.map["Gulf States"].regimeChange, 0)  # removed
+        self.assertEqual(app.map["Gulf States"].aid, 0)  # removed
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # removed
+        self.assertTrue(app.map["Gulf States"].is_adversary())  # due to revolution
+        self.assertEqual(app.funding, 8)  # +3 from resources
+        self.assertEqual(app.prestige, 1)  # to 1 due to troops present
 
         app = Labyrinth(1, 1, testScenarioSetup)
         app.map["Gulf States"].make_neutral()
@@ -952,14 +968,14 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 0
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [3,4]) # Revolution fails
-        self.assertTrue(app.map["Gulf States"].is_poor()) # gov still 3
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 0) # all cells active
-        self.assertEqual(app.map["Gulf States"].activeCells, 8) # lost one cells to the to failure rolls
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 1) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        app.executeJihad("Gulf States", [3, 4])  # Revolution fails
+        self.assertTrue(app.map["Gulf States"].is_poor())  # gov still 3
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 0)  # all cells active
+        self.assertEqual(app.map["Gulf States"].activeCells, 8)  # lost one cells to the to failure rolls
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -972,14 +988,14 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 0
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [4,4]) # Revolution fails
-        self.assertTrue(app.map["Gulf States"].is_poor()) # gov still 3
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 0) # all cells active
-        self.assertEqual(app.map["Gulf States"].activeCells, 7) # lost two cells to the to failure rolls
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 1) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        app.executeJihad("Gulf States", [4, 4])  # Revolution fails
+        self.assertTrue(app.map["Gulf States"].is_poor())  # gov still 3
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 0)  # all cells active
+        self.assertEqual(app.map["Gulf States"].activeCells, 7)  # lost two cells to the to failure rolls
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -994,17 +1010,17 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].aid = 1
         funding_before = app.funding
         prestige_before = app.prestige
-        app.executeJihad("Gulf States", [3,4,4]) # 8.4.3.1 Major Jihad Failure
-        self.assertTrue(app.map["Gulf States"].is_poor()) # gov still 3
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 0) # all cells active
-        self.assertEqual(app.map["Gulf States"].activeCells, 7) # lost two cells to the two failure rolls
+        app.executeJihad("Gulf States", [3, 4, 4])  # 8.4.3.1 Major Jihad Failure
+        self.assertTrue(app.map["Gulf States"].is_poor())  # gov still 3
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 0)  # all cells active
+        self.assertEqual(app.map["Gulf States"].activeCells, 7)  # lost two cells to the two failure rolls
         self.assertEqual(app.map["Gulf States"].regimeChange, 1)
         self.assertEqual(app.map["Gulf States"].aid, 1)
         self.assertEqual(app.map["Gulf States"].besieged, 1)
         self.assertTrue(app.map["Gulf States"].is_ally())
         self.assertEqual(app.funding, funding_before)
         self.assertEqual(app.prestige, prestige_before)
-                
+
         app = Labyrinth(1, 1, testScenarioSetup)
         app.map["Gulf States"].make_neutral()
         app.map["Gulf States"].make_poor()
@@ -1014,60 +1030,18 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 0
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [4,4,4]) # Major failure
-        self.assertTrue(app.map["Gulf States"].is_poor()) # gov still 3
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 0) # all cells active
-        self.assertEqual(app.map["Gulf States"].activeCells, 6) # lost three cells to the to failure rolls
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 1) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 1) # major failure
-        self.assertTrue(app.map["Gulf States"].is_ally()) # major failure
+        app.executeJihad("Gulf States", [4, 4, 4])  # Major failure
+        self.assertTrue(app.map["Gulf States"].is_poor())  # gov still 3
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 0)  # all cells active
+        self.assertEqual(app.map["Gulf States"].activeCells, 6)  # lost three cells to the to failure rolls
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 1)  # major failure
+        self.assertTrue(app.map["Gulf States"].is_ally())  # major failure
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
-        
-    # No troops
-        app = Labyrinth(1, 1, testScenarioSetup)
-        app.map["Gulf States"].make_neutral()
-        app.map["Gulf States"].make_poor()
-        app.map["Gulf States"].sleeperCells = 5
-        app.map["Gulf States"].activeCells = 4
-        app.map["Gulf States"].troopCubes = 4
-        app.map["Gulf States"].besieged = 0
-        app.map["Gulf States"].regimeChange = 1
-        app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [3,3,4]) # Islamist Revolution
-        self.assertTrue(app.map["Gulf States"].is_islamist_rule()) # islamist rule
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 0) # all cells active
-        self.assertEqual(app.map["Gulf States"].activeCells, 8) # lost one cells to the to failure rolls
-        self.assertEqual(app.map["Gulf States"].regimeChange, 0) # removed
-        self.assertEqual(app.map["Gulf States"].aid, 0) # removed
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # removed
-        self.assertTrue(app.map["Gulf States"].is_adversary()) # due to revolution
-        self.assertEqual(app.funding, 8) # +3 from resources
-        self.assertEqual(app.prestige, 1) # to 1 due to troops present
-        
-    # No troops
-        app = Labyrinth(1, 1, testScenarioSetup)
-        app.map["Gulf States"].make_neutral()
-        app.map["Gulf States"].make_poor()
-        app.map["Gulf States"].sleeperCells = 5
-        app.map["Gulf States"].activeCells = 4
-        app.map["Gulf States"].troopCubes = 0
-        app.map["Gulf States"].besieged = 0
-        app.map["Gulf States"].regimeChange = 1
-        app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [3,3,4]) # Islamist Revolution
-        self.assertTrue(app.map["Gulf States"].is_islamist_rule()) # islamist rule
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 0) # all cells active
-        self.assertEqual(app.map["Gulf States"].activeCells, 8) # lost one cells to the to failure rolls
-        self.assertEqual(app.map["Gulf States"].regimeChange, 0) # removed
-        self.assertEqual(app.map["Gulf States"].aid, 0) # removed
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # removed
-        self.assertTrue(app.map["Gulf States"].is_adversary()) # due to revolution
-        self.assertEqual(app.funding, 8) # +3 from resources
-        self.assertEqual(app.prestige, 7) # unchanged, no troops
 
-    # No troops
+        # No troops
         app = Labyrinth(1, 1, testScenarioSetup)
         app.map["Gulf States"].make_neutral()
         app.map["Gulf States"].make_poor()
@@ -1077,18 +1051,18 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 0
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [3,3,3]) # Islamist Revolution
-        self.assertTrue(app.map["Gulf States"].is_islamist_rule()) # islamist rule
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 0) # all cells active
-        self.assertEqual(app.map["Gulf States"].activeCells, 9) # lost no cells to the to failure rolls
-        self.assertEqual(app.map["Gulf States"].regimeChange, 0) # removed
-        self.assertEqual(app.map["Gulf States"].aid, 0) # removed
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # removed
-        self.assertTrue(app.map["Gulf States"].is_adversary()) # due to revolution
-        self.assertEqual(app.funding, 8) # +3 from resources
-        self.assertEqual(app.prestige, 1) # to 1 due to troops present
-        
-    # No troops
+        app.executeJihad("Gulf States", [3, 3, 4])  # Islamist Revolution
+        self.assertTrue(app.map["Gulf States"].is_islamist_rule())  # islamist rule
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 0)  # all cells active
+        self.assertEqual(app.map["Gulf States"].activeCells, 8)  # lost one cells to the to failure rolls
+        self.assertEqual(app.map["Gulf States"].regimeChange, 0)  # removed
+        self.assertEqual(app.map["Gulf States"].aid, 0)  # removed
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # removed
+        self.assertTrue(app.map["Gulf States"].is_adversary())  # due to revolution
+        self.assertEqual(app.funding, 8)  # +3 from resources
+        self.assertEqual(app.prestige, 1)  # to 1 due to troops present
+
+        # No troops
         app = Labyrinth(1, 1, testScenarioSetup)
         app.map["Gulf States"].make_neutral()
         app.map["Gulf States"].make_poor()
@@ -1098,20 +1072,62 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 0
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [3,3,3]) # Islamist Revolution
-        self.assertTrue(app.map["Gulf States"].is_islamist_rule()) # islamist rule
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 0) # all cells active
-        self.assertEqual(app.map["Gulf States"].activeCells, 9) # lost no cells to the to failure rolls
-        self.assertEqual(app.map["Gulf States"].regimeChange, 0) # removed
-        self.assertEqual(app.map["Gulf States"].aid, 0) # removed
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # removed
-        self.assertTrue(app.map["Gulf States"].is_adversary()) # due to revolution
-        self.assertEqual(app.funding, 8) # +3 from resources
-        self.assertEqual(app.prestige, 7) # unchanged, no troops
+        app.executeJihad("Gulf States", [3, 3, 4])  # Islamist Revolution
+        self.assertTrue(app.map["Gulf States"].is_islamist_rule())  # islamist rule
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 0)  # all cells active
+        self.assertEqual(app.map["Gulf States"].activeCells, 8)  # lost one cells to the to failure rolls
+        self.assertEqual(app.map["Gulf States"].regimeChange, 0)  # removed
+        self.assertEqual(app.map["Gulf States"].aid, 0)  # removed
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # removed
+        self.assertTrue(app.map["Gulf States"].is_adversary())  # due to revolution
+        self.assertEqual(app.funding, 8)  # +3 from resources
+        self.assertEqual(app.prestige, 7)  # unchanged, no troops
+
+        # No troops
+        app = Labyrinth(1, 1, testScenarioSetup)
+        app.map["Gulf States"].make_neutral()
+        app.map["Gulf States"].make_poor()
+        app.map["Gulf States"].sleeperCells = 5
+        app.map["Gulf States"].activeCells = 4
+        app.map["Gulf States"].troopCubes = 4
+        app.map["Gulf States"].besieged = 0
+        app.map["Gulf States"].regimeChange = 1
+        app.map["Gulf States"].aid = 1
+        app.executeJihad("Gulf States", [3, 3, 3])  # Islamist Revolution
+        self.assertTrue(app.map["Gulf States"].is_islamist_rule())  # islamist rule
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 0)  # all cells active
+        self.assertEqual(app.map["Gulf States"].activeCells, 9)  # lost no cells to the to failure rolls
+        self.assertEqual(app.map["Gulf States"].regimeChange, 0)  # removed
+        self.assertEqual(app.map["Gulf States"].aid, 0)  # removed
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # removed
+        self.assertTrue(app.map["Gulf States"].is_adversary())  # due to revolution
+        self.assertEqual(app.funding, 8)  # +3 from resources
+        self.assertEqual(app.prestige, 1)  # to 1 due to troops present
+
+        # No troops
+        app = Labyrinth(1, 1, testScenarioSetup)
+        app.map["Gulf States"].make_neutral()
+        app.map["Gulf States"].make_poor()
+        app.map["Gulf States"].sleeperCells = 5
+        app.map["Gulf States"].activeCells = 4
+        app.map["Gulf States"].troopCubes = 0
+        app.map["Gulf States"].besieged = 0
+        app.map["Gulf States"].regimeChange = 1
+        app.map["Gulf States"].aid = 1
+        app.executeJihad("Gulf States", [3, 3, 3])  # Islamist Revolution
+        self.assertTrue(app.map["Gulf States"].is_islamist_rule())  # islamist rule
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 0)  # all cells active
+        self.assertEqual(app.map["Gulf States"].activeCells, 9)  # lost no cells to the to failure rolls
+        self.assertEqual(app.map["Gulf States"].regimeChange, 0)  # removed
+        self.assertEqual(app.map["Gulf States"].aid, 0)  # removed
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # removed
+        self.assertTrue(app.map["Gulf States"].is_adversary())  # due to revolution
+        self.assertEqual(app.funding, 8)  # +3 from resources
+        self.assertEqual(app.prestige, 7)  # unchanged, no troops
 
     def testJihadEnoughCellsPoorGovIsBeseiged(self):    
-# Poor Gov
-# Besieged
+        # Poor Gov
+        # Besieged
         app = Labyrinth(1, 1, testScenarioSetup)
         app.map["Gulf States"].make_neutral()
         app.map["Gulf States"].make_poor()
@@ -1121,17 +1137,17 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 1
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [3]) # Revolution in besiged
-        self.assertTrue(app.map["Gulf States"].is_islamist_rule()) # islamist rule
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 0) # all cells active
-        self.assertEqual(app.map["Gulf States"].activeCells, 9) # lost no cells to the to failure rolls
-        self.assertEqual(app.map["Gulf States"].regimeChange, 0) # removed
-        self.assertEqual(app.map["Gulf States"].aid, 0) # removed
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # removed
-        self.assertTrue(app.map["Gulf States"].is_adversary()) # due to revolution
-        self.assertEqual(app.funding, 8) # +3 from resources
-        self.assertEqual(app.prestige, 1) # troops
-        
+        app.executeJihad("Gulf States", [3])  # Revolution in besiged
+        self.assertTrue(app.map["Gulf States"].is_islamist_rule())  # islamist rule
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 0)  # all cells active
+        self.assertEqual(app.map["Gulf States"].activeCells, 9)  # lost no cells to the to failure rolls
+        self.assertEqual(app.map["Gulf States"].regimeChange, 0)  # removed
+        self.assertEqual(app.map["Gulf States"].aid, 0)  # removed
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # removed
+        self.assertTrue(app.map["Gulf States"].is_adversary())  # due to revolution
+        self.assertEqual(app.funding, 8)  # +3 from resources
+        self.assertEqual(app.prestige, 1)  # troops
+
         app = Labyrinth(1, 1, testScenarioSetup)
         app.map["Gulf States"].make_neutral()
         app.map["Gulf States"].make_poor()
@@ -1141,14 +1157,14 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 1
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [4]) # Revolution fails in besiged
-        self.assertTrue(app.map["Gulf States"].is_poor()) # gov still 3
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 0) # all cells active
-        self.assertEqual(app.map["Gulf States"].activeCells, 8) # lost one cells to the to failure rolls
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 1) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 1) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        app.executeJihad("Gulf States", [4])  # Revolution fails in besiged
+        self.assertTrue(app.map["Gulf States"].is_poor())  # gov still 3
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 0)  # all cells active
+        self.assertEqual(app.map["Gulf States"].activeCells, 8)  # lost one cells to the to failure rolls
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 1)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -1161,16 +1177,16 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 1
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [3,3]) # Revolution in besiged
-        self.assertTrue(app.map["Gulf States"].is_islamist_rule()) # islamist rule
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 0) # all cells active
-        self.assertEqual(app.map["Gulf States"].activeCells, 9) # lost no cells to the to failure rolls
-        self.assertEqual(app.map["Gulf States"].regimeChange, 0) # removed
-        self.assertEqual(app.map["Gulf States"].aid, 0) # removed
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # removed
-        self.assertTrue(app.map["Gulf States"].is_adversary()) # due to revolution
-        self.assertEqual(app.funding, 8) # +3 from resources
-        self.assertEqual(app.prestige, 1) # troops
+        app.executeJihad("Gulf States", [3, 3])  # Revolution in besiged
+        self.assertTrue(app.map["Gulf States"].is_islamist_rule())  # islamist rule
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 0)  # all cells active
+        self.assertEqual(app.map["Gulf States"].activeCells, 9)  # lost no cells to the to failure rolls
+        self.assertEqual(app.map["Gulf States"].regimeChange, 0)  # removed
+        self.assertEqual(app.map["Gulf States"].aid, 0)  # removed
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # removed
+        self.assertTrue(app.map["Gulf States"].is_adversary())  # due to revolution
+        self.assertEqual(app.funding, 8)  # +3 from resources
+        self.assertEqual(app.prestige, 1)  # troops
 
         app = Labyrinth(1, 1, testScenarioSetup)
         app.map["Gulf States"].make_neutral()
@@ -1181,17 +1197,17 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 1
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [3,4]) # Revolution in besiged
-        self.assertTrue(app.map["Gulf States"].is_islamist_rule()) # islamist rule
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 0) # all cells active
-        self.assertEqual(app.map["Gulf States"].activeCells, 8) # lost one cells to the to failure rolls
-        self.assertEqual(app.map["Gulf States"].regimeChange, 0) # removed
-        self.assertEqual(app.map["Gulf States"].aid, 0) # removed
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # removed
-        self.assertTrue(app.map["Gulf States"].is_adversary()) # due to revolution
-        self.assertEqual(app.funding, 8) # +3 from resources
-        self.assertEqual(app.prestige, 1) # troops
-        
+        app.executeJihad("Gulf States", [3, 4])  # Revolution in besiged
+        self.assertTrue(app.map["Gulf States"].is_islamist_rule())  # islamist rule
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 0)  # all cells active
+        self.assertEqual(app.map["Gulf States"].activeCells, 8)  # lost one cells to the to failure rolls
+        self.assertEqual(app.map["Gulf States"].regimeChange, 0)  # removed
+        self.assertEqual(app.map["Gulf States"].aid, 0)  # removed
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # removed
+        self.assertTrue(app.map["Gulf States"].is_adversary())  # due to revolution
+        self.assertEqual(app.funding, 8)  # +3 from resources
+        self.assertEqual(app.prestige, 1)  # troops
+
         app = Labyrinth(1, 1, testScenarioSetup)
         app.map["Gulf States"].make_neutral()
         app.map["Gulf States"].make_poor()
@@ -1201,14 +1217,14 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 1
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [4,4]) # Revolution fails in besiged
-        self.assertTrue(app.map["Gulf States"].is_poor()) # gov still 3
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 0) # all cells active
-        self.assertEqual(app.map["Gulf States"].activeCells, 7) # lost one cells to the to failure rolls
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 1) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 1) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        app.executeJihad("Gulf States", [4, 4])  # Revolution fails in besiged
+        self.assertTrue(app.map["Gulf States"].is_poor())  # gov still 3
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 0)  # all cells active
+        self.assertEqual(app.map["Gulf States"].activeCells, 7)  # lost one cells to the to failure rolls
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 1)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -1221,17 +1237,17 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 1
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [3,3,3]) # Revolution in besiged
-        self.assertTrue(app.map["Gulf States"].is_islamist_rule()) # islamist rule
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 0) # all cells active
-        self.assertEqual(app.map["Gulf States"].activeCells, 9) # lost no cells to the to failure rolls
-        self.assertEqual(app.map["Gulf States"].regimeChange, 0) # removed
-        self.assertEqual(app.map["Gulf States"].aid, 0) # removed
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # removed
-        self.assertTrue(app.map["Gulf States"].is_adversary()) # due to revolution
-        self.assertEqual(app.funding, 8) # +3 from resources
-        self.assertEqual(app.prestige, 1) # troops
-        
+        app.executeJihad("Gulf States", [3, 3, 3])  # Revolution in besiged
+        self.assertTrue(app.map["Gulf States"].is_islamist_rule())  # islamist rule
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 0)  # all cells active
+        self.assertEqual(app.map["Gulf States"].activeCells, 9)  # lost no cells to the to failure rolls
+        self.assertEqual(app.map["Gulf States"].regimeChange, 0)  # removed
+        self.assertEqual(app.map["Gulf States"].aid, 0)  # removed
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # removed
+        self.assertTrue(app.map["Gulf States"].is_adversary())  # due to revolution
+        self.assertEqual(app.funding, 8)  # +3 from resources
+        self.assertEqual(app.prestige, 1)  # troops
+
         app = Labyrinth(1, 1, testScenarioSetup)
         app.map["Gulf States"].make_neutral()
         app.map["Gulf States"].make_poor()
@@ -1241,17 +1257,17 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 1
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [3,3,4]) # Revolution in besiged
-        self.assertTrue(app.map["Gulf States"].is_islamist_rule()) # islamist rule
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 0) # all cells active
-        self.assertEqual(app.map["Gulf States"].activeCells, 8) # lost one cells to the to failure rolls
-        self.assertEqual(app.map["Gulf States"].regimeChange, 0) # removed
-        self.assertEqual(app.map["Gulf States"].aid, 0) # removed
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # removed
-        self.assertTrue(app.map["Gulf States"].is_adversary()) # due to revolution
-        self.assertEqual(app.funding, 8) # +3 from resources
-        self.assertEqual(app.prestige, 1) # troops
-        
+        app.executeJihad("Gulf States", [3, 3, 4])  # Revolution in besiged
+        self.assertTrue(app.map["Gulf States"].is_islamist_rule())  # islamist rule
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 0)  # all cells active
+        self.assertEqual(app.map["Gulf States"].activeCells, 8)  # lost one cells to the to failure rolls
+        self.assertEqual(app.map["Gulf States"].regimeChange, 0)  # removed
+        self.assertEqual(app.map["Gulf States"].aid, 0)  # removed
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # removed
+        self.assertTrue(app.map["Gulf States"].is_adversary())  # due to revolution
+        self.assertEqual(app.funding, 8)  # +3 from resources
+        self.assertEqual(app.prestige, 1)  # troops
+
         app = Labyrinth(1, 1, testScenarioSetup)
         app.map["Gulf States"].make_neutral()
         app.map["Gulf States"].make_poor()
@@ -1261,17 +1277,17 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 1
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [3,4,4]) # Revolution in besiged
-        self.assertTrue(app.map["Gulf States"].is_islamist_rule()) # islamist rule
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 0) # all cells active
-        self.assertEqual(app.map["Gulf States"].activeCells, 7) # lost two cells to the to failure rolls
-        self.assertEqual(app.map["Gulf States"].regimeChange, 0) # removed
-        self.assertEqual(app.map["Gulf States"].aid, 0) # removed
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # removed
-        self.assertTrue(app.map["Gulf States"].is_adversary()) # due to revolution
-        self.assertEqual(app.funding, 8) # +3 from resources
-        self.assertEqual(app.prestige, 1) # troops
-        
+        app.executeJihad("Gulf States", [3, 4, 4])  # Revolution in besiged
+        self.assertTrue(app.map["Gulf States"].is_islamist_rule())  # islamist rule
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 0)  # all cells active
+        self.assertEqual(app.map["Gulf States"].activeCells, 7)  # lost two cells to the to failure rolls
+        self.assertEqual(app.map["Gulf States"].regimeChange, 0)  # removed
+        self.assertEqual(app.map["Gulf States"].aid, 0)  # removed
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # removed
+        self.assertTrue(app.map["Gulf States"].is_adversary())  # due to revolution
+        self.assertEqual(app.funding, 8)  # +3 from resources
+        self.assertEqual(app.prestige, 1)  # troops
+
         app = Labyrinth(1, 1, testScenarioSetup)
         app.map["Gulf States"].make_neutral()
         app.map["Gulf States"].make_poor()
@@ -1281,20 +1297,20 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 1
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [4,4,4]) # Major Failure in besiged
-        self.assertTrue(app.map["Gulf States"].is_poor()) # gov still 3
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 0) # all cells active
-        self.assertEqual(app.map["Gulf States"].activeCells, 6) # lost three cells to the to failure rolls
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 1) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 1) # major failure
-        self.assertTrue(app.map["Gulf States"].is_ally()) # major failure
+        app.executeJihad("Gulf States", [4, 4, 4])  # Major Failure in besiged
+        self.assertTrue(app.map["Gulf States"].is_poor())  # gov still 3
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 0)  # all cells active
+        self.assertEqual(app.map["Gulf States"].activeCells, 6)  # lost three cells to the to failure rolls
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 1)  # major failure
+        self.assertTrue(app.map["Gulf States"].is_ally())  # major failure
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
     def testJihadEnoughCellsFairGovNotBeseiged(self):
-# Fair Gov
-# Not Besieged
+        # Fair Gov
+        # Not Besieged
         app = Labyrinth(1, 1, testScenarioSetup)
         app.map["Gulf States"].make_neutral()
         app.map["Gulf States"].make_fair()
@@ -1304,14 +1320,14 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 0
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [2]) # Revolution fails
-        self.assertTrue(app.map["Gulf States"].is_poor()) # gov to 3
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 5) # major jihad not possible
-        self.assertEqual(app.map["Gulf States"].activeCells, 4) # lost no cells to the to failure rolls
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 0) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        app.executeJihad("Gulf States", [2])  # Revolution fails
+        self.assertTrue(app.map["Gulf States"].is_poor())  # gov to 3
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 5)  # major jihad not possible
+        self.assertEqual(app.map["Gulf States"].activeCells, 4)  # lost no cells to the to failure rolls
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 0)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -1324,14 +1340,14 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 0
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [3]) # Revolution fails
-        self.assertTrue(app.map["Gulf States"].is_fair()) # gov still 2
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 5) # major jihad not possible
-        self.assertEqual(app.map["Gulf States"].activeCells, 3) # lost one cells to the to failure rolls
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 1) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        app.executeJihad("Gulf States", [3])  # Revolution fails
+        self.assertTrue(app.map["Gulf States"].is_fair())  # gov still 2
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 5)  # major jihad not possible
+        self.assertEqual(app.map["Gulf States"].activeCells, 3)  # lost one cells to the to failure rolls
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -1344,14 +1360,14 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 0
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [2,2]) # Revolution fails
-        self.assertTrue(app.map["Gulf States"].is_poor()) # gov to 3
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 5) # major jihad not possible
-        self.assertEqual(app.map["Gulf States"].activeCells, 4) # lost no cells to the to failure rolls
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 0) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        app.executeJihad("Gulf States", [2, 2])  # Revolution fails
+        self.assertTrue(app.map["Gulf States"].is_poor())  # gov to 3
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 5)  # major jihad not possible
+        self.assertEqual(app.map["Gulf States"].activeCells, 4)  # lost no cells to the to failure rolls
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 0)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -1364,14 +1380,14 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 0
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [2,3]) # Revolution fails
-        self.assertTrue(app.map["Gulf States"].is_poor()) # gov to 3
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 5) # major jihad not possible
-        self.assertEqual(app.map["Gulf States"].activeCells, 3) # lost one cells to the to failure rolls
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 0) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        app.executeJihad("Gulf States", [2, 3])  # Revolution fails
+        self.assertTrue(app.map["Gulf States"].is_poor())  # gov to 3
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 5)  # major jihad not possible
+        self.assertEqual(app.map["Gulf States"].activeCells, 3)  # lost one cells to the to failure rolls
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 0)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -1384,14 +1400,14 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 0
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [3,3]) # Revolution fails
-        self.assertTrue(app.map["Gulf States"].is_fair()) # gov still 2
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 5) # major jihad not possible
-        self.assertEqual(app.map["Gulf States"].activeCells, 2) # lost two cells to the to failure rolls
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 1) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        app.executeJihad("Gulf States", [3, 3])  # Revolution fails
+        self.assertTrue(app.map["Gulf States"].is_fair())  # gov still 2
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 5)  # major jihad not possible
+        self.assertEqual(app.map["Gulf States"].activeCells, 2)  # lost two cells to the to failure rolls
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -1404,17 +1420,17 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 0
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [2,2,3]) # Revolution fails
-        self.assertTrue(app.map["Gulf States"].is_poor()) # gov to 3
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 0) # all cells active
-        self.assertEqual(app.map["Gulf States"].activeCells, 8) # lost one cells to the to failure rolls
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 0) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        app.executeJihad("Gulf States", [2, 2, 3])  # Revolution fails
+        self.assertTrue(app.map["Gulf States"].is_poor())  # gov to 3
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 0)  # all cells active
+        self.assertEqual(app.map["Gulf States"].activeCells, 8)  # lost one cells to the to failure rolls
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 0)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
-        
+
         app = Labyrinth(1, 1, testScenarioSetup)
         app.map["Gulf States"].make_neutral()
         app.map["Gulf States"].make_fair()
@@ -1424,17 +1440,17 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 0
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [2,3,3]) # Revolution fails
-        self.assertTrue(app.map["Gulf States"].is_poor()) # gov to 3
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 0) # all cells active
-        self.assertEqual(app.map["Gulf States"].activeCells, 7) # lost two cells to the to failure rolls
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 0) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        app.executeJihad("Gulf States", [2, 3, 3])  # Revolution fails
+        self.assertTrue(app.map["Gulf States"].is_poor())  # gov to 3
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 0)  # all cells active
+        self.assertEqual(app.map["Gulf States"].activeCells, 7)  # lost two cells to the to failure rolls
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 0)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
-                
+
         app = Labyrinth(1, 1, testScenarioSetup)
         app.map["Gulf States"].make_neutral()
         app.map["Gulf States"].make_fair()
@@ -1444,18 +1460,18 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 0
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [3,3,3]) # not Major failure
-        self.assertTrue(app.map["Gulf States"].is_fair()) # gov still 2
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 0) # all cells active
-        self.assertEqual(app.map["Gulf States"].activeCells, 6) # lost three cells to the to failure rolls
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 1) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # not major failure
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # not major failure
+        app.executeJihad("Gulf States", [3, 3, 3])  # not Major failure
+        self.assertTrue(app.map["Gulf States"].is_fair())  # gov still 2
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 0)  # all cells active
+        self.assertEqual(app.map["Gulf States"].activeCells, 6)  # lost three cells to the to failure rolls
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # not major failure
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # not major failure
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
-        
-    # No troops
+
+        # No troops
         app = Labyrinth(1, 1, testScenarioSetup)
         app.map["Gulf States"].make_neutral()
         app.map["Gulf States"].make_fair()
@@ -1465,18 +1481,18 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 0
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [2,2,3]) # Islamist Revolution
-        self.assertTrue(app.map["Gulf States"].is_poor()) # gov to 3
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 0) # all cells active
-        self.assertEqual(app.map["Gulf States"].activeCells, 8) # lost one cells to the to failure rolls
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 0) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        app.executeJihad("Gulf States", [2, 2, 3])  # Islamist Revolution
+        self.assertTrue(app.map["Gulf States"].is_poor())  # gov to 3
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 0)  # all cells active
+        self.assertEqual(app.map["Gulf States"].activeCells, 8)  # lost one cells to the to failure rolls
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 0)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
-        
-    # troops
+
+        # troops
         app = Labyrinth(1, 1, testScenarioSetup)
         app.map["Gulf States"].make_neutral()
         app.map["Gulf States"].make_fair()
@@ -1486,18 +1502,18 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 0
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [2,2,2]) # Islamist Revolution
-        self.assertTrue(app.map["Gulf States"].is_islamist_rule()) # islamist rule
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 0) # all cells active
-        self.assertEqual(app.map["Gulf States"].activeCells, 9) # lost no cells to the to failure rolls
-        self.assertEqual(app.map["Gulf States"].regimeChange, 0) # removed
-        self.assertEqual(app.map["Gulf States"].aid, 0) # removed
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # removed
-        self.assertTrue(app.map["Gulf States"].is_adversary()) # due to revolution
-        self.assertEqual(app.funding, 8) # +3 from resources
-        self.assertEqual(app.prestige, 1) # to 1 due to troops present
-        
-    # No troops
+        app.executeJihad("Gulf States", [2, 2, 2])  # Islamist Revolution
+        self.assertTrue(app.map["Gulf States"].is_islamist_rule())  # islamist rule
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 0)  # all cells active
+        self.assertEqual(app.map["Gulf States"].activeCells, 9)  # lost no cells to the to failure rolls
+        self.assertEqual(app.map["Gulf States"].regimeChange, 0)  # removed
+        self.assertEqual(app.map["Gulf States"].aid, 0)  # removed
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # removed
+        self.assertTrue(app.map["Gulf States"].is_adversary())  # due to revolution
+        self.assertEqual(app.funding, 8)  # +3 from resources
+        self.assertEqual(app.prestige, 1)  # to 1 due to troops present
+
+        # No troops
         app = Labyrinth(1, 1, testScenarioSetup)
         app.map["Gulf States"].make_neutral()
         app.map["Gulf States"].make_fair()
@@ -1507,20 +1523,39 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 0
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [2,2,2]) # Islamist Revolution
-        self.assertTrue(app.map["Gulf States"].is_islamist_rule()) # islamist rule
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 0) # all cells active
-        self.assertEqual(app.map["Gulf States"].activeCells, 9) # lost no cells to the to failure rolls
-        self.assertEqual(app.map["Gulf States"].regimeChange, 0) # removed
-        self.assertEqual(app.map["Gulf States"].aid, 0) # removed
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # removed
-        self.assertTrue(app.map["Gulf States"].is_adversary()) # due to revolution
-        self.assertEqual(app.funding, 8) # +3 from resources
-        self.assertEqual(app.prestige, 7) # unchanged, no troops
-        
+        app.executeJihad("Gulf States", [2, 2, 2])  # Islamist Revolution
+        self.assertTrue(app.map["Gulf States"].is_islamist_rule())  # islamist rule
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 0)  # all cells active
+        self.assertEqual(app.map["Gulf States"].activeCells, 9)  # lost no cells to the to failure rolls
+        self.assertEqual(app.map["Gulf States"].regimeChange, 0)  # removed
+        self.assertEqual(app.map["Gulf States"].aid, 0)  # removed
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # removed
+        self.assertTrue(app.map["Gulf States"].is_adversary())  # due to revolution
+        self.assertEqual(app.funding, 8)  # +3 from resources
+        self.assertEqual(app.prestige, 7)  # unchanged, no troops
+
     def testJihadEnoughCellsFairGovIsBeseiged(self):
-# Fair Gov
-# Besieged
+        # Fair Gov
+        # Besieged
+        app = Labyrinth(1, 1, testScenarioSetup)
+        app.map["Gulf States"].make_neutral()
+        app.map["Gulf States"].make_fair()
+        app.map["Gulf States"].sleeperCells = 5
+        app.map["Gulf States"].activeCells = 4
+        app.map["Gulf States"].troopCubes = 4
+        app.map["Gulf States"].besieged = 1
+        app.map["Gulf States"].regimeChange = 1
+        app.map["Gulf States"].aid = 1
+        app.executeJihad("Gulf States", [2])  # Revolution fails
+        self.assertTrue(app.map["Gulf States"].is_poor())  # gov to 3
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 5)  # major jihad not possible
+        self.assertEqual(app.map["Gulf States"].activeCells, 4)  # lost no cells to the to failure rolls
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 0)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 1)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
+        self.assertEqual(app.funding, 5)
+        self.assertEqual(app.prestige, 7)
 
         app = Labyrinth(1, 1, testScenarioSetup)
         app.map["Gulf States"].make_neutral()
@@ -1531,34 +1566,14 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 1
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [2]) # Revolution fails
-        self.assertTrue(app.map["Gulf States"].is_poor()) # gov to 3
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 5) # major jihad not possible
-        self.assertEqual(app.map["Gulf States"].activeCells, 4) # lost no cells to the to failure rolls
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 0) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 1) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
-        self.assertEqual(app.funding, 5)
-        self.assertEqual(app.prestige, 7)
-        
-        app = Labyrinth(1, 1, testScenarioSetup)
-        app.map["Gulf States"].make_neutral()
-        app.map["Gulf States"].make_fair()
-        app.map["Gulf States"].sleeperCells = 5
-        app.map["Gulf States"].activeCells = 4
-        app.map["Gulf States"].troopCubes = 4
-        app.map["Gulf States"].besieged = 1
-        app.map["Gulf States"].regimeChange = 1
-        app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [3]) # Revolution fails in besiged
-        self.assertTrue(app.map["Gulf States"].is_fair()) # gov still 2
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 5) # major jihad not possible
-        self.assertEqual(app.map["Gulf States"].activeCells, 3) # lost one cells to the to failure rolls
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 1) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 1) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        app.executeJihad("Gulf States", [3])  # Revolution fails in besiged
+        self.assertTrue(app.map["Gulf States"].is_fair())  # gov still 2
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 5)  # major jihad not possible
+        self.assertEqual(app.map["Gulf States"].activeCells, 3)  # lost one cells to the to failure rolls
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 1)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -1571,16 +1586,16 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 1
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [2,2]) # Revolution in besieged
-        self.assertTrue(app.map["Gulf States"].is_islamist_rule()) # islamist rule
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 0) # all cells active
-        self.assertEqual(app.map["Gulf States"].activeCells, 9) # lost no cells to the to failure rolls
-        self.assertEqual(app.map["Gulf States"].regimeChange, 0) # removed
-        self.assertEqual(app.map["Gulf States"].aid, 0) # removed
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # removed
-        self.assertTrue(app.map["Gulf States"].is_adversary()) # due to revolution
-        self.assertEqual(app.funding, 8) # +3 from resources
-        self.assertEqual(app.prestige, 7) # unchanged, no troops
+        app.executeJihad("Gulf States", [2, 2])  # Revolution in besieged
+        self.assertTrue(app.map["Gulf States"].is_islamist_rule())  # islamist rule
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 0)  # all cells active
+        self.assertEqual(app.map["Gulf States"].activeCells, 9)  # lost no cells to the to failure rolls
+        self.assertEqual(app.map["Gulf States"].regimeChange, 0)  # removed
+        self.assertEqual(app.map["Gulf States"].aid, 0)  # removed
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # removed
+        self.assertTrue(app.map["Gulf States"].is_adversary())  # due to revolution
+        self.assertEqual(app.funding, 8)  # +3 from resources
+        self.assertEqual(app.prestige, 7)  # unchanged, no troops
 
         app = Labyrinth(1, 1, testScenarioSetup)
         app.map["Gulf States"].make_neutral()
@@ -1591,34 +1606,14 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 1
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [2,3]) # Revolution failed
-        self.assertTrue(app.map["Gulf States"].is_poor()) # gov to 3
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 0) # all cells active
-        self.assertEqual(app.map["Gulf States"].activeCells, 8) # lost one cells to the to failure rolls
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 0) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 1) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
-        self.assertEqual(app.funding, 5)
-        self.assertEqual(app.prestige, 7)
-        
-        app = Labyrinth(1, 1, testScenarioSetup)
-        app.map["Gulf States"].make_neutral()
-        app.map["Gulf States"].make_fair()
-        app.map["Gulf States"].sleeperCells = 5
-        app.map["Gulf States"].activeCells = 4
-        app.map["Gulf States"].troopCubes = 4
-        app.map["Gulf States"].besieged = 1
-        app.map["Gulf States"].regimeChange = 1
-        app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [3,3]) # Revolution fails in besiged
-        self.assertTrue(app.map["Gulf States"].is_fair()) # gov still 2
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 0) # all cells active
-        self.assertEqual(app.map["Gulf States"].activeCells, 7) # lost two cells to the to failure rolls
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 1) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 1) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        app.executeJihad("Gulf States", [2, 3])  # Revolution failed
+        self.assertTrue(app.map["Gulf States"].is_poor())  # gov to 3
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 0)  # all cells active
+        self.assertEqual(app.map["Gulf States"].activeCells, 8)  # lost one cells to the to failure rolls
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 0)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 1)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -1631,57 +1626,17 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 1
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [2,2,2]) # Revolution in besiged
-        self.assertTrue(app.map["Gulf States"].is_islamist_rule()) # islamist rule
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 0) # all cells active
-        self.assertEqual(app.map["Gulf States"].activeCells, 9) # lost no cells to the to failure rolls
-        self.assertEqual(app.map["Gulf States"].regimeChange, 0) # removed
-        self.assertEqual(app.map["Gulf States"].aid, 0) # removed
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # removed
-        self.assertTrue(app.map["Gulf States"].is_adversary()) # due to revolution
-        self.assertEqual(app.funding, 8) # +3 from resources
-        self.assertEqual(app.prestige, 1) # troops
-        
-        app = Labyrinth(1, 1, testScenarioSetup)
-        app.map["Gulf States"].make_neutral()
-        app.map["Gulf States"].make_fair()
-        app.map["Gulf States"].sleeperCells = 5
-        app.map["Gulf States"].activeCells = 4
-        app.map["Gulf States"].troopCubes = 4
-        app.map["Gulf States"].besieged = 1
-        app.map["Gulf States"].regimeChange = 1
-        app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [2,2,3]) # Revolution in besiged
-        self.assertTrue(app.map["Gulf States"].is_islamist_rule()) # islamist rule
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 0) # all cells active
-        self.assertEqual(app.map["Gulf States"].activeCells, 8) # lost one cells to the to failure rolls
-        self.assertEqual(app.map["Gulf States"].regimeChange, 0) # removed
-        self.assertEqual(app.map["Gulf States"].aid, 0) # removed
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # removed
-        self.assertTrue(app.map["Gulf States"].is_adversary()) # due to revolution
-        self.assertEqual(app.funding, 8) # +3 from resources
-        self.assertEqual(app.prestige, 1) # troops
-        
-        app = Labyrinth(1, 1, testScenarioSetup)
-        app.map["Gulf States"].make_neutral()
-        app.map["Gulf States"].make_fair()
-        app.map["Gulf States"].sleeperCells = 5
-        app.map["Gulf States"].activeCells = 4
-        app.map["Gulf States"].troopCubes = 4
-        app.map["Gulf States"].besieged = 1
-        app.map["Gulf States"].regimeChange = 1
-        app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [2,3,3]) # Revolution fails
-        self.assertTrue(app.map["Gulf States"].is_poor()) # gov to 3
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 0) # all cells active
-        self.assertEqual(app.map["Gulf States"].activeCells, 7) # lost two cells to the to failure rolls
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 0) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 1) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        app.executeJihad("Gulf States", [3, 3])  # Revolution fails in besiged
+        self.assertTrue(app.map["Gulf States"].is_fair())  # gov still 2
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 0)  # all cells active
+        self.assertEqual(app.map["Gulf States"].activeCells, 7)  # lost two cells to the to failure rolls
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 1)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
-        
+
         app = Labyrinth(1, 1, testScenarioSetup)
         app.map["Gulf States"].make_neutral()
         app.map["Gulf States"].make_fair()
@@ -1691,20 +1646,80 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 1
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [3,3,3]) # Not Major Failure in besiged
-        self.assertTrue(app.map["Gulf States"].is_fair()) # gov still 2
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 0) # all cells active
-        self.assertEqual(app.map["Gulf States"].activeCells, 6) # lost three cells to the to failure rolls
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 1) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 1) # major failure
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # major failure
+        app.executeJihad("Gulf States", [2, 2, 2])  # Revolution in besiged
+        self.assertTrue(app.map["Gulf States"].is_islamist_rule())  # islamist rule
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 0)  # all cells active
+        self.assertEqual(app.map["Gulf States"].activeCells, 9)  # lost no cells to the to failure rolls
+        self.assertEqual(app.map["Gulf States"].regimeChange, 0)  # removed
+        self.assertEqual(app.map["Gulf States"].aid, 0)  # removed
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # removed
+        self.assertTrue(app.map["Gulf States"].is_adversary())  # due to revolution
+        self.assertEqual(app.funding, 8)  # +3 from resources
+        self.assertEqual(app.prestige, 1)  # troops
+
+        app = Labyrinth(1, 1, testScenarioSetup)
+        app.map["Gulf States"].make_neutral()
+        app.map["Gulf States"].make_fair()
+        app.map["Gulf States"].sleeperCells = 5
+        app.map["Gulf States"].activeCells = 4
+        app.map["Gulf States"].troopCubes = 4
+        app.map["Gulf States"].besieged = 1
+        app.map["Gulf States"].regimeChange = 1
+        app.map["Gulf States"].aid = 1
+        app.executeJihad("Gulf States", [2, 2, 3])  # Revolution in besiged
+        self.assertTrue(app.map["Gulf States"].is_islamist_rule())  # islamist rule
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 0)  # all cells active
+        self.assertEqual(app.map["Gulf States"].activeCells, 8)  # lost one cells to the to failure rolls
+        self.assertEqual(app.map["Gulf States"].regimeChange, 0)  # removed
+        self.assertEqual(app.map["Gulf States"].aid, 0)  # removed
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # removed
+        self.assertTrue(app.map["Gulf States"].is_adversary())  # due to revolution
+        self.assertEqual(app.funding, 8)  # +3 from resources
+        self.assertEqual(app.prestige, 1)  # troops
+
+        app = Labyrinth(1, 1, testScenarioSetup)
+        app.map["Gulf States"].make_neutral()
+        app.map["Gulf States"].make_fair()
+        app.map["Gulf States"].sleeperCells = 5
+        app.map["Gulf States"].activeCells = 4
+        app.map["Gulf States"].troopCubes = 4
+        app.map["Gulf States"].besieged = 1
+        app.map["Gulf States"].regimeChange = 1
+        app.map["Gulf States"].aid = 1
+        app.executeJihad("Gulf States", [2, 3, 3])  # Revolution fails
+        self.assertTrue(app.map["Gulf States"].is_poor())  # gov to 3
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 0)  # all cells active
+        self.assertEqual(app.map["Gulf States"].activeCells, 7)  # lost two cells to the to failure rolls
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 0)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 1)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
+        self.assertEqual(app.funding, 5)
+        self.assertEqual(app.prestige, 7)
+
+        app = Labyrinth(1, 1, testScenarioSetup)
+        app.map["Gulf States"].make_neutral()
+        app.map["Gulf States"].make_fair()
+        app.map["Gulf States"].sleeperCells = 5
+        app.map["Gulf States"].activeCells = 4
+        app.map["Gulf States"].troopCubes = 4
+        app.map["Gulf States"].besieged = 1
+        app.map["Gulf States"].regimeChange = 1
+        app.map["Gulf States"].aid = 1
+        app.executeJihad("Gulf States", [3, 3, 3])  # Not Major Failure in besiged
+        self.assertTrue(app.map["Gulf States"].is_fair())  # gov still 2
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 0)  # all cells active
+        self.assertEqual(app.map["Gulf States"].activeCells, 6)  # lost three cells to the to failure rolls
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 1)  # major failure
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # major failure
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
     def testJihadEnoughCellsGoodGovNotBeseiged(self):
-# Good Gov
-# Not Besieged
+        # Good Gov
+        # Not Besieged
         app = Labyrinth(1, 1, testScenarioSetup)
         app.map["Gulf States"].make_neutral()
         app.map["Gulf States"].make_good()
@@ -1714,14 +1729,14 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 0
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [1]) # Revolution fails
-        self.assertTrue(app.map["Gulf States"].is_fair()) # gov to 2
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 5) # major jihad not possible
-        self.assertEqual(app.map["Gulf States"].activeCells, 4) # lost no cells to the to failure rolls
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 0) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        app.executeJihad("Gulf States", [1])  # Revolution fails
+        self.assertTrue(app.map["Gulf States"].is_fair())  # gov to 2
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 5)  # major jihad not possible
+        self.assertEqual(app.map["Gulf States"].activeCells, 4)  # lost no cells to the to failure rolls
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 0)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -1734,14 +1749,14 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 0
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [2]) # Revolution fails
-        self.assertTrue(app.map["Gulf States"].is_good()) # gov still 1
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 5) # major jihad not possible
-        self.assertEqual(app.map["Gulf States"].activeCells, 3) # lost one cells to the to failure rolls
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 1) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        app.executeJihad("Gulf States", [2])  # Revolution fails
+        self.assertTrue(app.map["Gulf States"].is_good())  # gov still 1
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 5)  # major jihad not possible
+        self.assertEqual(app.map["Gulf States"].activeCells, 3)  # lost one cells to the to failure rolls
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -1754,14 +1769,14 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 0
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [1,1]) # Revolution fails
-        self.assertTrue(app.map["Gulf States"].is_poor()) # gov to 3
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 5) # major jihad not possible
-        self.assertEqual(app.map["Gulf States"].activeCells, 4) # lost no cells to the to failure rolls
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 0) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        app.executeJihad("Gulf States", [1, 1])  # Revolution fails
+        self.assertTrue(app.map["Gulf States"].is_poor())  # gov to 3
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 5)  # major jihad not possible
+        self.assertEqual(app.map["Gulf States"].activeCells, 4)  # lost no cells to the to failure rolls
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 0)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -1774,14 +1789,14 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 0
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [1,2]) # Revolution fails
-        self.assertTrue(app.map["Gulf States"].is_fair()) # gov to 2
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 5) # major jihad not possible
-        self.assertEqual(app.map["Gulf States"].activeCells, 3) # lost one cells to the to failure rolls
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 0) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        app.executeJihad("Gulf States", [1, 2])  # Revolution fails
+        self.assertTrue(app.map["Gulf States"].is_fair())  # gov to 2
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 5)  # major jihad not possible
+        self.assertEqual(app.map["Gulf States"].activeCells, 3)  # lost one cells to the to failure rolls
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 0)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -1794,14 +1809,14 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 0
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [2,2]) # Revolution fails
-        self.assertTrue(app.map["Gulf States"].is_good()) # gov still 1
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 5) # major jihad not possible
-        self.assertEqual(app.map["Gulf States"].activeCells, 2) # lost two cells to the to failure rolls
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 1) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        app.executeJihad("Gulf States", [2, 2])  # Revolution fails
+        self.assertTrue(app.map["Gulf States"].is_good())  # gov still 1
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 5)  # major jihad not possible
+        self.assertEqual(app.map["Gulf States"].activeCells, 2)  # lost two cells to the to failure rolls
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -1814,74 +1829,14 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 0
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [1,1,2]) # Revolution fails
-        self.assertTrue(app.map["Gulf States"].is_poor()) # gov to 3
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 5) # major jihad not possible
-        self.assertEqual(app.map["Gulf States"].activeCells, 3) # lost one cells to the to failure rolls
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 0) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
-        self.assertEqual(app.funding, 5)
-        self.assertEqual(app.prestige, 7)
-        
-        app = Labyrinth(1, 1, testScenarioSetup)
-        app.map["Gulf States"].make_neutral()
-        app.map["Gulf States"].make_good()
-        app.map["Gulf States"].sleeperCells = 5
-        app.map["Gulf States"].activeCells = 4
-        app.map["Gulf States"].troopCubes = 4
-        app.map["Gulf States"].besieged = 0
-        app.map["Gulf States"].regimeChange = 1
-        app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [1,2,2]) # Revolution fails
-        self.assertTrue(app.map["Gulf States"].is_fair()) # gov to 2
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 5) # major jihad not possible
-        self.assertEqual(app.map["Gulf States"].activeCells, 2) # lost two cells to the to failure rolls
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 0) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
-        self.assertEqual(app.funding, 5)
-        self.assertEqual(app.prestige, 7)
-                
-        app = Labyrinth(1, 1, testScenarioSetup)
-        app.map["Gulf States"].make_neutral()
-        app.map["Gulf States"].make_good()
-        app.map["Gulf States"].sleeperCells = 5
-        app.map["Gulf States"].activeCells = 4
-        app.map["Gulf States"].troopCubes = 4
-        app.map["Gulf States"].besieged = 0
-        app.map["Gulf States"].regimeChange = 1
-        app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [2,2,2]) # not Major failure
-        self.assertTrue(app.map["Gulf States"].is_good()) # gov still 1
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 5) # major jihad not possible
-        self.assertEqual(app.map["Gulf States"].activeCells, 1) # lost three cells to the to failure rolls
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 1) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # not major failure
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # not major failure
-        self.assertEqual(app.funding, 5)
-        self.assertEqual(app.prestige, 7)
-        
-        app = Labyrinth(1, 1, testScenarioSetup)
-        app.map["Gulf States"].make_neutral()
-        app.map["Gulf States"].make_good()
-        app.map["Gulf States"].sleeperCells = 5
-        app.map["Gulf States"].activeCells = 4
-        app.map["Gulf States"].troopCubes = 4
-        app.map["Gulf States"].besieged = 0
-        app.map["Gulf States"].regimeChange = 1
-        app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [1,2,2]) # Revolution failed
-        self.assertTrue(app.map["Gulf States"].is_fair()) # gov to 2
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 5) # major jihad not possible
-        self.assertEqual(app.map["Gulf States"].activeCells, 2) # lost two cells to the to failure rolls
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 0) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        app.executeJihad("Gulf States", [1, 1, 2])  # Revolution fails
+        self.assertTrue(app.map["Gulf States"].is_poor())  # gov to 3
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 5)  # major jihad not possible
+        self.assertEqual(app.map["Gulf States"].activeCells, 3)  # lost one cells to the to failure rolls
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 0)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -1894,20 +1849,80 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 0
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [1,1,1]) # Revolution failed
-        self.assertTrue(app.map["Gulf States"].is_poor()) # gov to 3
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 5) # major jihad not possible
-        self.assertEqual(app.map["Gulf States"].activeCells, 4) # lost no cells to the to failure rolls
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 0) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        app.executeJihad("Gulf States", [1, 2, 2])  # Revolution fails
+        self.assertTrue(app.map["Gulf States"].is_fair())  # gov to 2
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 5)  # major jihad not possible
+        self.assertEqual(app.map["Gulf States"].activeCells, 2)  # lost two cells to the to failure rolls
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 0)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
+        self.assertEqual(app.funding, 5)
+        self.assertEqual(app.prestige, 7)
+
+        app = Labyrinth(1, 1, testScenarioSetup)
+        app.map["Gulf States"].make_neutral()
+        app.map["Gulf States"].make_good()
+        app.map["Gulf States"].sleeperCells = 5
+        app.map["Gulf States"].activeCells = 4
+        app.map["Gulf States"].troopCubes = 4
+        app.map["Gulf States"].besieged = 0
+        app.map["Gulf States"].regimeChange = 1
+        app.map["Gulf States"].aid = 1
+        app.executeJihad("Gulf States", [2, 2, 2])  # not Major failure
+        self.assertTrue(app.map["Gulf States"].is_good())  # gov still 1
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 5)  # major jihad not possible
+        self.assertEqual(app.map["Gulf States"].activeCells, 1)  # lost three cells to the to failure rolls
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # not major failure
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # not major failure
+        self.assertEqual(app.funding, 5)
+        self.assertEqual(app.prestige, 7)
+
+        app = Labyrinth(1, 1, testScenarioSetup)
+        app.map["Gulf States"].make_neutral()
+        app.map["Gulf States"].make_good()
+        app.map["Gulf States"].sleeperCells = 5
+        app.map["Gulf States"].activeCells = 4
+        app.map["Gulf States"].troopCubes = 4
+        app.map["Gulf States"].besieged = 0
+        app.map["Gulf States"].regimeChange = 1
+        app.map["Gulf States"].aid = 1
+        app.executeJihad("Gulf States", [1, 2, 2])  # Revolution failed
+        self.assertTrue(app.map["Gulf States"].is_fair())  # gov to 2
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 5)  # major jihad not possible
+        self.assertEqual(app.map["Gulf States"].activeCells, 2)  # lost two cells to the to failure rolls
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 0)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
+        self.assertEqual(app.funding, 5)
+        self.assertEqual(app.prestige, 7)
+
+        app = Labyrinth(1, 1, testScenarioSetup)
+        app.map["Gulf States"].make_neutral()
+        app.map["Gulf States"].make_good()
+        app.map["Gulf States"].sleeperCells = 5
+        app.map["Gulf States"].activeCells = 4
+        app.map["Gulf States"].troopCubes = 4
+        app.map["Gulf States"].besieged = 0
+        app.map["Gulf States"].regimeChange = 1
+        app.map["Gulf States"].aid = 1
+        app.executeJihad("Gulf States", [1, 1, 1])  # Revolution failed
+        self.assertTrue(app.map["Gulf States"].is_poor())  # gov to 3
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 5)  # major jihad not possible
+        self.assertEqual(app.map["Gulf States"].activeCells, 4)  # lost no cells to the to failure rolls
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 0)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
     def testJihadEnoughCellsGoodGovIsBeseiged(self):
-# Good Gov
-# Besieged
+        # Good Gov
+        # Besieged
 
         app = Labyrinth(1, 1, testScenarioSetup)
         app.map["Gulf States"].make_neutral()
@@ -1918,17 +1933,17 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 1
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [1]) # Revolution fails
-        self.assertTrue(app.map["Gulf States"].is_fair()) # gov to 2
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 5) # major jihad not possible
-        self.assertEqual(app.map["Gulf States"].activeCells, 4) # lost no cells to the to failure rolls
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 0) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 1) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        app.executeJihad("Gulf States", [1])  # Revolution fails
+        self.assertTrue(app.map["Gulf States"].is_fair())  # gov to 2
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 5)  # major jihad not possible
+        self.assertEqual(app.map["Gulf States"].activeCells, 4)  # lost no cells to the to failure rolls
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 0)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 1)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
-        
+
         app = Labyrinth(1, 1, testScenarioSetup)
         app.map["Gulf States"].make_neutral()
         app.map["Gulf States"].make_good()
@@ -1938,14 +1953,14 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 1
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [2]) # Revolution fails in besiged
-        self.assertTrue(app.map["Gulf States"].is_good()) # gov still 1
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 5) # major jihad not possible
-        self.assertEqual(app.map["Gulf States"].activeCells, 3) # lost one cells to the to failure rolls
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 1) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 1) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        app.executeJihad("Gulf States", [2])  # Revolution fails in besiged
+        self.assertTrue(app.map["Gulf States"].is_good())  # gov still 1
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 5)  # major jihad not possible
+        self.assertEqual(app.map["Gulf States"].activeCells, 3)  # lost one cells to the to failure rolls
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 1)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -1958,14 +1973,14 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 1
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [1,1]) # Revolution fails
-        self.assertTrue(app.map["Gulf States"].is_poor()) # gov to 3
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 5) # major jihad not possible
-        self.assertEqual(app.map["Gulf States"].activeCells, 4) # lost no cells to the to failure rolls
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 0) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 1) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        app.executeJihad("Gulf States", [1, 1])  # Revolution fails
+        self.assertTrue(app.map["Gulf States"].is_poor())  # gov to 3
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 5)  # major jihad not possible
+        self.assertEqual(app.map["Gulf States"].activeCells, 4)  # lost no cells to the to failure rolls
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 0)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 1)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -1978,34 +1993,14 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 1
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [1,2]) # Revolution failed
-        self.assertTrue(app.map["Gulf States"].is_fair()) # gov to 2
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 5) # major jihad not possible
-        self.assertEqual(app.map["Gulf States"].activeCells, 3) # lost one cells to the to failure rolls
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 0) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 1) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
-        self.assertEqual(app.funding, 5)
-        self.assertEqual(app.prestige, 7)
-        
-        app = Labyrinth(1, 1, testScenarioSetup)
-        app.map["Gulf States"].make_neutral()
-        app.map["Gulf States"].make_good()
-        app.map["Gulf States"].sleeperCells = 5
-        app.map["Gulf States"].activeCells = 4
-        app.map["Gulf States"].troopCubes = 4
-        app.map["Gulf States"].besieged = 1
-        app.map["Gulf States"].regimeChange = 1
-        app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [2,2]) # Revolution fails in besiged
-        self.assertTrue(app.map["Gulf States"].is_good()) # gov still 1
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 5) # major jihad not possible
-        self.assertEqual(app.map["Gulf States"].activeCells, 2) # lost two cells to the to failure rolls
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 1) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 1) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        app.executeJihad("Gulf States", [1, 2])  # Revolution failed
+        self.assertTrue(app.map["Gulf States"].is_fair())  # gov to 2
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 5)  # major jihad not possible
+        self.assertEqual(app.map["Gulf States"].activeCells, 3)  # lost one cells to the to failure rolls
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 0)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 1)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -2018,17 +2013,17 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 1
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [1,1,1]) # Revolution in besiged
-        self.assertTrue(app.map["Gulf States"].is_islamist_rule()) # islamist rule
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 0) # all cells active
-        self.assertEqual(app.map["Gulf States"].activeCells, 9) # lost no cells to the to failure rolls
-        self.assertEqual(app.map["Gulf States"].regimeChange, 0) # removed
-        self.assertEqual(app.map["Gulf States"].aid, 0) # removed
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # removed
-        self.assertTrue(app.map["Gulf States"].is_adversary()) # due to revolution
-        self.assertEqual(app.funding, 8) # +3 from resources
-        self.assertEqual(app.prestige, 1) # troops
-        
+        app.executeJihad("Gulf States", [2, 2])  # Revolution fails in besiged
+        self.assertTrue(app.map["Gulf States"].is_good())  # gov still 1
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 5)  # major jihad not possible
+        self.assertEqual(app.map["Gulf States"].activeCells, 2)  # lost two cells to the to failure rolls
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 1)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
+        self.assertEqual(app.funding, 5)
+        self.assertEqual(app.prestige, 7)
+
         app = Labyrinth(1, 1, testScenarioSetup)
         app.map["Gulf States"].make_neutral()
         app.map["Gulf States"].make_good()
@@ -2038,17 +2033,17 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 1
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [1,1,2]) # Revolution in besiged
-        self.assertTrue(app.map["Gulf States"].is_poor()) # gov to 3
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 0) # all cells active
-        self.assertEqual(app.map["Gulf States"].activeCells, 8) # lost one cells to the to failure rolls
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 0) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 1) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
-        self.assertEqual(app.funding, 5)
-        self.assertEqual(app.prestige, 7)
-        
+        app.executeJihad("Gulf States", [1, 1, 1])  # Revolution in besiged
+        self.assertTrue(app.map["Gulf States"].is_islamist_rule())  # islamist rule
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 0)  # all cells active
+        self.assertEqual(app.map["Gulf States"].activeCells, 9)  # lost no cells to the to failure rolls
+        self.assertEqual(app.map["Gulf States"].regimeChange, 0)  # removed
+        self.assertEqual(app.map["Gulf States"].aid, 0)  # removed
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # removed
+        self.assertTrue(app.map["Gulf States"].is_adversary())  # due to revolution
+        self.assertEqual(app.funding, 8)  # +3 from resources
+        self.assertEqual(app.prestige, 1)  # troops
+
         app = Labyrinth(1, 1, testScenarioSetup)
         app.map["Gulf States"].make_neutral()
         app.map["Gulf States"].make_good()
@@ -2058,17 +2053,17 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 1
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [1,2,2]) # Revolution fails
-        self.assertTrue(app.map["Gulf States"].is_fair()) # gov to 2
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 0) # all cells active
-        self.assertEqual(app.map["Gulf States"].activeCells, 7) # lost two cells to the to failure rolls
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 0) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 1) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        app.executeJihad("Gulf States", [1, 1, 2])  # Revolution in besiged
+        self.assertTrue(app.map["Gulf States"].is_poor())  # gov to 3
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 0)  # all cells active
+        self.assertEqual(app.map["Gulf States"].activeCells, 8)  # lost one cells to the to failure rolls
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 0)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 1)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
-        
+
         app = Labyrinth(1, 1, testScenarioSetup)
         app.map["Gulf States"].make_neutral()
         app.map["Gulf States"].make_good()
@@ -2078,23 +2073,43 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 1
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [2,2,2]) # not Major Failure in besiged
-        self.assertTrue(app.map["Gulf States"].is_good()) # gov still 1
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 0) # all cells active
-        self.assertEqual(app.map["Gulf States"].activeCells, 6) # lost three cells to the to failure rolls
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 1) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 1) # major failure
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # not major failure
+        app.executeJihad("Gulf States", [1, 2, 2])  # Revolution fails
+        self.assertTrue(app.map["Gulf States"].is_fair())  # gov to 2
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 0)  # all cells active
+        self.assertEqual(app.map["Gulf States"].activeCells, 7)  # lost two cells to the to failure rolls
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 0)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 1)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
-        
-# NOT 5 MORE CELLS THAN TROOPS - Major Jihad NOT possible
+
+        app = Labyrinth(1, 1, testScenarioSetup)
+        app.map["Gulf States"].make_neutral()
+        app.map["Gulf States"].make_good()
+        app.map["Gulf States"].sleeperCells = 5
+        app.map["Gulf States"].activeCells = 4
+        app.map["Gulf States"].troopCubes = 4
+        app.map["Gulf States"].besieged = 1
+        app.map["Gulf States"].regimeChange = 1
+        app.map["Gulf States"].aid = 1
+        app.executeJihad("Gulf States", [2, 2, 2])  # not Major Failure in besiged
+        self.assertTrue(app.map["Gulf States"].is_good())  # gov still 1
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 0)  # all cells active
+        self.assertEqual(app.map["Gulf States"].activeCells, 6)  # lost three cells to the to failure rolls
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 1)  # major failure
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # not major failure
+        self.assertEqual(app.funding, 5)
+        self.assertEqual(app.prestige, 7)
+
+        # NOT 5 MORE CELLS THAN TROOPS - Major Jihad NOT possible
 
     def testJihadNotEnoughCellsPoorGovNotBeseiged(self):
 
-# Poor Gov
-# Not Besieged
+        # Poor Gov
+        # Not Besieged
         app = Labyrinth(1, 1, testScenarioSetup)
         app.map["Gulf States"].make_neutral()
         app.map["Gulf States"].make_poor()
@@ -2104,14 +2119,14 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 0
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [3]) # Revolution fails
-        self.assertTrue(app.map["Gulf States"].is_poor()) # gov still 3
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 1) # major jihad not possible
-        self.assertEqual(app.map["Gulf States"].activeCells, 3) # lost no cells to the to failure rolls
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 1) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        app.executeJihad("Gulf States", [3])  # Revolution fails
+        self.assertTrue(app.map["Gulf States"].is_poor())  # gov still 3
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 1)  # major jihad not possible
+        self.assertEqual(app.map["Gulf States"].activeCells, 3)  # lost no cells to the to failure rolls
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -2124,14 +2139,14 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 0
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [4]) # Revolution fails
-        self.assertTrue(app.map["Gulf States"].is_poor()) # gov still 3
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 1) # major jihad not possible
-        self.assertEqual(app.map["Gulf States"].activeCells, 2) # lost one cells to the to failure rolls
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 1) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        app.executeJihad("Gulf States", [4])  # Revolution fails
+        self.assertTrue(app.map["Gulf States"].is_poor())  # gov still 3
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 1)  # major jihad not possible
+        self.assertEqual(app.map["Gulf States"].activeCells, 2)  # lost one cells to the to failure rolls
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -2144,14 +2159,14 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 0
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [3,3]) # Islamist Revolution
-        self.assertTrue(app.map["Gulf States"].is_poor()) # gov still 3
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 1) # major jihad not possible
-        self.assertEqual(app.map["Gulf States"].activeCells, 3) # lost no cells to the to failure rolls
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 1) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        app.executeJihad("Gulf States", [3, 3])  # Islamist Revolution
+        self.assertTrue(app.map["Gulf States"].is_poor())  # gov still 3
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 1)  # major jihad not possible
+        self.assertEqual(app.map["Gulf States"].activeCells, 3)  # lost no cells to the to failure rolls
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -2164,14 +2179,14 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 0
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [3,4]) # Revolution fails
-        self.assertTrue(app.map["Gulf States"].is_poor()) # gov still 3
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 1) # major jihad not possible
-        self.assertEqual(app.map["Gulf States"].activeCells, 2) # lost one cells to the to failure rolls
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 1) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        app.executeJihad("Gulf States", [3, 4])  # Revolution fails
+        self.assertTrue(app.map["Gulf States"].is_poor())  # gov still 3
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 1)  # major jihad not possible
+        self.assertEqual(app.map["Gulf States"].activeCells, 2)  # lost one cells to the to failure rolls
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -2184,14 +2199,14 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 0
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [4,4]) # Revolution fails
-        self.assertTrue(app.map["Gulf States"].is_poor()) # gov still 3
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 1) # major jihad not possible
-        self.assertEqual(app.map["Gulf States"].activeCells, 1) # lost two cells to the to failure rolls
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 1) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        app.executeJihad("Gulf States", [4, 4])  # Revolution fails
+        self.assertTrue(app.map["Gulf States"].is_poor())  # gov still 3
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 1)  # major jihad not possible
+        self.assertEqual(app.map["Gulf States"].activeCells, 1)  # lost two cells to the to failure rolls
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -2204,17 +2219,17 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 0
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [3,4,4]) # Revolution fails
-        self.assertTrue(app.map["Gulf States"].is_poor()) # gov still 3
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 1) # major jihad not possible
-        self.assertEqual(app.map["Gulf States"].activeCells, 1) # lost two cells to the to failure rolls
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 1) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        app.executeJihad("Gulf States", [3, 4, 4])  # Revolution fails
+        self.assertTrue(app.map["Gulf States"].is_poor())  # gov still 3
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 1)  # major jihad not possible
+        self.assertEqual(app.map["Gulf States"].activeCells, 1)  # lost two cells to the to failure rolls
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
-                
+
         app = Labyrinth(1, 1, testScenarioSetup)
         app.map["Gulf States"].make_neutral()
         app.map["Gulf States"].make_poor()
@@ -2224,18 +2239,18 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 0
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [4,4,4]) # Not Major failure
-        self.assertTrue(app.map["Gulf States"].is_poor()) # gov still 3
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 1) # major jihad not possible
-        self.assertEqual(app.map["Gulf States"].activeCells, 0) # lost three cells to the to failure rolls
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 1) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # not major failure
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # not major failure
+        app.executeJihad("Gulf States", [4, 4, 4])  # Not Major failure
+        self.assertTrue(app.map["Gulf States"].is_poor())  # gov still 3
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 1)  # major jihad not possible
+        self.assertEqual(app.map["Gulf States"].activeCells, 0)  # lost three cells to the to failure rolls
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # not major failure
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # not major failure
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
-        
-    # No troops
+
+        # No troops
         app = Labyrinth(1, 1, testScenarioSetup)
         app.map["Gulf States"].make_neutral()
         app.map["Gulf States"].make_poor()
@@ -2245,18 +2260,18 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 0
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [3,3,4]) # can't major jihad
-        self.assertTrue(app.map["Gulf States"].is_poor()) # gov still 3
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 1) # major jihad not possible
-        self.assertEqual(app.map["Gulf States"].activeCells, 2) # lost one cells to the to failure rolls
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 1) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        app.executeJihad("Gulf States", [3, 3, 4])  # can't major jihad
+        self.assertTrue(app.map["Gulf States"].is_poor())  # gov still 3
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 1)  # major jihad not possible
+        self.assertEqual(app.map["Gulf States"].activeCells, 2)  # lost one cells to the to failure rolls
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
-        
-    # No troops
+
+        # No troops
         app = Labyrinth(1, 1, testScenarioSetup)
         app.map["Gulf States"].make_neutral()
         app.map["Gulf States"].make_poor()
@@ -2266,18 +2281,18 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 0
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [3,3,4]) # can't major jihad
-        self.assertTrue(app.map["Gulf States"].is_poor()) # gov still 3
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 1) # major jihad not possible
-        self.assertEqual(app.map["Gulf States"].activeCells, 2) # lost one cells to the to failure rolls
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 1) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        app.executeJihad("Gulf States", [3, 3, 4])  # can't major jihad
+        self.assertTrue(app.map["Gulf States"].is_poor())  # gov still 3
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 1)  # major jihad not possible
+        self.assertEqual(app.map["Gulf States"].activeCells, 2)  # lost one cells to the to failure rolls
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
-    # No troops
+        # No troops
         app = Labyrinth(1, 1, testScenarioSetup)
         app.map["Gulf States"].make_neutral()
         app.map["Gulf States"].make_poor()
@@ -2287,18 +2302,18 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 0
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [3,3,3]) # can't major jihad
-        self.assertTrue(app.map["Gulf States"].is_poor()) # gov still 3
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 1) # major jihad not possible
-        self.assertEqual(app.map["Gulf States"].activeCells, 3) # lost no cells to the to failure rolls
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 1) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        app.executeJihad("Gulf States", [3, 3, 3])  # can't major jihad
+        self.assertTrue(app.map["Gulf States"].is_poor())  # gov still 3
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 1)  # major jihad not possible
+        self.assertEqual(app.map["Gulf States"].activeCells, 3)  # lost no cells to the to failure rolls
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
-        
-    # No troops
+
+        # No troops
         app = Labyrinth(1, 1, testScenarioSetup)
         app.map["Gulf States"].make_neutral()
         app.map["Gulf States"].make_poor()
@@ -2308,20 +2323,20 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 0
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [3,3,3]) # can't major jihad
-        self.assertTrue(app.map["Gulf States"].is_poor()) # gov still 3
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 1) # major jihad not possible
-        self.assertEqual(app.map["Gulf States"].activeCells, 3) # lost no cells to the to failure rolls
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 1) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        app.executeJihad("Gulf States", [3, 3, 3])  # can't major jihad
+        self.assertTrue(app.map["Gulf States"].is_poor())  # gov still 3
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 1)  # major jihad not possible
+        self.assertEqual(app.map["Gulf States"].activeCells, 3)  # lost no cells to the to failure rolls
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
     def testJihadNotEnoughCellsPoorGovIsBeseiged(self):    
-# Poor Gov
-# Besieged
+        # Poor Gov
+        # Besieged
         app = Labyrinth(1, 1, testScenarioSetup)
         app.map["Gulf States"].make_neutral()
         app.map["Gulf States"].make_poor()
@@ -2331,34 +2346,14 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 1
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [3]) # can't major jihad
-        self.assertTrue(app.map["Gulf States"].is_poor()) # gov still 3
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 1) # major jihad not possible
-        self.assertEqual(app.map["Gulf States"].activeCells, 3) # lost no cells to the to failure rolls
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 1) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 1) # 
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
-        self.assertEqual(app.funding, 5)
-        self.assertEqual(app.prestige, 7)
-        
-        app = Labyrinth(1, 1, testScenarioSetup)
-        app.map["Gulf States"].make_neutral()
-        app.map["Gulf States"].make_poor()
-        app.map["Gulf States"].sleeperCells = 1
-        app.map["Gulf States"].activeCells = 3
-        app.map["Gulf States"].troopCubes = 4
-        app.map["Gulf States"].besieged = 1
-        app.map["Gulf States"].regimeChange = 1
-        app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [4]) # Revolution fails in besiged
-        self.assertTrue(app.map["Gulf States"].is_poor()) # gov still 3
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 1) # all cells active
-        self.assertEqual(app.map["Gulf States"].activeCells, 2) # lost one cells to the to failure rolls
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 1) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 1) # 
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        app.executeJihad("Gulf States", [3])  # can't major jihad
+        self.assertTrue(app.map["Gulf States"].is_poor())  # gov still 3
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 1)  # major jihad not possible
+        self.assertEqual(app.map["Gulf States"].activeCells, 3)  # lost no cells to the to failure rolls
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 1)  # 
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -2371,14 +2366,14 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 1
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [3,3]) # can't major jihad
-        self.assertTrue(app.map["Gulf States"].is_poor()) # gov still 3
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 1) # major jihad not possible
-        self.assertEqual(app.map["Gulf States"].activeCells, 3) # lost no cells to the to failure rolls
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 1) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 1) # 
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        app.executeJihad("Gulf States", [4])  # Revolution fails in besiged
+        self.assertTrue(app.map["Gulf States"].is_poor())  # gov still 3
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 1)  # all cells active
+        self.assertEqual(app.map["Gulf States"].activeCells, 2)  # lost one cells to the to failure rolls
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 1)  # 
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -2391,34 +2386,14 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 1
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [3,4]) # Revolution in besiged
-        self.assertTrue(app.map["Gulf States"].is_poor()) # gov still 3
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 1) # major jihad not possible
-        self.assertEqual(app.map["Gulf States"].activeCells, 2) # lost one cells to the to failure rolls
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 1) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 1) # 
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
-        self.assertEqual(app.funding, 5)
-        self.assertEqual(app.prestige, 7)
-        
-        app = Labyrinth(1, 1, testScenarioSetup)
-        app.map["Gulf States"].make_neutral()
-        app.map["Gulf States"].make_poor()
-        app.map["Gulf States"].sleeperCells = 1
-        app.map["Gulf States"].activeCells = 3
-        app.map["Gulf States"].troopCubes = 4
-        app.map["Gulf States"].besieged = 1
-        app.map["Gulf States"].regimeChange = 1
-        app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [4,4]) # Revolution fails in besiged
-        self.assertTrue(app.map["Gulf States"].is_poor()) # gov still 3
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 1) # all cells active
-        self.assertEqual(app.map["Gulf States"].activeCells, 1) # lost two cells to the to failure rolls
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 1) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 1) # 
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        app.executeJihad("Gulf States", [3, 3])  # can't major jihad
+        self.assertTrue(app.map["Gulf States"].is_poor())  # gov still 3
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 1)  # major jihad not possible
+        self.assertEqual(app.map["Gulf States"].activeCells, 3)  # lost no cells to the to failure rolls
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 1)  # 
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -2431,17 +2406,17 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 1
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [3,3,3]) # can't major jihad
-        self.assertTrue(app.map["Gulf States"].is_poor()) # gov still 3
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 1) # major jihad not possible
-        self.assertEqual(app.map["Gulf States"].activeCells, 3) # lost no cells to the to failure rolls
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 1) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 1) # 
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        app.executeJihad("Gulf States", [3, 4])  # Revolution in besiged
+        self.assertTrue(app.map["Gulf States"].is_poor())  # gov still 3
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 1)  # major jihad not possible
+        self.assertEqual(app.map["Gulf States"].activeCells, 2)  # lost one cells to the to failure rolls
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 1)  # 
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
-        
+
         app = Labyrinth(1, 1, testScenarioSetup)
         app.map["Gulf States"].make_neutral()
         app.map["Gulf States"].make_poor()
@@ -2451,17 +2426,17 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 1
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [3,3,4]) # Revolution in besiged
-        self.assertTrue(app.map["Gulf States"].is_poor()) # gov still 3
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 1) # major jihad not possible
-        self.assertEqual(app.map["Gulf States"].activeCells, 2) # lost one cells to the to failure rolls
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 1) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 1) # 
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        app.executeJihad("Gulf States", [4, 4])  # Revolution fails in besiged
+        self.assertTrue(app.map["Gulf States"].is_poor())  # gov still 3
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 1)  # all cells active
+        self.assertEqual(app.map["Gulf States"].activeCells, 1)  # lost two cells to the to failure rolls
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 1)  # 
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
-        
+
         app = Labyrinth(1, 1, testScenarioSetup)
         app.map["Gulf States"].make_neutral()
         app.map["Gulf States"].make_poor()
@@ -2471,17 +2446,17 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 1
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [3,4,4]) # Revolution in besiged
-        self.assertTrue(app.map["Gulf States"].is_poor()) # gov still 3
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 1) # major jihad not possible
-        self.assertEqual(app.map["Gulf States"].activeCells, 1) # lost two cells to the to failure rolls
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 1) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 1) # 
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        app.executeJihad("Gulf States", [3, 3, 3])  # can't major jihad
+        self.assertTrue(app.map["Gulf States"].is_poor())  # gov still 3
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 1)  # major jihad not possible
+        self.assertEqual(app.map["Gulf States"].activeCells, 3)  # lost no cells to the to failure rolls
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 1)  # 
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
-        
+
         app = Labyrinth(1, 1, testScenarioSetup)
         app.map["Gulf States"].make_neutral()
         app.map["Gulf States"].make_poor()
@@ -2491,20 +2466,60 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 1
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [4,4,4]) # no major failure
-        self.assertTrue(app.map["Gulf States"].is_poor()) # gov still 3
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 1) # major jihad not possible
-        self.assertEqual(app.map["Gulf States"].activeCells, 0) # lost three cells to the to failure rolls
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 1) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 1) # 
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        app.executeJihad("Gulf States", [3, 3, 4])  # Revolution in besiged
+        self.assertTrue(app.map["Gulf States"].is_poor())  # gov still 3
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 1)  # major jihad not possible
+        self.assertEqual(app.map["Gulf States"].activeCells, 2)  # lost one cells to the to failure rolls
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 1)  # 
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
+        self.assertEqual(app.funding, 5)
+        self.assertEqual(app.prestige, 7)
+
+        app = Labyrinth(1, 1, testScenarioSetup)
+        app.map["Gulf States"].make_neutral()
+        app.map["Gulf States"].make_poor()
+        app.map["Gulf States"].sleeperCells = 1
+        app.map["Gulf States"].activeCells = 3
+        app.map["Gulf States"].troopCubes = 4
+        app.map["Gulf States"].besieged = 1
+        app.map["Gulf States"].regimeChange = 1
+        app.map["Gulf States"].aid = 1
+        app.executeJihad("Gulf States", [3, 4, 4])  # Revolution in besiged
+        self.assertTrue(app.map["Gulf States"].is_poor())  # gov still 3
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 1)  # major jihad not possible
+        self.assertEqual(app.map["Gulf States"].activeCells, 1)  # lost two cells to the to failure rolls
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 1)  # 
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
+        self.assertEqual(app.funding, 5)
+        self.assertEqual(app.prestige, 7)
+
+        app = Labyrinth(1, 1, testScenarioSetup)
+        app.map["Gulf States"].make_neutral()
+        app.map["Gulf States"].make_poor()
+        app.map["Gulf States"].sleeperCells = 1
+        app.map["Gulf States"].activeCells = 3
+        app.map["Gulf States"].troopCubes = 4
+        app.map["Gulf States"].besieged = 1
+        app.map["Gulf States"].regimeChange = 1
+        app.map["Gulf States"].aid = 1
+        app.executeJihad("Gulf States", [4, 4, 4])  # no major failure
+        self.assertTrue(app.map["Gulf States"].is_poor())  # gov still 3
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 1)  # major jihad not possible
+        self.assertEqual(app.map["Gulf States"].activeCells, 0)  # lost three cells to the to failure rolls
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 1)  # 
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
     def testJihadNotEnoughCellsFairGovNotBeseiged(self):
-# Fair Gov
-# Not Besieged
+        # Fair Gov
+        # Not Besieged
         app = Labyrinth(1, 1, testScenarioSetup)
         app.map["Gulf States"].make_neutral()
         app.map["Gulf States"].make_fair()
@@ -2514,14 +2529,14 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 0
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [2]) # Revolution fails
-        self.assertTrue(app.map["Gulf States"].is_poor()) # gov to 3
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 1) # major jihad not possible
-        self.assertEqual(app.map["Gulf States"].activeCells, 3) # lost no cells to the to failure rolls
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 0) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        app.executeJihad("Gulf States", [2])  # Revolution fails
+        self.assertTrue(app.map["Gulf States"].is_poor())  # gov to 3
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 1)  # major jihad not possible
+        self.assertEqual(app.map["Gulf States"].activeCells, 3)  # lost no cells to the to failure rolls
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 0)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -2534,14 +2549,14 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 0
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [3]) # Revolution fails
-        self.assertTrue(app.map["Gulf States"].is_fair()) # gov still 2
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 1) # major jihad not possible
-        self.assertEqual(app.map["Gulf States"].activeCells, 2) # lost one cells to the to failure rolls
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 1) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        app.executeJihad("Gulf States", [3])  # Revolution fails
+        self.assertTrue(app.map["Gulf States"].is_fair())  # gov still 2
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 1)  # major jihad not possible
+        self.assertEqual(app.map["Gulf States"].activeCells, 2)  # lost one cells to the to failure rolls
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -2554,14 +2569,14 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 0
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [2,2]) # Revolution fails
-        self.assertTrue(app.map["Gulf States"].is_poor()) # gov to 3
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 1) # major jihad not possible
-        self.assertEqual(app.map["Gulf States"].activeCells, 3) # lost no cells to the to failure rolls
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 0) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        app.executeJihad("Gulf States", [2, 2])  # Revolution fails
+        self.assertTrue(app.map["Gulf States"].is_poor())  # gov to 3
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 1)  # major jihad not possible
+        self.assertEqual(app.map["Gulf States"].activeCells, 3)  # lost no cells to the to failure rolls
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 0)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -2574,14 +2589,14 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 0
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [2,3]) # Revolution fails
-        self.assertTrue(app.map["Gulf States"].is_poor()) # gov to 3
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 1) # major jihad not possible
-        self.assertEqual(app.map["Gulf States"].activeCells, 2) # lost one cells to the to failure rolls
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 0) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        app.executeJihad("Gulf States", [2, 3])  # Revolution fails
+        self.assertTrue(app.map["Gulf States"].is_poor())  # gov to 3
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 1)  # major jihad not possible
+        self.assertEqual(app.map["Gulf States"].activeCells, 2)  # lost one cells to the to failure rolls
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 0)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -2594,14 +2609,14 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 0
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [3,3]) # Revolution fails
-        self.assertTrue(app.map["Gulf States"].is_fair()) # gov still 2
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 1) # major jihad not possible
-        self.assertEqual(app.map["Gulf States"].activeCells, 1) # lost two cells to the to failure rolls
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 1) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        app.executeJihad("Gulf States", [3, 3])  # Revolution fails
+        self.assertTrue(app.map["Gulf States"].is_fair())  # gov still 2
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 1)  # major jihad not possible
+        self.assertEqual(app.map["Gulf States"].activeCells, 1)  # lost two cells to the to failure rolls
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -2614,17 +2629,17 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 0
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [2,2,3]) # Revolution fails
-        self.assertTrue(app.map["Gulf States"].is_poor()) # gov to 3
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 1) # major jihad not possible
-        self.assertEqual(app.map["Gulf States"].activeCells, 2) # lost one cells to the to failure rolls
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 0) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        app.executeJihad("Gulf States", [2, 2, 3])  # Revolution fails
+        self.assertTrue(app.map["Gulf States"].is_poor())  # gov to 3
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 1)  # major jihad not possible
+        self.assertEqual(app.map["Gulf States"].activeCells, 2)  # lost one cells to the to failure rolls
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 0)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
-        
+
         app = Labyrinth(1, 1, testScenarioSetup)
         app.map["Gulf States"].make_neutral()
         app.map["Gulf States"].make_fair()
@@ -2634,17 +2649,17 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 0
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [2,3,3]) # Revolution fails
-        self.assertTrue(app.map["Gulf States"].is_poor()) # gov to 3
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 1) # major jihad not possible
-        self.assertEqual(app.map["Gulf States"].activeCells, 1) # lost two cells to the to failure rolls
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 0) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        app.executeJihad("Gulf States", [2, 3, 3])  # Revolution fails
+        self.assertTrue(app.map["Gulf States"].is_poor())  # gov to 3
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 1)  # major jihad not possible
+        self.assertEqual(app.map["Gulf States"].activeCells, 1)  # lost two cells to the to failure rolls
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 0)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
-                
+
         app = Labyrinth(1, 1, testScenarioSetup)
         app.map["Gulf States"].make_neutral()
         app.map["Gulf States"].make_fair()
@@ -2654,18 +2669,18 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 0
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [3,3,3]) # no Major failure
-        self.assertTrue(app.map["Gulf States"].is_fair()) # gov stays 2
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 1) # major jihad not possible
-        self.assertEqual(app.map["Gulf States"].activeCells, 0) # lost three cells to the to failure rolls
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 1) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        app.executeJihad("Gulf States", [3, 3, 3])  # no Major failure
+        self.assertTrue(app.map["Gulf States"].is_fair())  # gov stays 2
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 1)  # major jihad not possible
+        self.assertEqual(app.map["Gulf States"].activeCells, 0)  # lost three cells to the to failure rolls
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
-        
-    # No troops
+
+        # No troops
         app = Labyrinth(1, 1, testScenarioSetup)
         app.map["Gulf States"].make_neutral()
         app.map["Gulf States"].make_fair()
@@ -2675,18 +2690,18 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 0
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [2,2,3]) # can't major jihad
-        self.assertTrue(app.map["Gulf States"].is_poor()) # gov to 3
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 1) # major jihad not possible
-        self.assertEqual(app.map["Gulf States"].activeCells, 2) # lost one cells to the to failure rolls
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 0) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        app.executeJihad("Gulf States", [2, 2, 3])  # can't major jihad
+        self.assertTrue(app.map["Gulf States"].is_poor())  # gov to 3
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 1)  # major jihad not possible
+        self.assertEqual(app.map["Gulf States"].activeCells, 2)  # lost one cells to the to failure rolls
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 0)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
-        
-    # troops
+
+        # troops
         app = Labyrinth(1, 1, testScenarioSetup)
         app.map["Gulf States"].make_neutral()
         app.map["Gulf States"].make_fair()
@@ -2696,18 +2711,18 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 0
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [2,2,2]) # can't major jihad
-        self.assertTrue(app.map["Gulf States"].is_poor()) # gov to 3
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 1) # major jihad not possible
-        self.assertEqual(app.map["Gulf States"].activeCells, 3) # lost no cells to the to failure rolls
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 0) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        app.executeJihad("Gulf States", [2, 2, 2])  # can't major jihad
+        self.assertTrue(app.map["Gulf States"].is_poor())  # gov to 3
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 1)  # major jihad not possible
+        self.assertEqual(app.map["Gulf States"].activeCells, 3)  # lost no cells to the to failure rolls
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 0)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
-        
-    # No troops
+
+        # No troops
         app = Labyrinth(1, 1, testScenarioSetup)
         app.map["Gulf States"].make_neutral()
         app.map["Gulf States"].make_fair()
@@ -2717,20 +2732,20 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 0
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [2,2,2]) # Islamist Revolution
-        self.assertTrue(app.map["Gulf States"].is_poor()) # gov to 3
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 1) # major jihad not possible
-        self.assertEqual(app.map["Gulf States"].activeCells, 3) # lost no cells to the to failure rolls
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 0) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        app.executeJihad("Gulf States", [2, 2, 2])  # Islamist Revolution
+        self.assertTrue(app.map["Gulf States"].is_poor())  # gov to 3
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 1)  # major jihad not possible
+        self.assertEqual(app.map["Gulf States"].activeCells, 3)  # lost no cells to the to failure rolls
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 0)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
-        
+
     def testJihadNotEnoughCellsFairGovIsBeseiged(self):
-# Fair Gov
-# Besieged
+        # Fair Gov
+        # Besieged
 
         app = Labyrinth(1, 1, testScenarioSetup)
         app.map["Gulf States"].make_neutral()
@@ -2741,17 +2756,17 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 1
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [2]) # Revolution fails
-        self.assertTrue(app.map["Gulf States"].is_poor()) # gov to 3
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 1) # major jihad not possible
-        self.assertEqual(app.map["Gulf States"].activeCells, 3) # lost no cells to the to failure rolls
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 0) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 1) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        app.executeJihad("Gulf States", [2])  # Revolution fails
+        self.assertTrue(app.map["Gulf States"].is_poor())  # gov to 3
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 1)  # major jihad not possible
+        self.assertEqual(app.map["Gulf States"].activeCells, 3)  # lost no cells to the to failure rolls
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 0)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 1)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
-        
+
         app = Labyrinth(1, 1, testScenarioSetup)
         app.map["Gulf States"].make_neutral()
         app.map["Gulf States"].make_fair()
@@ -2761,14 +2776,14 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 1
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [3]) # Revolution fails in besiged
-        self.assertTrue(app.map["Gulf States"].is_fair()) # gov still 2
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 1) # major jihad not possible
-        self.assertEqual(app.map["Gulf States"].activeCells, 2) # lost one cells to the to failure rolls
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 1) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 1) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        app.executeJihad("Gulf States", [3])  # Revolution fails in besiged
+        self.assertTrue(app.map["Gulf States"].is_fair())  # gov still 2
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 1)  # major jihad not possible
+        self.assertEqual(app.map["Gulf States"].activeCells, 2)  # lost one cells to the to failure rolls
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 1)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -2781,14 +2796,14 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 1
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [2,2]) # Revolution in besieged
-        self.assertTrue(app.map["Gulf States"].is_poor()) # gov to 3
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 1) # major jihad not possible
-        self.assertEqual(app.map["Gulf States"].activeCells, 3) # lost no cells to the to failure rolls
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 0) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 1) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        app.executeJihad("Gulf States", [2, 2])  # Revolution in besieged
+        self.assertTrue(app.map["Gulf States"].is_poor())  # gov to 3
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 1)  # major jihad not possible
+        self.assertEqual(app.map["Gulf States"].activeCells, 3)  # lost no cells to the to failure rolls
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 0)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 1)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -2801,34 +2816,14 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 1
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [2,3]) # Revolution failed
-        self.assertTrue(app.map["Gulf States"].is_poor()) # gov to 3
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 1) # major jihad not possible
-        self.assertEqual(app.map["Gulf States"].activeCells, 2) # lost one cells to the to failure rolls
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 0) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 1) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
-        self.assertEqual(app.funding, 5)
-        self.assertEqual(app.prestige, 7)
-        
-        app = Labyrinth(1, 1, testScenarioSetup)
-        app.map["Gulf States"].make_neutral()
-        app.map["Gulf States"].make_fair()
-        app.map["Gulf States"].sleeperCells = 1
-        app.map["Gulf States"].activeCells = 3
-        app.map["Gulf States"].troopCubes = 4
-        app.map["Gulf States"].besieged = 1
-        app.map["Gulf States"].regimeChange = 1
-        app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [3,3]) # Revolution fails in besiged
-        self.assertTrue(app.map["Gulf States"].is_fair()) # gov still 2
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 1) # major jihad not possible
-        self.assertEqual(app.map["Gulf States"].activeCells, 1) # lost two cells to the to failure rolls
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 1) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 1) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        app.executeJihad("Gulf States", [2, 3])  # Revolution failed
+        self.assertTrue(app.map["Gulf States"].is_poor())  # gov to 3
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 1)  # major jihad not possible
+        self.assertEqual(app.map["Gulf States"].activeCells, 2)  # lost one cells to the to failure rolls
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 0)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 1)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -2841,17 +2836,17 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 1
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [2,2,2]) # can't major jihad
-        self.assertTrue(app.map["Gulf States"].is_poor()) # gov still 3
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 1) # major jihad not possible
-        self.assertEqual(app.map["Gulf States"].activeCells, 3) # lost no cells to the to failure rolls
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 0) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 1) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        app.executeJihad("Gulf States", [3, 3])  # Revolution fails in besiged
+        self.assertTrue(app.map["Gulf States"].is_fair())  # gov still 2
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 1)  # major jihad not possible
+        self.assertEqual(app.map["Gulf States"].activeCells, 1)  # lost two cells to the to failure rolls
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 1)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
-        
+
         app = Labyrinth(1, 1, testScenarioSetup)
         app.map["Gulf States"].make_neutral()
         app.map["Gulf States"].make_fair()
@@ -2861,17 +2856,17 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 1
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [2,2,3]) # can't major jihad
-        self.assertTrue(app.map["Gulf States"].is_poor()) # gov still 3
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 1) # major jihad not possible
-        self.assertEqual(app.map["Gulf States"].activeCells, 2) # lost one cells to the to failure rolls
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 0) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 1) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        app.executeJihad("Gulf States", [2, 2, 2])  # can't major jihad
+        self.assertTrue(app.map["Gulf States"].is_poor())  # gov still 3
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 1)  # major jihad not possible
+        self.assertEqual(app.map["Gulf States"].activeCells, 3)  # lost no cells to the to failure rolls
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 0)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 1)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
-        
+
         app = Labyrinth(1, 1, testScenarioSetup)
         app.map["Gulf States"].make_neutral()
         app.map["Gulf States"].make_fair()
@@ -2881,17 +2876,17 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 1
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [2,3,3]) # Revolution fails
-        self.assertTrue(app.map["Gulf States"].is_poor()) # gov to 3
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 1) # major jihad not possible
-        self.assertEqual(app.map["Gulf States"].activeCells, 1) # lost two cells to the to failure rolls
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 0) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 1) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        app.executeJihad("Gulf States", [2, 2, 3])  # can't major jihad
+        self.assertTrue(app.map["Gulf States"].is_poor())  # gov still 3
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 1)  # major jihad not possible
+        self.assertEqual(app.map["Gulf States"].activeCells, 2)  # lost one cells to the to failure rolls
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 0)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 1)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
-        
+
         app = Labyrinth(1, 1, testScenarioSetup)
         app.map["Gulf States"].make_neutral()
         app.map["Gulf States"].make_fair()
@@ -2901,20 +2896,40 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 1
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [3,3,3]) # no Failure in besiged
-        self.assertTrue(app.map["Gulf States"].is_fair()) # gov still 2
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 1) # major jihad not possible
-        self.assertEqual(app.map["Gulf States"].activeCells, 0) # lost three cells to the to failure rolls
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 1) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 1) # major failure
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        app.executeJihad("Gulf States", [2, 3, 3])  # Revolution fails
+        self.assertTrue(app.map["Gulf States"].is_poor())  # gov to 3
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 1)  # major jihad not possible
+        self.assertEqual(app.map["Gulf States"].activeCells, 1)  # lost two cells to the to failure rolls
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 0)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 1)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
+        self.assertEqual(app.funding, 5)
+        self.assertEqual(app.prestige, 7)
+
+        app = Labyrinth(1, 1, testScenarioSetup)
+        app.map["Gulf States"].make_neutral()
+        app.map["Gulf States"].make_fair()
+        app.map["Gulf States"].sleeperCells = 1
+        app.map["Gulf States"].activeCells = 3
+        app.map["Gulf States"].troopCubes = 4
+        app.map["Gulf States"].besieged = 1
+        app.map["Gulf States"].regimeChange = 1
+        app.map["Gulf States"].aid = 1
+        app.executeJihad("Gulf States", [3, 3, 3])  # no Failure in besiged
+        self.assertTrue(app.map["Gulf States"].is_fair())  # gov still 2
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 1)  # major jihad not possible
+        self.assertEqual(app.map["Gulf States"].activeCells, 0)  # lost three cells to the to failure rolls
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 1)  # major failure
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
     def testJihadNotEnoughCellsGoodGovNotBeseiged(self):
-# Good Gov
-# Not Besieged
+        # Good Gov
+        # Not Besieged
         app = Labyrinth(1, 1, testScenarioSetup)
         app.map["Gulf States"].make_neutral()
         app.map["Gulf States"].make_good()
@@ -2924,14 +2939,14 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 0
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [1]) # Revolution fails
-        self.assertTrue(app.map["Gulf States"].is_fair()) # gov to 2
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 1) # major jihad not possible
-        self.assertEqual(app.map["Gulf States"].activeCells, 3) # lost no cells to the to failure rolls
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 0) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        app.executeJihad("Gulf States", [1])  # Revolution fails
+        self.assertTrue(app.map["Gulf States"].is_fair())  # gov to 2
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 1)  # major jihad not possible
+        self.assertEqual(app.map["Gulf States"].activeCells, 3)  # lost no cells to the to failure rolls
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 0)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -2944,14 +2959,14 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 0
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [2]) # Revolution fails
-        self.assertTrue(app.map["Gulf States"].is_good()) # gov still 1
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 1) # major jihad not possible
-        self.assertEqual(app.map["Gulf States"].activeCells, 2) # lost one cells to the to failure rolls
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 1) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        app.executeJihad("Gulf States", [2])  # Revolution fails
+        self.assertTrue(app.map["Gulf States"].is_good())  # gov still 1
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 1)  # major jihad not possible
+        self.assertEqual(app.map["Gulf States"].activeCells, 2)  # lost one cells to the to failure rolls
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -2964,14 +2979,14 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 0
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [1,1]) # Revolution fails
-        self.assertTrue(app.map["Gulf States"].is_poor()) # gov to 3
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 1) # major jihad not possible
-        self.assertEqual(app.map["Gulf States"].activeCells, 3) # lost no cells to the to failure rolls
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 0) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        app.executeJihad("Gulf States", [1, 1])  # Revolution fails
+        self.assertTrue(app.map["Gulf States"].is_poor())  # gov to 3
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 1)  # major jihad not possible
+        self.assertEqual(app.map["Gulf States"].activeCells, 3)  # lost no cells to the to failure rolls
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 0)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -2984,14 +2999,14 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 0
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [1,2]) # Revolution fails
-        self.assertTrue(app.map["Gulf States"].is_fair()) # gov to 2
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 1) # major jihad not possible
-        self.assertEqual(app.map["Gulf States"].activeCells, 2) # lost one cells to the to failure rolls
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 0) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        app.executeJihad("Gulf States", [1, 2])  # Revolution fails
+        self.assertTrue(app.map["Gulf States"].is_fair())  # gov to 2
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 1)  # major jihad not possible
+        self.assertEqual(app.map["Gulf States"].activeCells, 2)  # lost one cells to the to failure rolls
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 0)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -3004,14 +3019,14 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 0
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [2,2]) # Revolution fails
-        self.assertTrue(app.map["Gulf States"].is_good()) # gov still 1
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 1) # major jihad not possible
-        self.assertEqual(app.map["Gulf States"].activeCells, 1) # lost two cells to the to failure rolls
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 1) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        app.executeJihad("Gulf States", [2, 2])  # Revolution fails
+        self.assertTrue(app.map["Gulf States"].is_good())  # gov still 1
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 1)  # major jihad not possible
+        self.assertEqual(app.map["Gulf States"].activeCells, 1)  # lost two cells to the to failure rolls
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -3024,74 +3039,14 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 0
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [1,1,2]) # Revolution fails
-        self.assertTrue(app.map["Gulf States"].is_poor()) # gov to 3
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 1) # major jihad not possible
-        self.assertEqual(app.map["Gulf States"].activeCells, 2) # lost one cells to the to failure rolls
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 0) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
-        self.assertEqual(app.funding, 5)
-        self.assertEqual(app.prestige, 7)
-        
-        app = Labyrinth(1, 1, testScenarioSetup)
-        app.map["Gulf States"].make_neutral()
-        app.map["Gulf States"].make_good()
-        app.map["Gulf States"].sleeperCells = 1
-        app.map["Gulf States"].activeCells = 3
-        app.map["Gulf States"].troopCubes = 4
-        app.map["Gulf States"].besieged = 0
-        app.map["Gulf States"].regimeChange = 1
-        app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [1,2,2]) # Revolution fails
-        self.assertTrue(app.map["Gulf States"].is_fair()) # gov to 2
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 1) # major jihad not possible
-        self.assertEqual(app.map["Gulf States"].activeCells, 1) # lost two cells to the to failure rolls
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 0) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
-        self.assertEqual(app.funding, 5)
-        self.assertEqual(app.prestige, 7)
-                
-        app = Labyrinth(1, 1, testScenarioSetup)
-        app.map["Gulf States"].make_neutral()
-        app.map["Gulf States"].make_good()
-        app.map["Gulf States"].sleeperCells = 1
-        app.map["Gulf States"].activeCells = 3
-        app.map["Gulf States"].troopCubes = 4
-        app.map["Gulf States"].besieged = 0
-        app.map["Gulf States"].regimeChange = 1
-        app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [2,2,2]) # no Major failure
-        self.assertTrue(app.map["Gulf States"].is_good()) # gov still 1
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 1) # major jihad not possible
-        self.assertEqual(app.map["Gulf States"].activeCells, 0) # lost three cells to the to failure rolls
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 1) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
-        self.assertEqual(app.funding, 5)
-        self.assertEqual(app.prestige, 7)
-        
-        app = Labyrinth(1, 1, testScenarioSetup)
-        app.map["Gulf States"].make_neutral()
-        app.map["Gulf States"].make_good()
-        app.map["Gulf States"].sleeperCells = 1
-        app.map["Gulf States"].activeCells = 3
-        app.map["Gulf States"].troopCubes = 4
-        app.map["Gulf States"].besieged = 0
-        app.map["Gulf States"].regimeChange = 1
-        app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [1,2,2]) # Revolution failed
-        self.assertTrue(app.map["Gulf States"].is_fair()) # gov to 2
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 1) # major jihad not possible
-        self.assertEqual(app.map["Gulf States"].activeCells, 1) # lost two cells to the to failure rolls
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 0) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        app.executeJihad("Gulf States", [1, 1, 2])  # Revolution fails
+        self.assertTrue(app.map["Gulf States"].is_poor())  # gov to 3
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 1)  # major jihad not possible
+        self.assertEqual(app.map["Gulf States"].activeCells, 2)  # lost one cells to the to failure rolls
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 0)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -3104,20 +3059,80 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 0
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [1,1,1]) # Revolution failed
-        self.assertTrue(app.map["Gulf States"].is_poor()) # gov to 3
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 1) # major jihad not possible
-        self.assertEqual(app.map["Gulf States"].activeCells, 3) # lost no cells to the to failure rolls
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 0) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        app.executeJihad("Gulf States", [1, 2, 2])  # Revolution fails
+        self.assertTrue(app.map["Gulf States"].is_fair())  # gov to 2
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 1)  # major jihad not possible
+        self.assertEqual(app.map["Gulf States"].activeCells, 1)  # lost two cells to the to failure rolls
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 0)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
+        self.assertEqual(app.funding, 5)
+        self.assertEqual(app.prestige, 7)
+
+        app = Labyrinth(1, 1, testScenarioSetup)
+        app.map["Gulf States"].make_neutral()
+        app.map["Gulf States"].make_good()
+        app.map["Gulf States"].sleeperCells = 1
+        app.map["Gulf States"].activeCells = 3
+        app.map["Gulf States"].troopCubes = 4
+        app.map["Gulf States"].besieged = 0
+        app.map["Gulf States"].regimeChange = 1
+        app.map["Gulf States"].aid = 1
+        app.executeJihad("Gulf States", [2, 2, 2])  # no Major failure
+        self.assertTrue(app.map["Gulf States"].is_good())  # gov still 1
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 1)  # major jihad not possible
+        self.assertEqual(app.map["Gulf States"].activeCells, 0)  # lost three cells to the to failure rolls
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
+        self.assertEqual(app.funding, 5)
+        self.assertEqual(app.prestige, 7)
+
+        app = Labyrinth(1, 1, testScenarioSetup)
+        app.map["Gulf States"].make_neutral()
+        app.map["Gulf States"].make_good()
+        app.map["Gulf States"].sleeperCells = 1
+        app.map["Gulf States"].activeCells = 3
+        app.map["Gulf States"].troopCubes = 4
+        app.map["Gulf States"].besieged = 0
+        app.map["Gulf States"].regimeChange = 1
+        app.map["Gulf States"].aid = 1
+        app.executeJihad("Gulf States", [1, 2, 2])  # Revolution failed
+        self.assertTrue(app.map["Gulf States"].is_fair())  # gov to 2
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 1)  # major jihad not possible
+        self.assertEqual(app.map["Gulf States"].activeCells, 1)  # lost two cells to the to failure rolls
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 0)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
+        self.assertEqual(app.funding, 5)
+        self.assertEqual(app.prestige, 7)
+
+        app = Labyrinth(1, 1, testScenarioSetup)
+        app.map["Gulf States"].make_neutral()
+        app.map["Gulf States"].make_good()
+        app.map["Gulf States"].sleeperCells = 1
+        app.map["Gulf States"].activeCells = 3
+        app.map["Gulf States"].troopCubes = 4
+        app.map["Gulf States"].besieged = 0
+        app.map["Gulf States"].regimeChange = 1
+        app.map["Gulf States"].aid = 1
+        app.executeJihad("Gulf States", [1, 1, 1])  # Revolution failed
+        self.assertTrue(app.map["Gulf States"].is_poor())  # gov to 3
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 1)  # major jihad not possible
+        self.assertEqual(app.map["Gulf States"].activeCells, 3)  # lost no cells to the to failure rolls
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 0)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
     def testJihadNotEnoughCellsGoodGovIsBeseiged(self):
-# Good Gov
-# Besieged
+        # Good Gov
+        # Besieged
 
         app = Labyrinth(1, 1, testScenarioSetup)
         app.map["Gulf States"].make_neutral()
@@ -3128,17 +3143,17 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 1
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [1]) # Revolution fails
-        self.assertTrue(app.map["Gulf States"].is_fair()) # gov to 2
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 1) # major jihad not possible
-        self.assertEqual(app.map["Gulf States"].activeCells, 3) # lost no cells to the to failure rolls
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 0) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 1) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        app.executeJihad("Gulf States", [1])  # Revolution fails
+        self.assertTrue(app.map["Gulf States"].is_fair())  # gov to 2
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 1)  # major jihad not possible
+        self.assertEqual(app.map["Gulf States"].activeCells, 3)  # lost no cells to the to failure rolls
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 0)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 1)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
-        
+
         app = Labyrinth(1, 1, testScenarioSetup)
         app.map["Gulf States"].make_neutral()
         app.map["Gulf States"].make_good()
@@ -3148,14 +3163,14 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 1
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [2]) # Revolution fails in besiged
-        self.assertTrue(app.map["Gulf States"].is_good()) # gov still 1
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 1) # major jihad not possible
-        self.assertEqual(app.map["Gulf States"].activeCells, 2) # lost one cells to the to failure rolls
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 1) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 1) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        app.executeJihad("Gulf States", [2])  # Revolution fails in besiged
+        self.assertTrue(app.map["Gulf States"].is_good())  # gov still 1
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 1)  # major jihad not possible
+        self.assertEqual(app.map["Gulf States"].activeCells, 2)  # lost one cells to the to failure rolls
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 1)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -3168,14 +3183,14 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 1
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [1,1]) # Revolution fails
-        self.assertTrue(app.map["Gulf States"].is_poor()) # gov to 3
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 1) # major jihad not possible
-        self.assertEqual(app.map["Gulf States"].activeCells, 3) # lost no cells to the to failure rolls
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 0) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 1) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        app.executeJihad("Gulf States", [1, 1])  # Revolution fails
+        self.assertTrue(app.map["Gulf States"].is_poor())  # gov to 3
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 1)  # major jihad not possible
+        self.assertEqual(app.map["Gulf States"].activeCells, 3)  # lost no cells to the to failure rolls
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 0)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 1)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -3188,34 +3203,14 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 1
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [1,2]) # Revolution failed
-        self.assertTrue(app.map["Gulf States"].is_fair()) # gov to 2
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 1) # major jihad not possible
-        self.assertEqual(app.map["Gulf States"].activeCells, 2) # lost one cells to the to failure rolls
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 0) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 1) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
-        self.assertEqual(app.funding, 5)
-        self.assertEqual(app.prestige, 7)
-        
-        app = Labyrinth(1, 1, testScenarioSetup)
-        app.map["Gulf States"].make_neutral()
-        app.map["Gulf States"].make_good()
-        app.map["Gulf States"].sleeperCells = 1
-        app.map["Gulf States"].activeCells = 3
-        app.map["Gulf States"].troopCubes = 4
-        app.map["Gulf States"].besieged = 1
-        app.map["Gulf States"].regimeChange = 1
-        app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [2,2]) # Revolution fails in besiged
-        self.assertTrue(app.map["Gulf States"].is_good()) # gov still 1
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 1) # major jihad not possible
-        self.assertEqual(app.map["Gulf States"].activeCells, 1) # lost two cells to the to failure rolls
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 1) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 1) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        app.executeJihad("Gulf States", [1, 2])  # Revolution failed
+        self.assertTrue(app.map["Gulf States"].is_fair())  # gov to 2
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 1)  # major jihad not possible
+        self.assertEqual(app.map["Gulf States"].activeCells, 2)  # lost one cells to the to failure rolls
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 0)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 1)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -3228,78 +3223,98 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 1
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [1,1,1]) # Can't major jihad
-        self.assertTrue(app.map["Gulf States"].is_poor()) # gov to 3
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 1) # major jihad not possible
-        self.assertEqual(app.map["Gulf States"].activeCells, 3) # lost no cells to the to failure rolls
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 0) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 1) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
-        self.assertEqual(app.funding, 5)
-        self.assertEqual(app.prestige, 7)
-        
-        app = Labyrinth(1, 1, testScenarioSetup)
-        app.map["Gulf States"].make_neutral()
-        app.map["Gulf States"].make_good()
-        app.map["Gulf States"].sleeperCells = 1
-        app.map["Gulf States"].activeCells = 3
-        app.map["Gulf States"].troopCubes = 4
-        app.map["Gulf States"].besieged = 1
-        app.map["Gulf States"].regimeChange = 1
-        app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [1,1,2]) # can't major jihad
-        self.assertTrue(app.map["Gulf States"].is_poor()) # gov to 3
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 1) # major jihad not possible
-        self.assertEqual(app.map["Gulf States"].activeCells, 2) # lost one cells to the to failure rolls
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 0) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 1) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
-        self.assertEqual(app.funding, 5)
-        self.assertEqual(app.prestige, 7)
-        
-        app = Labyrinth(1, 1, testScenarioSetup)
-        app.map["Gulf States"].make_neutral()
-        app.map["Gulf States"].make_good()
-        app.map["Gulf States"].sleeperCells = 1
-        app.map["Gulf States"].activeCells = 3
-        app.map["Gulf States"].troopCubes = 4
-        app.map["Gulf States"].besieged = 1
-        app.map["Gulf States"].regimeChange = 1
-        app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [1,2,2]) # Revolution fails
-        self.assertTrue(app.map["Gulf States"].is_fair()) # gov to 2
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 1) # major jihad not possible
-        self.assertEqual(app.map["Gulf States"].activeCells, 1) # lost two cells to the to failure rolls
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 0) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 1) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
-        self.assertEqual(app.funding, 5)
-        self.assertEqual(app.prestige, 7)
-        
-        app = Labyrinth(1, 1, testScenarioSetup)
-        app.map["Gulf States"].make_neutral()
-        app.map["Gulf States"].make_good()
-        app.map["Gulf States"].sleeperCells = 1
-        app.map["Gulf States"].activeCells = 3
-        app.map["Gulf States"].troopCubes = 4
-        app.map["Gulf States"].besieged = 1
-        app.map["Gulf States"].regimeChange = 1
-        app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [2,2,2]) # no Major Failure in besiged
-        self.assertTrue(app.map["Gulf States"].is_good()) # gov stays 1
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 1) # major jihad not possible
-        self.assertEqual(app.map["Gulf States"].activeCells, 0) # lost three cells to the to failure rolls
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 1) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 1) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        app.executeJihad("Gulf States", [2, 2])  # Revolution fails in besiged
+        self.assertTrue(app.map["Gulf States"].is_good())  # gov still 1
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 1)  # major jihad not possible
+        self.assertEqual(app.map["Gulf States"].activeCells, 1)  # lost two cells to the to failure rolls
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 1)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
-# Sleeper/Active cell testing
+        app = Labyrinth(1, 1, testScenarioSetup)
+        app.map["Gulf States"].make_neutral()
+        app.map["Gulf States"].make_good()
+        app.map["Gulf States"].sleeperCells = 1
+        app.map["Gulf States"].activeCells = 3
+        app.map["Gulf States"].troopCubes = 4
+        app.map["Gulf States"].besieged = 1
+        app.map["Gulf States"].regimeChange = 1
+        app.map["Gulf States"].aid = 1
+        app.executeJihad("Gulf States", [1, 1, 1])  # Can't major jihad
+        self.assertTrue(app.map["Gulf States"].is_poor())  # gov to 3
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 1)  # major jihad not possible
+        self.assertEqual(app.map["Gulf States"].activeCells, 3)  # lost no cells to the to failure rolls
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 0)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 1)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
+        self.assertEqual(app.funding, 5)
+        self.assertEqual(app.prestige, 7)
+
+        app = Labyrinth(1, 1, testScenarioSetup)
+        app.map["Gulf States"].make_neutral()
+        app.map["Gulf States"].make_good()
+        app.map["Gulf States"].sleeperCells = 1
+        app.map["Gulf States"].activeCells = 3
+        app.map["Gulf States"].troopCubes = 4
+        app.map["Gulf States"].besieged = 1
+        app.map["Gulf States"].regimeChange = 1
+        app.map["Gulf States"].aid = 1
+        app.executeJihad("Gulf States", [1, 1, 2])  # can't major jihad
+        self.assertTrue(app.map["Gulf States"].is_poor())  # gov to 3
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 1)  # major jihad not possible
+        self.assertEqual(app.map["Gulf States"].activeCells, 2)  # lost one cells to the to failure rolls
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 0)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 1)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
+        self.assertEqual(app.funding, 5)
+        self.assertEqual(app.prestige, 7)
+
+        app = Labyrinth(1, 1, testScenarioSetup)
+        app.map["Gulf States"].make_neutral()
+        app.map["Gulf States"].make_good()
+        app.map["Gulf States"].sleeperCells = 1
+        app.map["Gulf States"].activeCells = 3
+        app.map["Gulf States"].troopCubes = 4
+        app.map["Gulf States"].besieged = 1
+        app.map["Gulf States"].regimeChange = 1
+        app.map["Gulf States"].aid = 1
+        app.executeJihad("Gulf States", [1, 2, 2])  # Revolution fails
+        self.assertTrue(app.map["Gulf States"].is_fair())  # gov to 2
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 1)  # major jihad not possible
+        self.assertEqual(app.map["Gulf States"].activeCells, 1)  # lost two cells to the to failure rolls
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 0)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 1)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
+        self.assertEqual(app.funding, 5)
+        self.assertEqual(app.prestige, 7)
+
+        app = Labyrinth(1, 1, testScenarioSetup)
+        app.map["Gulf States"].make_neutral()
+        app.map["Gulf States"].make_good()
+        app.map["Gulf States"].sleeperCells = 1
+        app.map["Gulf States"].activeCells = 3
+        app.map["Gulf States"].troopCubes = 4
+        app.map["Gulf States"].besieged = 1
+        app.map["Gulf States"].regimeChange = 1
+        app.map["Gulf States"].aid = 1
+        app.executeJihad("Gulf States", [2, 2, 2])  # no Major Failure in besiged
+        self.assertTrue(app.map["Gulf States"].is_good())  # gov stays 1
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 1)  # major jihad not possible
+        self.assertEqual(app.map["Gulf States"].activeCells, 0)  # lost three cells to the to failure rolls
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 1)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
+        self.assertEqual(app.funding, 5)
+        self.assertEqual(app.prestige, 7)
+
+        # Sleeper/Active cell testing
 
     def testJihadOneCell(self):
         app = Labyrinth(1, 1, testScenarioSetup)
@@ -3312,13 +3327,13 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
         app.executeJihad("Gulf States", [3])
-        self.assertTrue(app.map["Gulf States"].is_poor()) # gov still 3
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 0) # sleeper goes active
-        self.assertEqual(app.map["Gulf States"].activeCells, 1) #  sleeper goes active
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 1) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        self.assertTrue(app.map["Gulf States"].is_poor())  # gov still 3
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 0)  # sleeper goes active
+        self.assertEqual(app.map["Gulf States"].activeCells, 1)  # sleeper goes active
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -3332,13 +3347,13 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
         app.executeJihad("Gulf States", [4])
-        self.assertTrue(app.map["Gulf States"].is_poor()) # gov still 3
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 0) # lose sleeper cell
-        self.assertEqual(app.map["Gulf States"].activeCells, 0) # 
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 1) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        self.assertTrue(app.map["Gulf States"].is_poor())  # gov still 3
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 0)  # lose sleeper cell
+        self.assertEqual(app.map["Gulf States"].activeCells, 0)
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -3353,13 +3368,13 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
         app.executeJihad("Gulf States", [3])
-        self.assertTrue(app.map["Gulf States"].is_poor()) # gov still 3
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 1) # sleeper goes active
-        self.assertEqual(app.map["Gulf States"].activeCells, 1) # sleeper goes active
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 1) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        self.assertTrue(app.map["Gulf States"].is_poor())  # gov still 3
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 1)  # sleeper goes active
+        self.assertEqual(app.map["Gulf States"].activeCells, 1)  # sleeper goes active
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -3373,13 +3388,13 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
         app.executeJihad("Gulf States", [4])
-        self.assertTrue(app.map["Gulf States"].is_poor()) # gov still 3
-        self.assertEqual(app.map["Gulf States"].sleeperCells, 1) # lose sleeper cell
-        self.assertEqual(app.map["Gulf States"].activeCells, 0) # lose sleeper cell
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 1) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        self.assertTrue(app.map["Gulf States"].is_poor())  # gov still 3
+        self.assertEqual(app.map["Gulf States"].sleeperCells, 1)  # lose sleeper cell
+        self.assertEqual(app.map["Gulf States"].activeCells, 0)  # lose sleeper cell
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -3392,14 +3407,14 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 0
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [3,3])
-        self.assertTrue(app.map["Gulf States"].is_poor()) # gov still 3
+        app.executeJihad("Gulf States", [3, 3])
+        self.assertTrue(app.map["Gulf States"].is_poor())  # gov still 3
         self.assertEqual(app.map["Gulf States"].sleeperCells, 0) 
         self.assertEqual(app.map["Gulf States"].activeCells, 2)
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 1) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -3412,14 +3427,14 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 0
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [3,4])
-        self.assertTrue(app.map["Gulf States"].is_poor()) # gov still 3
+        app.executeJihad("Gulf States", [3, 4])
+        self.assertTrue(app.map["Gulf States"].is_poor())  # gov still 3
         self.assertEqual(app.map["Gulf States"].sleeperCells, 0) 
         self.assertEqual(app.map["Gulf States"].activeCells, 1)
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 1) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -3432,14 +3447,14 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 0
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [4,4])
-        self.assertTrue(app.map["Gulf States"].is_poor()) # gov still 3
+        app.executeJihad("Gulf States", [4, 4])
+        self.assertTrue(app.map["Gulf States"].is_poor())  # gov still 3
         self.assertEqual(app.map["Gulf States"].sleeperCells, 0) 
         self.assertEqual(app.map["Gulf States"].activeCells, 0)
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 1) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -3454,13 +3469,13 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
         app.executeJihad("Gulf States", [3])
-        self.assertTrue(app.map["Gulf States"].is_poor()) # gov still 3
+        self.assertTrue(app.map["Gulf States"].is_poor())  # gov still 3
         self.assertEqual(app.map["Gulf States"].sleeperCells, 0) 
         self.assertEqual(app.map["Gulf States"].activeCells, 2)
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 1) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -3474,13 +3489,13 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
         app.executeJihad("Gulf States", [4])
-        self.assertTrue(app.map["Gulf States"].is_poor()) # gov still 3
+        self.assertTrue(app.map["Gulf States"].is_poor())  # gov still 3
         self.assertEqual(app.map["Gulf States"].sleeperCells, 0)
         self.assertEqual(app.map["Gulf States"].activeCells, 1)
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 1) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -3493,14 +3508,14 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 0
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [3,3])
-        self.assertTrue(app.map["Gulf States"].is_poor()) # gov still 3
+        app.executeJihad("Gulf States", [3, 3])
+        self.assertTrue(app.map["Gulf States"].is_poor())  # gov still 3
         self.assertEqual(app.map["Gulf States"].sleeperCells, 0) 
         self.assertEqual(app.map["Gulf States"].activeCells, 2)
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 1) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -3513,14 +3528,14 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 0
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [3,4])
-        self.assertTrue(app.map["Gulf States"].is_poor()) # gov still 3
+        app.executeJihad("Gulf States", [3, 4])
+        self.assertTrue(app.map["Gulf States"].is_poor())  # gov still 3
         self.assertEqual(app.map["Gulf States"].sleeperCells, 0) 
         self.assertEqual(app.map["Gulf States"].activeCells, 1)
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 1) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -3533,14 +3548,14 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 0
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [4,4])
-        self.assertTrue(app.map["Gulf States"].is_poor()) # gov still 3
+        app.executeJihad("Gulf States", [4, 4])
+        self.assertTrue(app.map["Gulf States"].is_poor())  # gov still 3
         self.assertEqual(app.map["Gulf States"].sleeperCells, 0) 
         self.assertEqual(app.map["Gulf States"].activeCells, 0)
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 1) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -3555,13 +3570,13 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
         app.executeJihad("Gulf States", [3])
-        self.assertTrue(app.map["Gulf States"].is_poor()) # gov still 3
+        self.assertTrue(app.map["Gulf States"].is_poor())  # gov still 3
         self.assertEqual(app.map["Gulf States"].sleeperCells, 1) 
         self.assertEqual(app.map["Gulf States"].activeCells, 1)
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 1) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -3575,13 +3590,13 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
         app.executeJihad("Gulf States", [4])
-        self.assertTrue(app.map["Gulf States"].is_poor()) # gov still 3
+        self.assertTrue(app.map["Gulf States"].is_poor())  # gov still 3
         self.assertEqual(app.map["Gulf States"].sleeperCells, 1)
         self.assertEqual(app.map["Gulf States"].activeCells, 0)
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 1) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -3594,14 +3609,14 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 0
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [3,3])
-        self.assertTrue(app.map["Gulf States"].is_poor()) # gov still 3
+        app.executeJihad("Gulf States", [3, 3])
+        self.assertTrue(app.map["Gulf States"].is_poor())  # gov still 3
         self.assertEqual(app.map["Gulf States"].sleeperCells, 0) 
         self.assertEqual(app.map["Gulf States"].activeCells, 2)
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 1) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -3614,14 +3629,14 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 0
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [3,4])
-        self.assertTrue(app.map["Gulf States"].is_poor()) # gov still 3
+        app.executeJihad("Gulf States", [3, 4])
+        self.assertTrue(app.map["Gulf States"].is_poor())  # gov still 3
         self.assertEqual(app.map["Gulf States"].sleeperCells, 0) 
         self.assertEqual(app.map["Gulf States"].activeCells, 1)
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 1) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -3634,14 +3649,14 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 0
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [4,4])
-        self.assertTrue(app.map["Gulf States"].is_poor()) # gov still 3
+        app.executeJihad("Gulf States", [4, 4])
+        self.assertTrue(app.map["Gulf States"].is_poor())  # gov still 3
         self.assertEqual(app.map["Gulf States"].sleeperCells, 0) 
         self.assertEqual(app.map["Gulf States"].activeCells, 0)
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 1) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -3656,13 +3671,13 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
         app.executeJihad("Gulf States", [3])
-        self.assertTrue(app.map["Gulf States"].is_poor()) # gov still 3
+        self.assertTrue(app.map["Gulf States"].is_poor())  # gov still 3
         self.assertEqual(app.map["Gulf States"].sleeperCells, 2) 
         self.assertEqual(app.map["Gulf States"].activeCells, 1) 
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 1) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -3676,13 +3691,13 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
         app.executeJihad("Gulf States", [4])
-        self.assertTrue(app.map["Gulf States"].is_poor()) # gov still 3
+        self.assertTrue(app.map["Gulf States"].is_poor())  # gov still 3
         self.assertEqual(app.map["Gulf States"].sleeperCells, 2)
         self.assertEqual(app.map["Gulf States"].activeCells, 0)
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 1) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -3695,14 +3710,14 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 0
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [3,3])
-        self.assertTrue(app.map["Gulf States"].is_poor()) # gov still 3
+        app.executeJihad("Gulf States", [3, 3])
+        self.assertTrue(app.map["Gulf States"].is_poor())  # gov still 3
         self.assertEqual(app.map["Gulf States"].sleeperCells, 1) 
         self.assertEqual(app.map["Gulf States"].activeCells, 2)
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 1) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -3715,14 +3730,14 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 0
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [3,4])
-        self.assertTrue(app.map["Gulf States"].is_poor()) # gov still 3
+        app.executeJihad("Gulf States", [3, 4])
+        self.assertTrue(app.map["Gulf States"].is_poor())  # gov still 3
         self.assertEqual(app.map["Gulf States"].sleeperCells, 1) 
         self.assertEqual(app.map["Gulf States"].activeCells, 1)
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 1) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -3735,14 +3750,14 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 0
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [4,4])
-        self.assertTrue(app.map["Gulf States"].is_poor()) # gov still 3
+        app.executeJihad("Gulf States", [4, 4])
+        self.assertTrue(app.map["Gulf States"].is_poor())  # gov still 3
         self.assertEqual(app.map["Gulf States"].sleeperCells, 1) 
         self.assertEqual(app.map["Gulf States"].activeCells, 0)
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 1) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -3755,14 +3770,14 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 0
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [3,3,3])
-        self.assertTrue(app.map["Gulf States"].is_poor()) # gov still 3
+        app.executeJihad("Gulf States", [3, 3, 3])
+        self.assertTrue(app.map["Gulf States"].is_poor())  # gov still 3
         self.assertEqual(app.map["Gulf States"].sleeperCells, 0) 
         self.assertEqual(app.map["Gulf States"].activeCells, 3)
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 1) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -3775,14 +3790,14 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 0
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [3,3,4])
-        self.assertTrue(app.map["Gulf States"].is_poor()) # gov still 3
+        app.executeJihad("Gulf States", [3, 3, 4])
+        self.assertTrue(app.map["Gulf States"].is_poor())  # gov still 3
         self.assertEqual(app.map["Gulf States"].sleeperCells, 0) 
         self.assertEqual(app.map["Gulf States"].activeCells, 2)
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 1) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -3795,14 +3810,14 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 0
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [3,4,4])
-        self.assertTrue(app.map["Gulf States"].is_poor()) # gov still 3
+        app.executeJihad("Gulf States", [3, 4, 4])
+        self.assertTrue(app.map["Gulf States"].is_poor())  # gov still 3
         self.assertEqual(app.map["Gulf States"].sleeperCells, 0) 
         self.assertEqual(app.map["Gulf States"].activeCells, 1)
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 1) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -3815,14 +3830,14 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 0
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [4,4,4])
-        self.assertTrue(app.map["Gulf States"].is_poor()) # gov still 3
+        app.executeJihad("Gulf States", [4, 4, 4])
+        self.assertTrue(app.map["Gulf States"].is_poor())  # gov still 3
         self.assertEqual(app.map["Gulf States"].sleeperCells, 0) 
         self.assertEqual(app.map["Gulf States"].activeCells, 0)
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 1) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -3837,13 +3852,13 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
         app.executeJihad("Gulf States", [3])
-        self.assertTrue(app.map["Gulf States"].is_poor()) # gov still 3
+        self.assertTrue(app.map["Gulf States"].is_poor())  # gov still 3
         self.assertEqual(app.map["Gulf States"].sleeperCells, 2) 
         self.assertEqual(app.map["Gulf States"].activeCells, 1) 
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 1) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -3857,13 +3872,13 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
         app.executeJihad("Gulf States", [4])
-        self.assertTrue(app.map["Gulf States"].is_poor()) # gov still 3
+        self.assertTrue(app.map["Gulf States"].is_poor())  # gov still 3
         self.assertEqual(app.map["Gulf States"].sleeperCells, 2)
         self.assertEqual(app.map["Gulf States"].activeCells, 0)
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 1) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -3876,14 +3891,14 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 0
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [3,3])
-        self.assertTrue(app.map["Gulf States"].is_poor()) # gov still 3
+        app.executeJihad("Gulf States", [3, 3])
+        self.assertTrue(app.map["Gulf States"].is_poor())  # gov still 3
         self.assertEqual(app.map["Gulf States"].sleeperCells, 1) 
         self.assertEqual(app.map["Gulf States"].activeCells, 2)
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 1) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -3896,14 +3911,14 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 0
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [3,4])
-        self.assertTrue(app.map["Gulf States"].is_poor()) # gov still 3
+        app.executeJihad("Gulf States", [3, 4])
+        self.assertTrue(app.map["Gulf States"].is_poor())  # gov still 3
         self.assertEqual(app.map["Gulf States"].sleeperCells, 1) 
         self.assertEqual(app.map["Gulf States"].activeCells, 1)
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 1) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -3916,14 +3931,14 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 0
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [4,4])
-        self.assertTrue(app.map["Gulf States"].is_poor()) # gov still 3
+        app.executeJihad("Gulf States", [4, 4])
+        self.assertTrue(app.map["Gulf States"].is_poor())  # gov still 3
         self.assertEqual(app.map["Gulf States"].sleeperCells, 1) 
         self.assertEqual(app.map["Gulf States"].activeCells, 0)
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 1) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -3936,14 +3951,14 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 0
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [3,3,3])
-        self.assertTrue(app.map["Gulf States"].is_poor()) # gov still 3
+        app.executeJihad("Gulf States", [3, 3, 3])
+        self.assertTrue(app.map["Gulf States"].is_poor())  # gov still 3
         self.assertEqual(app.map["Gulf States"].sleeperCells, 0) 
         self.assertEqual(app.map["Gulf States"].activeCells, 3)
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 1) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -3956,14 +3971,14 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 0
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [3,3,4])
-        self.assertTrue(app.map["Gulf States"].is_poor()) # gov still 3
+        app.executeJihad("Gulf States", [3, 3, 4])
+        self.assertTrue(app.map["Gulf States"].is_poor())  # gov still 3
         self.assertEqual(app.map["Gulf States"].sleeperCells, 0) 
         self.assertEqual(app.map["Gulf States"].activeCells, 2)
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 1) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -3976,14 +3991,14 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 0
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [3,4,4])
-        self.assertTrue(app.map["Gulf States"].is_poor()) # gov still 3
+        app.executeJihad("Gulf States", [3, 4, 4])
+        self.assertTrue(app.map["Gulf States"].is_poor())  # gov still 3
         self.assertEqual(app.map["Gulf States"].sleeperCells, 0) 
         self.assertEqual(app.map["Gulf States"].activeCells, 1)
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 1) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -3996,14 +4011,14 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 0
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [4,4,4])
-        self.assertTrue(app.map["Gulf States"].is_poor()) # gov still 3
+        app.executeJihad("Gulf States", [4, 4, 4])
+        self.assertTrue(app.map["Gulf States"].is_poor())  # gov still 3
         self.assertEqual(app.map["Gulf States"].sleeperCells, 0) 
         self.assertEqual(app.map["Gulf States"].activeCells, 0)
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 1) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -4018,13 +4033,13 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
         app.executeJihad("Gulf States", [3])
-        self.assertTrue(app.map["Gulf States"].is_poor()) # gov still 3
+        self.assertTrue(app.map["Gulf States"].is_poor())  # gov still 3
         self.assertEqual(app.map["Gulf States"].sleeperCells, 1) 
         self.assertEqual(app.map["Gulf States"].activeCells, 2) 
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 1) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -4038,13 +4053,13 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
         app.executeJihad("Gulf States", [4])
-        self.assertTrue(app.map["Gulf States"].is_poor()) # gov still 3
+        self.assertTrue(app.map["Gulf States"].is_poor())  # gov still 3
         self.assertEqual(app.map["Gulf States"].sleeperCells, 1)
         self.assertEqual(app.map["Gulf States"].activeCells, 1)
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 1) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -4057,14 +4072,14 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 0
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [3,3])
-        self.assertTrue(app.map["Gulf States"].is_poor()) # gov still 3
+        app.executeJihad("Gulf States", [3, 3])
+        self.assertTrue(app.map["Gulf States"].is_poor())  # gov still 3
         self.assertEqual(app.map["Gulf States"].sleeperCells, 1) 
         self.assertEqual(app.map["Gulf States"].activeCells, 2)
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 1) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -4077,14 +4092,14 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 0
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [3,4])
-        self.assertTrue(app.map["Gulf States"].is_poor()) # gov still 3
+        app.executeJihad("Gulf States", [3, 4])
+        self.assertTrue(app.map["Gulf States"].is_poor())  # gov still 3
         self.assertEqual(app.map["Gulf States"].sleeperCells, 1) 
         self.assertEqual(app.map["Gulf States"].activeCells, 1)
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 1) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -4097,14 +4112,14 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 0
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [4,4])
-        self.assertTrue(app.map["Gulf States"].is_poor()) # gov still 3
+        app.executeJihad("Gulf States", [4, 4])
+        self.assertTrue(app.map["Gulf States"].is_poor())  # gov still 3
         self.assertEqual(app.map["Gulf States"].sleeperCells, 1) 
         self.assertEqual(app.map["Gulf States"].activeCells, 0)
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 1) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -4117,14 +4132,14 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 0
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [3,3,3])
-        self.assertTrue(app.map["Gulf States"].is_poor()) # gov still 3
+        app.executeJihad("Gulf States", [3, 3, 3])
+        self.assertTrue(app.map["Gulf States"].is_poor())  # gov still 3
         self.assertEqual(app.map["Gulf States"].sleeperCells, 0) 
         self.assertEqual(app.map["Gulf States"].activeCells, 3)
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 1) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -4137,14 +4152,14 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 0
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [3,3,4])
-        self.assertTrue(app.map["Gulf States"].is_poor()) # gov still 3
+        app.executeJihad("Gulf States", [3, 3, 4])
+        self.assertTrue(app.map["Gulf States"].is_poor())  # gov still 3
         self.assertEqual(app.map["Gulf States"].sleeperCells, 0) 
         self.assertEqual(app.map["Gulf States"].activeCells, 2)
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 1) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -4157,14 +4172,14 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 0
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [3,4,4])
-        self.assertTrue(app.map["Gulf States"].is_poor()) # gov still 3
+        app.executeJihad("Gulf States", [3, 4, 4])
+        self.assertTrue(app.map["Gulf States"].is_poor())  # gov still 3
         self.assertEqual(app.map["Gulf States"].sleeperCells, 0) 
         self.assertEqual(app.map["Gulf States"].activeCells, 1)
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 1) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -4177,14 +4192,14 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 0
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [4,4,4])
-        self.assertTrue(app.map["Gulf States"].is_poor()) # gov still 3
+        app.executeJihad("Gulf States", [4, 4, 4])
+        self.assertTrue(app.map["Gulf States"].is_poor())  # gov still 3
         self.assertEqual(app.map["Gulf States"].sleeperCells, 0) 
         self.assertEqual(app.map["Gulf States"].activeCells, 0)
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 1) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -4199,13 +4214,13 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
         app.executeJihad("Gulf States", [3])
-        self.assertTrue(app.map["Gulf States"].is_poor()) # gov still 3
+        self.assertTrue(app.map["Gulf States"].is_poor())  # gov still 3
         self.assertEqual(app.map["Gulf States"].sleeperCells, 0) 
         self.assertEqual(app.map["Gulf States"].activeCells, 3) 
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 1) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -4219,13 +4234,13 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
         app.executeJihad("Gulf States", [4])
-        self.assertTrue(app.map["Gulf States"].is_poor()) # gov still 3
+        self.assertTrue(app.map["Gulf States"].is_poor())  # gov still 3
         self.assertEqual(app.map["Gulf States"].sleeperCells, 0)
         self.assertEqual(app.map["Gulf States"].activeCells, 2)
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 1) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -4238,14 +4253,14 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 0
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [3,3])
-        self.assertTrue(app.map["Gulf States"].is_poor()) # gov still 3
+        app.executeJihad("Gulf States", [3, 3])
+        self.assertTrue(app.map["Gulf States"].is_poor())  # gov still 3
         self.assertEqual(app.map["Gulf States"].sleeperCells, 0) 
         self.assertEqual(app.map["Gulf States"].activeCells, 3)
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 1) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -4258,14 +4273,14 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 0
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [3,4])
-        self.assertTrue(app.map["Gulf States"].is_poor()) # gov still 3
+        app.executeJihad("Gulf States", [3, 4])
+        self.assertTrue(app.map["Gulf States"].is_poor())  # gov still 3
         self.assertEqual(app.map["Gulf States"].sleeperCells, 0) 
         self.assertEqual(app.map["Gulf States"].activeCells, 2)
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 1) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -4278,14 +4293,14 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 0
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [4,4])
-        self.assertTrue(app.map["Gulf States"].is_poor()) # gov still 3
+        app.executeJihad("Gulf States", [4, 4])
+        self.assertTrue(app.map["Gulf States"].is_poor())  # gov still 3
         self.assertEqual(app.map["Gulf States"].sleeperCells, 0) 
         self.assertEqual(app.map["Gulf States"].activeCells, 1)
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 1) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -4298,14 +4313,14 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 0
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [3,3,3])
-        self.assertTrue(app.map["Gulf States"].is_poor()) # gov still 3
+        app.executeJihad("Gulf States", [3, 3, 3])
+        self.assertTrue(app.map["Gulf States"].is_poor())  # gov still 3
         self.assertEqual(app.map["Gulf States"].sleeperCells, 0) 
         self.assertEqual(app.map["Gulf States"].activeCells, 3)
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 1) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -4318,14 +4333,14 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 0
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [3,3,4])
-        self.assertTrue(app.map["Gulf States"].is_poor()) # gov still 3
+        app.executeJihad("Gulf States", [3, 3, 4])
+        self.assertTrue(app.map["Gulf States"].is_poor())  # gov still 3
         self.assertEqual(app.map["Gulf States"].sleeperCells, 0) 
         self.assertEqual(app.map["Gulf States"].activeCells, 2)
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 1) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -4338,14 +4353,14 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 0
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [3,4,4])
-        self.assertTrue(app.map["Gulf States"].is_poor()) # gov still 3
+        app.executeJihad("Gulf States", [3, 4, 4])
+        self.assertTrue(app.map["Gulf States"].is_poor())  # gov still 3
         self.assertEqual(app.map["Gulf States"].sleeperCells, 0) 
         self.assertEqual(app.map["Gulf States"].activeCells, 1)
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 1) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
@@ -4358,396 +4373,401 @@ class executeJihad(unittest.TestCase):
         app.map["Gulf States"].besieged = 0
         app.map["Gulf States"].regimeChange = 1
         app.map["Gulf States"].aid = 1
-        app.executeJihad("Gulf States", [4,4,4])
-        self.assertTrue(app.map["Gulf States"].is_poor()) # gov still 3
+        app.executeJihad("Gulf States", [4, 4, 4])
+        self.assertTrue(app.map["Gulf States"].is_poor())  # gov still 3
         self.assertEqual(app.map["Gulf States"].sleeperCells, 0) 
         self.assertEqual(app.map["Gulf States"].activeCells, 0)
-        self.assertEqual(app.map["Gulf States"].regimeChange, 1) # still there
-        self.assertEqual(app.map["Gulf States"].aid, 1) # still there
-        self.assertEqual(app.map["Gulf States"].besieged, 0) # need three fails to get a besieged regime
-        self.assertTrue(app.map["Gulf States"].is_neutral()) # need three fails to move alignment
+        self.assertEqual(app.map["Gulf States"].regimeChange, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].aid, 1)  # still there
+        self.assertEqual(app.map["Gulf States"].besieged, 0)  # need three fails to get a besieged regime
+        self.assertTrue(app.map["Gulf States"].is_neutral())  # need three fails to move alignment
         self.assertEqual(app.funding, 5)
         self.assertEqual(app.prestige, 7)
 
-class minorJihadChoice(unittest.TestCase):
-    '''Test minorJihadInGoodFairChoice'''
+
+class MinorJihadChoice(unittest.TestCase):
+    """Test minorJihadInGoodFairChoice"""
 
     def testMinorJihadOneCellOneOps(self):
-# one cell in each country, one ops case    
+        # one cell in each country, one ops case
 
         app = Labyrinth(1, 1, test3ScenarioSetup)
-    # only Islamist rule has cells
+        # only Islamist rule has cells
         app.map["Gulf States"].activeCells = 0
         app.map["Gulf States"].sleeperCells = 0
         app.map["Pakistan"].activeCells = 0
         self.assertEqual(app.minorJihadInGoodFairChoice(1), False)
-    # fair governance
+        # fair governance
         app.map["Gulf States"].make_fair()
         app.map["Gulf States"].activeCells = 1
-        self.assertEqual(app.minorJihadInGoodFairChoice(1), [("Gulf States",1)])
-    # good governance
+        self.assertEqual(app.minorJihadInGoodFairChoice(1), [("Gulf States", 1)])
+        # good governance
         app.map["Saudi Arabia"].make_good()
         app.map["Saudi Arabia"].activeCells = 1
-        self.assertEqual(app.minorJihadInGoodFairChoice(1), [("Saudi Arabia",1)])
-    # 2 good governance
+        self.assertEqual(app.minorJihadInGoodFairChoice(1), [("Saudi Arabia", 1)])
+        # 2 good governance
         app.map["Gulf States"].make_good()
         for i in range(10):
             retVal = app.minorJihadInGoodFairChoice(1)
-            self.assertTrue((retVal == [("Gulf States",1)]) or (retVal == [("Saudi Arabia",1)]))
-    # 2 good governance but Jordan has less resources    
+            self.assertTrue((retVal == [("Gulf States", 1)]) or (retVal == [("Saudi Arabia", 1)]))
+        # 2 good governance but Jordan has less resources    
         app.map["Saudi Arabia"].make_poor()
         app.map["Jordan"].make_good()
         app.map["Jordan"].activeCells = 1
-        self.assertEqual(app.minorJihadInGoodFairChoice(1), [("Gulf States",1)])
-    # but the other is besieged
+        self.assertEqual(app.minorJihadInGoodFairChoice(1), [("Gulf States", 1)])
+        # but the other is besieged
         app.map["Jordan"].besieged = 1
-        self.assertEqual(app.minorJihadInGoodFairChoice(1), [("Jordan",1)])
-    # but the other has aid
+        self.assertEqual(app.minorJihadInGoodFairChoice(1), [("Jordan", 1)])
+        # but the other has aid
         app.map["Gulf States"].aid = 1
-        self.assertEqual(app.minorJihadInGoodFairChoice(1), [("Gulf States",1)])
-    # but yet another is Pakistan    
+        self.assertEqual(app.minorJihadInGoodFairChoice(1), [("Gulf States", 1)])
+        # but yet another is Pakistan    
         app.map["Pakistan"].make_good()
         app.map["Pakistan"].activeCells = 1
-        self.assertEqual(app.minorJihadInGoodFairChoice(1), [("Pakistan",1)])
-    # but Pakistan does not win against good if it is fair
+        self.assertEqual(app.minorJihadInGoodFairChoice(1), [("Pakistan", 1)])
+        # but Pakistan does not win against good if it is fair
         app.map["Pakistan"].make_fair()
-        self.assertEqual(app.minorJihadInGoodFairChoice(1), [("Gulf States",1)])
+        self.assertEqual(app.minorJihadInGoodFairChoice(1), [("Gulf States", 1)])
 
     def testMinorJihadOneCellTwoOps(self):
-# one cell in each country, two ops case    
+        # one cell in each country, two ops case
 
         app = Labyrinth(1, 1, test3ScenarioSetup)
-    # only Islamist rule has cells
+        # only Islamist rule has cells
         app.map["Gulf States"].activeCells = 0
         app.map["Gulf States"].sleeperCells = 0
         app.map["Pakistan"].activeCells = 0
         self.assertEqual(app.minorJihadInGoodFairChoice(2), False)
-    # fair governance
+        # fair governance
         app.map["Gulf States"].make_fair()
         app.map["Gulf States"].activeCells = 1
-        self.assertEqual(app.minorJihadInGoodFairChoice(2), [("Gulf States",1)])
-    # good governance
+        self.assertEqual(app.minorJihadInGoodFairChoice(2), [("Gulf States", 1)])
+        # good governance
         app.map["Saudi Arabia"].make_good()
         app.map["Saudi Arabia"].activeCells = 1
-        self.assertEqual(app.minorJihadInGoodFairChoice(2), [("Saudi Arabia",1),("Gulf States",1)])
-    # 2 good governance
+        self.assertEqual(app.minorJihadInGoodFairChoice(2), [("Saudi Arabia", 1), ("Gulf States", 1)])
+        # 2 good governance
         app.map["Gulf States"].make_good()
         retVal = app.minorJihadInGoodFairChoice(2)
-        self.assertTrue((("Gulf States",1) in retVal) and (("Saudi Arabia",1) in retVal) and len(retVal) == 2)
-    # 2 good governance but Jordan has less resources    
+        self.assertTrue((("Gulf States", 1) in retVal) and (("Saudi Arabia", 1) in retVal) and len(retVal) == 2)
+        # 2 good governance but Jordan has less resources    
         app.map["Saudi Arabia"].make_poor()
         app.map["Jordan"].make_good()
         app.map["Jordan"].activeCells = 1
-        self.assertEqual(app.minorJihadInGoodFairChoice(2), [("Gulf States",1),("Jordan",1)])
-    # but the other is besieged
+        self.assertEqual(app.minorJihadInGoodFairChoice(2), [("Gulf States", 1), ("Jordan", 1)])
+        # but the other is besieged
         app.map["Jordan"].besieged = 1
-        self.assertEqual(app.minorJihadInGoodFairChoice(2), [("Jordan",1),("Gulf States",1)])
-    # but the other has aid
+        self.assertEqual(app.minorJihadInGoodFairChoice(2), [("Jordan", 1), ("Gulf States", 1)])
+        # but the other has aid
         app.map["Gulf States"].aid = 1
-        self.assertEqual(app.minorJihadInGoodFairChoice(2), [("Gulf States",1),("Jordan",1)])
-    # but yet another is Pakistan    
+        self.assertEqual(app.minorJihadInGoodFairChoice(2), [("Gulf States", 1), ("Jordan", 1)])
+        # but yet another is Pakistan    
         app.map["Pakistan"].make_good()
         app.map["Pakistan"].activeCells = 1
-        self.assertEqual(app.minorJihadInGoodFairChoice(2), [("Pakistan",1),("Gulf States",1)])
-    # but Pakistan does not win against good if it is fair
+        self.assertEqual(app.minorJihadInGoodFairChoice(2), [("Pakistan", 1), ("Gulf States", 1)])
+        # but Pakistan does not win against good if it is fair
         app.map["Pakistan"].make_fair()
-        self.assertEqual(app.minorJihadInGoodFairChoice(2), [("Gulf States",1),("Jordan",1)])
+        self.assertEqual(app.minorJihadInGoodFairChoice(2), [("Gulf States", 1), ("Jordan", 1)])
 
     def testMinorJihadOneCellThreeOps(self):
-# one cell in each country, three ops case    
+        # one cell in each country, three ops case
 
         app = Labyrinth(1, 1, test3ScenarioSetup)
-    # only Islamist rule has cells
+        # only Islamist rule has cells
         app.map["Gulf States"].activeCells = 0
         app.map["Gulf States"].sleeperCells = 0
         app.map["Pakistan"].activeCells = 0
         self.assertEqual(app.minorJihadInGoodFairChoice(3), False)
-    # fair governance
+        # fair governance
         app.map["Gulf States"].make_fair()
         app.map["Gulf States"].activeCells = 1
-        self.assertEqual(app.minorJihadInGoodFairChoice(3), [("Gulf States",1)])
-    # good governance
+        self.assertEqual(app.minorJihadInGoodFairChoice(3), [("Gulf States", 1)])
+        # good governance
         app.map["Saudi Arabia"].make_good()
         app.map["Saudi Arabia"].activeCells = 1
-        self.assertEqual(app.minorJihadInGoodFairChoice(3), [("Saudi Arabia",1),("Gulf States",1)])
-    # 2 good governance
+        self.assertEqual(app.minorJihadInGoodFairChoice(3), [("Saudi Arabia", 1), ("Gulf States", 1)])
+        # 2 good governance
         app.map["Gulf States"].make_good()
-        self.assertTrue((("Gulf States",1) in app.minorJihadInGoodFairChoice(3)) and (("Saudi Arabia",1) in app.minorJihadInGoodFairChoice(3)) and len(app.minorJihadInGoodFairChoice(3)) == 2)
-    # 2 good governance but Jordan has less resources    
+        self.assertTrue((("Gulf States", 1) in app.minorJihadInGoodFairChoice(3)) and
+                        (("Saudi Arabia", 1) in app.minorJihadInGoodFairChoice(3))
+                        and len(app.minorJihadInGoodFairChoice(3)) == 2)
+        # 2 good governance but Jordan has less resources    
         app.map["Saudi Arabia"].make_poor()
         app.map["Jordan"].make_good()
         app.map["Jordan"].activeCells = 1
-        self.assertEqual(app.minorJihadInGoodFairChoice(3), [("Gulf States",1),("Jordan",1)])
-    # but the other is besieged
+        self.assertEqual(app.minorJihadInGoodFairChoice(3), [("Gulf States", 1), ("Jordan", 1)])
+        # but the other is besieged
         app.map["Jordan"].besieged = 1
-        self.assertEqual(app.minorJihadInGoodFairChoice(3), [("Jordan",1),("Gulf States",1)])
-    # but the other has aid
+        self.assertEqual(app.minorJihadInGoodFairChoice(3), [("Jordan", 1), ("Gulf States", 1)])
+        # but the other has aid
         app.map["Gulf States"].aid = 1
-        self.assertEqual(app.minorJihadInGoodFairChoice(3), [("Gulf States",1),("Jordan",1)])
-    # but yet another is Pakistan    
+        self.assertEqual(app.minorJihadInGoodFairChoice(3), [("Gulf States", 1), ("Jordan", 1)])
+        # but yet another is Pakistan    
         app.map["Pakistan"].make_good()
         app.map["Pakistan"].activeCells = 1
-        self.assertEqual(app.minorJihadInGoodFairChoice(3), [("Pakistan",1),("Gulf States",1),("Jordan",1)])
-    # but Pakistan does not win against good if it is fair
+        self.assertEqual(app.minorJihadInGoodFairChoice(3), [("Pakistan", 1), ("Gulf States", 1), ("Jordan", 1)])
+        # but Pakistan does not win against good if it is fair
         app.map["Pakistan"].make_fair()
-        self.assertEqual(app.minorJihadInGoodFairChoice(3), [("Gulf States",1),("Jordan",1),("Pakistan",1)])
+        self.assertEqual(app.minorJihadInGoodFairChoice(3), [("Gulf States", 1), ("Jordan", 1), ("Pakistan", 1)])
 
     def testMinorJihadTwoCellOneOps(self):
-# two cells in each country, one ops case    
+        # two cells in each country, one ops case
 
         app = Labyrinth(1, 1, test3ScenarioSetup)
-    # only Islamist rule has cells
+        # only Islamist rule has cells
         app.map["Gulf States"].activeCells = 0
         app.map["Gulf States"].sleeperCells = 0
         app.map["Pakistan"].activeCells = 0
         self.assertEqual(app.minorJihadInGoodFairChoice(1), False)
-    # fair governance
+        # fair governance
         app.map["Gulf States"].make_fair()
         app.map["Gulf States"].activeCells = 2
-        self.assertEqual(app.minorJihadInGoodFairChoice(1), [("Gulf States",1)])
-    # good governance
+        self.assertEqual(app.minorJihadInGoodFairChoice(1), [("Gulf States", 1)])
+        # good governance
         app.map["Saudi Arabia"].make_good()
         app.map["Saudi Arabia"].activeCells = 2
-        self.assertEqual(app.minorJihadInGoodFairChoice(1), [("Saudi Arabia",1)])
-    # 2 good governance
+        self.assertEqual(app.minorJihadInGoodFairChoice(1), [("Saudi Arabia", 1)])
+        # 2 good governance
         app.map["Gulf States"].make_good()
         for i in range(10):
             retVal = app.minorJihadInGoodFairChoice(1)
-            self.assertTrue(retVal == [("Gulf States",1)] or retVal == [("Saudi Arabia",1)])
-    # 2 good governance but Jordan has less resources    
+            self.assertTrue(retVal == [("Gulf States", 1)] or retVal == [("Saudi Arabia", 1)])
+        # 2 good governance but Jordan has less resources    
         app.map["Saudi Arabia"].make_poor()
         app.map["Jordan"].make_good()
         app.map["Jordan"].activeCells = 2
-        self.assertEqual(app.minorJihadInGoodFairChoice(1), [("Gulf States",1)])
-    # but the other is besieged
+        self.assertEqual(app.minorJihadInGoodFairChoice(1), [("Gulf States", 1)])
+        # but the other is besieged
         app.map["Jordan"].besieged = 1
-        self.assertEqual(app.minorJihadInGoodFairChoice(1), [("Jordan",1)])
-    # but the other has aid
+        self.assertEqual(app.minorJihadInGoodFairChoice(1), [("Jordan", 1)])
+        # but the other has aid
         app.map["Gulf States"].aid = 1
-        self.assertEqual(app.minorJihadInGoodFairChoice(1), [("Gulf States",1)])
-    # but yet another is Pakistan    
+        self.assertEqual(app.minorJihadInGoodFairChoice(1), [("Gulf States", 1)])
+        # but yet another is Pakistan    
         app.map["Pakistan"].make_good()
         app.map["Pakistan"].activeCells = 2
-        self.assertEqual(app.minorJihadInGoodFairChoice(1), [("Pakistan",1)])
-    # but Pakistan does not win against good if it is fair
+        self.assertEqual(app.minorJihadInGoodFairChoice(1), [("Pakistan", 1)])
+        # but Pakistan does not win against good if it is fair
         app.map["Pakistan"].make_fair()
-        self.assertEqual(app.minorJihadInGoodFairChoice(1), [("Gulf States",1)])
+        self.assertEqual(app.minorJihadInGoodFairChoice(1), [("Gulf States", 1)])
 
     def testMinorJihadTwoCellTwoOps(self):
-# two cell in each country, two ops case    
+        # two cell in each country, two ops case
 
         app = Labyrinth(1, 1, test3ScenarioSetup)
-    # only Islamist rule has cells
+        # only Islamist rule has cells
         app.map["Gulf States"].activeCells = 0
         app.map["Gulf States"].sleeperCells = 0
         app.map["Pakistan"].activeCells = 0
         self.assertEqual(app.minorJihadInGoodFairChoice(2), False)
-    # fair governance
+        # fair governance
         app.map["Gulf States"].make_fair()
         app.map["Gulf States"].activeCells = 2
-        self.assertEqual(app.minorJihadInGoodFairChoice(2), [("Gulf States",2)])
-    # good governance
+        self.assertEqual(app.minorJihadInGoodFairChoice(2), [("Gulf States", 2)])
+        # good governance
         app.map["Saudi Arabia"].make_good()
         app.map["Saudi Arabia"].activeCells = 2
-        self.assertEqual(app.minorJihadInGoodFairChoice(2), [("Saudi Arabia",2)])
-    # 2 good governance
+        self.assertEqual(app.minorJihadInGoodFairChoice(2), [("Saudi Arabia", 2)])
+        # 2 good governance
         app.map["Gulf States"].make_good()
         for i in range(10):
             retVal = app.minorJihadInGoodFairChoice(2) 
-            self.assertTrue(retVal == [("Gulf States",2)] or retVal == [("Saudi Arabia",2)])
-    # 2 good governance but Jordan has less resources    
+            self.assertTrue(retVal == [("Gulf States", 2)] or retVal == [("Saudi Arabia", 2)])
+        # 2 good governance but Jordan has less resources    
         app.map["Saudi Arabia"].make_poor()
         app.map["Jordan"].make_good()
         app.map["Jordan"].activeCells = 2
-        self.assertEqual(app.minorJihadInGoodFairChoice(2), [("Gulf States",2)])
-    # but the other is besieged
+        self.assertEqual(app.minorJihadInGoodFairChoice(2), [("Gulf States", 2)])
+        # but the other is besieged
         app.map["Jordan"].besieged = 1
-        self.assertEqual(app.minorJihadInGoodFairChoice(2), [("Jordan",2)])
-    # but the other has aid
+        self.assertEqual(app.minorJihadInGoodFairChoice(2), [("Jordan", 2)])
+        # but the other has aid
         app.map["Gulf States"].aid = 1
-        self.assertEqual(app.minorJihadInGoodFairChoice(2), [("Gulf States",2)])
-    # but yet another is Pakistan    
+        self.assertEqual(app.minorJihadInGoodFairChoice(2), [("Gulf States", 2)])
+        # but yet another is Pakistan    
         app.map["Pakistan"].make_good()
         app.map["Pakistan"].activeCells = 2
-        self.assertEqual(app.minorJihadInGoodFairChoice(2), [("Pakistan",2)])
-    # but Pakistan does not win against good if it is fair
+        self.assertEqual(app.minorJihadInGoodFairChoice(2), [("Pakistan", 2)])
+        # but Pakistan does not win against good if it is fair
         app.map["Pakistan"].make_fair()
-        self.assertEqual(app.minorJihadInGoodFairChoice(2), [("Gulf States",2)])
+        self.assertEqual(app.minorJihadInGoodFairChoice(2), [("Gulf States", 2)])
 
     def testMinorJihadTwoCellThreeOps(self):
-# two cell in each country, three ops case    
+        # two cell in each country, three ops case
 
         app = Labyrinth(1, 1, test3ScenarioSetup)
-    # only Islamist rule has cells
+        # only Islamist rule has cells
         app.map["Gulf States"].activeCells = 0
         app.map["Gulf States"].sleeperCells = 0
         app.map["Pakistan"].activeCells = 0
         self.assertEqual(app.minorJihadInGoodFairChoice(3), False)
-    # fair governance
+        # fair governance
         app.map["Gulf States"].make_fair()
         app.map["Gulf States"].activeCells = 2
-        self.assertEqual(app.minorJihadInGoodFairChoice(3), [("Gulf States",2)])
-    # good governance
+        self.assertEqual(app.minorJihadInGoodFairChoice(3), [("Gulf States", 2)])
+        # good governance
         app.map["Saudi Arabia"].make_good()
         app.map["Saudi Arabia"].activeCells = 2
-        self.assertEqual(app.minorJihadInGoodFairChoice(3), [("Saudi Arabia",2),("Gulf States",1)])
-    # 2 good governance
+        self.assertEqual(app.minorJihadInGoodFairChoice(3), [("Saudi Arabia", 2), ("Gulf States", 1)])
+        # 2 good governance
         app.map["Gulf States"].make_good()
         for i in range(10):
             retVal = app.minorJihadInGoodFairChoice(3)
-            self.assertTrue(retVal == [("Saudi Arabia",2),("Gulf States",1)] or retVal == [("Gulf States",2),("Saudi Arabia",1)])
-    # 2 good governance but Jordan has less resources    
+            self.assertTrue(retVal == [("Saudi Arabia", 2), ("Gulf States", 1)] or
+                            retVal == [("Gulf States", 2), ("Saudi Arabia", 1)])
+        # 2 good governance but Jordan has less resources    
         app.map["Saudi Arabia"].make_poor()
         app.map["Jordan"].make_good()
         app.map["Jordan"].activeCells = 2
-        self.assertEqual(app.minorJihadInGoodFairChoice(3), [("Gulf States",2),("Jordan",1)])
-    # but the other is besieged
+        self.assertEqual(app.minorJihadInGoodFairChoice(3), [("Gulf States", 2), ("Jordan", 1)])
+        # but the other is besieged
         app.map["Jordan"].besieged = 1
-        self.assertEqual(app.minorJihadInGoodFairChoice(3), [("Jordan",2),("Gulf States",1)])
-    # but the other has aid
+        self.assertEqual(app.minorJihadInGoodFairChoice(3), [("Jordan", 2), ("Gulf States", 1)])
+        # but the other has aid
         app.map["Gulf States"].aid = 1
-        self.assertEqual(app.minorJihadInGoodFairChoice(3), [("Gulf States",2),("Jordan",1)])
-    # but yet another is Pakistan    
+        self.assertEqual(app.minorJihadInGoodFairChoice(3), [("Gulf States", 2), ("Jordan", 1)])
+        # but yet another is Pakistan    
         app.map["Pakistan"].make_good()
         app.map["Pakistan"].activeCells = 2
-        self.assertEqual(app.minorJihadInGoodFairChoice(3), [("Pakistan",2),("Gulf States",1)])
-    # but Pakistan does not win against good if it is fair
+        self.assertEqual(app.minorJihadInGoodFairChoice(3), [("Pakistan", 2), ("Gulf States", 1)])
+        # but Pakistan does not win against good if it is fair
         app.map["Pakistan"].make_fair()
-        self.assertEqual(app.minorJihadInGoodFairChoice(3), [("Gulf States",2),("Jordan",1)])
+        self.assertEqual(app.minorJihadInGoodFairChoice(3), [("Gulf States", 2), ("Jordan", 1)])
 
     def testMinorJihadThreeCellOneOps(self):
-# three cells in each country, one ops case    
+        # three cells in each country, one ops case
 
         app = Labyrinth(1, 1, test3ScenarioSetup)
-    # only Islamist rule has cells
+        # only Islamist rule has cells
         app.map["Gulf States"].activeCells = 0
         app.map["Gulf States"].sleeperCells = 0
         app.map["Pakistan"].activeCells = 0
         self.assertEqual(app.minorJihadInGoodFairChoice(1), False)
-    # fair governance
+        # fair governance
         app.map["Gulf States"].make_fair()
         app.map["Gulf States"].activeCells = 3
-        self.assertEqual(app.minorJihadInGoodFairChoice(1), [("Gulf States",1)])
-    # good governance
+        self.assertEqual(app.minorJihadInGoodFairChoice(1), [("Gulf States", 1)])
+        # good governance
         app.map["Saudi Arabia"].make_good()
         app.map["Saudi Arabia"].activeCells = 3
-        self.assertEqual(app.minorJihadInGoodFairChoice(1), [("Saudi Arabia",1)])
-    # 2 good governance
+        self.assertEqual(app.minorJihadInGoodFairChoice(1), [("Saudi Arabia", 1)])
+        # 2 good governance
         app.map["Gulf States"].make_good()
-        self.assertTrue(app.minorJihadInGoodFairChoice(1) in [[("Gulf States",1)],[("Saudi Arabia",1)]])
-        self.assertTrue(app.minorJihadInGoodFairChoice(1) in [[("Gulf States",1)],[("Saudi Arabia",1)]])
-        self.assertTrue(app.minorJihadInGoodFairChoice(1) in [[("Gulf States",1)],[("Saudi Arabia",1)]])
-        self.assertTrue(app.minorJihadInGoodFairChoice(1) in [[("Gulf States",1)],[("Saudi Arabia",1)]])
-        self.assertTrue(app.minorJihadInGoodFairChoice(1) in [[("Gulf States",1)],[("Saudi Arabia",1)]])
-        self.assertTrue(app.minorJihadInGoodFairChoice(1) in [[("Gulf States",1)],[("Saudi Arabia",1)]])
-        self.assertTrue(app.minorJihadInGoodFairChoice(1) in [[("Gulf States",1)],[("Saudi Arabia",1)]])
-        self.assertTrue(app.minorJihadInGoodFairChoice(1) in [[("Gulf States",1)],[("Saudi Arabia",1)]])
-        self.assertTrue(app.minorJihadInGoodFairChoice(1) in [[("Gulf States",1)],[("Saudi Arabia",1)]])
-        self.assertTrue(app.minorJihadInGoodFairChoice(1) in [[("Gulf States",1)],[("Saudi Arabia",1)]])
-    # 2 good governance but Jordan has less resources    
+        self.assertTrue(app.minorJihadInGoodFairChoice(1) in [[("Gulf States", 1)], [("Saudi Arabia", 1)]])
+        self.assertTrue(app.minorJihadInGoodFairChoice(1) in [[("Gulf States", 1)], [("Saudi Arabia", 1)]])
+        self.assertTrue(app.minorJihadInGoodFairChoice(1) in [[("Gulf States", 1)], [("Saudi Arabia", 1)]])
+        self.assertTrue(app.minorJihadInGoodFairChoice(1) in [[("Gulf States", 1)], [("Saudi Arabia", 1)]])
+        self.assertTrue(app.minorJihadInGoodFairChoice(1) in [[("Gulf States", 1)], [("Saudi Arabia", 1)]])
+        self.assertTrue(app.minorJihadInGoodFairChoice(1) in [[("Gulf States", 1)], [("Saudi Arabia", 1)]])
+        self.assertTrue(app.minorJihadInGoodFairChoice(1) in [[("Gulf States", 1)], [("Saudi Arabia", 1)]])
+        self.assertTrue(app.minorJihadInGoodFairChoice(1) in [[("Gulf States", 1)], [("Saudi Arabia", 1)]])
+        self.assertTrue(app.minorJihadInGoodFairChoice(1) in [[("Gulf States", 1)], [("Saudi Arabia", 1)]])
+        self.assertTrue(app.minorJihadInGoodFairChoice(1) in [[("Gulf States", 1)], [("Saudi Arabia", 1)]])
+        # 2 good governance but Jordan has less resources    
         app.map["Saudi Arabia"].make_poor()
         app.map["Jordan"].make_good()
         app.map["Jordan"].activeCells = 3
-        self.assertEqual(app.minorJihadInGoodFairChoice(1), [("Gulf States",1)])
-    # but the other is besieged
+        self.assertEqual(app.minorJihadInGoodFairChoice(1), [("Gulf States", 1)])
+        # but the other is besieged
         app.map["Jordan"].besieged = 1
-        self.assertEqual(app.minorJihadInGoodFairChoice(1), [("Jordan",1)])
-    # but the other has aid
+        self.assertEqual(app.minorJihadInGoodFairChoice(1), [("Jordan", 1)])
+        # but the other has aid
         app.map["Gulf States"].aid = 1
-        self.assertEqual(app.minorJihadInGoodFairChoice(1), [("Gulf States",1)])
-    # but yet another is Pakistan    
+        self.assertEqual(app.minorJihadInGoodFairChoice(1), [("Gulf States", 1)])
+        # but yet another is Pakistan    
         app.map["Pakistan"].make_good()
         app.map["Pakistan"].activeCells = 3
-        self.assertEqual(app.minorJihadInGoodFairChoice(1), [("Pakistan",1)])
-    # but Pakistan does not win against good if it is fair
+        self.assertEqual(app.minorJihadInGoodFairChoice(1), [("Pakistan", 1)])
+        # but Pakistan does not win against good if it is fair
         app.map["Pakistan"].make_fair()
-        self.assertEqual(app.minorJihadInGoodFairChoice(1), [("Gulf States",1)])
+        self.assertEqual(app.minorJihadInGoodFairChoice(1), [("Gulf States", 1)])
 
     def testMinorJihadThreeCellTwoOps(self):
-# three cell in each country, two ops case    
+        # three cell in each country, two ops case
 
         app = Labyrinth(1, 1, test3ScenarioSetup)
-    # only Islamist rule has cells
+        # only Islamist rule has cells
         app.map["Gulf States"].activeCells = 0
         app.map["Gulf States"].sleeperCells = 0
         app.map["Pakistan"].activeCells = 0
         self.assertEqual(app.minorJihadInGoodFairChoice(2), False)
-    # fair governance
+        # fair governance
         app.map["Gulf States"].make_fair()
         app.map["Gulf States"].activeCells = 3
-        self.assertEqual(app.minorJihadInGoodFairChoice(2), [("Gulf States",2)])
-    # good governance
+        self.assertEqual(app.minorJihadInGoodFairChoice(2), [("Gulf States", 2)])
+        # good governance
         app.map["Saudi Arabia"].make_good()
         app.map["Saudi Arabia"].activeCells = 3
-        self.assertEqual(app.minorJihadInGoodFairChoice(2), [("Saudi Arabia",2)])
-    # 2 good governance
+        self.assertEqual(app.minorJihadInGoodFairChoice(2), [("Saudi Arabia", 2)])
+        # 2 good governance
         app.map["Gulf States"].make_good()
         for i in range(10):
             retVal = app.minorJihadInGoodFairChoice(2)
-            self.assertTrue(retVal == [("Gulf States",2)] or retVal == [("Saudi Arabia",2)])
-    # 2 good governance but Jordan has less resources    
+            self.assertTrue(retVal == [("Gulf States", 2)] or retVal == [("Saudi Arabia", 2)])
+        # 2 good governance but Jordan has less resources    
         app.map["Saudi Arabia"].make_poor()
         app.map["Jordan"].make_good()
         app.map["Jordan"].activeCells = 3
-        self.assertEqual(app.minorJihadInGoodFairChoice(2), [("Gulf States",2)])
-    # but the other is besieged
+        self.assertEqual(app.minorJihadInGoodFairChoice(2), [("Gulf States", 2)])
+        # but the other is besieged
         app.map["Jordan"].besieged = 1
-        self.assertEqual(app.minorJihadInGoodFairChoice(2), [("Jordan",2)])
-    # but the other has aid
+        self.assertEqual(app.minorJihadInGoodFairChoice(2), [("Jordan", 2)])
+        # but the other has aid
         app.map["Gulf States"].aid = 1
-        self.assertEqual(app.minorJihadInGoodFairChoice(2), [("Gulf States",2)])
-    # but yet another is Pakistan    
+        self.assertEqual(app.minorJihadInGoodFairChoice(2), [("Gulf States", 2)])
+        # but yet another is Pakistan    
         app.map["Pakistan"].make_good()
         app.map["Pakistan"].activeCells = 3
-        self.assertEqual(app.minorJihadInGoodFairChoice(2), [("Pakistan",2)])
-    # but Pakistan does not win against good if it is fair
+        self.assertEqual(app.minorJihadInGoodFairChoice(2), [("Pakistan", 2)])
+        # but Pakistan does not win against good if it is fair
         app.map["Pakistan"].make_fair()
-        self.assertEqual(app.minorJihadInGoodFairChoice(2), [("Gulf States",2)])
+        self.assertEqual(app.minorJihadInGoodFairChoice(2), [("Gulf States", 2)])
 
     def testMinorJihadThreeCellThreeOps(self):
-# three cell in each country, three ops case    
+        # three cell in each country, three ops case
 
         app = Labyrinth(1, 1, test3ScenarioSetup)
-    # only Islamist rule has cells
+        # only Islamist rule has cells
         app.map["Gulf States"].activeCells = 0
         app.map["Gulf States"].sleeperCells = 0
         app.map["Pakistan"].activeCells = 0
         self.assertEqual(app.minorJihadInGoodFairChoice(3), False)
-    # fair governance
+        # fair governance
         app.map["Gulf States"].make_fair()
         app.map["Gulf States"].activeCells = 3
-        self.assertEqual(app.minorJihadInGoodFairChoice(3), [("Gulf States",3)])
-    # good governance
+        self.assertEqual(app.minorJihadInGoodFairChoice(3), [("Gulf States", 3)])
+        # good governance
         app.map["Saudi Arabia"].make_good()
         app.map["Saudi Arabia"].activeCells = 3
-        self.assertEqual(app.minorJihadInGoodFairChoice(3), [("Saudi Arabia",3)])
-    # 2 good governance
+        self.assertEqual(app.minorJihadInGoodFairChoice(3), [("Saudi Arabia", 3)])
+        # 2 good governance
         app.map["Gulf States"].make_good()
         for i in range(10):
             retVal = app.minorJihadInGoodFairChoice(3)
-            self.assertTrue((retVal == [("Saudi Arabia",3)]) or (retVal == [("Gulf States",3)]))
-    # 2 good governance but Jordan has less resources    
+            self.assertTrue((retVal == [("Saudi Arabia", 3)]) or (retVal == [("Gulf States", 3)]))
+        # 2 good governance but Jordan has less resources    
         app.map["Saudi Arabia"].make_poor()
         app.map["Jordan"].make_good()
         app.map["Jordan"].activeCells = 3
-        self.assertEqual(app.minorJihadInGoodFairChoice(3), [("Gulf States",3)])
-    # but the other is besieged
+        self.assertEqual(app.minorJihadInGoodFairChoice(3), [("Gulf States", 3)])
+        # but the other is besieged
         app.map["Jordan"].besieged = 1
-        self.assertEqual(app.minorJihadInGoodFairChoice(3), [("Jordan",3)])
-    # but the other has aid
+        self.assertEqual(app.minorJihadInGoodFairChoice(3), [("Jordan", 3)])
+        # but the other has aid
         app.map["Gulf States"].aid = 1
-        self.assertEqual(app.minorJihadInGoodFairChoice(3), [("Gulf States",3)])
-    # but yet another is Pakistan    
+        self.assertEqual(app.minorJihadInGoodFairChoice(3), [("Gulf States", 3)])
+        # but yet another is Pakistan    
         app.map["Pakistan"].make_good()
         app.map["Pakistan"].activeCells = 3
-        self.assertEqual(app.minorJihadInGoodFairChoice(3), [("Pakistan",3)])
-    # but Pakistan does not win against good if it is fair
+        self.assertEqual(app.minorJihadInGoodFairChoice(3), [("Pakistan", 3)])
+        # but Pakistan does not win against good if it is fair
         app.map["Pakistan"].make_fair()
-        self.assertEqual(app.minorJihadInGoodFairChoice(3), [("Gulf States",3)])
-        
-class recruit(unittest.TestCase):
-    '''Test Recruiting'''
-    
+        self.assertEqual(app.minorJihadInGoodFairChoice(3), [("Gulf States", 3)])
+
+
+class Recruit(unittest.TestCase):
+    """Test Recruiting"""
+
     def testRecruitChoice(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertFalse(app.recruitChoice(3))
@@ -4786,16 +4806,16 @@ class recruit(unittest.TestCase):
         self.assertEqual(app.recruitChoice(3), "Iraq")
         app.map["Gulf States"].troopCubes = 6
         self.assertEqual(app.recruitChoice(1), "Gulf States")
-        
+
     def testExecuteRecruit(self):
-    # Normal
+        # Normal
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.cells = 15
         unusedOps = app.executeRecruit("United States", 1, [1])
         self.assertEqual(unusedOps, 0)
         self.assertEqual(app.map["United States"].sleeperCells, 1)
         self.assertEqual(app.cells, 14)
-        
+
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.cells = 15
         unusedOps = app.executeRecruit("United States", 1, [2])
@@ -4805,49 +4825,49 @@ class recruit(unittest.TestCase):
 
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.cells = 15
-        unusedOps = app.executeRecruit("United States", 2, [1,1])
+        unusedOps = app.executeRecruit("United States", 2, [1, 1])
         self.assertEqual(unusedOps, 0)
         self.assertEqual(app.map["United States"].sleeperCells, 2)
         self.assertEqual(app.cells, 13)
-        
+
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.cells = 15
-        unusedOps = app.executeRecruit("United States", 2, [1,2])
+        unusedOps = app.executeRecruit("United States", 2, [1, 2])
         self.assertEqual(unusedOps, 0)
         self.assertEqual(app.map["United States"].sleeperCells, 1)
         self.assertEqual(app.cells, 14)
-        
+
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.cells = 15
-        unusedOps = app.executeRecruit("United States", 2, [2,2])
+        unusedOps = app.executeRecruit("United States", 2, [2, 2])
         self.assertEqual(unusedOps, 0)
         self.assertEqual(app.map["United States"].sleeperCells, 0)
         self.assertEqual(app.cells, 15)
-        
+
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.cells = 15
-        unusedOps = app.executeRecruit("United States", 3, [1,1,1])
+        unusedOps = app.executeRecruit("United States", 3, [1, 1, 1])
         self.assertEqual(unusedOps, 0)
         self.assertEqual(app.map["United States"].sleeperCells, 3)
         self.assertEqual(app.cells, 12)
-        
+
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.cells = 15
-        unusedOps = app.executeRecruit("United States", 3, [1,2,1])
+        unusedOps = app.executeRecruit("United States", 3, [1, 2, 1])
         self.assertEqual(unusedOps, 0)
         self.assertEqual(app.map["United States"].sleeperCells, 2)
         self.assertEqual(app.cells, 13)
-        
+
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.cells = 15
-        unusedOps = app.executeRecruit("United States", 3, [2,1,2])
+        unusedOps = app.executeRecruit("United States", 3, [2, 1, 2])
         self.assertEqual(unusedOps, 0)
         self.assertEqual(app.map["United States"].sleeperCells, 1)
         self.assertEqual(app.cells, 14)
-        
+
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.cells = 15
-        unusedOps = app.executeRecruit("United States", 3, [2,2,2])
+        unusedOps = app.executeRecruit("United States", 3, [2, 2, 2])
         self.assertEqual(unusedOps, 0)
         self.assertEqual(app.map["United States"].sleeperCells, 0)
         self.assertEqual(app.cells, 15)
@@ -4858,7 +4878,7 @@ class recruit(unittest.TestCase):
         self.assertEqual(unusedOps, 0)
         self.assertEqual(app.map["United States"].sleeperCells, 1)
         self.assertEqual(app.cells, 14)
-        
+
         app = Labyrinth(1, 2, testBlankScenarioSetup)
         app.cells = 15
         unusedOps = app.executeRecruit("United States", 1, [2])
@@ -4868,151 +4888,151 @@ class recruit(unittest.TestCase):
 
         app = Labyrinth(1, 2, testBlankScenarioSetup)
         app.cells = 15
-        unusedOps = app.executeRecruit("United States", 2, [1,1])
+        unusedOps = app.executeRecruit("United States", 2, [1, 1])
         self.assertEqual(unusedOps, 0)
         self.assertEqual(app.map["United States"].sleeperCells, 2)
         self.assertEqual(app.cells, 13)
-        
+
         app = Labyrinth(1, 2, testBlankScenarioSetup)
         app.cells = 15
-        unusedOps = app.executeRecruit("United States", 2, [1,2])
+        unusedOps = app.executeRecruit("United States", 2, [1, 2])
         self.assertEqual(unusedOps, 0)
         self.assertEqual(app.map["United States"].sleeperCells, 1)
         self.assertEqual(app.cells, 14)
-        
+
         app = Labyrinth(1, 2, testBlankScenarioSetup)
         app.cells = 15
-        unusedOps = app.executeRecruit("United States", 2, [2,2])
+        unusedOps = app.executeRecruit("United States", 2, [2, 2])
         self.assertEqual(unusedOps, 0)
         self.assertEqual(app.map["United States"].sleeperCells, 0)
         self.assertEqual(app.cells, 15)
-        
+
         app = Labyrinth(1, 2, testBlankScenarioSetup)
         app.cells = 15
-        unusedOps = app.executeRecruit("United States", 3, [1,1,1])
+        unusedOps = app.executeRecruit("United States", 3, [1, 1, 1])
         self.assertEqual(unusedOps, 0)
         self.assertEqual(app.map["United States"].sleeperCells, 3)
         self.assertEqual(app.cells, 12)
-        
+
         app = Labyrinth(1, 2, testBlankScenarioSetup)
         app.cells = 15
-        unusedOps = app.executeRecruit("United States", 3, [1,2,1])
+        unusedOps = app.executeRecruit("United States", 3, [1, 2, 1])
         self.assertEqual(unusedOps, 0)
         self.assertEqual(app.map["United States"].sleeperCells, 2)
         self.assertEqual(app.cells, 13)
-        
+
         app = Labyrinth(1, 2, testBlankScenarioSetup)
         app.cells = 15
-        unusedOps = app.executeRecruit("United States", 3, [2,1,2])
+        unusedOps = app.executeRecruit("United States", 3, [2, 1, 2])
         self.assertEqual(unusedOps, 0)
         self.assertEqual(app.map["United States"].sleeperCells, 1)
         self.assertEqual(app.cells, 14)
-        
+
         app = Labyrinth(1, 2, testBlankScenarioSetup)
         app.cells = 15
-        unusedOps = app.executeRecruit("United States", 3, [2,2,2])
+        unusedOps = app.executeRecruit("United States", 3, [2, 2, 2])
         self.assertEqual(unusedOps, 0)
         self.assertEqual(app.map["United States"].sleeperCells, 0)
         self.assertEqual(app.cells, 15)
-        
-    # not enough cells        
+
+        # not enough cells        
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.cells = 1
         app.funding = 9
-        unusedOps = app.executeRecruit("United States", 2, [1,1])
+        unusedOps = app.executeRecruit("United States", 2, [1, 1])
         self.assertEqual(unusedOps, 1)
         self.assertEqual(app.map["United States"].sleeperCells, 1)
         self.assertEqual(app.cells, 0)
-        
+
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.cells = 2
         app.funding = 9
-        unusedOps = app.executeRecruit("United States", 3, [2,2,1])
+        unusedOps = app.executeRecruit("United States", 3, [2, 2, 1])
         self.assertEqual(unusedOps, 0)
         self.assertEqual(app.map["United States"].sleeperCells, 1)
         self.assertEqual(app.cells, 1)
-        
+
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.cells = 2
         app.funding = 9
-        unusedOps = app.executeRecruit("United States", 3, [1,2,1])
+        unusedOps = app.executeRecruit("United States", 3, [1, 2, 1])
         self.assertEqual(unusedOps, 0)
         self.assertEqual(app.map["United States"].sleeperCells, 2)
         self.assertEqual(app.cells, 0)
-        
+
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.cells = 2
         app.funding = 9
-        unusedOps = app.executeRecruit("United States", 3, [1,1,2])
+        unusedOps = app.executeRecruit("United States", 3, [1, 1, 2])
         self.assertEqual(unusedOps, 1)
         self.assertEqual(app.map["United States"].sleeperCells, 2)
         self.assertEqual(app.cells, 0)
-        
+
         app = Labyrinth(1, 2, testBlankScenarioSetup)
         app.cells = 1
         app.funding = 9
-        unusedOps = app.executeRecruit("United States", 2, [1,1])
+        unusedOps = app.executeRecruit("United States", 2, [1, 1])
         self.assertEqual(unusedOps, 1)
         self.assertEqual(app.map["United States"].sleeperCells, 1)
         self.assertEqual(app.cells, 0)
-        
+
         app = Labyrinth(1, 2, testBlankScenarioSetup)
         app.cells = 2
         app.funding = 9
-        unusedOps = app.executeRecruit("United States", 2, [1,1])
+        unusedOps = app.executeRecruit("United States", 2, [1, 1])
         self.assertEqual(unusedOps, 0)
         self.assertEqual(app.map["United States"].sleeperCells, 2)
         self.assertEqual(app.cells, 0)
-        
+
         app = Labyrinth(1, 2, testBlankScenarioSetup)
         app.cells = 3
         app.funding = 9
-        unusedOps = app.executeRecruit("United States", 2, [1,1])
+        unusedOps = app.executeRecruit("United States", 2, [1, 1])
         self.assertEqual(unusedOps, 0)
         self.assertEqual(app.map["United States"].sleeperCells, 2)
         self.assertEqual(app.cells, 1)
-        
+
         app = Labyrinth(1, 2, testBlankScenarioSetup)
         app.cells = 3
         app.funding = 9
-        unusedOps = app.executeRecruit("United States", 2, [2,1])
+        unusedOps = app.executeRecruit("United States", 2, [2, 1])
         self.assertEqual(unusedOps, 0)
         self.assertEqual(app.map["United States"].sleeperCells, 1)
         self.assertEqual(app.cells, 2)
-        
+
         app = Labyrinth(1, 2, testBlankScenarioSetup)
         app.cells = 5
         app.funding = 9
-        unusedOps = app.executeRecruit("United States", 2, [2,1])
+        unusedOps = app.executeRecruit("United States", 2, [2, 1])
         self.assertEqual(unusedOps, 0)
         self.assertEqual(app.map["United States"].sleeperCells, 1)
         self.assertEqual(app.cells, 4)
-        
+
         app = Labyrinth(1, 2, testBlankScenarioSetup)
         app.cells = 5
         app.funding = 9
-        unusedOps = app.executeRecruit("United States", 2, [1,1])
+        unusedOps = app.executeRecruit("United States", 2, [1, 1])
         self.assertEqual(unusedOps, 0)
         self.assertEqual(app.map["United States"].sleeperCells, 2)
         self.assertEqual(app.cells, 3)
-        
+
         app = Labyrinth(1, 2, testBlankScenarioSetup)
         app.cells = 5
         app.funding = 9
-        unusedOps = app.executeRecruit("United States", 3, [1,1,1])
+        unusedOps = app.executeRecruit("United States", 3, [1, 1, 1])
         self.assertEqual(unusedOps, 0)
         self.assertEqual(app.map["United States"].sleeperCells, 3)
         self.assertEqual(app.cells, 2)
-        
+
         app = Labyrinth(1, 2, testBlankScenarioSetup)
         app.cells = 4
         app.funding = 9
-        unusedOps = app.executeRecruit("United States", 3, [1,1,1])
+        unusedOps = app.executeRecruit("United States", 3, [1, 1, 1])
         self.assertEqual(unusedOps, 0)
         self.assertEqual(app.map["United States"].sleeperCells, 3)
         self.assertEqual(app.cells, 1)
 
-    # IR RC
+        # IR RC
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.cells = 15
         app.funding = 9
@@ -5021,7 +5041,7 @@ class recruit(unittest.TestCase):
         self.assertEqual(unusedOps, 0)
         self.assertEqual(app.map["Iraq"].sleeperCells, 0)
         self.assertEqual(app.cells, 15)
-                
+
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.cells = 15
         app.funding = 9
@@ -5030,7 +5050,7 @@ class recruit(unittest.TestCase):
         self.assertEqual(unusedOps, 0)
         self.assertEqual(app.map["Iraq"].sleeperCells, 1)
         self.assertEqual(app.cells, 14)
-                
+
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.cells = 15
         app.funding = 9
@@ -5040,10 +5060,11 @@ class recruit(unittest.TestCase):
         self.assertEqual(unusedOps, 0)
         self.assertEqual(app.map["Iraq"].sleeperCells, 1)
         self.assertEqual(app.cells, 14)
-                
-class numCellsAvaialbe(unittest.TestCase):
-    '''Test num cells available'''
-    
+
+
+class NumCellsAvailable(unittest.TestCase):
+    """Test num cells available"""
+
     def testNumCellsAvaialable(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.funding = 9
@@ -5077,7 +5098,7 @@ class numCellsAvaialbe(unittest.TestCase):
         self.assertTrue(app.numCellsAvailable(), 2)
         self.cells = 1
         self.assertTrue(app.numCellsAvailable(), 1)
-        
+
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.funding = 8
         self.cells = 15
@@ -5110,7 +5131,7 @@ class numCellsAvaialbe(unittest.TestCase):
         self.assertTrue(app.numCellsAvailable(), 2)
         self.cells = 1
         self.assertTrue(app.numCellsAvailable(), 1)
-        
+
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.funding = 7
         self.cells = 15
@@ -5143,7 +5164,7 @@ class numCellsAvaialbe(unittest.TestCase):
         self.assertTrue(app.numCellsAvailable(), 2)
         self.cells = 1
         self.assertTrue(app.numCellsAvailable(), 1)
-        
+
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.funding = 6
         self.cells = 15
@@ -5275,7 +5296,7 @@ class numCellsAvaialbe(unittest.TestCase):
         self.assertTrue(app.numCellsAvailable(), 0)
         self.cells = 1
         self.assertTrue(app.numCellsAvailable(), 0)
-        
+
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.funding = 2
         self.cells = 15
@@ -5308,7 +5329,7 @@ class numCellsAvaialbe(unittest.TestCase):
         self.assertTrue(app.numCellsAvailable(), 0)
         self.cells = 1
         self.assertTrue(app.numCellsAvailable(), 0)
-        
+
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.funding = 1
         self.cells = 15
@@ -5341,9 +5362,10 @@ class numCellsAvaialbe(unittest.TestCase):
         self.assertTrue(app.numCellsAvailable(), 0)
         self.cells = 1
         self.assertTrue(app.numCellsAvailable(), 0)
-        
-class travel(unittest.TestCase):
-    '''Test Travel'''
+
+
+class Travel(unittest.TestCase):
+    """Test Travel"""
 
     def testTravelFirstBox(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
@@ -5351,27 +5373,27 @@ class travel(unittest.TestCase):
         app.map["Gulf States"].make_poor()
         app.map["Gulf States"].besieged = 1
         dest = app.travelDestinations(1)
-        self.assertEqual(dest,["Gulf States"])
+        self.assertEqual(dest, ["Gulf States"])
 
         app.map["Gulf States"].besieged = 0
         app.map["Gulf States"].aid = 1
         dest = app.travelDestinations(1)
-        self.assertEqual(dest,["Gulf States"])
+        self.assertEqual(dest, ["Gulf States"])
 
         app.map["Gulf States"].aid = 0
         app.map["Gulf States"].regimeChange = 1
         dest = app.travelDestinations(1)
-        self.assertEqual(dest,["Gulf States"])
+        self.assertEqual(dest, ["Gulf States"])
 
         app.map["Gulf States"].make_islamist_rule()
         app.map["Afghanistan"].make_poor()
         app.map["Afghanistan"].besieged = 1
         dest = app.travelDestinations(1)
-        self.assertEqual(dest,["Afghanistan"])
+        self.assertEqual(dest, ["Afghanistan"])
 
         app.map["Gulf States"].make_poor()
         dest = app.travelDestinations(1)
-        self.assertEqual(dest,["Gulf States"])
+        self.assertEqual(dest, ["Gulf States"])
 
         app.map["Iraq"].make_poor()
         app.map["Iraq"].aid = 1
@@ -5386,12 +5408,12 @@ class travel(unittest.TestCase):
             self.assertTrue(dest == ["Gulf States"] or dest == ["Iraq"])
         self.assertTrue(iraqCount > 0)
         self.assertTrue(gulfCount > 0)
-            
+
         app.map["Pakistan"].make_poor()
         app.map["Pakistan"].aid = 1
         dest = app.travelDestinations(1)
-        self.assertEqual(dest,["Pakistan"])
-        
+        self.assertEqual(dest, ["Pakistan"])
+
     def testTravelSecondBox(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
 
@@ -5399,16 +5421,16 @@ class travel(unittest.TestCase):
         app.map["Afghanistan"].troopCubes = 1
         app.map["Afghanistan"].sleeperCells = 4
         dest = app.travelDestinations(1)
-        self.assertEqual(dest,["Afghanistan"])
+        self.assertEqual(dest, ["Afghanistan"])
 
         app.map["Gulf States"].make_poor()
         app.map["Gulf States"].besieged = 1
         dest = app.travelDestinations(1)
-        self.assertEqual(dest,["Gulf States"])
+        self.assertEqual(dest, ["Gulf States"])
 
         dest = app.travelDestinations(2)
-        self.assertEqual(dest,["Gulf States","Afghanistan"])
-        
+        self.assertEqual(dest, ["Gulf States", "Afghanistan"])
+
     def testTravelThirdBox(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
 
@@ -5416,26 +5438,26 @@ class travel(unittest.TestCase):
         app.map["Iraq"].make_poor()
         app.map["Iraq"].sleeperCells = 1
         dest = app.travelDestinations(1)
-        self.assertEqual(dest,["Jordan"])
+        self.assertEqual(dest, ["Jordan"])
 
         app.map["Gulf States"].make_fair()
         dest = app.travelDestinations(1)
-        self.assertEqual(dest,["Gulf States"])
-        
+        self.assertEqual(dest, ["Gulf States"])
+
         app.map["Gulf States"].make_poor()        
         app.map["Algeria/Tunisia"].make_fair()
         dest = app.travelDestinations(1)
-        self.assertEqual(dest,["Jordan"])
-        
+        self.assertEqual(dest, ["Jordan"])
+
         app.map["Germany"].sleeperCells = 1
         dest = app.travelDestinations(1)
-        self.assertEqual(dest,["Algeria/Tunisia"])
-        
+        self.assertEqual(dest, ["Algeria/Tunisia"])
+
     def testTravelForthBox(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
-        
+
         app.map["United States"].posture = "Hard"
-        
+
         app.map["Canada"].posture = "Hard"
         app.map["United Kingdom"].posture = "Hard"
         app.map["Serbia"].posture = "Hard"
@@ -5452,33 +5474,31 @@ class travel(unittest.TestCase):
         app.map["China"].posture = "Hard"
         app.map["Kenya/Tanzania"].posture = "Hard"
         app.map["Thailand"].posture = "Hard"
-        #app.map["Philippines"]
         dest = app.travelDestinations(1)
-        self.assertEqual(dest,["Philippines"])
-    
+        self.assertEqual(dest, ["Philippines"])
+
     def testTravelMultiple(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         dest = app.travelDestinations(3)
-        
+
         app.map["Gulf States"].make_poor()
         app.map["Gulf States"].besieged = 1
         dest = app.travelDestinations(1)
-        self.assertEqual(dest,["Gulf States"])
-        
+        self.assertEqual(dest, ["Gulf States"])
+
         app.map["Afghanistan"].make_poor()
         app.map["Afghanistan"].troopCubes = 1
         app.map["Afghanistan"].sleeperCells = 4
         dest = app.travelDestinations(2)
-        self.assertEqual(dest,["Gulf States", "Afghanistan"])
+        self.assertEqual(dest, ["Gulf States", "Afghanistan"])
 
         app.map["Jordan"].make_fair()
         app.map["Iraq"].make_poor()
         app.map["Iraq"].sleeperCells = 1
         dest = app.travelDestinations(3)
-        self.assertEqual(dest,["Gulf States", "Afghanistan", "Jordan"])
+        self.assertEqual(dest, ["Gulf States", "Afghanistan", "Jordan"])
 
         app.map["United States"].posture = "Hard"
-        
         app.map["Canada"].posture = "Hard"
         app.map["United Kingdom"].posture = "Hard"
         app.map["Serbia"].posture = "Hard"
@@ -5495,14 +5515,13 @@ class travel(unittest.TestCase):
         app.map["China"].posture = "Hard"
         app.map["Kenya/Tanzania"].posture = "Hard"
         app.map["Thailand"].posture = "Hard"
-        #app.map["Philippines"]
         dest = app.travelDestinations(3)
-        self.assertEqual(dest,["Gulf States", "Afghanistan", "Jordan"])
+        self.assertEqual(dest, ["Gulf States", "Afghanistan", "Jordan"])
 
         app.map["Gulf States"].make_islamist_rule()
         dest = app.travelDestinations(3)
-        self.assertEqual(dest,["Afghanistan", "Jordan", "Philippines"])
-        
+        self.assertEqual(dest, ["Afghanistan", "Jordan", "Philippines"])
+
         app.map["Kenya/Tanzania"].posture = ""
         phCount = 0
         ktCount = 0
@@ -5512,15 +5531,16 @@ class travel(unittest.TestCase):
                 phCount += 1
             elif dest == ["Afghanistan", "Jordan", "Kenya/Tanzania"]:
                 ktCount += 1
-            self.assertTrue(dest == ["Afghanistan", "Jordan", "Philippines"] or dest == ["Afghanistan", "Jordan", "Kenya/Tanzania"])
+            self.assertTrue(dest == ["Afghanistan", "Jordan", "Philippines"] or
+                            dest == ["Afghanistan", "Jordan", "Kenya/Tanzania"])
         self.assertTrue(phCount > 0)
         self.assertTrue(ktCount > 0)
 
         app.map["United States"].posture = "Soft"
         app.map["China"].posture = "Soft"
         dest = app.travelDestinations(3)
-        self.assertEqual(dest,["Afghanistan", "Jordan", "China"])
-        
+        self.assertEqual(dest, ["Afghanistan", "Jordan", "China"])
+
         app.map["Benelux"].posture = "Soft"
         chinaCount = 0
         beneluxCount = 0
@@ -5533,50 +5553,50 @@ class travel(unittest.TestCase):
             self.assertTrue(dest == ["Afghanistan", "Jordan", "China"] or dest == ["Afghanistan", "Jordan", "Benelux"])
         self.assertTrue(chinaCount > 0)
         self.assertTrue(beneluxCount > 0)
-        
+
     def testTravelFrom(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
 
         app.map["Gulf States"].make_poor()
         app.map["Gulf States"].besieged = 1
         dest = app.travelDestinations(1)
-        self.assertEqual(dest,["Gulf States"])
-        
+        self.assertEqual(dest, ["Gulf States"])
+
         app.map["Lebanon"].make_fair()
         app.map["Lebanon"].activeCells = 1
         sources = app.travelSources(dest, 1)
-        self.assertEqual(sources,["Lebanon"])
+        self.assertEqual(sources, ["Lebanon"])
 
         app.map["Iraq"].make_fair()
         app.map["Iraq"].activeCells = 1
         sources = app.travelSources(dest, 1)
-        self.assertEqual(sources,["Iraq"])
-        
+        self.assertEqual(sources, ["Iraq"])
+
         app.map["Egypt"].make_fair()
         app.map["Egypt"].activeCells = 1
         app.map["Egypt"].regimeChange = 1
         app.map["Egypt"].troopCubes = 2
         sources = app.travelSources(dest, 1)
-        self.assertEqual(sources,["Iraq"])
+        self.assertEqual(sources, ["Iraq"])
         app.map["Egypt"].activeCells = 3
         sources = app.travelSources(dest, 1)
-        self.assertEqual(sources,["Egypt"])
-        
+        self.assertEqual(sources, ["Egypt"])
+
         app.map["Yemen"].make_islamist_rule()
         app.map["Yemen"].activeCells = 3
         app.map["Yemen"].troopCubes = 2
         sources = app.travelSources(dest, 3)
-        self.assertEqual(sources,["Egypt"])
+        self.assertEqual(sources, ["Egypt"])
         sources = app.travelSources(dest, 2)
-        self.assertEqual(sources,["Yemen"])
-        
-    #multi    
+        self.assertEqual(sources, ["Yemen"])
+
+        #multi
 
         app = Labyrinth(1, 1, testBlankScenarioSetup)
-        
+
         app.map["Gulf States"].make_poor()
         app.map["Gulf States"].besieged = 1
-        
+
         app.map["Afghanistan"].make_poor()
         app.map["Afghanistan"].troopCubes = 1
         app.map["Afghanistan"].sleeperCells = 4
@@ -5585,38 +5605,38 @@ class travel(unittest.TestCase):
         app.map["Iraq"].make_poor()
         app.map["Iraq"].sleeperCells = 1
         dest = app.travelDestinations(3)
-        self.assertEqual(dest,["Gulf States", "Afghanistan", "Jordan"])
+        self.assertEqual(dest, ["Gulf States", "Afghanistan", "Jordan"])
 
         app.map["Lebanon"].make_fair()
         app.map["Lebanon"].activeCells = 1
 
         app.map["Iraq"].make_fair()
         app.map["Iraq"].activeCells = 1
-        
+
         app.map["Egypt"].make_fair()
         app.map["Egypt"].regimeChange = 1
         app.map["Egypt"].troopCubes = 2
         app.map["Egypt"].activeCells = 3
-        
+
         app.map["Yemen"].make_islamist_rule()
         app.map["Yemen"].activeCells = 4
         app.map["Yemen"].troopCubes = 2
         sources = app.travelSources(dest, 3)
-        self.assertEqual(sources,["Yemen", "Egypt", "Iraq"])
-        
+        self.assertEqual(sources, ["Yemen", "Egypt", "Iraq"])
+
         app.map["Yemen"].activeCells = 5
         sources = app.travelSources(dest, 3)
-        self.assertEqual(sources,["Yemen", "Yemen", "Egypt"])
+        self.assertEqual(sources, ["Yemen", "Yemen", "Egypt"])
 
         app.map["Yemen"].activeCells = 6
         sources = app.travelSources(dest, 3)
-        self.assertEqual(sources,["Yemen", "Yemen", "Yemen"])
+        self.assertEqual(sources, ["Yemen", "Yemen", "Yemen"])
 
         app.map["Yemen"].activeCells = 4
         sources = app.travelSources(dest, 3)
         app.map["Egypt"].activeCells = 4
         sources = app.travelSources(dest, 3)
-        self.assertEqual(sources,["Yemen", "Egypt", "Egypt"])
+        self.assertEqual(sources, ["Yemen", "Egypt", "Egypt"])
 
         app.map["Iraq"].make_fair()
         app.map["Iraq"].regimeChange = 1
@@ -5625,42 +5645,43 @@ class travel(unittest.TestCase):
         app.map["Egypt"].activeCells = 0
         app.map["Egypt"].sleeperCells = 4
         sources = app.travelSources(dest, 3)
-        self.assertEqual(sources,["Yemen", "Iraq", "Iraq"])
+        self.assertEqual(sources, ["Yemen", "Iraq", "Iraq"])
 
-class resolvePlot(unittest.TestCase):
-    '''Resolve Plots'''
-    
+
+class ResolvePlot(unittest.TestCase):
+    """Resolve Plots"""
+
     def testResolveNonMuslimNonUSPlots(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.map["Germany"].plots = 1
-        app.resolvePlot("Germany", 1, 4, [], ["Spain", "Scandinavia"], [5,4], [])
+        app.resolvePlot("Germany", 1, 4, [], ["Spain", "Scandinavia"], [5, 4], [])
         self.assertEqual(app.funding, 7)
         self.assertEqual(app.map["Germany"].posture, "Soft")
         self.assertEqual(app.map["Spain"].posture, "Hard")
         self.assertEqual(app.map["Scandinavia"].posture, "Soft")
         self.assertEqual(app.prestige, 7)
         self.assertEqual(app.map["Germany"].plots, 0)
-        
+
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.map["Germany"].plots = 2
-        app.resolvePlot("Germany", 1, 4, [], ["Spain", "Scandinavia"], [5,4], [])
+        app.resolvePlot("Germany", 1, 4, [], ["Spain", "Scandinavia"], [5, 4], [])
         self.assertEqual(app.funding, 7)
         self.assertEqual(app.map["Germany"].posture, "Soft")
         self.assertEqual(app.map["Spain"].posture, "Hard")
         self.assertEqual(app.map["Scandinavia"].posture, "Soft")
         self.assertEqual(app.prestige, 7)
         self.assertEqual(app.map["Germany"].plots, 1)
-        
+
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.map["Germany"].plots = 1
-        app.resolvePlot("Germany", 2, 5, [], ["Spain", "Scandinavia"], [4,5], [])
+        app.resolvePlot("Germany", 2, 5, [], ["Spain", "Scandinavia"], [4, 5], [])
         self.assertEqual(app.funding, 9)
         self.assertEqual(app.map["Germany"].posture, "Hard")
         self.assertEqual(app.map["Spain"].posture, "Soft")
         self.assertEqual(app.map["Scandinavia"].posture, "Hard")
         self.assertEqual(app.prestige, 7)
         self.assertEqual(app.map["Germany"].plots, 0)
-        
+
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.map["Canada"].plots = 1
         app.resolvePlot("Canada", 2, 5, [], [], [], [])
@@ -5670,7 +5691,7 @@ class resolvePlot(unittest.TestCase):
         self.assertEqual(app.map["Scandinavia"].posture, "")
         self.assertEqual(app.prestige, 7)
         self.assertEqual(app.map["Canada"].plots, 0)
-        
+
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.map["Russia"].plots = 1
         app.resolvePlot("Russia", 2, 4, [], [], [], [])
@@ -5680,28 +5701,28 @@ class resolvePlot(unittest.TestCase):
         self.assertEqual(app.map["Scandinavia"].posture, "")
         self.assertEqual(app.prestige, 7)
         self.assertEqual(app.map["Russia"].plots, 0)
-        
+
         app = Labyrinth(1, "WMD", testBlankScenarioSetup)
         app.map["Germany"].plots = 1
-        app.resolvePlot("Germany", 1, 4, [], ["Spain", "Scandinavia"], [5,4], [])
+        app.resolvePlot("Germany", 1, 4, [], ["Spain", "Scandinavia"], [5, 4], [])
         self.assertEqual(app.funding, 7)
         self.assertEqual(app.map["Germany"].posture, "Soft")
         self.assertEqual(app.map["Spain"].posture, "Hard")
         self.assertEqual(app.map["Scandinavia"].posture, "Soft")
         self.assertEqual(app.prestige, 7)
         self.assertEqual(app.map["Germany"].plots, 0)
-        
+
         app = Labyrinth(1, "WMD", testBlankScenarioSetup)
         app.funding = 1
         app.map["Germany"].plots = 1
-        app.resolvePlot("Germany", 3, 4, [], ["Spain", "Scandinavia"], [5,4], [])
+        app.resolvePlot("Germany", 3, 4, [], ["Spain", "Scandinavia"], [5, 4], [])
         self.assertEqual(app.funding, 7)
         self.assertEqual(app.map["Germany"].posture, "Soft")
         self.assertEqual(app.map["Spain"].posture, "Hard")
         self.assertEqual(app.map["Scandinavia"].posture, "Soft")
         self.assertEqual(app.prestige, 7)
         self.assertEqual(app.map["Germany"].plots, 0)
-        
+
     def testResolveMuslimIranPlots(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.map["Iraq"].make_fair()
@@ -5717,43 +5738,43 @@ class resolvePlot(unittest.TestCase):
         self.assertEqual(app.map["Iraq"].aid, 0)
         self.assertEqual(app.prestige, 7)
         self.assertEqual(app.map["Iraq"].plots, 0)
-        
+
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.map["Iraq"].make_good()
         app.map["Iraq"].aid = 1
         app.map["Iraq"].plots = 1
-        app.resolvePlot("Iraq", 3, 0, [], [], [], [3,1,2])
+        app.resolvePlot("Iraq", 3, 0, [], [], [], [3, 1, 2])
         self.assertEqual(app.funding, 7)
         self.assertTrue(app.map["Iraq"].is_fair())
         self.assertEqual(app.map["Iraq"].aid, 0)
         self.assertEqual(app.prestige, 7)
         self.assertEqual(app.map["Iraq"].plots, 0)
-    
+
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.map["Iraq"].make_good()
         app.map["Iraq"].aid = 1
         app.map["Iraq"].plots = 1
-        app.resolvePlot("Iraq", "WMD", 0, [], [], [], [3,1,2])
+        app.resolvePlot("Iraq", "WMD", 0, [], [], [], [3, 1, 2])
         self.assertEqual(app.funding, 7)
         self.assertTrue(app.map["Iraq"].is_fair())
         self.assertEqual(app.map["Iraq"].aid, 0)
         self.assertEqual(app.prestige, 7)
         self.assertEqual(app.map["Iraq"].plots, 0)
-    
+
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.map["Iraq"].make_poor()
         app.map["Iraq"].aid = 0
         app.map["Iraq"].plots = 1
-        app.resolvePlot("Iraq", 3, 0, [], [], [], [3,3,3])
+        app.resolvePlot("Iraq", 3, 0, [], [], [], [3, 3, 3])
         self.assertEqual(app.funding, 6)
         self.assertTrue(app.map["Iraq"].is_poor())
         self.assertEqual(app.map["Iraq"].aid, 0)
         self.assertEqual(app.prestige, 7)
         self.assertEqual(app.map["Iraq"].plots, 0)
-    
+
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.map["Iran"].plots = 1
-        app.resolvePlot("Iran", 3, 0, [], [], [], [3,3,3])
+        app.resolvePlot("Iran", 3, 0, [], [], [], [3, 3, 3])
         self.assertEqual(app.funding, 6)
         self.assertTrue(app.map["Iran"].is_fair())
         self.assertEqual(app.map["Iran"].aid, 0)
@@ -5765,53 +5786,53 @@ class resolvePlot(unittest.TestCase):
         app.map["Iraq"].aid = 0
         app.map["Iraq"].plots = 1
         app.map["Iraq"].troopCubes = 1
-        app.resolvePlot("Iraq", 3, 0, [], [], [], [3,3,3])
+        app.resolvePlot("Iraq", 3, 0, [], [], [], [3, 3, 3])
         self.assertEqual(app.funding, 6)
         self.assertTrue(app.map["Iraq"].is_poor())
         self.assertEqual(app.map["Iraq"].aid, 0)
         self.assertEqual(app.prestige, 6)
         self.assertEqual(app.map["Iraq"].plots, 0)
-    
+
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.map["Iraq"].make_poor()
         app.map["Iraq"].aid = 0
         app.map["Iraq"].plots = 1
         app.map["Iraq"].troopCubes = 1
-        app.resolvePlot("Iraq", "WMD", 0, [], [], [], [3,3,3])
+        app.resolvePlot("Iraq", "WMD", 0, [], [], [], [3, 3, 3])
         self.assertEqual(app.funding, 6)
         self.assertTrue(app.map["Iraq"].is_poor())
         self.assertEqual(app.map["Iraq"].aid, 0)
         self.assertEqual(app.prestige, 1)
         self.assertEqual(app.map["Iraq"].plots, 0)
-    
+
     def testResolveUSPlots(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.map["United States"].plots = 1
         app.map["United States"].posture = "Hard"
-        app.resolvePlot("United States", 1, 4, [1,6,1], [], [], [])
+        app.resolvePlot("United States", 1, 4, [1, 6, 1], [], [], [])
         self.assertEqual(app.funding, 9)
         self.assertEqual(app.map["United States"].posture, "Soft")
         self.assertEqual(app.prestige, 6)
         self.assertEqual(app.map["United States"].plots, 0)
-        
+
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.map["United States"].plots = 1
         app.map["United States"].posture = "Soft"
-        app.resolvePlot("United States", 2, 4, [5,6,1], [], [], [])
+        app.resolvePlot("United States", 2, 4, [5, 6, 1], [], [], [])
         self.assertEqual(app.funding, 9)
         self.assertEqual(app.map["United States"].posture, "Soft")
         self.assertEqual(app.prestige, 8)
         self.assertEqual(app.map["United States"].plots, 0)
-        
+
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.map["United States"].plots = 1
         app.map["United States"].posture = "Soft"
-        app.resolvePlot("United States", 3, 5, [5,6,4], [], [], [])
+        app.resolvePlot("United States", 3, 5, [5, 6, 4], [], [], [])
         self.assertEqual(app.funding, 9)
         self.assertEqual(app.map["United States"].posture, "Hard")
         self.assertEqual(app.prestige, 11)
         self.assertEqual(app.map["United States"].plots, 0)
-        
+
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertFalse(app.gameOver)
         app.map["United States"].plots = 1
@@ -5835,43 +5856,43 @@ class resolvePlot(unittest.TestCase):
         self.assertEqual(app.map["Iraq"].aid, 0)
         self.assertEqual(app.prestige, 7)
         self.assertEqual(app.map["Iraq"].plots, 0)
-        
+
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.map["Iraq"].make_good()
         app.map["Iraq"].aid = 1
         app.map["Iraq"].plots = 1
-        app.resolvePlot("Iraq", 3, 0, [], [], [], [3,1,2], True)
+        app.resolvePlot("Iraq", 3, 0, [], [], [], [3, 1, 2], True)
         self.assertEqual(app.funding, 3)
         self.assertTrue(app.map["Iraq"].is_fair())
         self.assertEqual(app.map["Iraq"].aid, 0)
         self.assertEqual(app.prestige, 7)
         self.assertEqual(app.map["Iraq"].plots, 0)
-    
+
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.map["Iraq"].make_good()
         app.map["Iraq"].aid = 1
         app.map["Iraq"].plots = 1
-        app.resolvePlot("Iraq", "WMD", 0, [], [], [], [3,1,2], True)
+        app.resolvePlot("Iraq", "WMD", 0, [], [], [], [3, 1, 2], True)
         self.assertEqual(app.funding, 1)
         self.assertTrue(app.map["Iraq"].is_fair())
         self.assertEqual(app.map["Iraq"].aid, 0)
         self.assertEqual(app.prestige, 7)
         self.assertEqual(app.map["Iraq"].plots, 0)
-    
+
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.map["Iraq"].make_poor()
         app.map["Iraq"].aid = 0
         app.map["Iraq"].plots = 1
-        app.resolvePlot("Iraq", 3, 0, [], [], [], [3,3,3], True)
+        app.resolvePlot("Iraq", 3, 0, [], [], [], [3, 3, 3], True)
         self.assertEqual(app.funding, 4)
         self.assertTrue(app.map["Iraq"].is_poor())
         self.assertEqual(app.map["Iraq"].aid, 0)
         self.assertEqual(app.prestige, 7)
         self.assertEqual(app.map["Iraq"].plots, 0)
-    
+
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.map["Iran"].plots = 1
-        app.resolvePlot("Iran", 3, 0, [], [], [], [3,3,3], True)
+        app.resolvePlot("Iran", 3, 0, [], [], [], [3, 3, 3], True)
         self.assertEqual(app.funding, 4)
         self.assertTrue(app.map["Iran"].is_fair())
         self.assertEqual(app.map["Iran"].aid, 0)
@@ -5883,39 +5904,40 @@ class resolvePlot(unittest.TestCase):
         app.map["Iraq"].aid = 0
         app.map["Iraq"].plots = 1
         app.map["Iraq"].troopCubes = 1
-        app.resolvePlot("Iraq", 3, 0, [], [], [], [3,3,3], True)
+        app.resolvePlot("Iraq", 3, 0, [], [], [], [3, 3, 3], True)
         self.assertEqual(app.funding, 4)
         self.assertTrue(app.map["Iraq"].is_poor())
         self.assertEqual(app.map["Iraq"].aid, 0)
         self.assertEqual(app.prestige, 6)
         self.assertEqual(app.map["Iraq"].plots, 0)
-    
+
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.map["Iraq"].make_poor()
         app.map["Iraq"].aid = 0
         app.map["Iraq"].plots = 1
         app.map["Iraq"].troopCubes = 1
-        app.resolvePlot("Iraq", "WMD", 0, [], [], [], [3,3,3], True)
+        app.resolvePlot("Iraq", "WMD", 0, [], [], [], [3, 3, 3], True)
         self.assertEqual(app.funding, 1)
         self.assertTrue(app.map["Iraq"].is_poor())
         self.assertEqual(app.map["Iraq"].aid, 0)
         self.assertEqual(app.prestige, 1)
         self.assertEqual(app.map["Iraq"].plots, 0)
 
-class placePlots(unittest.TestCase):
-    '''Place Plots'''
-    
+
+class PlacePlots(unittest.TestCase):
+    """Place Plots"""
+
     def testPlacePlot(self):
-    # no cells
+        # no cells
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         unusedOps = app.executePlot(1, True, [1])
         self.assertEqual(unusedOps, 1)
-        unusedOps = app.executePlot(2, False, [1,2])
+        unusedOps = app.executePlot(2, False, [1, 2])
         self.assertEqual(unusedOps, 2)
-        unusedOps = app.executePlot(3, True, [1,2,3])
+        unusedOps = app.executePlot(3, True, [1, 2, 3])
         self.assertEqual(unusedOps, 3)
-    
-    # 1 cell in US
+
+        # 1 cell in US
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.map["United States"].sleeperCells = 1
         unusedOps = app.executePlot(1, True, [2])
@@ -5928,8 +5950,8 @@ class placePlots(unittest.TestCase):
         self.assertEqual(unusedOps, 0)
         self.assertEqual(app.map["United States"].activeCells, 1)
         self.assertEqual(app.map["United States"].plots, 1)
-    
-    # 2 cells in us
+
+        # 2 cells in us
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.map["United States"].sleeperCells = 2
         unusedOps = app.executePlot(1, True, [1])
@@ -5940,29 +5962,29 @@ class placePlots(unittest.TestCase):
 
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.map["United States"].sleeperCells = 2
-        unusedOps = app.executePlot(2, True, [1,1])
+        unusedOps = app.executePlot(2, True, [1, 1])
         self.assertEqual(unusedOps, 0)
         self.assertEqual(app.map["United States"].activeCells, 2)
         self.assertEqual(app.map["United States"].sleeperCells, 0)
         self.assertEqual(app.map["United States"].plots, 2)
-        
+
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.map["United States"].sleeperCells = 2
-        unusedOps = app.executePlot(2, True, [1,2])
+        unusedOps = app.executePlot(2, True, [1, 2])
         self.assertEqual(unusedOps, 0)
         self.assertEqual(app.map["United States"].activeCells, 2)
         self.assertEqual(app.map["United States"].sleeperCells, 0)
         self.assertEqual(app.map["United States"].plots, 1)
-        
+
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.map["United States"].sleeperCells = 2
-        unusedOps = app.executePlot(3, True, [1,2,3])
+        unusedOps = app.executePlot(3, True, [1, 2, 3])
         self.assertEqual(unusedOps, 1)
         self.assertEqual(app.map["United States"].activeCells, 2)
         self.assertEqual(app.map["United States"].sleeperCells, 0)
         self.assertEqual(app.map["United States"].plots, 1)
-        
-    # 3 cells in us
+
+        # 3 cells in us
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.map["United States"].sleeperCells = 3
         unusedOps = app.executePlot(1, True, [1])
@@ -5973,37 +5995,37 @@ class placePlots(unittest.TestCase):
 
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.map["United States"].sleeperCells = 3
-        unusedOps = app.executePlot(2, True, [1,1])
+        unusedOps = app.executePlot(2, True, [1, 1])
         self.assertEqual(unusedOps, 0)
         self.assertEqual(app.map["United States"].activeCells, 2)
         self.assertEqual(app.map["United States"].sleeperCells, 1)
         self.assertEqual(app.map["United States"].plots, 2)
-        
+
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.map["United States"].sleeperCells = 3
-        unusedOps = app.executePlot(2, True, [1,2])
+        unusedOps = app.executePlot(2, True, [1, 2])
         self.assertEqual(unusedOps, 0)
         self.assertEqual(app.map["United States"].activeCells, 2)
         self.assertEqual(app.map["United States"].sleeperCells, 1)
         self.assertEqual(app.map["United States"].plots, 1)
-        
+
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.map["United States"].sleeperCells = 3
-        unusedOps = app.executePlot(2, True, [1,2])
+        unusedOps = app.executePlot(2, True, [1, 2])
         self.assertEqual(unusedOps, 0)
         self.assertEqual(app.map["United States"].activeCells, 2)
         self.assertEqual(app.map["United States"].sleeperCells, 1)
         self.assertEqual(app.map["United States"].plots, 1)
-        
+
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.map["United States"].sleeperCells = 3
-        unusedOps = app.executePlot(3, True, [1,1,3])
+        unusedOps = app.executePlot(3, True, [1, 1, 3])
         self.assertEqual(unusedOps, 0)
         self.assertEqual(app.map["United States"].activeCells, 3)
         self.assertEqual(app.map["United States"].sleeperCells, 0)
         self.assertEqual(app.map["United States"].plots, 2)
-    
-    # Low prestige, no GWOT penalty
+
+        # Low prestige, no GWOT penalty
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.prestige = 3
         app.funding = 8
@@ -6019,7 +6041,7 @@ class placePlots(unittest.TestCase):
         self.assertEqual(app.map["Israel"].plots, 1)
         self.assertEqual(app.map["Canada"].plots, 0)
         self.assertEqual(app.map["Iraq"].plots, 0)
-        
+
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.prestige = 3
         app.funding = 8
@@ -6029,7 +6051,7 @@ class placePlots(unittest.TestCase):
         app.map["Iraq"].make_fair()
         app.map["Iraq"].sleeperCells = 1
         app.map["Iraq"].aid = 1
-        unusedOps = app.executePlot(2, True, [1,1])
+        unusedOps = app.executePlot(2, True, [1, 1])
         self.assertEqual(unusedOps, 0)
         self.assertEqual(app.map["Israel"].activeCells, 1)
         self.assertEqual(app.map["Israel"].sleeperCells, 0)
@@ -6053,8 +6075,8 @@ class placePlots(unittest.TestCase):
         self.assertEqual(app.map["Canada"].plots, 0)
         self.assertEqual(app.map["Iraq"].activeCells, 1)
         self.assertEqual(app.map["Iraq"].plots, 1)
-        
-    # Low prestige, yes GWOT penalty
+
+        # Low prestige, yes GWOT penalty
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.prestige = 3
         app.map["Israel"].sleeperCells = 1
@@ -6071,8 +6093,8 @@ class placePlots(unittest.TestCase):
         self.assertEqual(app.map["Israel"].plots, 0)
         self.assertEqual(app.map["Canada"].plots, 0)
         self.assertEqual(app.map["Iraq"].plots, 1)
-        
-    # Funding section
+
+        # Funding section
         # Low prestige, yes GWOT penalty
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.prestige = 3
@@ -6091,7 +6113,7 @@ class placePlots(unittest.TestCase):
         self.assertEqual(app.map["Israel"].plots, 0)
         self.assertEqual(app.map["Canada"].plots, 0)
         self.assertEqual(app.map["Iraq"].plots, 0)
-    
+
         # Low prestige, yes GWOT penalty
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.prestige = 3
@@ -6110,7 +6132,7 @@ class placePlots(unittest.TestCase):
         self.assertEqual(app.map["Israel"].plots, 1)
         self.assertEqual(app.map["Canada"].plots, 0)
         self.assertEqual(app.map["Iraq"].plots, 0)
-    
+
         # Low prestige, yes GWOT penalty
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.prestige = 3
@@ -6122,14 +6144,14 @@ class placePlots(unittest.TestCase):
         app.map["Iraq"].make_fair()
         app.map["Iraq"].sleeperCells = 1
         app.map["Iraq"].aid = 0
-        unusedOps = app.executePlot(2, True, [1,1])
+        unusedOps = app.executePlot(2, True, [1, 1])
         self.assertEqual(unusedOps, 0)
         self.assertEqual(app.map["Israel"].activeCells, 1)
         self.assertEqual(app.map["Israel"].sleeperCells, 0)
         self.assertEqual(app.map["Israel"].plots, 1)
         self.assertEqual(app.map["Canada"].plots, 1)
         self.assertEqual(app.map["Iraq"].plots, 0)
-    
+
         # Low prestige, yes GWOT penalty
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.prestige = 3
@@ -6141,15 +6163,15 @@ class placePlots(unittest.TestCase):
         app.map["Iraq"].make_fair()
         app.map["Iraq"].sleeperCells = 1
         app.map["Iraq"].aid = 0
-        unusedOps = app.executePlot(3, True, [1,1,1])
+        unusedOps = app.executePlot(3, True, [1, 1, 1])
         self.assertEqual(unusedOps, 0)
         self.assertEqual(app.map["Israel"].activeCells, 1)
         self.assertEqual(app.map["Israel"].sleeperCells, 0)
         self.assertEqual(app.map["Israel"].plots, 1)
         self.assertEqual(app.map["Canada"].plots, 1)
         self.assertEqual(app.map["Iraq"].plots, 1)
-        
-    # High prestige
+
+        # High prestige
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.prestige = 4
         app.markers = ["Abu Sayyaf"]
@@ -6172,8 +6194,8 @@ class placePlots(unittest.TestCase):
         self.assertEqual(app.map["Philippines"].activeCells, 1)
         self.assertEqual(app.map["Philippines"].sleeperCells, 0)
         self.assertEqual(app.map["Philippines"].plots, 1)
-        
-    # priorities box
+
+        # priorities box
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.prestige = 3
         app.map["Israel"].sleeperCells = 0
@@ -6191,7 +6213,7 @@ class placePlots(unittest.TestCase):
         self.assertEqual(unusedOps, 0)
         self.assertEqual(app.map["Iraq"].plots, 0)
         self.assertEqual(app.map["Gulf States"].plots, 1)
-        
+
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.prestige = 3
         app.map["Israel"].sleeperCells = 0
@@ -6209,22 +6231,24 @@ class placePlots(unittest.TestCase):
         self.assertEqual(unusedOps, 0)
         self.assertEqual(app.map["Iraq"].plots, 1)
         self.assertEqual(app.map["Gulf States"].plots, 0)
-        
-class isAdjacent(unittest.TestCase):
-    '''Test isAdjacent'''
-    
+
+
+class IsAdjacent(unittest.TestCase):
+    """Test isAdjacent"""
+
     def testIsAdjacent(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
-        self.assertTrue(app.isAdjacent("Iran","Iraq"))
-        self.assertTrue(app.isAdjacent("Germany","Spain"))
-        self.assertTrue(app.isAdjacent("Libya","Italy"))
-        self.assertTrue(app.isAdjacent("Benelux","Russia"))
-        self.assertTrue(app.isAdjacent("Lebanon","France"))
-        self.assertFalse(app.isAdjacent("United States","Lebanon"))
+        self.assertTrue(app.isAdjacent("Iran", "Iraq"))
+        self.assertTrue(app.isAdjacent("Germany", "Spain"))
+        self.assertTrue(app.isAdjacent("Libya", "Italy"))
+        self.assertTrue(app.isAdjacent("Benelux", "Russia"))
+        self.assertTrue(app.isAdjacent("Lebanon", "France"))
+        self.assertFalse(app.isAdjacent("United States", "Lebanon"))
 
-class countryResources(unittest.TestCase):
-    '''Test countryResources'''
-    
+
+class CountryResources(unittest.TestCase):
+    """Test countryResources"""
+
     def testCountryResources(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertTrue(app.countryResources("Iraq") == 3)
@@ -6243,29 +6267,31 @@ class countryResources(unittest.TestCase):
         self.assertTrue(app.countryResources("Syria") == 2)
         self.assertTrue(app.countryResources("Lebanon") == 1)
 
-class countryDistance(unittest.TestCase):
-    '''Test countryDistance'''
-    
+
+class CountryDistance(unittest.TestCase):
+    """Test countryDistance"""
+
     def testIsAdjacent(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
-        self.assertTrue(app.countryDistance("Iran","Iran") == 0)
-        self.assertTrue(app.countryDistance("Iran","Iraq") == 1)
-        self.assertTrue(app.countryDistance("Iran","Sudan") == 4)
-        self.assertTrue(app.countryDistance("Thailand","United States") == 2)
-        self.assertTrue(app.countryDistance("Russia","Morocco") == 2)
-        
-class card1(unittest.TestCase):
-    '''Backlash'''
-    
-    def testPlayable(self):
+        self.assertTrue(app.countryDistance("Iran", "Iran") == 0)
+        self.assertTrue(app.countryDistance("Iran", "Iraq") == 1)
+        self.assertTrue(app.countryDistance("Iran", "Sudan") == 4)
+        self.assertTrue(app.countryDistance("Thailand", "United States") == 2)
+        self.assertTrue(app.countryDistance("Russia", "Morocco") == 2)
+
+
+class Card1(unittest.TestCase):
+    """Backlash"""
+
+    def test_playable(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertFalse(app.deck["1"].playable("US", app, True))
         app.map["Canada"].plots = 1
         self.assertFalse(app.deck["1"].playable("US", app, True))
         app.map["Iraq"].plots = 1
         self.assertTrue(app.deck["1"].playable("US", app, True))
-        
-    def testEvent(self):
+
+    def test_event(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertFalse(app.backlashInPlay)
         app.deck["1"].playEvent("US", app)
@@ -6276,81 +6302,83 @@ class card1(unittest.TestCase):
         app.map["Iraq"].plots = 1
         app.deck["1"].playEvent("US", app)
         self.assertTrue(app.backlashInPlay)
-        
-class card2(unittest.TestCase):
-    '''Biometrics'''
-    
-    def testPlayable(self):
+
+
+class Card2(unittest.TestCase):
+    """Biometrics"""
+
+    def test_playable(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertTrue(app.deck["2"].playable("US", app, True))
-        
-    def testEvent(self):
+
+    def test_event(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertFalse("Biometrics" in app.lapsing)
         app.deck["2"].playEvent("US", app)
         self.assertTrue("Biometrics" in app.lapsing)
         app.do_turn("")
         self.assertFalse("Biometrics" in app.lapsing)
-        
+
     def testTravelDestination(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.map["Gulf States"].make_poor()
         app.map["Gulf States"].besieged = 1
         dest = app.travelDestinations(1)
-        self.assertEqual(dest,["Gulf States"])
+        self.assertEqual(dest, ["Gulf States"])
         app.deck["2"].playEvent("US", app)
         dest = app.travelDestinations(1)
         self.assertTrue("Biometrics" in app.lapsing)
-        self.assertEqual(dest,[])
+        self.assertEqual(dest, [])
         app.map["Iraq"].sleeperCells = 1
         dest = app.travelDestinations(1)
-        self.assertEqual(dest,["Gulf States"])
-        
+        self.assertEqual(dest, ["Gulf States"])
+
     def testTravelSource(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.map["Gulf States"].make_poor()
         app.map["Gulf States"].besieged = 1
         dest = app.travelDestinations(1)
-        self.assertEqual(dest,["Gulf States"])
+        self.assertEqual(dest, ["Gulf States"])
         app.deck["2"].playEvent("US", app)
         dest = app.travelDestinations(1)
-        self.assertEqual(dest,[])
+        self.assertEqual(dest, [])
         app.map["Iraq"].sleeperCells = 1
         dest = app.travelDestinations(1)
-        self.assertEqual(dest,["Gulf States"])
+        self.assertEqual(dest, ["Gulf States"])
         app.map["Sudan"].make_islamist_rule()        
         app.map["Sudan"].sleeperCells = 4    
         sources = app.travelSources(dest, 1)
-        self.assertEqual(sources,["Iraq"])
-        
+        self.assertEqual(sources, ["Iraq"])
+
     def testTravelToGood(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.map["Gulf States"].make_good()
         app.map["Gulf States"].besieged = 1
         dest = app.travelDestinations(1)
-        self.assertEqual(dest,["Gulf States"])
+        self.assertEqual(dest, ["Gulf States"])
         app.deck["2"].playEvent("US", app)
         dest = app.travelDestinations(1)
-        self.assertEqual(dest,[])
+        self.assertEqual(dest, [])
         app.map["Iraq"].sleeperCells = 1
         dest = app.travelDestinations(1)
-        self.assertEqual(dest,["Gulf States"])
+        self.assertEqual(dest, ["Gulf States"])
         app.map["Sudan"].make_islamist_rule()        
         app.map["Sudan"].sleeperCells = 4    
         sources = app.travelSources(dest, 1)
-        self.assertEqual(sources,["Iraq"])
+        self.assertEqual(sources, ["Iraq"])
         app.handleTravel(1)
 
-class card3(unittest.TestCase):
-    '''CTR'''
-    
-    def testPlayable(self):
+
+class Card3(unittest.TestCase):
+    """CTR"""
+
+    def test_playable(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertFalse(app.deck["3"].playable("US", app, True))
         app.do_reassessment("")
         self.assertTrue(app.deck["3"].playable("US", app, True))
 
-    def testEvent(self):
+    def test_event(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.do_reassessment("")
         self.assertFalse("CTR" in app.map["Russia"].markers)
@@ -6359,7 +6387,7 @@ class card3(unittest.TestCase):
         app.deck["3"].playEvent("US", app)
         self.assertTrue("CTR" in app.map["Russia"].markers)
         self.assertFalse("CTR" in app.map["Central Asia"].markers)
-        
+
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.do_reassessment("")
         self.assertFalse("CTR" in app.map["Russia"].markers)
@@ -6371,7 +6399,7 @@ class card3(unittest.TestCase):
         print app.map["Russia"].countryStr()
         self.assertTrue("Markers: CTR" in app.map["Russia"].countryStr())
         self.assertTrue("Markers: CTR" in app.map["Central Asia"].countryStr())
-        
+
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.do_reassessment("")
         self.assertFalse("CTR" in app.map["Russia"].markers)
@@ -6381,14 +6409,15 @@ class card3(unittest.TestCase):
         self.assertTrue("CTR" in app.map["Russia"].markers)
         self.assertTrue("CTR" in app.map["Central Asia"].markers)
 
-class card4(unittest.TestCase):
-    '''Moro Talks'''
-    
-    def testPlayable(self):
+
+class Card4(unittest.TestCase):
+    """Moro Talks"""
+
+    def test_playable(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertTrue(app.deck["4"].playable("US", app, True))
 
-    def testEvent(self):
+    def test_event(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertTrue(app.map["Philippines"].posture == "")
         self.assertTrue(app.funding == 5)
@@ -6405,23 +6434,25 @@ class card4(unittest.TestCase):
         self.assertTrue(app.map["Philippines"].posture == "Soft" or app.map["Philippines"].posture == "Hard")
         self.assertTrue(app.funding == 1)
 
-class card5(unittest.TestCase):
-    '''NEST'''
-    
-    def testPlayable(self):
+
+class Card5(unittest.TestCase):
+    """NEST"""
+
+    def test_playable(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertTrue(app.deck["5"].playable("US", app, True))
-        
-    def testEvent(self):
+
+    def test_event(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertFalse("NEST" in app.markers)
         app.deck["5"].playEvent("US", app)
         self.assertTrue("NEST" in app.markers)
-        
-class card6and7(unittest.TestCase):
-    '''Sanctions'''
-    
-    def testPlayable(self):
+
+
+class Card6and7(unittest.TestCase):
+    """Sanctions"""
+
+    def test_playable(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertFalse(app.deck["6"].playable("US", app, True))
         self.assertFalse(app.deck["7"].playable("US", app, True))
@@ -6429,12 +6460,12 @@ class card6and7(unittest.TestCase):
         self.assertTrue(app.deck["6"].playable("US", app, True))
         self.assertTrue(app.deck["7"].playable("US", app, True))
 
-    def testEvent(self):
+    def test_event(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.markers.append("Patriot Act")
         app.deck["6"].playEvent("US", app)
         self.assertTrue(app.funding == 3)
-        
+
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.markers.append("Patriot Act")
         app.deck["7"].playEvent("US", app)
@@ -6445,11 +6476,12 @@ class card6and7(unittest.TestCase):
         app.markers.append("Patriot Act")
         app.deck["6"].playEvent("US", app)
         self.assertTrue(app.funding == 1)
-        
-class card8and9and10(unittest.TestCase):
-    '''Special Forces'''
-    
-    def testPlayable(self):
+
+
+class Card8and9and10(unittest.TestCase):
+    """Special Forces"""
+
+    def test_playable(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertFalse(app.deck["8"].playable("US", app, True))
         self.assertFalse(app.deck["9"].playable("US", app, True))
@@ -6467,22 +6499,23 @@ class card8and9and10(unittest.TestCase):
         self.assertTrue(app.deck["8"].playable("US", app, True))
         self.assertTrue(app.deck["9"].playable("US", app, True))
         self.assertTrue(app.deck["10"].playable("US", app, True))
-        
-    def testPlayEvent(self):
+
+    def test_event(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.listCountriesWithCellAndAdjacentTroops()
         app.map["Iran"].sleeperCells = 1
         app.map["Iraq"].troopCubes = 1
         app.listCountriesWithCellAndAdjacentTroops()
 
-class card11(unittest.TestCase):
-    '''Abbas'''
-    
-    def testPlayable(self):
+
+class Card11(unittest.TestCase):
+    """Abbas"""
+
+    def test_playable(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertTrue(app.deck["11"].playable("US", app, True))
 
-    def testEvent(self):
+    def test_event(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.deck["11"].playEvent("US", app)
         self.assertTrue(app.prestige == 8)
@@ -6531,38 +6564,40 @@ class card11(unittest.TestCase):
         self.assertTrue(app.prestige == 12)
         self.assertTrue(app.funding == 1)
 
-class card12(unittest.TestCase):
-    '''Al-Azhar'''
-    
-    def testPlayable(self):
+
+class Card12(unittest.TestCase):
+    """Al-Azhar"""
+
+    def test_playable(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertTrue(app.deck["12"].playable("US", app, True))
 
-    def testEvent(self):
+    def test_event(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertTrue(app.map["Egypt"].is_ungoverned())
         app.deck["12"].playEvent("US", app)
         self.assertTrue(app.map["Egypt"].is_governed())
         self.assertTrue(app.funding == 1)
-        
+
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertTrue(app.map["Egypt"].is_ungoverned())
         app.map["Pakistan"].make_islamist_rule()
         app.deck["12"].playEvent("US", app)
         self.assertTrue(app.map["Egypt"].is_governed())
         self.assertTrue(app.funding == 3)
-        
+
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.funding = 2
         self.assertTrue(app.map["Egypt"].is_ungoverned())
         app.deck["12"].playEvent("US", app)
         self.assertTrue(app.map["Egypt"].is_governed())
         self.assertTrue(app.funding == 1)
-        
-class card13(unittest.TestCase):
-    '''Anbar Awakening'''
-    
-    def testPlayable(self):
+
+
+class Card13(unittest.TestCase):
+    """Anbar Awakening"""
+
+    def test_playable(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertFalse(app.deck["13"].playable("US", app, True))
         app.map["Iraq"].troopCubes = 1
@@ -6573,39 +6608,41 @@ class card13(unittest.TestCase):
         app.map["Syria"].troopCubes = 0
         self.assertFalse(app.deck["13"].playable("US", app, True))
 
-    def testEvent(self):
+    def test_event(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.map["Iraq"].troopCubes = 1
         app.deck["13"].playEvent("US", app)
         self.assertTrue(app.map["Iraq"].aid > 0)
         self.assertTrue("Anbar Awakening" in app.markers)
-        
+
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.map["Syria"].troopCubes = 1
         app.deck["13"].playEvent("US", app)
         self.assertTrue(app.map["Syria"].aid > 0)
         self.assertTrue("Anbar Awakening" in app.markers)
-                        
-class card14(unittest.TestCase):
-    '''Covert Action'''
-    
-    def testPlayable(self):
+
+
+class Card14(unittest.TestCase):
+    """Covert Action"""
+
+    def test_playable(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertFalse(app.deck["14"].playable("US", app, True))
         app.map["Iraq"].make_adversary()
         self.assertTrue(app.deck["14"].playable("US", app, True))
 
-    def testEvent(self):
+    def test_event(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.listAdversaryCountries()
         app.map["Iran"].make_adversary()
         app.map["Iraq"].make_adversary()
         app.listAdversaryCountries()
 
-class card15(unittest.TestCase):
-    '''Ethiopia Strikes'''
-    
-    def testPlayable(self):
+
+class Card15(unittest.TestCase):
+    """Ethiopia Strikes"""
+
+    def test_playable(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertFalse(app.deck["15"].playable("US", app, True))
         app.map["Somalia"].make_islamist_rule()
@@ -6615,14 +6652,14 @@ class card15(unittest.TestCase):
         app.map["Sudan"].make_islamist_rule()
         self.assertTrue(app.deck["15"].playable("US", app, True))
 
-    def testEvent(self):
+    def test_event(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.map["Somalia"].make_islamist_rule()
         app.map["Somalia"].make_adversary()
         app.deck["15"].playEvent("US", app)
         self.assertTrue(app.map["Somalia"].is_poor())
         self.assertTrue(app.map["Somalia"].is_neutral())
-        
+
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.map["Sudan"].make_islamist_rule()
         app.map["Sudan"].make_adversary()
@@ -6630,14 +6667,15 @@ class card15(unittest.TestCase):
         self.assertTrue(app.map["Sudan"].is_poor())
         self.assertTrue(app.map["Sudan"].is_neutral())
 
-class card16(unittest.TestCase):
-    '''Euro-Islam'''
-    
-    def testPlayable(self):
+
+class Card16(unittest.TestCase):
+    """Euro-Islam"""
+
+    def test_playable(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertTrue(app.deck["16"].playable("US", app, True))
 
-    def testEvent(self):
+    def test_event(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.executeCardEuroIslam("Hard")
         self.assertTrue(app.map["Benelux"].posture == "Hard")
@@ -6653,61 +6691,65 @@ class card16(unittest.TestCase):
         self.assertTrue(app.map["Benelux"].posture == "Hard")
         self.assertTrue(app.funding == 1)
 
-class card17(unittest.TestCase):
-    '''FSB'''
-    
-    def testPlayable(self):
+
+class Card17(unittest.TestCase):
+    """FSB"""
+
+    def test_playable(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertTrue(app.deck["17"].playable("US", app, True))
 
-    def testEvent(self):
+    def test_event(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup, ['y'])
         app.map["Central Asia"].activeCells = 1
         app.map["Russia"].activeCells = 1
         app.deck["17"].playEvent("US", app)
-    
+
         app = Labyrinth(1, 1, testBlankScenarioSetup, ['y'])
         app.map["Russia"].activeCells = 1
         app.deck["17"].playEvent("US", app)
-    
+
         app = Labyrinth(1, 1, testBlankScenarioSetup, ['y'])
         app.map["Central Asia"].sleeperCells = 1
         app.deck["17"].playEvent("US", app)
 
-class card18(unittest.TestCase):
-    '''Intel Community'''
-    
-    def testPlayable(self):
+
+class Card18(unittest.TestCase):
+    """Intel Community"""
+
+    def test_playable(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertTrue(app.deck["18"].playable("US", app, True))
 
-    def testEvent(self):
+    def test_event(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.deck["18"].playEvent("US", app)
-    
-class card19(unittest.TestCase):
-    '''Kemalist Republic'''
-    
-    def testPlayable(self):
+
+
+class Card19(unittest.TestCase):
+    """Kemalist Republic"""
+
+    def test_playable(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertTrue(app.deck["19"].playable("US", app, True))
 
-    def testEvent(self):
+    def test_event(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.deck["19"].playEvent("US", app)
         self.assertTrue(app.map["Turkey"].is_fair())
         self.assertTrue(app.map["Turkey"].is_ally())
-    
-class card20(unittest.TestCase):
-    '''King Abdullah'''
-    
-    def testPlayable(self):
+
+
+class Card20(unittest.TestCase):
+    """King Abdullah"""
+
+    def test_playable(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertTrue(app.deck["20"].playable("US", app, True))
         self.assertTrue(app.funding == 5)
         self.assertTrue(app.prestige == 7)
 
-    def testEvent(self):
+    def test_event(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.deck["20"].playEvent("US", app)
         self.assertTrue(app.map["Jordan"].is_fair())
@@ -6724,10 +6766,11 @@ class card20(unittest.TestCase):
         self.assertTrue(app.funding == 1)
         self.assertTrue(app.prestige == 12)
 
-class card21(unittest.TestCase):
-    '''Let's Roll'''
-    
-    def testPlayable(self):
+
+class Card21(unittest.TestCase):
+    """Let's Roll"""
+
+    def test_playable(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertFalse(app.deck["21"].playable("US", app, True))
         app.map["Canada"].plots = 1
@@ -6740,7 +6783,7 @@ class card21(unittest.TestCase):
         app.map["Saudi Arabia"].make_good()
         self.assertTrue(app.deck["21"].playable("US", app, True))
 
-    def testEvent(self):
+    def test_event(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.map["Canada"].plots = 1
         app.map["Spain"].posture = "Soft"
@@ -6748,7 +6791,7 @@ class card21(unittest.TestCase):
         self.assertTrue(app.map["Canada"].plots == 0)
         self.assertTrue(app.map["Spain"].posture == "Hard")
 
-        app = Labyrinth(1, 1, testBlankScenarioSetup, ["Saudi Arabi", "Spain","h"])
+        app = Labyrinth(1, 1, testBlankScenarioSetup, ["Saudi Arabi", "Spain", "h"])
         app.map["Spain"].posture = "Soft"
         app.map["Saudi Arabia"].make_good()
         app.map["Saudi Arabia"].plots = 1
@@ -6756,26 +6799,27 @@ class card21(unittest.TestCase):
         self.assertTrue(app.map["Spain"].posture == "Hard")
         self.assertTrue(app.map["Saudi Arabia"].plots == 0)
 
-class card22(unittest.TestCase):
-    '''Mossad and Shin Bet'''
-    
-    def testPlayable(self):
+
+class Card22(unittest.TestCase):
+    """Mossad and Shin Bet"""
+
+    def test_playable(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertFalse(app.deck["22"].playable("US", app, True))
         app.map["Israel"].sleeperCells = 1
         self.assertTrue(app.deck["22"].playable("US", app, True))
-        
+
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertFalse(app.deck["22"].playable("US", app, True))
         app.map["Jordan"].sleeperCells = 1
         self.assertTrue(app.deck["22"].playable("US", app, True))
-        
+
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertFalse(app.deck["22"].playable("US", app, True))
         app.map["Lebanon"].sleeperCells = 1
         self.assertTrue(app.deck["22"].playable("US", app, True))
-        
-    def testEvent(self):
+
+    def test_event(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.map["Israel"].sleeperCells = 1
         app.map["Israel"].activeCells = 4
@@ -6791,10 +6835,11 @@ class card22(unittest.TestCase):
         self.assertTrue(app.map["Lebanon"].activeCells == 0)
         self.assertTrue(app.map["Iraq"].sleeperCells == 2)
 
-class card23and24and25(unittest.TestCase):
-    '''Predator'''
-    
-    def testPlayable(self):
+
+class Card23and24and25(unittest.TestCase):
+    """Predator"""
+
+    def test_playable(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertFalse(app.deck["23"].playable("US", app, True))
         app.map["Israel"].sleeperCells = 1
@@ -6803,7 +6848,7 @@ class card23and24and25(unittest.TestCase):
         self.assertFalse(app.deck["23"].playable("US", app, True))
         app.map["Jordan"].sleeperCells = 1
         self.assertTrue(app.deck["23"].playable("US", app, True))
-        
+
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertFalse(app.deck["24"].playable("US", app, True))
         app.map["Israel"].sleeperCells = 1
@@ -6812,7 +6857,7 @@ class card23and24and25(unittest.TestCase):
         self.assertFalse(app.deck["24"].playable("US", app, True))
         app.map["Jordan"].sleeperCells = 1
         self.assertTrue(app.deck["24"].playable("US", app, True))
-        
+
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertFalse(app.deck["25"].playable("US", app, True))
         app.map["Israel"].sleeperCells = 1
@@ -6821,17 +6866,18 @@ class card23and24and25(unittest.TestCase):
         self.assertFalse(app.deck["25"].playable("US", app, True))
         app.map["Jordan"].sleeperCells = 1
         self.assertTrue(app.deck["25"].playable("US", app, True))
-        
-    def testEvent(self):
+
+    def test_event(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup, ["Iraq"])
         app.map["Iraq"].sleeperCells = 2
         app.deck["25"].playEvent("US", app)
         self.assertTrue(app.map["Iraq"].sleeperCells == 1)
 
-class card26(unittest.TestCase):
-    '''Quartet'''
-    
-    def testPlayable(self):
+
+class Card26(unittest.TestCase):
+    """Quartet"""
+
+    def test_playable(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertFalse(app.deck["26"].playable("US", app, True))
         app.markers.append("Abbas")
@@ -6842,90 +6888,93 @@ class card26(unittest.TestCase):
         self.assertTrue(app.deck["26"].playable("US", app, True))
         app.map["Egypt"].make_islamist_rule()
         self.assertFalse(app.deck["26"].playable("US", app, True))    
-        
-    def testEvent(self):
+
+    def test_event(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.markers.append("Abbas")
         app.deck["26"].playEvent("US", app)
         self.assertTrue(app.prestige == 9)
         self.assertTrue(app.funding == 2)
-         
-class card27(unittest.TestCase):
-    '''Saddam Captured'''
-    
-    def testPlayable(self):
+
+
+class Card27(unittest.TestCase):
+    """Saddam Captured"""
+
+    def test_playable(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertFalse(app.deck["27"].playable("US", app, True))
         app.map["Iraq"].troopCubes = 1
         self.assertTrue(app.deck["27"].playable("US", app, True))
-        
-    def testEvent(self):
+
+    def test_event(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.map["Iraq"].troopCubes = 1
         app.deck["27"].playEvent("US", app)
         self.assertTrue("Saddam Captured" in app.markers)
         self.assertTrue(app.map["Iraq"].aid == 1)
-        
-class card28(unittest.TestCase):
-    '''Sharia'''
-    
-    def testPlayable(self):
+
+
+class Card28(unittest.TestCase):
+    """Sharia"""
+
+    def test_playable(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertFalse(app.deck["28"].playable("US", app, True))
         app.map["Iraq"].besieged = 1
         self.assertTrue(app.deck["28"].playable("US", app, True))
-        
-    def testEvent(self):
+
+    def test_event(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.map["Iraq"].besieged = 1
         app.deck["28"].playEvent("US", app)
         self.assertTrue(app.map["Iraq"].besieged == 0)
-        
+
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.map["Iraq"].besieged = 1
         app.map["Pakistan"].besieged = 1
-        #app.deck["28"].playEvent("US", app)
-        
-class card29(unittest.TestCase):
-    '''Tony Blair'''
-    
-    def testPlayable(self):
+        # app.deck["28"].playEvent("US", app)     TODO re-enable test
+
+class Card29(unittest.TestCase):
+    """Tony Blair"""
+
+    def test_playable(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertTrue(app.deck["29"].playable("US", app, True))
-        
-    def testEvent(self):
+
+    def test_event(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.map["United States"].posture = "Hard"
-        #app.deck["29"].playEvent("US", app)
-        #self.assertTrue(app.map["United Kingdom"].posture == "Hard")
-        
+        # app.deck["29"].playEvent("US", app)
+        # self.assertTrue(app.map["United Kingdom"].posture == "Hard")
+
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.map["United States"].posture = "Hard"
         app.executeNonMuslimWOI("Spain", 4)
         self.assertTrue(app.map["Spain"].posture == "Soft")
         app.executeNonMuslimWOI("France", 5)
         self.assertTrue(app.map["France"].posture == "Hard")
-        #app.deck["29"].playEvent("US", app)
+        # app.deck["29"].playEvent("US", app)
 
-class card30(unittest.TestCase):
-    '''UN Nation Building'''
-    
-    def testPlayable(self):
+
+class Card30(unittest.TestCase):
+    """UN Nation Building"""
+
+    def test_playable(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertFalse(app.deck["30"].playable("US", app, True))
         app.map["Iraq"].regimeChange = 1
         self.assertTrue(app.deck["30"].playable("US", app, True))
         app.markers.append("Vieira de Mello Slain")
         self.assertFalse(app.deck["30"].playable("US", app, True))
-        
-    def testEvent(self):
+
+    def test_event(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup, ["6"])
         app.map["United States"].posture = "Hard"
         app.map["Spain"].posture = "Soft"
         app.map["France"].posture = "Soft"
         app.map["Germany"].posture = "Soft"
         app.map["Canada"].posture = "Soft"
-        #app.map["Iraq"].regimeChange = 1
+        # app.map["Iraq"].regimeChange = 1
         app.map["Pakistan"].regimeChange = 1
         app.map["Pakistan"].make_poor()
         app.map["Pakistan"].make_ally()
@@ -6951,67 +7000,68 @@ class card30(unittest.TestCase):
         self.assertTrue(app.map["Iraq"].aid == 1)
         self.assertTrue(app.map["Iraq"].is_fair())
 
-class card31(unittest.TestCase):
-    '''Wiretapping'''
-    
-    def testPlayable(self):
+
+class Card31(unittest.TestCase):
+    """Wiretapping"""
+
+    def test_playable(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertFalse(app.deck["31"].playable("US", app, True))
         app.map["United States"].sleeperCells = 1
         self.assertTrue(app.deck["31"].playable("US", app, True))
-        
+
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.map["United States"].activeCells = 1
         self.assertTrue(app.deck["31"].playable("US", app, True))
-        
+
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.map["United States"].cadre = 1
         self.assertTrue(app.deck["31"].playable("US", app, True))
-        
+
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.map["United States"].plots = 1
         self.assertTrue(app.deck["31"].playable("US", app, True))
-        
+
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertFalse(app.deck["31"].playable("US", app, True))
         app.map["United Kingdom"].sleeperCells = 1
         self.assertTrue(app.deck["31"].playable("US", app, True))
-        
+
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.map["United Kingdom"].activeCells = 1
         self.assertTrue(app.deck["31"].playable("US", app, True))
-        
+
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.map["United Kingdom"].cadre = 1
         self.assertTrue(app.deck["31"].playable("US", app, True))
-        
+
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.map["United Kingdom"].plots = 1
         self.assertTrue(app.deck["31"].playable("US", app, True))
-        
+
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertFalse(app.deck["31"].playable("US", app, True))
         app.map["Canada"].sleeperCells = 1
         self.assertTrue(app.deck["31"].playable("US", app, True))
-        
+
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.map["Canada"].activeCells = 1
         self.assertTrue(app.deck["31"].playable("US", app, True))
-        
+
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.map["Canada"].cadre = 1
         self.assertTrue(app.deck["31"].playable("US", app, True))
-        
+
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.map["Canada"].plots = 1
         self.assertTrue(app.deck["31"].playable("US", app, True))
-        
+
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.map["Canada"].plots = 1
         app.markers.append("Leak-Wiretapping")
         self.assertFalse(app.deck["31"].playable("US", app, True))
-        
-    def testEvent(self):
+
+    def test_event(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.map["United States"].sleeperCells = 1
         app.map["United States"].activeCells = 1
@@ -7064,11 +7114,12 @@ class card31(unittest.TestCase):
         self.assertTrue(app.map["Canada"].cadre == 0)
         self.assertTrue(app.map["Canada"].plots == 0)
 
-class card32(unittest.TestCase):
-    '''Back Channel'''
-    
-    def testPlayable(self):
-        app = Labyrinth(1, 1, testBlankScenarioSetup, ["y","n"])
+
+class Card32(unittest.TestCase):
+    """Back Channel"""
+
+    def test_playable(self):
+        app = Labyrinth(1, 1, testBlankScenarioSetup, ["y", "n"])
         app.map["United States"].posture = "Hard"
         self.assertFalse(app.deck["32"].playable("US", app, True))
         app.map["United States"].posture = "Soft"
@@ -7081,9 +7132,9 @@ class card32(unittest.TestCase):
         self.assertTrue(app.deck["32"].playable("US", app, True))
         print "Say no"
         self.assertFalse(app.deck["32"].playable("US", app, True))
-         
-    def testEvent(self):
-        app = Labyrinth(1, 1, testBlankScenarioSetup, ["y","y","Pakistan"])
+
+    def test_event(self):
+        app = Labyrinth(1, 1, testBlankScenarioSetup, ["y", "y", "Pakistan"])
         app.map["United States"].posture = "Soft"
         app.map["Iraq"].make_poor()
         app.map["Iraq"].make_adversary()
@@ -7108,10 +7159,11 @@ class card32(unittest.TestCase):
         self.assertTrue(app.map["Iraq"].is_adversary())
         self.assertTrue(app.map["Pakistan"].is_adversary())
 
-class card33(unittest.TestCase):
-    '''Benazir Bhutto'''
-    
-    def testPlayable(self):
+
+class Card33(unittest.TestCase):
+    """Benazir Bhutto"""
+
+    def test_playable(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertTrue(app.deck["33"].playable("US", app, True))
         app.markers.append("Bhutto Shot")
@@ -7138,13 +7190,13 @@ class card33(unittest.TestCase):
         app.map["Indonesia/Malaysia"].make_islamist_rule()
         self.assertFalse(app.deck["33"].playable("US", app, True))
 
-    def testEvent(self):
+    def test_event(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.map["Pakistan"].make_poor()
         app.deck["33"].playEvent("US", app)
         self.assertTrue(app.map["Pakistan"].is_fair())
 
-# no jihad in Pakistan
+        # no jihad in Pakistan
         app = Labyrinth(1, 1, test3ScenarioSetup)
         app.map["Gulf States"].activeCells = 0
         app.map["Gulf States"].sleeperCells = 0
@@ -7152,7 +7204,7 @@ class card33(unittest.TestCase):
         self.assertEqual(app.minorJihadInGoodFairChoice(1), False)
         app.map["Pakistan"].make_fair()
         app.map["Pakistan"].activeCells = 1
-        self.assertEqual(app.minorJihadInGoodFairChoice(1), [("Pakistan",1)])
+        self.assertEqual(app.minorJihadInGoodFairChoice(1), [("Pakistan", 1)])
         app.deck["33"].playEvent("US", app)
         self.assertEqual(app.minorJihadInGoodFairChoice(1), False)
 
@@ -7163,7 +7215,7 @@ class card33(unittest.TestCase):
         self.assertEqual(app.majorJihadPossible(3), ["Pakistan"])
         app.deck["33"].playEvent("US", app)
         self.assertEqual(app.majorJihadPossible(3), [])
-        
+
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.map["Pakistan"].make_poor()
         app.map["Pakistan"].activeCells = 5
@@ -7173,10 +7225,11 @@ class card33(unittest.TestCase):
         app.deck["33"].playEvent("US", app)
         self.assertEqual(app.majorJihadPossible(3), ["Iraq"])
 
-class card34(unittest.TestCase):
-    '''Enhanced Measures'''
-    
-    def testPlayable(self):
+
+class Card34(unittest.TestCase):
+    """Enhanced Measures"""
+
+    def test_playable(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertFalse(app.deck["34"].playable("US", app, True))
         app.map["Iraq"].cadre = 1
@@ -7194,8 +7247,8 @@ class card34(unittest.TestCase):
         app.map["Iraq"].make_neutral()
         app.map["Iraq"].troopCubes = 2
         self.assertFalse(app.deck["34"].playable("US", app, True))
-        
-    def testEvent(self):
+
+    def test_event(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup, ["Iraq"])
         app.map["Iraq"].cadre = 1
         app.map["Iraq"].make_poor()
@@ -7209,17 +7262,18 @@ class card34(unittest.TestCase):
         self.assertTrue("Enhanced Measures" in app.markers)
         self.assertTrue(app.map["Pakistan"].cadre == 1)
         self.assertTrue(app.map["Iraq"].cadre == 0)
-        
-class card35(unittest.TestCase):
-    '''Hajib'''
-    
-    def testPlayable(self):
+
+
+class Card35(unittest.TestCase):
+    """Hajib"""
+
+    def test_playable(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertTrue(app.deck["35"].playable("US", app, True))
         app.map["Iraq"].make_islamist_rule()
         self.assertFalse(app.deck["35"].playable("US", app, True))
 
-    def testEvent(self):
+    def test_event(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup, ["h"])
         app.deck["35"].playEvent("US", app)
         self.assertTrue(app.map["Turkey"].governance_is_better_than(POOR))
@@ -7229,10 +7283,11 @@ class card35(unittest.TestCase):
         self.assertTrue(app.map["France"].posture == "Hard")
         self.assertTrue(app.funding == 3)
 
-class card36(unittest.TestCase):
-    '''Indo-Pakistani Talks'''
-    
-    def testPlayable(self):
+
+class Card36(unittest.TestCase):
+    """Indo-Pakistani Talks"""
+
+    def test_playable(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertFalse(app.deck["36"].playable("US", app, True))
         app.map["Pakistan"].make_islamist_rule()
@@ -7244,8 +7299,8 @@ class card36(unittest.TestCase):
         app.map["Pakistan"].make_good()
         self.assertTrue(app.deck["36"].playable("US", app, True))
 
-    def testEvent(self):
-        app = Labyrinth(1, 1, testBlankScenarioSetup, ["s","1"])
+    def test_event(self):
+        app = Labyrinth(1, 1, testBlankScenarioSetup, ["s", "1"])
         app.map["Pakistan"].make_fair()
         app.map["Pakistan"].make_adversary()
         app.deck["36"].playEvent("US", app)
@@ -7255,11 +7310,12 @@ class card36(unittest.TestCase):
         app.map["India"].plots = 1
         app.do_plot("")
         self.assertFalse("Indo-Pakistani Talks" in app.markers)
-         
-class card37(unittest.TestCase):
-    '''Iraqi WMD'''
-    
-    def testPlayable(self):
+
+
+class Card37(unittest.TestCase):
+    """Iraqi WMD"""
+
+    def test_playable(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertFalse(app.deck["37"].playable("US", app, True))
         app.map["Iraq"].make_poor()
@@ -7268,17 +7324,18 @@ class card37(unittest.TestCase):
         app.map["United States"].posture = "Soft"
         self.assertFalse(app.deck["37"].playable("US", app, True))
 
-    def testEvent(self):
+    def test_event(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.deck["37"].playEvent("US", app)
         self.assertTrue("Iraqi WMD" in app.markers)
         app.handleRegimeChange("Iraq", "track", 6, 4, (4, 4, 4))
         self.assertFalse("Iraqi WMD" in app.markers)
 
-class card38(unittest.TestCase):
-    '''Libyan Desl'''
-    
-    def testPlayable(self):
+
+class Card38(unittest.TestCase):
+    """Libyan Desl"""
+
+    def test_playable(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertFalse(app.deck["38"].playable("US", app, True))
         app.map["Libya"].make_poor()
@@ -7294,8 +7351,8 @@ class card38(unittest.TestCase):
         app.map["Libya"].make_islamist_rule()
         self.assertFalse(app.deck["38"].playable("US", app, True))
 
-    def testEvent(self):
-        app = Labyrinth(1, 1, testBlankScenarioSetup,["france", "s", "Spain", "h"])
+    def test_event(self):
+        app = Labyrinth(1, 1, testBlankScenarioSetup, ["france", "s", "Spain", "h"])
         app.map["Libya"].make_poor()
         app.map["Iraq"].make_ally()
         app.deck["38"].playEvent("US", app)
@@ -7304,10 +7361,11 @@ class card38(unittest.TestCase):
         self.assertTrue(app.map["France"].posture == "Soft")
         self.assertTrue(app.map["Spain"].posture == "Hard")
 
-class card39(unittest.TestCase):
-    '''Libyan WMD'''
-    
-    def testPlayable(self):
+
+class Card39(unittest.TestCase):
+    """Libyan WMD"""
+
+    def test_playable(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertFalse(app.deck["39"].playable("US", app, True))
         app.map["Libya"].make_poor()
@@ -7320,17 +7378,18 @@ class card39(unittest.TestCase):
         app.markers.append("Libyan Deal")
         self.assertFalse(app.deck["39"].playable("US", app, True))
 
-    def testEvent(self):
+    def test_event(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.deck["39"].playEvent("US", app)
         self.assertTrue("Libyan WMD" in app.markers)
         app.handleRegimeChange("Libya", "track", 6, 4, (4, 4, 4))
         self.assertFalse("Libyan WMD" in app.markers)
 
-class card40(unittest.TestCase):
-    '''Mass Turnout'''
-    
-    def testPlayable(self):
+
+class Card40(unittest.TestCase):
+    """Mass Turnout"""
+
+    def test_playable(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertFalse(app.deck["40"].playable("US", app, True))
         app.map["Libya"].make_poor()
@@ -7339,14 +7398,14 @@ class card40(unittest.TestCase):
         app.map["Libya"].regimeChange = 1
         self.assertTrue(app.deck["40"].playable("US", app, True))
 
-    def testEvent(self):
+    def test_event(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.map["Libya"].make_poor()
         app.map["Libya"].make_adversary()
         app.map["Libya"].regimeChange = 1
         app.deck["40"].playEvent("US", app)
         self.assertTrue(app.map["Libya"].is_fair())
-           
+
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.map["Libya"].make_fair()
         app.map["Libya"].make_adversary()
@@ -7356,8 +7415,8 @@ class card40(unittest.TestCase):
         self.assertTrue(app.map["Libya"].is_good())
         self.assertTrue(app.map["Libya"].regimeChange == 0)
         self.assertTrue(app.map["Libya"].aid == 0)
-          
-        app = Labyrinth(1, 1, testBlankScenarioSetup,["Iraq"])
+
+        app = Labyrinth(1, 1, testBlankScenarioSetup, ["Iraq"])
         app.map["Libya"].make_fair()
         app.map["Libya"].make_adversary()
         app.map["Libya"].regimeChange = 1
@@ -7370,11 +7429,12 @@ class card40(unittest.TestCase):
         self.assertTrue(app.map["Iraq"].is_good())
         self.assertTrue(app.map["Iraq"].regimeChange == 0)
         self.assertTrue(app.map["Iraq"].aid == 0)
-          
-class card41(unittest.TestCase):
-    '''NATO'''
-    
-    def testPlayable(self):
+
+
+class Card41(unittest.TestCase):
+    """NATO"""
+
+    def test_playable(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertFalse(app.deck["41"].playable("US", app, True))
         app.map["Libya"].make_poor()
@@ -7386,7 +7446,7 @@ class card41(unittest.TestCase):
         app.map["Spain"].posture = "Soft"
         self.assertFalse(app.deck["41"].playable("US", app, True))
 
-    def testEvent(self):
+    def test_event(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup, ["Libya", "track", "3"])
         app.map["Libya"].make_poor()
         app.map["Libya"].make_ally()
@@ -7402,7 +7462,7 @@ class card41(unittest.TestCase):
         app.do_deploy("")
         self.assertTrue(app.map["Libya"].troops() == 0)
         self.assertTrue("NATO" not in app.map["Libya"].markers)        
-           
+
         app = Labyrinth(1, 1, testBlankScenarioSetup, ["Iraq"])
         app.map["Libya"].make_fair()
         app.map["Libya"].make_adversary()
@@ -7416,11 +7476,12 @@ class card41(unittest.TestCase):
         self.assertEqual(app.map["Iraq"].aid, 1)
         self.assertTrue(app.map["Iraq"].troops() == 2)
         self.assertTrue("NATO" in app.map["Iraq"].markers)
-         
-class card42(unittest.TestCase):
-    '''Pakistani Offensive'''
-    
-    def testPlayable(self):
+
+
+class Card42(unittest.TestCase):
+    """Pakistani Offensive"""
+
+    def test_playable(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertFalse(app.deck["42"].playable("US", app, True))
         app.map["Pakistan"].make_poor()
@@ -7431,7 +7492,7 @@ class card42(unittest.TestCase):
         app.map["Pakistan"].make_neutral()
         self.assertFalse(app.deck["42"].playable("US", app, True))
 
-    def testEvent(self):
+    def test_event(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.map["Pakistan"].make_poor()
         app.map["Pakistan"].make_ally()
@@ -7439,45 +7500,47 @@ class card42(unittest.TestCase):
         app.deck["42"].playEvent("US", app)
         self.assertTrue("FATA" not in app.map["Pakistan"].markers)
 
-class card43(unittest.TestCase):
-    '''Patriot Act'''
-    
-    def testPlayable(self):
+
+class Card43(unittest.TestCase):
+    """Patriot Act"""
+
+    def test_playable(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertTrue(app.deck["43"].playable("US", app, True))
 
-    def testEvent(self):
+    def test_event(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertTrue(app.isAdjacent("United States", "Canada"))
         self.assertTrue(app.isAdjacent("United States", "United Kingdom"))
         self.assertTrue(app.isAdjacent("United States", "Philippines"))
         for country in app.map:
-               if app.map[country].schengen:
-                   self.assertTrue(app.isAdjacent("United States", country))
+            if app.map[country].schengen:
+                self.assertTrue(app.isAdjacent("United States", country))
         app.deck["43"].playEvent("US", app)
         self.assertTrue("Patriot Act" in app.markers)
         self.assertTrue(app.isAdjacent("United States", "Canada"))
         self.assertFalse(app.isAdjacent("United States", "United Kingdom"))
         self.assertFalse(app.isAdjacent("United States", "Philippines"))
         for country in app.map:
-               if app.map[country].schengen:
-                   self.assertFalse(app.isAdjacent("United States", country))
+            if app.map[country].schengen:
+                self.assertFalse(app.isAdjacent("United States", country))
 
-class card44(unittest.TestCase):
-    '''Renditions'''
-    
-    def testPlayable(self):
+
+class Card44(unittest.TestCase):
+    """Renditions"""
+
+    def test_playable(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertTrue(app.deck["44"].playable("US", app, True))
         app.map["United States"].posture = "Soft"
         self.assertFalse(app.deck["44"].playable("US", app, True))
-        
+
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertTrue(app.deck["44"].playable("US", app, True))
         app.markers.append("Leak-Renditions")
         self.assertFalse(app.deck["44"].playable("US", app, True))
 
-    def testEvent(self):
+    def test_event(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup, ["Iraq"])
         app.map["Iraq"].cadre = 1
         app.map["Iraq"].make_poor()
@@ -7490,7 +7553,7 @@ class card44(unittest.TestCase):
         app.deck["44"].playEvent("US", app)
         self.assertTrue("Renditions" in app.markers)
         self.assertTrue(app.map["Iraq"].cadre == 0)
-    
+
         app = Labyrinth(1, 1, testBlankScenarioSetup, ["Pakistan"])
         app.map["Iraq"].cadre = 1
         app.map["Iraq"].make_poor()
@@ -7505,11 +7568,12 @@ class card44(unittest.TestCase):
         self.assertTrue("Renditions" in app.markers)
         self.assertTrue(app.map["Pakistan"].cadre == 1)
         self.assertTrue(app.map["Pakistan"].sleeperCells == 0)
-    
-class card45(unittest.TestCase):
-    '''Safer Now'''
-    
-    def testPlayable(self):
+
+
+class Card45(unittest.TestCase):
+    """Safer Now"""
+
+    def test_playable(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertTrue(app.deck["45"].playable("US", app, True))
         app.map["Iraq"].make_islamist_rule()
@@ -7533,7 +7597,7 @@ class card45(unittest.TestCase):
         app.map["Iraq"].activeCells = 1
         self.assertFalse(app.deck["45"].playable("US", app, True))    
 
-    def testEvent(self):
+    def test_event(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup, ["4", "Spain", "h"])
         print "Enter 4 for posture role, Spain and Hard"
         app.deck["45"].playEvent("US", app)
@@ -7541,10 +7605,11 @@ class card45(unittest.TestCase):
         self.assertTrue(app.prestige == 10)
         self.assertTrue(app.map["Spain"].posture == "Hard")
 
-class card46(unittest.TestCase):
-    '''Sistani'''
-    
-    def testPlayable(self):
+
+class Card46(unittest.TestCase):
+    """Sistani"""
+
+    def test_playable(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertFalse(app.deck["46"].playable("US", app, True))
         app.map["Iraq"].make_fair()
@@ -7573,7 +7638,7 @@ class card46(unittest.TestCase):
         app.map["Syria"].activeCells = 1
         self.assertFalse(app.deck["46"].playable("US", app, True))    
 
-    def testEvent(self):
+    def test_event(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.map["Iraq"].make_poor()
         app.map["Iraq"].make_ally()
@@ -7583,7 +7648,7 @@ class card46(unittest.TestCase):
         self.assertTrue(app.map["Iraq"].is_fair())
         app.deck["46"].playEvent("US", app)
         self.assertTrue(app.map["Iraq"].is_good())
-          
+
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.map["Iraq"].make_fair()
         app.map["Iraq"].make_ally()
@@ -7609,14 +7674,15 @@ class card46(unittest.TestCase):
         app.deck["46"].playEvent("US", app)
         self.assertTrue(app.map["Lebanon"].is_good())
 
-class card47(unittest.TestCase):
-    '''The door of Itjihad was closed'''
-    
-    def testPlayable(self):
+
+class Card47(unittest.TestCase):
+    """The door of Itjihad was closed"""
+
+    def test_playable(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertTrue(app.deck["47"].playable("US", app, True))    
 
-    def testEvent(self):
+    def test_event(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.deck["47"].playEvent("US", app)
         self.assertTrue("The door of Itjihad was closed" in app.lapsing)
@@ -7627,30 +7693,32 @@ class card47(unittest.TestCase):
         self.assertTrue(app.deck["66"].playable("Jihadist", app, False))
         self.assertTrue(app.deck["114"].playable("Jihadist", app, False))
 
-class card48(unittest.TestCase):
-    '''Adam Gadahn'''
-    
-    def testPlayable(self):
-        app = Labyrinth(1, 1, testBlankScenarioSetup, ["n","y"])
+
+class Card48(unittest.TestCase):
+    """Adam Gadahn"""
+
+    def test_playable(self):
+        app = Labyrinth(1, 1, testBlankScenarioSetup, ["n", "y"])
         print "Say No"
         self.assertFalse(app.deck["48"].playable("Jihadist", app, False))
         print "Say Yes"
         self.assertTrue(app.deck["48"].playable("Jihadist", app, False))
         app.cells = 4
         self.assertFalse(app.deck["48"].playable("Jihadist", app, False))        
-        
-    def testPutsCell(self):
+
+    def test_puts_cell(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertTrue(app.deck["48"].putsCell(app))            
 
-    def testEvent(self):
-        app = Labyrinth(1, 1, testBlankScenarioSetup)
-#         app.deck["48"].playEvent("Jihadist", app)
-        
-class card49(unittest.TestCase):
-    '''Al-Ittihad al-Islami'''
-    
-    def testPlayable(self):
+    def test_event(self):
+        app = Labyrinth(1, 1, testBlankScenarioSetup, ["120"])
+        # app.deck["48"].playEvent("Jihadist", app)  # TODO fix hanging test
+
+
+class Card49(unittest.TestCase):
+    """Al-Ittihad al-Islami"""
+
+    def test_playable(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertTrue(app.deck["49"].playable("Jihadist", app, False))    
         app.cells = 1
@@ -7658,19 +7726,20 @@ class card49(unittest.TestCase):
         app.cells = 0
         self.assertTrue(app.deck["49"].playable("Jihadist", app, False))    
 
-    def testPutsCell(self):
+    def test_puts_cell(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertTrue(app.deck["49"].putsCell(app))            
 
-    def testEvent(self):
+    def test_event(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.deck["49"].playEvent("Jihadist", app)
         self.assertTrue(app.map["Somalia"].sleeperCells == 1)
-        
-class card50(unittest.TestCase):
-    '''Ansar al-Islam'''
-    
-    def testPlayable(self):
+
+
+class Card50(unittest.TestCase):
+    """Ansar al-Islam"""
+
+    def test_playable(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertFalse(app.deck["50"].playable("Jihadist", app, False))    
         app.map["Iraq"].make_good()
@@ -7682,54 +7751,56 @@ class card50(unittest.TestCase):
         app.map["Iraq"].make_islamist_rule()
         self.assertTrue(app.deck["50"].playable("Jihadist", app, False))    
 
-    def testPutsCell(self):
+    def test_puts_cell(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertTrue(app.deck["50"].putsCell(app))            
 
-    def testEvent(self):
+    def test_event(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.deck["50"].playEvent("Jihadist", app)
         app.map["Iraq"].make_fair()
-        self.assertTrue(app.map["Iraq"].sleeperCells == 1 or app.map["Iran"].sleeperCells == 1 )
-        
-class card51(unittest.TestCase):
-    '''FREs'''
-    
-    def testPlayable(self):
+        self.assertTrue(app.map["Iraq"].sleeperCells == 1 or app.map["Iran"].sleeperCells == 1)
+
+
+class Card51(unittest.TestCase):
+    """FREs"""
+
+    def test_playable(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertFalse(app.deck["51"].playable("Jihadist", app, False))    
         app.map["Iraq"].changeTroops(1)
         self.assertTrue(app.deck["51"].playable("Jihadist", app, False))    
 
-    def testPutsCell(self):
+    def test_puts_cell(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertTrue(app.deck["51"].putsCell(app))            
 
-    def testEvent(self):
+    def test_event(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.testCountry("Iraq")
         app.map["Iraq"].changeTroops(1)
         app.deck["51"].playEvent("Jihadist", app)
         self.assertTrue(app.map["Iraq"].sleeperCells == 4)
-        
+
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.markers.append("Saddam Captured")
         app.testCountry("Iraq")
         app.map["Iraq"].changeTroops(1)
         app.deck["51"].playEvent("Jihadist", app)
         self.assertTrue(app.map["Iraq"].sleeperCells == 2)
-        
+
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.cells = 3
         app.testCountry("Iraq")
         app.map["Iraq"].changeTroops(1)
         app.deck["51"].playEvent("Jihadist", app)
         self.assertTrue(app.map["Iraq"].sleeperCells == 3)
-        
-class card52(unittest.TestCase):
-    '''IEDs'''
-    
-    def testPlayable(self):
+
+
+class Card52(unittest.TestCase):
+    """IEDs"""
+
+    def test_playable(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertFalse(app.deck["52"].playable("Jihadist", app, False))    
         app.testCountry("Iraq")
@@ -7737,62 +7808,65 @@ class card52(unittest.TestCase):
         app.map["Iraq"].sleeperCells = 1
         self.assertTrue(app.deck["52"].playable("Jihadist", app, False))        
 
-    def testPutsCell(self):
+    def test_puts_cell(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertFalse(app.deck["52"].putsCell(app))            
 
-    def testEvent(self):
+    def test_event(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.deck["52"].playEvent("Jihadist", app)
-        
-class card53(unittest.TestCase):
-    '''Madrassas'''
-    
-    def testPlayable(self):
-        app = Labyrinth(1, 1, testBlankScenarioSetup, ["n","y"])
+
+
+class Card53(unittest.TestCase):
+    """Madrassas"""
+
+    def test_playable(self):
+        app = Labyrinth(1, 1, testBlankScenarioSetup, ["n", "y"])
         print "Say No"
         self.assertFalse(app.deck["53"].playable("Jihadist", app, False))
         print "Say Yes"
         self.assertTrue(app.deck["53"].playable("Jihadist", app, False))
-        
-    def testPutsCell(self):
+
+    def test_puts_cell(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertTrue(app.deck["53"].putsCell(app))            
 
-    def testEvent(self):
+    def test_event(self):
         app = Labyrinth(1, 1, testScenarioSetup, ["1"])
         app.deck["53"].playEvent("Jihadist", app)
-        
-class card54(unittest.TestCase):
-    '''Moqtada al-Sadr'''
-    
-    def testPlayable(self):
+
+
+class Card54(unittest.TestCase):
+    """Moqtada al-Sadr"""
+
+    def test_playable(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertFalse(app.deck["54"].playable("Jihadist", app, False))
         app.map["Iraq"].changeTroops(1)
         self.assertTrue(app.deck["54"].playable("Jihadist", app, False))    
-        
-    def testPutsCell(self):
+
+    def test_puts_cell(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertFalse(app.deck["54"].putsCell(app))            
 
-    def testEvent(self):
+    def test_event(self):
         app = Labyrinth(1, 1, testScenarioSetup)
         app.deck["54"].playEvent("Jihadist", app)
         self.assertTrue("Sadr" in app.map["Iraq"].markers)
-        
-class card55(unittest.TestCase):
-    '''Uyghur Jihad'''
-    
-    def testPlayable(self):
+
+
+class Card55(unittest.TestCase):
+    """Uyghur Jihad"""
+
+    def test_playable(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertTrue(app.deck["55"].playable("Jihadist", app, False))    
-        
-    def testPutsCell(self):
+
+    def test_puts_cell(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertTrue(app.deck["55"].putsCell(app))            
 
-    def testEvent(self):
+    def test_event(self):
         for i in range(100):
             app = Labyrinth(1, 1, testBlankScenarioSetup)
             app.deck["55"].playEvent("Jihadist", app)
@@ -7802,11 +7876,12 @@ class card55(unittest.TestCase):
             else:
                 self.assertTrue(app.map["Central Asia"].is_governed())
                 self.assertTrue(app.map["Central Asia"].sleeperCells == 1)
-             
-class card56(unittest.TestCase):
-    '''Vieira de Mello Slain'''
-    
-    def testPlayable(self):
+
+
+class Card56(unittest.TestCase):
+    """Vieira de Mello Slain"""
+
+    def test_playable(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertFalse(app.deck["56"].playable("Jihadist", app, False))    
         app.testCountry("Iraq")
@@ -7814,54 +7889,56 @@ class card56(unittest.TestCase):
         self.assertFalse(app.deck["56"].playable("Jihadist", app, False))    
         app.map["Iraq"].sleeperCells = 1
         self.assertTrue(app.deck["56"].playable("Jihadist", app, False))    
-        
-    def testPutsCell(self):
+
+    def test_puts_cell(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertFalse(app.deck["56"].putsCell(app))            
 
-    def testEvent(self):
+    def test_event(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.deck["56"].playEvent("Jihadist", app)
         self.assertTrue("Vieira de Mello Slain" in app.markers)
         self.assertTrue(app.prestige == 6)
-        
-class card57(unittest.TestCase):
-    '''Abu Sayyaf'''
-    
-    def testPlayable(self):
+
+
+class Card57(unittest.TestCase):
+    """Abu Sayyaf"""
+
+    def test_playable(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertTrue(app.deck["57"].playable("Jihadist", app, False))    
         app.markers.append("Moro Talks")
         self.assertFalse(app.deck["57"].playable("Jihadist", app, False))    
-        
-    def testPutsCell(self):
+
+    def test_puts_cell(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertTrue(app.deck["57"].putsCell(app))            
 
-    def testEvent(self):
+    def test_event(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.deck["57"].playEvent("Jihadist", app)
         self.assertTrue("Abu Sayyaf" in app.markers)
         self.assertTrue(app.map["Philippines"].is_governed())
         self.assertTrue(app.map["Philippines"].sleeperCells == 1)
         app.map["Philippines"].sleeperCells = 3
-        app.placePlots("Philippines", 0, [1,5,1])
+        app.placePlots("Philippines", 0, [1, 5, 1])
         self.assertTrue(app.prestige == 5)
-        
-class card58(unittest.TestCase):
-    '''Al-Anbar'''
-    
-    def testPlayable(self):
+
+
+class Card58(unittest.TestCase):
+    """Al-Anbar"""
+
+    def test_playable(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertTrue(app.deck["58"].playable("Jihadist", app, False))    
         app.markers.append("Anbar Awakening")
         self.assertFalse(app.deck["58"].playable("Jihadist", app, False))    
-        
-    def testPutsCell(self):
+
+    def test_puts_cell(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertTrue(app.deck["58"].putsCell(app))            
 
-    def testEvent(self):
+    def test_event(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.deck["58"].playEvent("Jihadist", app)
         self.assertTrue("Al-Anbar" in app.markers)
@@ -7872,7 +7949,7 @@ class card58(unittest.TestCase):
         app.handleDisrupt("Iraq")
         self.assertTrue(app.map["Iraq"].sleeperCells == 2)
         self.assertTrue(app.map["Iraq"].activeCells == 1)
-        
+
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.deck["58"].playEvent("Jihadist", app)
         self.assertTrue("Al-Anbar" in app.markers)
@@ -7882,7 +7959,7 @@ class card58(unittest.TestCase):
         app.handleDisrupt("Syria")
         self.assertTrue(app.map["Syria"].sleeperCells == 2)
         self.assertTrue(app.map["Syria"].activeCells == 1)
-        
+
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.deck["58"].playEvent("Jihadist", app)
         self.assertTrue("Al-Anbar" in app.markers)
@@ -7901,44 +7978,47 @@ class card58(unittest.TestCase):
         app.map["Iraq"].troopCubes = 3
         app.handleDisrupt("Iraq")
         self.assertTrue(app.map["Iraq"].cadre == 1)
-                
-class card59(unittest.TestCase):
-    '''Amerithrax'''
-    
-    def testPlayable(self):
+
+
+class Card59(unittest.TestCase):
+    """Amerithrax"""
+
+    def test_playable(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertTrue(app.deck["59"].playable("Jihadist", app, False))    
-        
-    def testPutsCell(self):
+
+    def test_puts_cell(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertFalse(app.deck["59"].putsCell(app))            
 
-    def testEvent(self):
+    def test_event(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.deck["59"].playEvent("Jihadist", app)
 
-class card60(unittest.TestCase):
-    '''Bhutto Shot'''
-    
-    def testPlayable(self):
+
+class Card60(unittest.TestCase):
+    """Bhutto Shot"""
+
+    def test_playable(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertFalse(app.deck["60"].playable("Jihadist", app, False))
         app.map["Pakistan"].sleeperCells = 1
         self.assertTrue(app.deck["60"].playable("Jihadist", app, False))
-        
-    def testPutsCell(self):
+
+    def test_puts_cell(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertFalse(app.deck["60"].putsCell(app))            
 
-    def testEvent(self):
+    def test_event(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.deck["60"].playEvent("Jihadist", app)
         self.assertTrue("Bhutto Shot" in app.markers)
 
-class card61(unittest.TestCase):
-    '''Detainee Release'''
-    
-    def testPlayable(self):
+
+class Card61(unittest.TestCase):
+    """Detainee Release"""
+
+    def test_playable(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.lapsing.append("GTMO")
         self.assertFalse(app.deck["61"].playable("Jihadist", app, False))
@@ -7947,34 +8027,35 @@ class card61(unittest.TestCase):
         app.markers.append("Renditions")
         self.assertFalse(app.deck["61"].playable("Jihadist", app, False))
 
-        app = Labyrinth(1, 1, testBlankScenarioSetup, ["n","y"])
+        app = Labyrinth(1, 1, testBlankScenarioSetup, ["n", "y"])
         print "Say No"
         self.assertFalse(app.deck["61"].playable("Jihadist", app, False))
         print "Say Yes"
         self.assertTrue(app.deck["61"].playable("Jihadist", app, False))
-        
-    def testPutsCell(self):
+
+    def test_puts_cell(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertTrue(app.deck["61"].putsCell(app))            
 
-    def testEvent(self):
+    def test_event(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup, ["Iraq"])
         app.testCountry("Iraq")
         app.deck["61"].playEvent("Jihadist", app)
         self.assertTrue(app.map["Iraq"].sleeperCells == 1)
 
-class card62(unittest.TestCase):
-    '''Ex-KGB'''
-    
-    def testPlayable(self):
+
+class Card62(unittest.TestCase):
+    """Ex-KGB"""
+
+    def test_playable(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertTrue(app.deck["62"].playable("Jihadist", app, False))
-        
-    def testPutsCell(self):
+
+    def test_puts_cell(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertFalse(app.deck["62"].putsCell(app))            
 
-    def testEvent(self):
+    def test_event(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.map["Russia"].markers.append("CTR")
         app.map["Caucasus"].posture = "Hard"
@@ -8014,35 +8095,37 @@ class card62(unittest.TestCase):
         self.assertTrue(app.map["Central Asia"].is_governed())
         self.assertTrue(app.map["Central Asia"].is_neutral())
 
-class card63(unittest.TestCase):
-    '''Gaza War'''
-    
-    def testPlayable(self):
+
+class Card63(unittest.TestCase):
+    """Gaza War"""
+
+    def test_playable(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertTrue(app.deck["63"].playable("Jihadist", app, False))
-        
-    def testPutsCell(self):
+
+    def test_puts_cell(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertFalse(app.deck["63"].putsCell(app))            
 
-    def testEvent(self):
+    def test_event(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.deck["63"].playEvent("Jihadist", app)
         self.assertTrue(app.funding == 6)
         self.assertTrue(app.prestige == 6)
 
-class card64(unittest.TestCase):
-    '''Hariri Killed'''
-    
-    def testPlayable(self):
+
+class Card64(unittest.TestCase):
+    """Hariri Killed"""
+
+    def test_playable(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertTrue(app.deck["64"].playable("Jihadist", app, False))
-        
-    def testPutsCell(self):
+
+    def test_puts_cell(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertFalse(app.deck["64"].putsCell(app))            
 
-    def testEvent(self):
+    def test_event(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.map["Syria"].make_good()
         app.map["Syria"].make_ally()
@@ -8075,10 +8158,11 @@ class card64(unittest.TestCase):
         self.assertTrue(app.map["Syria"].is_islamist_rule())
         self.assertTrue(app.map["Syria"].is_adversary())
 
-class card65(unittest.TestCase):
-    '''HEU'''
-    
-    def testPlayable(self):
+
+class Card65(unittest.TestCase):
+    """HEU"""
+
+    def test_playable(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertFalse(app.deck["65"].playable("Jihadist", app, False))
         app.testCountry("Russia")
@@ -8091,69 +8175,71 @@ class card65(unittest.TestCase):
         self.assertTrue(app.deck["65"].playable("Jihadist", app, False))
         app.map["Central Asia"].markers.append("CTR")
         self.assertFalse(app.deck["65"].playable("Jihadist", app, False))
-        
-    def testPutsCell(self):
+
+    def test_puts_cell(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertFalse(app.deck["65"].putsCell(app))            
 
-    def testEvent(self):
+    def test_event(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.testCountry("Russia")
         app.map["Russia"].sleeperCells = 1
-        app.executeCardHEU("Russia",1)
+        app.executeCardHEU("Russia", 1)
         self.assertTrue(app.map["Russia"].sleeperCells == 1)
 
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.testCountry("Russia")
         app.map["Russia"].sleeperCells = 1
-        app.executeCardHEU("Russia",3)
+        app.executeCardHEU("Russia", 3)
         self.assertTrue(app.map["Russia"].sleeperCells == 0)
 
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.testCountry("Central Asia")
         app.map["Central Asia"].sleeperCells = 1
-        app.executeCardHEU("Central Asia",1)
+        app.executeCardHEU("Central Asia", 1)
         self.assertTrue(app.map["Central Asia"].sleeperCells == 1)
 
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.testCountry("Central Asia")
         app.map["Central Asia"].sleeperCells = 1
-        app.executeCardHEU("Central Asia",4)
+        app.executeCardHEU("Central Asia", 4)
         self.assertTrue(app.map["Central Asia"].sleeperCells == 0)
 
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.map["Russia"].sleeperCells = 1
         app.deck["65"].playEvent("Jihadist", app)
 
-class card66(unittest.TestCase):
-    '''Homegrown'''
-    
-    def testPlayable(self):
+
+class Card66(unittest.TestCase):
+    """Homegrown"""
+
+    def test_playable(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertTrue(app.deck["66"].playable("Jihadist", app, False))
-        
-    def testPutsCell(self):
+
+    def test_puts_cell(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertTrue(app.deck["66"].putsCell(app))            
 
-    def testEvent(self):
+    def test_event(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.deck["66"].playEvent("Jihadist", app)
         self.assertTrue(app.map["United Kingdom"].posture != "")
         self.assertTrue(app.map["United Kingdom"].sleeperCells == 1)
 
-class card67(unittest.TestCase):
-    '''Islamic Jihad Union'''
-    
-    def testPlayable(self):
+
+class Card67(unittest.TestCase):
+    """Islamic Jihad Union"""
+
+    def test_playable(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertTrue(app.deck["67"].playable("Jihadist", app, False))
-        
-    def testPutsCell(self):
+
+    def test_puts_cell(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertTrue(app.deck["67"].putsCell(app))            
 
-    def testEvent(self):
+    def test_event(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.deck["67"].playEvent("Jihadist", app)
         self.assertTrue(app.map["Central Asia"].sleeperCells == 1)
@@ -8165,18 +8251,19 @@ class card67(unittest.TestCase):
         self.assertTrue(app.map["Central Asia"].sleeperCells == 1)
         self.assertTrue(app.map["Afghanistan"].sleeperCells == 0)
 
-class card68(unittest.TestCase):
-    '''Jemaah Islamiya'''
-    
-    def testPlayable(self):
+
+class Card68(unittest.TestCase):
+    """Jemaah Islamiya"""
+
+    def test_playable(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertTrue(app.deck["68"].playable("Jihadist", app, False))
-        
-    def testPutsCell(self):
+
+    def test_puts_cell(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertTrue(app.deck["68"].putsCell(app))            
 
-    def testEvent(self):
+    def test_event(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.deck["68"].playEvent("Jihadist", app)
         self.assertTrue(app.map["Indonesia/Malaysia"].sleeperCells == 2)
@@ -8186,50 +8273,52 @@ class card68(unittest.TestCase):
         app.deck["68"].playEvent("Jihadist", app)
         self.assertTrue(app.map["Indonesia/Malaysia"].sleeperCells == 1)
 
-class card69(unittest.TestCase):
-    '''Kazakh Strain'''
-    
-    def testPlayable(self):
+
+class Card69(unittest.TestCase):
+    """Kazakh Strain"""
+
+    def test_playable(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.testCountry("Central Asia")
         app.map["Central Asia"].sleeperCells = 1
         self.assertTrue(app.deck["69"].playable("Jihadist", app, False))
         app.map["Central Asia"].markers.append("CTR")
         self.assertFalse(app.deck["69"].playable("Jihadist", app, False))
-        
-    def testPutsCell(self):
+
+    def test_puts_cell(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertFalse(app.deck["69"].putsCell(app))            
 
-    def testEvent(self):
+    def test_event(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.testCountry("Central Asia")
         app.map["Central Asia"].sleeperCells = 1
-        app.executeCardHEU("Central Asia",1)
+        app.executeCardHEU("Central Asia", 1)
         self.assertTrue(app.map["Central Asia"].sleeperCells == 1)
 
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.testCountry("Central Asia")
         app.map["Central Asia"].sleeperCells = 1
-        app.executeCardHEU("Central Asia",4)
+        app.executeCardHEU("Central Asia", 4)
         self.assertTrue(app.map["Central Asia"].sleeperCells == 0)
 
         app.deck["69"].playEvent("Jihadist", app)
 
-class card70(unittest.TestCase):
-    '''Lashkar-e-Tayyiba'''
-    
-    def testPlayable(self):
+
+class Card70(unittest.TestCase):
+    """Lashkar-e-Tayyiba"""
+
+    def test_playable(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertTrue(app.deck["70"].playable("Jihadist", app, False))
         app.markers.append("Indo-Pakistani Talks")
         self.assertFalse(app.deck["70"].playable("Jihadist", app, False))
 
-    def testPutsCell(self):
+    def test_puts_cell(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertTrue(app.deck["70"].putsCell(app))            
 
-    def testEvent(self):
+    def test_event(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.deck["70"].playEvent("Jihadist", app)
         self.assertTrue(app.map["Pakistan"].sleeperCells == 1)
@@ -8241,50 +8330,52 @@ class card70(unittest.TestCase):
         self.assertTrue(app.map["Pakistan"].sleeperCells == 1)
         self.assertTrue(app.map["India"].sleeperCells == 0)
 
-class card71(unittest.TestCase):
-    '''Kazakh Strain'''
-    
-    def testPlayable(self):
+
+class Card71(unittest.TestCase):
+    """Kazakh Strain"""
+
+    def test_playable(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.testCountry("Russia")
         app.map["Russia"].sleeperCells = 1
         self.assertTrue(app.deck["71"].playable("Jihadist", app, False))
         app.map["Russia"].markers.append("CTR")
         self.assertFalse(app.deck["71"].playable("Jihadist", app, False))
-        
-    def testPutsCell(self):
+
+    def test_puts_cell(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertFalse(app.deck["71"].putsCell(app))            
 
-    def testEvent(self):
+    def test_event(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.testCountry("Russia")
         app.map["Russia"].sleeperCells = 1
-        app.executeCardHEU("Russia",1)
+        app.executeCardHEU("Russia", 1)
         self.assertTrue(app.map["Russia"].sleeperCells == 1)
 
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.testCountry("Russia")
         app.map["Russia"].sleeperCells = 1
-        app.executeCardHEU("Russia",4)
+        app.executeCardHEU("Russia", 4)
         self.assertTrue(app.map["Russia"].sleeperCells == 0)
 
         app.deck["71"].playEvent("Jihadist", app)
 
-class card72(unittest.TestCase):
-    '''Opium'''
-    
-    def testPlayable(self):
+
+class Card72(unittest.TestCase):
+    """Opium"""
+
+    def test_playable(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertFalse(app.deck["72"].playable("Jihadist", app, False))
         app.map["Afghanistan"].sleeperCells = 1
         self.assertTrue(app.deck["72"].playable("Jihadist", app, False))
 
-    def testPutsCell(self):
+    def test_puts_cell(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertTrue(app.deck["72"].putsCell(app))            
 
-    def testEvent(self):
+    def test_event(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.cells = 14
         app.testCountry("Afghanistan")
@@ -8299,7 +8390,7 @@ class card72(unittest.TestCase):
         app.map["Afghanistan"].make_islamist_rule()
         app.deck["72"].playEvent("Jihadist", app)
         self.assertTrue(app.map["Afghanistan"].sleeperCells == 15)
-         
+
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.cells = 2
         app.testCountry("Afghanistan")
@@ -8308,10 +8399,10 @@ class card72(unittest.TestCase):
         self.assertTrue(app.map["Afghanistan"].sleeperCells == 3)
 
 
-class card73(unittest.TestCase):
-    '''Pirates'''
-    
-    def testPlayable(self):
+class Card73(unittest.TestCase):
+    """Pirates"""
+
+    def test_playable(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertFalse(app.deck["73"].playable("Jihadist", app, False))
         app.map["Somalia"].make_islamist_rule()
@@ -8321,11 +8412,11 @@ class card73(unittest.TestCase):
         app.map["Yemen"].make_islamist_rule()
         self.assertTrue(app.deck["73"].playable("Jihadist", app, False))
 
-    def testPutsCell(self):
+    def test_puts_cell(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertFalse(app.deck["73"].putsCell(app))            
 
-    def testEvent(self):
+    def test_event(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.deck["73"].playEvent("Jihadist", app)
         self.assertTrue("Pirates" in app.markers)
@@ -8344,45 +8435,48 @@ class card73(unittest.TestCase):
         app.do_turn("")
         self.assertTrue(app.funding == 5)
 
-class card74(unittest.TestCase):
-    '''Schengen Visas'''
-    
-    def testPlayable(self):
+
+class Card74(unittest.TestCase):
+    """Schengen Visas"""
+
+    def test_playable(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertTrue(app.deck["74"].playable("Jihadist", app, False))
 
-    def testPutsCell(self):
+    def test_puts_cell(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
-        self.assertFalse(app.deck["74"].putsCell(app))            
+        self.assertFalse(app.deck["74"].putsCell(app))
 
-    def testEvent(self):
+    def test_event(self):
         app = Labyrinth(1, 1, testScenarioSetup)
         app.deck["74"].playEvent("Jihadist", app)
 
-class card75(unittest.TestCase):
-    '''Schroeder & Chirac'''
-    
-    def testPlayable(self):
+
+class Card75(unittest.TestCase):
+    """Schroeder & Chirac"""
+
+    def test_playable(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertTrue(app.deck["75"].playable("Jihadist", app, False))
         app.map["United States"].posture = "Soft"
         self.assertFalse(app.deck["75"].playable("Jihadist", app, False))
 
-    def testPutsCell(self):
+    def test_puts_cell(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertFalse(app.deck["75"].putsCell(app))            
 
-    def testEvent(self):
+    def test_event(self):
         app = Labyrinth(1, 1, testScenarioSetup)
         app.deck["75"].playEvent("Jihadist", app)
         self.assertTrue(app.map["Germany"].posture == "Soft")
         self.assertTrue(app.map["France"].posture == "Soft")
         self.assertTrue(app.prestige == 6)
 
-class card76(unittest.TestCase):
-    '''Abu Ghurayb'''
-    
-    def testPlayable(self):
+
+class Card76(unittest.TestCase):
+    """Abu Ghurayb"""
+
+    def test_playable(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertFalse(app.deck["76"].playable("Jihadist", app, False))
         app.testCountry("Iraq")
@@ -8391,11 +8485,11 @@ class card76(unittest.TestCase):
         app.map["Iraq"].sleeperCells = 1
         self.assertTrue(app.deck["76"].playable("Jihadist", app, False))
 
-    def testPutsCell(self):
+    def test_puts_cell(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertFalse(app.deck["76"].putsCell(app))            
 
-    def testEvent(self):
+    def test_event(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.testCountry("Iraq")
         app.map["Iraq"].regimeChange = 1
@@ -8414,10 +8508,11 @@ class card76(unittest.TestCase):
         self.assertTrue(app.map["Lebanon"].is_neutral())
         self.assertTrue(app.prestige == 5)
 
-class card77(unittest.TestCase):
-    '''Al Jazeera'''
-    
-    def testPlayable(self):
+
+class Card77(unittest.TestCase):
+    """Al Jazeera"""
+
+    def test_playable(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertFalse(app.deck["77"].playable("Jihadist", app, False))
         app.testCountry("Saudi Arabia")
@@ -8448,29 +8543,30 @@ class card77(unittest.TestCase):
         app.map["Yemen"].troopCubes = 1
         self.assertTrue(app.deck["77"].playable("Jihadist", app, False))
 
-    def testPutsCell(self):
+    def test_puts_cell(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertFalse(app.deck["77"].putsCell(app))            
 
-    def testEvent(self):
+    def test_event(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.testCountry("Yemen")
         app.map["Yemen"].troopCubes = 1
         app.deck["77"].playEvent("Jihadist", app)
         self.assertTrue(app.map["Yemen"].is_adversary())
 
-class card78(unittest.TestCase):
-    '''Axis of Evil'''
-    
-    def testPlayable(self):
+
+class Card78(unittest.TestCase):
+    """Axis of Evil"""
+
+    def test_playable(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertTrue(app.deck["78"].playable("Jihadist", app, False))
 
-    def testPutsCell(self):
+    def test_puts_cell(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertFalse(app.deck["78"].putsCell(app))            
 
-    def testEvent(self):
+    def test_event(self):
         for i in range(100):
             app = Labyrinth(1, 1, testBlankScenarioSetup)
             app.map["United States"].posture = "Soft"
@@ -8478,43 +8574,46 @@ class card78(unittest.TestCase):
             self.assertTrue(app.map["United States"].posture == "Hard")
             self.assertTrue(app.prestige != 7)
 
-class card79(unittest.TestCase):
-    '''Clean Operatives'''
-    
-    def testPlayable(self):
+
+class Card79(unittest.TestCase):
+    """Clean Operatives"""
+
+    def test_playable(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertTrue(app.deck["79"].playable("Jihadist", app, False))
 
-    def testPutsCell(self):
+    def test_puts_cell(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertFalse(app.deck["79"].putsCell(app))            
 
-    def testEvent(self):
+    def test_event(self):
         app = Labyrinth(1, 1, testScenarioSetup)
         app.deck["79"].playEvent("Jihadist", app)
         self.assertTrue(app.map["United States"].sleeperCells == 2)
 
-class card80(unittest.TestCase):
-    '''FATA'''
-    
-    def testPlayable(self):
+
+class Card80(unittest.TestCase):
+    """FATA"""
+
+    def test_playable(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertTrue(app.deck["80"].playable("Jihadist", app, False))
 
-    def testPutsCell(self):
+    def test_puts_cell(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertTrue(app.deck["80"].putsCell(app))            
 
-    def testEvent(self):
+    def test_event(self):
         app = Labyrinth(1, 1, testScenarioSetup)
         app.deck["80"].playEvent("Jihadist", app)
         self.assertTrue(app.map["Pakistan"].sleeperCells == 1)
         self.assertTrue("FATA" in app.map["Pakistan"].markers)
 
-class card81(unittest.TestCase):
-    '''Foreign Fighters'''
-    
-    def testPlayable(self):
+
+class Card81(unittest.TestCase):
+    """Foreign Fighters"""
+
+    def test_playable(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertFalse(app.deck["81"].playable("Jihadist", app, False))
         app.testCountry("Iraq")
@@ -8522,11 +8621,11 @@ class card81(unittest.TestCase):
         app.map["Iraq"].regimeChange = 1
         self.assertTrue(app.deck["81"].playable("Jihadist", app, False))
 
-    def testPutsCell(self):
+    def test_puts_cell(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertTrue(app.deck["81"].putsCell(app))            
 
-    def testEvent(self):
+    def test_event(self):
         app = Labyrinth(1, 1, testScenarioSetup)
         app.testCountry("Iraq")
         app.map["Iraq"].regimeChange = 1
@@ -8544,45 +8643,48 @@ class card81(unittest.TestCase):
         self.assertTrue(app.map["Iraq"].besieged == 0)
         self.assertTrue(app.map["Iraq"].aid == 0)
 
-class card82(unittest.TestCase):
-    '''Jihadist Videos'''
-    
-    def testPlayable(self):
+
+class Card82(unittest.TestCase):
+    """Jihadist Videos"""
+
+    def test_playable(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertTrue(app.deck["82"].playable("Jihadist", app, False))
 
-    def testPutsCell(self):
+    def test_puts_cell(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertTrue(app.deck["82"].putsCell(app))            
 
-    def testEvent(self):
+    def test_event(self):
         app = Labyrinth(1, 1, testScenarioSetup)
         app.deck["82"].playEvent("Jihadist", app)
 
-class card83(unittest.TestCase):
-    '''Kashmir'''
-    
-    def testPlayable(self):
+
+class Card83(unittest.TestCase):
+    """Kashmir"""
+
+    def test_playable(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertTrue(app.deck["83"].playable("Jihadist", app, False))
         app.markers.append("Indo-Pakistani Talks")
         self.assertFalse(app.deck["83"].playable("Jihadist", app, False))
 
-    def testPutsCell(self):
+    def test_puts_cell(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertTrue(app.deck["83"].putsCell(app))            
 
-    def testEvent(self):
+    def test_event(self):
         app = Labyrinth(1, 1, testScenarioSetup)
         app.testCountry("Pakistan")
         app.deck["83"].playEvent("Jihadist", app)
         self.assertTrue(app.map["Pakistan"].is_adversary())
         self.assertTrue(app.map["Pakistan"].sleeperCells == 1)
 
-class card84(unittest.TestCase):
-    '''Leak'''
-    
-    def testPlayable(self):
+
+class Card84(unittest.TestCase):
+    """Leak"""
+
+    def test_playable(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertFalse(app.deck["84"].playable("Jihadist", app, False))
         app.markers.append("Enhanced Measures")
@@ -8598,11 +8700,11 @@ class card84(unittest.TestCase):
         app.markers.append("Wiretapping")
         self.assertTrue(app.deck["84"].playable("Jihadist", app, False))
 
-    def testPutsCell(self):
+    def test_puts_cell(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertFalse(app.deck["84"].putsCell(app))            
 
-    def testEvent(self):
+    def test_event(self):
         app = Labyrinth(1, 1, testScenarioSetup)
         app.markers.append("Enhanced Measures")
         app.deck["84"].playEvent("Jihadist", app)
@@ -8621,11 +8723,12 @@ class card84(unittest.TestCase):
         self.assertTrue("Leak-Wiretapping" in app.markers)
         self.assertTrue("Wiretapping" not in app.markers)
         self.assertTrue(app.prestige != 7)
-         
-class card85(unittest.TestCase):
-    '''Leak'''
-    
-    def testPlayable(self):
+
+
+class Card85(unittest.TestCase):
+    """Leak"""
+
+    def test_playable(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertFalse(app.deck["85"].playable("Jihadist", app, False))
         app.markers.append("Enhanced Measures")
@@ -8641,11 +8744,11 @@ class card85(unittest.TestCase):
         app.markers.append("Wiretapping")
         self.assertTrue(app.deck["85"].playable("Jihadist", app, False))
 
-    def testPutsCell(self):
+    def test_puts_cell(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertFalse(app.deck["85"].putsCell(app))            
 
-    def testEvent(self):
+    def test_event(self):
         app = Labyrinth(1, 1, testScenarioSetup)
         app.markers.append("Enhanced Measures")
         app.deck["85"].playEvent("Jihadist", app)
@@ -8665,26 +8768,28 @@ class card85(unittest.TestCase):
         self.assertTrue("Wiretapping" not in app.markers)
         self.assertTrue(app.prestige != 7)
 
-class card86(unittest.TestCase):
-    '''Lebanon War'''
 
-    def testPlayable(self):
+class Card86(unittest.TestCase):
+    """Lebanon War"""
+
+    def test_playable(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertTrue(app.deck["86"].playable("Jihadist", app, False))
 
-    def testPutsCell(self):
+    def test_puts_cell(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertTrue(app.deck["86"].putsCell(app))            
 
-    def testEvent(self):
+    def test_event(self):
         app = Labyrinth(1, 1, testScenarioSetup)
         app.deck["86"].playEvent("Jihadist", app)
         self.assertTrue(app.prestige == 6)
 
-class card87(unittest.TestCase):
-    '''Martyrdom Operation'''
 
-    def testPlayable(self):
+class Card87(unittest.TestCase):
+    """Martyrdom Operation"""
+
+    def test_playable(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertFalse(app.deck["87"].playable("Jihadist", app, False))
         app.testCountry("Iraq")
@@ -8695,11 +8800,11 @@ class card87(unittest.TestCase):
         app.map["Iraq"].make_poor()
         self.assertTrue(app.deck["87"].playable("Jihadist", app, False))
 
-    def testPutsCell(self):
+    def test_puts_cell(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertFalse(app.deck["87"].putsCell(app))            
 
-    def testEvent(self):
+    def test_event(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.testCountry("Iraq")
         app.map["Iraq"].sleeperCells = 1
@@ -8720,10 +8825,11 @@ class card87(unittest.TestCase):
         self.assertTrue(app.map["United States"].activeCells == 0)
         self.assertTrue(app.map["United States"].plots == 2)
 
-class card88(unittest.TestCase):
-    '''Martyrdom Operation'''
 
-    def testPlayable(self):
+class Card88(unittest.TestCase):
+    """Martyrdom Operation"""
+
+    def test_playable(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertFalse(app.deck["88"].playable("Jihadist", app, False))
         app.testCountry("Iraq")
@@ -8734,11 +8840,11 @@ class card88(unittest.TestCase):
         app.map["Iraq"].make_poor()
         self.assertTrue(app.deck["88"].playable("Jihadist", app, False))
 
-    def testPutsCell(self):
+    def test_puts_cell(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertFalse(app.deck["88"].putsCell(app))            
 
-    def testEvent(self):
+    def test_event(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.testCountry("Iraq")
         app.map["Iraq"].sleeperCells = 1
@@ -8759,10 +8865,11 @@ class card88(unittest.TestCase):
         self.assertTrue(app.map["United States"].activeCells == 0)
         self.assertTrue(app.map["United States"].plots == 2)
 
-class card89(unittest.TestCase):
-    '''Martyrdom Operation'''
 
-    def testPlayable(self):
+class Card89(unittest.TestCase):
+    """Martyrdom Operation"""
+
+    def test_playable(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertFalse(app.deck["89"].playable("Jihadist", app, False))
         app.testCountry("Iraq")
@@ -8773,11 +8880,11 @@ class card89(unittest.TestCase):
         app.map["Iraq"].make_poor()
         self.assertTrue(app.deck["89"].playable("Jihadist", app, False))
 
-    def testPutsCell(self):
+    def test_puts_cell(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertFalse(app.deck["89"].putsCell(app))            
 
-    def testEvent(self):
+    def test_event(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.testCountry("Iraq")
         app.map["Iraq"].sleeperCells = 1
@@ -8798,10 +8905,11 @@ class card89(unittest.TestCase):
         self.assertTrue(app.map["United States"].activeCells == 0)
         self.assertTrue(app.map["United States"].plots == 2)
 
-class card90(unittest.TestCase):
-    '''Quagmire'''
 
-    def testPlayable(self):
+class Card90(unittest.TestCase):
+    """Quagmire"""
+
+    def test_playable(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertFalse(app.deck["90"].playable("Jihadist", app, False))
         app.prestige = 6
@@ -8817,20 +8925,21 @@ class card90(unittest.TestCase):
         app.map["Iraq"].regimeChange = 0
         self.assertFalse(app.deck["90"].playable("Jihadist", app, False))    
 
-    def testPutsCell(self):
+    def test_puts_cell(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertFalse(app.deck["90"].putsCell(app))            
 
-    def testEvent(self):
+    def test_event(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.testCountry("Iraq")
         app.deck["90"].playEvent("Jihadist", app)
         self.assertTrue(app.map["United States"].posture == "Soft")
-         
-class card91(unittest.TestCase):
-    '''Regional al-Qaeda'''
 
-    def testPlayable(self):
+
+class Card91(unittest.TestCase):
+    """Regional al-Qaeda"""
+
+    def test_playable(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertTrue(app.deck["91"].playable("Jihadist", app, False))
         for country in app.map:
@@ -8844,11 +8953,11 @@ class card91(unittest.TestCase):
         app.map["Lebanon"].alignment = ""
         self.assertTrue(app.deck["91"].playable("Jihadist", app, False))
 
-    def testPutsCell(self):
+    def test_puts_cell(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertTrue(app.deck["91"].putsCell(app))            
 
-    def testEvent(self):
+    def test_event(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         for country in app.map:
             if app.map[country].type == "Suni" or app.map[country].type == "Shia-Mix":
@@ -8864,11 +8973,12 @@ class card91(unittest.TestCase):
         self.assertTrue(app.map["Lebanon"].is_governed())
         self.assertTrue(app.map["Lebanon"].is_aligned())
         self.assertTrue(app.map["Lebanon"].sleeperCells == 1)
-         
-class card92(unittest.TestCase):
-    '''Saddam'''
 
-    def testPlayable(self):
+
+class Card92(unittest.TestCase):
+    """Saddam"""
+
+    def test_playable(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertFalse(app.deck["92"].playable("Jihadist", app, False))
         app.testCountry("Iraq")
@@ -8880,27 +8990,28 @@ class card92(unittest.TestCase):
         app.markers.append("Saddam Captured")
         self.assertFalse(app.deck["92"].playable("Jihadist", app, False))        
 
-    def testPutsCell(self):
+    def test_puts_cell(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertFalse(app.deck["92"].putsCell(app))            
 
-    def testEvent(self):
+    def test_event(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.deck["92"].playEvent("Jihadist", app)
         self.assertTrue(app.funding == 9)         
 
-class card93(unittest.TestCase):
-    '''Taliban'''
 
-    def testPlayable(self):
+class Card93(unittest.TestCase):
+    """Taliban"""
+
+    def test_playable(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertTrue(app.deck["93"].playable("Jihadist", app, False))
 
-    def testPutsCell(self):
+    def test_puts_cell(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertTrue(app.deck["93"].putsCell(app))            
 
-    def testEvent(self):
+    def test_event(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.testCountry("Afghanistan")
         app.testCountry("Pakistan")
@@ -8940,21 +9051,22 @@ class card93(unittest.TestCase):
         self.assertTrue(app.map["Pakistan"].sleeperCells == 0)         
         self.assertTrue(app.prestige == 6)
 
-class card94(unittest.TestCase):
-    '''The door of Itjihad was closed'''
 
-    def testPlayable(self):
-        app = Labyrinth(1, 1, testBlankScenarioSetup, ["n","y"])
+class Card94(unittest.TestCase):
+    """The door of Itjihad was closed"""
+
+    def test_playable(self):
+        app = Labyrinth(1, 1, testBlankScenarioSetup, ["n", "y"])
         print "Say No"
         self.assertFalse(app.deck["94"].playable("Jihadist", app, False))
         print "Say Yes"
         self.assertTrue(app.deck["94"].playable("Jihadist", app, False))
 
-    def testPutsCell(self):
+    def test_puts_cell(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertFalse(app.deck["94"].putsCell(app))            
 
-    def testEvent(self):
+    def test_event(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup, ["Iraq"])
         print "Choose Iraq"
         app.testCountry("Iraq")
@@ -8962,18 +9074,19 @@ class card94(unittest.TestCase):
         app.deck["94"].playEvent("Jihadist", app)
         self.assertTrue(app.map["Iraq"].is_poor())
 
-class card95(unittest.TestCase):
-    '''Wahhabism'''
 
-    def testPlayable(self):
+class Card95(unittest.TestCase):
+    """Wahhabism"""
+
+    def test_playable(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertTrue(app.deck["95"].playable("Jihadist", app, False))
 
-    def testPutsCell(self):
+    def test_puts_cell(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertFalse(app.deck["95"].putsCell(app))            
 
-    def testEvent(self):
+    def test_event(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.map["Saudi Arabia"].make_poor()
         app.deck["95"].playEvent("Jihadist", app)
@@ -8997,20 +9110,21 @@ class card95(unittest.TestCase):
         app.deck["95"].playEvent("Jihadist", app)
         self.assertTrue(app.funding == 9)
 
-class card96(unittest.TestCase):
-    '''Danish Cartoons'''
 
-    def testPlayable(self):
+class Card96(unittest.TestCase):
+    """Danish Cartoons"""
+
+    def test_playable(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertTrue(app.deck["96"].playable("US", app, True))
         self.assertTrue(app.deck["96"].playable("Jihadist", app, False))
 
-    def testPutsCell(self):
+    def test_puts_cell(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertFalse(app.deck["96"].putsCell(app))            
 
-    def testEvent(self):
-        app = Labyrinth(1, 1, testBlankScenarioSetup,["s","h"])
+    def test_event(self):
+        app = Labyrinth(1, 1, testBlankScenarioSetup, ["s", "h"])
         app.deck["96"].playEvent("US", app)
         self.assertTrue(app.map["Scandinavia"].posture == "Soft")
         app.testCountry("Iraq")
@@ -9018,152 +9132,158 @@ class card96(unittest.TestCase):
         app.deck["96"].playEvent("Jihadist", app)
         self.assertTrue(app.map["Scandinavia"].posture == "Hard")
 
-class card97(unittest.TestCase):
-    '''Fatwa'''
 
-    def testPlayable(self):
-        app = Labyrinth(1, 1, testBlankScenarioSetup, ["y","n"])
+class Card97(unittest.TestCase):
+    """Fatwa"""
+
+    def test_playable(self):
+        app = Labyrinth(1, 1, testBlankScenarioSetup, ["y", "n"])
         print "Say Yes"
         self.assertTrue(app.deck["97"].playable("US", app, True))
         print "Say No"
         self.assertFalse(app.deck["97"].playable("Jihadist", app, False))
 
-    def testPutsCell(self):
+    def test_puts_cell(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertFalse(app.deck["97"].putsCell(app))            
 
-    def testEvent(self):
+    def test_event(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.deck["97"].playEvent("US", app)
         app.deck["97"].playEvent("Jihadist", app)
 
-class card98(unittest.TestCase):
-    '''Gaza Withdrawl'''
 
-    def testPlayable(self):
+class Card98(unittest.TestCase):
+    """Gaza Withdrawl"""
+
+    def test_playable(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertTrue(app.deck["98"].playable("US", app, True))
         self.assertTrue(app.deck["98"].playable("Jihadist", app, False))
 
-    def testPutsCell(self):
+    def test_puts_cell(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertTrue(app.deck["98"].putsCell(app))            
 
-    def testEvent(self):
+    def test_event(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.deck["98"].playEvent("US", app)
         self.assertTrue(app.funding == 4)
-        
+
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.deck["98"].playEvent("Jihadist", app)
         self.assertTrue(app.map["Israel"].sleeperCells == 1)
         self.assertTrue(app.cells == 10)
 
-class card99(unittest.TestCase):
-    '''HAMAS Elected'''
 
-    def testPlayable(self):
+class Card99(unittest.TestCase):
+    """HAMAS Elected"""
+
+    def test_playable(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertTrue(app.deck["99"].playable("US", app, True))
         self.assertTrue(app.deck["99"].playable("Jihadist", app, False))
 
-    def testPutsCell(self):
+    def test_puts_cell(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertFalse(app.deck["99"].putsCell(app))            
 
-    def testEvent(self):
+    def test_event(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.deck["99"].playEvent("US", app)
         self.assertTrue(app.funding == 4)
         self.assertTrue(app.prestige == 6)
-        
+
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.deck["99"].playEvent("Jihadist", app)
         self.assertTrue(app.funding == 4)
         self.assertTrue(app.prestige == 6)
 
-class cardHundred(unittest.TestCase):
-    '''His Ut-Tahrir'''
 
-    def testPlayable(self):
+class CardHundred(unittest.TestCase):
+    """His Ut-Tahrir"""
+
+    def test_playable(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertTrue(app.deck["100"].playable("US", app, True))
         self.assertTrue(app.deck["100"].playable("Jihadist", app, False))
 
-    def testPutsCell(self):
+    def test_puts_cell(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertFalse(app.deck["100"].putsCell(app))            
 
-    def testEvent(self):
+    def test_event(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.deck["100"].playEvent("US", app)
         self.assertTrue(app.funding == 5)
-        
-        app = Labyrinth(1, 1, testBlankScenarioSetup)
-        app.deck["100"].playEvent("Jihadist", app)
-        self.assertTrue(app.funding == 5)
-        
-        app = Labyrinth(1, 1, testBlankScenarioSetup)
-        app.troops = 4
-        app.deck["100"].playEvent("US", app)
-        self.assertTrue(app.funding == 7)
-        
-        app = Labyrinth(1, 1, testBlankScenarioSetup)
-        app.troops = 4
-        app.deck["100"].playEvent("Jihadist", app)
-        self.assertTrue(app.funding == 7)
-        
-        app = Labyrinth(1, 1, testBlankScenarioSetup)
-        app.troops = 10
-        app.deck["100"].playEvent("US", app)
-        self.assertTrue(app.funding == 3)
-        
-        app = Labyrinth(1, 1, testBlankScenarioSetup)
-        app.troops = 10
-        app.deck["100"].playEvent("Jihadist", app)
-        self.assertTrue(app.funding == 3)
-        
-class cardHundredOne(unittest.TestCase):
-    '''Kosovo'''
 
-    def testPlayable(self):
+        app = Labyrinth(1, 1, testBlankScenarioSetup)
+        app.deck["100"].playEvent("Jihadist", app)
+        self.assertTrue(app.funding == 5)
+
+        app = Labyrinth(1, 1, testBlankScenarioSetup)
+        app.troops = 4
+        app.deck["100"].playEvent("US", app)
+        self.assertTrue(app.funding == 7)
+
+        app = Labyrinth(1, 1, testBlankScenarioSetup)
+        app.troops = 4
+        app.deck["100"].playEvent("Jihadist", app)
+        self.assertTrue(app.funding == 7)
+
+        app = Labyrinth(1, 1, testBlankScenarioSetup)
+        app.troops = 10
+        app.deck["100"].playEvent("US", app)
+        self.assertTrue(app.funding == 3)
+
+        app = Labyrinth(1, 1, testBlankScenarioSetup)
+        app.troops = 10
+        app.deck["100"].playEvent("Jihadist", app)
+        self.assertTrue(app.funding == 3)
+
+
+class CardHundredOne(unittest.TestCase):
+    """Kosovo"""
+
+    def test_playable(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertTrue(app.deck["101"].playable("US", app, True))
         self.assertTrue(app.deck["101"].playable("Jihadist", app, False))
 
-    def testPutsCell(self):
+    def test_puts_cell(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertFalse(app.deck["101"].putsCell(app))            
 
-    def testEvent(self):
+    def test_event(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.deck["101"].playEvent("US", app)
         self.assertTrue(app.prestige == 8)
         self.assertTrue(app.map["Serbia"].posture == "Soft")
-        
+
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.map["United States"].posture = "Soft"
         app.deck["101"].playEvent("Jihadist", app)
         self.assertTrue(app.prestige == 8)
         self.assertTrue(app.map["Serbia"].posture == "Hard")
-        
-class cardHundredTwo(unittest.TestCase):
-    '''Former Soviet Union'''
 
-    def testPlayable(self):
+
+class CardHundredTwo(unittest.TestCase):
+    """Former Soviet Union"""
+
+    def test_playable(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertTrue(app.deck["102"].playable("US", app, True))
         self.assertTrue(app.deck["102"].playable("Jihadist", app, False))
 
-    def testPutsCell(self):
+    def test_puts_cell(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertFalse(app.deck["102"].putsCell(app))            
 
-    def testEvent(self):
+    def test_event(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.deck["102"].playEvent("US", app)
         self.assertTrue(app.map["Central Asia"].is_neutral())
-        
+
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.testCountry("Central Asia")
         app.map["Central Asia"].make_good()
@@ -9171,26 +9291,27 @@ class cardHundredTwo(unittest.TestCase):
         app.deck["102"].playEvent("Jihadist", app)
         self.assertFalse(app.map["Central Asia"].is_good())
         self.assertTrue(app.map["Central Asia"].is_neutral())
-        
-class cardHundredThree(unittest.TestCase):
-    '''Hizballah'''
 
-    def testPlayable(self):
+
+class CardHundredThree(unittest.TestCase):
+    """Hizballah"""
+
+    def test_playable(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertTrue(app.deck["103"].playable("US", app, True))
         self.assertTrue(app.deck["103"].playable("Jihadist", app, False))
 
-    def testPutsCell(self):
+    def test_puts_cell(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertFalse(app.deck["103"].putsCell(app))            
 
-    def testEvent(self):
+    def test_event(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.testCountry("Iraq")
         app.map["Iraq"].sleeperCells = 1
         app.deck["103"].playEvent("US", app)
         self.assertTrue(app.map["Iraq"].sleeperCells == 0)
-        
+
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.deck["103"].playEvent("Jihadist", app)
         self.assertTrue(app.map["Lebanon"].is_poor())
@@ -9205,12 +9326,12 @@ class cardHundredThree(unittest.TestCase):
         app.deck["103"].playEvent("Jihadist", app)
         self.assertTrue(app.map["Lebanon"].is_poor())
         self.assertTrue(app.map["Lebanon"].is_neutral())
-        
-         #no countries
+
+        # no countries
         app = Labyrinth(1, 1, testBlankScenarioSetup, ["Iraq"])
         app.deck["103"].playEvent("US", app)
-        
-        #one country
+
+        # one country
         app = Labyrinth(1, 1, testBlankScenarioSetup, ["Iraq"])
         app.testCountry("Iraq")
         app.map["Iraq"].sleeperCells = 1
@@ -9218,26 +9339,27 @@ class cardHundredThree(unittest.TestCase):
         app.map["Gulf States"].sleeperCells = 1
         app.deck["103"].playEvent("US", app)
         self.assertTrue(app.map["Iraq"].sleeperCells == 0)
-                
-class cardHundredFour(unittest.TestCase):
-    '''Iran'''
 
-    def testPlayable(self):
+
+class CardHundredFour(unittest.TestCase):
+    """Iran"""
+
+    def test_playable(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertTrue(app.deck["104"].playable("US", app, True))
         self.assertTrue(app.deck["104"].playable("Jihadist", app, False))
 
-    def testPutsCell(self):
+    def test_puts_cell(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertFalse(app.deck["104"].putsCell(app))            
 
-    def testEvent(self):
+    def test_event(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup, ["Iraq"])
         app.testCountry("Iraq")
         app.map["Iraq"].sleeperCells = 1
         app.deck["104"].playEvent("US", app)
         self.assertTrue(app.map["Iraq"].sleeperCells == 0)
-        
+
         app = Labyrinth(1, 1, testBlankScenarioSetup, ["Yemen"])
         app.testCountry("Iraq")
         app.map["Iraq"].sleeperCells = 1
@@ -9245,28 +9367,29 @@ class cardHundredFour(unittest.TestCase):
         app.map["Yemen"].sleeperCells = 1
         app.deck["104"].playEvent("US", app)
         self.assertTrue(app.map["Yemen"].sleeperCells == 0)
-        
-        app.deck["104"].playEvent("Jihadist", app)
-        
-class cardHundredFive(unittest.TestCase):
-    '''Iran'''
 
-    def testPlayable(self):
+        app.deck["104"].playEvent("Jihadist", app)
+
+
+class CardHundredFive(unittest.TestCase):
+    """Iran"""
+
+    def test_playable(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertTrue(app.deck["105"].playable("US", app, True))
         self.assertTrue(app.deck["105"].playable("Jihadist", app, False))
 
-    def testPutsCell(self):
+    def test_puts_cell(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertFalse(app.deck["105"].putsCell(app))            
 
-    def testEvent(self):
+    def test_event(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup, ["Iraq"])
         app.testCountry("Iraq")
         app.map["Iraq"].sleeperCells = 1
         app.deck["105"].playEvent("US", app)
         self.assertTrue(app.map["Iraq"].sleeperCells == 0)
-        
+
         app = Labyrinth(1, 1, testBlankScenarioSetup, ["Yemen"])
         app.testCountry("Iraq")
         app.map["Iraq"].sleeperCells = 1
@@ -9274,13 +9397,14 @@ class cardHundredFive(unittest.TestCase):
         app.map["Yemen"].sleeperCells = 1
         app.deck["105"].playEvent("US", app)
         self.assertTrue(app.map["Yemen"].sleeperCells == 0)
-        
-        app.deck["105"].playEvent("Jihadist", app)
-        
-class cardHundredSix(unittest.TestCase):
-    '''Jaysh al-Mahdi'''
 
-    def testPlayable(self):
+        app.deck["105"].playEvent("Jihadist", app)
+
+
+class CardHundredSix(unittest.TestCase):
+    """Jaysh al-Mahdi"""
+
+    def test_playable(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertFalse(app.deck["106"].playable("US", app, True))
         self.assertFalse(app.deck["106"].playable("Jihadist", app, False))
@@ -9295,11 +9419,11 @@ class cardHundredSix(unittest.TestCase):
         self.assertFalse(app.deck["106"].playable("US", app, True))
         self.assertFalse(app.deck["106"].playable("Jihadist", app, False))
 
-    def testPutsCell(self):
+    def test_puts_cell(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertFalse(app.deck["106"].putsCell(app))            
 
-    def testEvent(self):
+    def test_event(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.testCountry("Iraq")
         app.map["Iraq"].sleeperCells = 3
@@ -9330,7 +9454,7 @@ class cardHundredSix(unittest.TestCase):
         print "Choose Lebanon"
         app.deck["106"].playEvent("US", app)
         self.assertTrue(app.map["Lebanon"].sleeperCells == 0)
-        
+
         print "HERE"
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.testCountry("Iraq")
@@ -9338,36 +9462,37 @@ class cardHundredSix(unittest.TestCase):
         app.map["Iraq"].sleeperCells = 2
         app.map["Iraq"].troopCubes = 1
         app.deck["106"].playEvent("Jihadist", app)
-        
-class cardHundredSeven(unittest.TestCase):
-    '''Kurdistan'''
 
-    def testPlayable(self):
+
+class CardHundredSeven(unittest.TestCase):
+    """Kurdistan"""
+
+    def test_playable(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertTrue(app.deck["107"].playable("US", app, True))
         self.assertTrue(app.deck["107"].playable("Jihadist", app, False))
 
-    def testPutsCell(self):
+    def test_puts_cell(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertFalse(app.deck["107"].putsCell(app))            
 
-    def testEvent(self):
+    def test_event(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.testCountry("Iraq")
         app.deck["107"].playEvent("US", app)
         self.assertTrue(app.map["Iraq"].aid == 1)
-        
+
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.deck["107"].playEvent("Jihadist", app)
         self.assertTrue(app.map["Turkey"].is_poor())
-        
+
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.testCountry("Iraq")
         app.map["Iraq"].make_good()
         app.deck["107"].playEvent("Jihadist", app)
         self.assertTrue(app.map["Turkey"].governance_is_worse_than(GOOD))
         self.assertTrue(app.map["Iraq"].is_fair())
-        
+
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.testCountry("Iraq")
         app.map["Iraq"].make_fair()
@@ -9378,10 +9503,11 @@ class cardHundredSeven(unittest.TestCase):
         self.assertTrue(app.map["Turkey"].is_poor())
         self.assertTrue(app.map["Iraq"].is_fair())
 
-class cardHundredEight(unittest.TestCase):
-    '''Musharraf'''
 
-    def testPlayable(self):
+class CardHundredEight(unittest.TestCase):
+    """Musharraf"""
+
+    def test_playable(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertFalse(app.deck["108"].playable("US", app, True))
         self.assertFalse(app.deck["108"].playable("Jihadist", app, False))
@@ -9393,11 +9519,11 @@ class cardHundredEight(unittest.TestCase):
         self.assertFalse(app.deck["108"].playable("US", app, True))
         self.assertFalse(app.deck["108"].playable("Jihadist", app, False))
 
-    def testPutsCell(self):
+    def test_puts_cell(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertFalse(app.deck["108"].putsCell(app))            
 
-    def testEvent(self):
+    def test_event(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.testCountry("Pakistan")
         app.map["Pakistan"].sleeperCells = 1
@@ -9406,7 +9532,7 @@ class cardHundredEight(unittest.TestCase):
         self.assertTrue(app.map["Pakistan"].totalCells(True) == 0)
         self.assertTrue(app.map["Pakistan"].is_poor())
         self.assertTrue(app.map["Pakistan"].is_ally())
-        
+
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.testCountry("Pakistan")
         app.map["Pakistan"].sleeperCells = 3
@@ -9416,11 +9542,12 @@ class cardHundredEight(unittest.TestCase):
         self.assertTrue(app.map["Pakistan"].totalCells(True) == 2)
         self.assertTrue(app.map["Pakistan"].is_poor())
         self.assertTrue(app.map["Pakistan"].is_ally())
-        
-class cardHundredNine(unittest.TestCase):
-    '''Tora Bora'''
 
-    def testPlayable(self):
+
+class CardHundredNine(unittest.TestCase):
+    """Tora Bora"""
+
+    def test_playable(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertFalse(app.deck["109"].playable("US", app, True))
         self.assertFalse(app.deck["109"].playable("Jihadist", app, False))
@@ -9432,11 +9559,11 @@ class cardHundredNine(unittest.TestCase):
         self.assertTrue(app.deck["109"].playable("US", app, True))
         self.assertTrue(app.deck["109"].playable("Jihadist", app, False))
 
-    def testPutsCell(self):
+    def test_puts_cell(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertFalse(app.deck["109"].putsCell(app))            
 
-    def testEvent(self):
+    def test_event(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.testCountry("Pakistan")
         app.map["Pakistan"].sleeperCells = 2
@@ -9444,7 +9571,7 @@ class cardHundredNine(unittest.TestCase):
         app.deck["109"].playEvent("US", app)
         self.assertTrue(app.map["Pakistan"].totalCells(True) == 0)
         self.assertTrue(app.prestige != 7)
-        
+
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.testCountry("Pakistan")
         app.map["Pakistan"].sleeperCells = 2
@@ -9464,11 +9591,12 @@ class cardHundredNine(unittest.TestCase):
         app.deck["109"].playEvent("US", app)
         self.assertTrue(app.map["Iraq"].totalCells(True) == 0)
         self.assertTrue(app.prestige != 7)
-        
-class cardHundredTen(unittest.TestCase):
-    '''Zarqawi'''
 
-    def testPlayable(self):
+
+class CardHundredTen(unittest.TestCase):
+    """Zarqawi"""
+
+    def test_playable(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertFalse(app.deck["110"].playable("US", app, True))
         self.assertFalse(app.deck["110"].playable("Jihadist", app, False))
@@ -9501,17 +9629,17 @@ class cardHundredTen(unittest.TestCase):
         self.assertTrue(app.deck["110"].playable("US", app, True))
         self.assertTrue(app.deck["110"].playable("Jihadist", app, False))
 
-    def testPutsCell(self):
+    def test_puts_cell(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertTrue(app.deck["110"].putsCell(app))            
 
-    def testEvent(self):
+    def test_event(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.testCountry("Iraq")
         app.map["Iraq"].troopCubes = 2
         app.deck["110"].playEvent("US", app)
         self.assertTrue(app.prestige == 10)
-        
+
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.testCountry("Iraq")
         app.map["Iraq"].troopCubes = 2
@@ -9519,14 +9647,15 @@ class cardHundredTen(unittest.TestCase):
         self.assertTrue(app.map["Iraq"].totalCells(True) == 3)
         self.assertTrue(app.map["Iraq"].plots == 1)
 
-class cardHundredEleven(unittest.TestCase):
-    '''Zawahiri'''
 
-    def testPlayable(self):
+class CardHundredEleven(unittest.TestCase):
+    """Zawahiri"""
+
+    def test_playable(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertTrue(app.deck["111"].playable("US", app, True))
         self.assertTrue(app.deck["111"].playable("Jihadist", app, False))
-        
+
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.testCountry("Iraq")
         app.map["Iraq"].make_islamist_rule()
@@ -9545,15 +9674,15 @@ class cardHundredEleven(unittest.TestCase):
         self.assertFalse(app.deck["111"].playable("US", app, True))
         self.assertTrue(app.deck["111"].playable("Jihadist", app, False))
 
-    def testPutsCell(self):
+    def test_puts_cell(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertFalse(app.deck["111"].putsCell(app))            
 
-    def testEvent(self):
+    def test_event(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.deck["111"].playEvent("US", app)
         self.assertTrue(app.funding == 3)
-        
+
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.deck["111"].playEvent("Jihadist", app)
         self.assertTrue(app.prestige == 6)
@@ -9564,14 +9693,15 @@ class cardHundredEleven(unittest.TestCase):
         app.deck["111"].playEvent("Jihadist", app)
         self.assertTrue(app.prestige == 4)
 
-class cardHundredTwelve(unittest.TestCase):
-    '''Bin Ladin'''
 
-    def testPlayable(self):
+class CardHundredTwelve(unittest.TestCase):
+    """Bin Ladin"""
+
+    def test_playable(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertTrue(app.deck["112"].playable("US", app, True))
         self.assertTrue(app.deck["112"].playable("Jihadist", app, False))
-        
+
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.testCountry("Iraq")
         app.map["Iraq"].make_islamist_rule()
@@ -9590,15 +9720,15 @@ class cardHundredTwelve(unittest.TestCase):
         self.assertFalse(app.deck["112"].playable("US", app, True))
         self.assertTrue(app.deck["112"].playable("Jihadist", app, False))
 
-    def testPutsCell(self):
+    def test_puts_cell(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertFalse(app.deck["112"].putsCell(app))            
 
-    def testEvent(self):
+    def test_event(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.deck["112"].playEvent("US", app)
         self.assertTrue(app.funding == 1)
-        
+
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.deck["112"].playEvent("Jihadist", app)
         self.assertTrue(app.prestige == 5)
@@ -9609,19 +9739,20 @@ class cardHundredTwelve(unittest.TestCase):
         app.deck["112"].playEvent("Jihadist", app)
         self.assertTrue(app.prestige == 3)
 
-class cardHundredThirteen(unittest.TestCase):
-    '''Darfur'''
 
-    def testPlayable(self):
+class CardHundredThirteen(unittest.TestCase):
+    """Darfur"""
+
+    def test_playable(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertTrue(app.deck["113"].playable("US", app, True))
         self.assertTrue(app.deck["113"].playable("Jihadist", app, False))
 
-    def testPutsCell(self):
+    def test_puts_cell(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertFalse(app.deck["113"].putsCell(app))            
 
-    def testEvent(self):
+    def test_event(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.deck["113"].playEvent("US", app)
         self.assertTrue(app.map["Sudan"].is_governed())
@@ -9635,7 +9766,7 @@ class cardHundredThirteen(unittest.TestCase):
         self.assertTrue(app.map["Sudan"].is_governed())
         self.assertTrue(app.map["Sudan"].aid == 1)
         self.assertTrue(app.map["Sudan"].is_neutral())
-        
+
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.prestige = 6
         app.deck["113"].playEvent("US", app)
@@ -9651,7 +9782,7 @@ class cardHundredThirteen(unittest.TestCase):
         self.assertTrue(app.map["Sudan"].is_governed())
         self.assertTrue(app.map["Sudan"].besieged == 1)
         self.assertTrue(app.map["Sudan"].is_neutral())
-        
+
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.deck["113"].playEvent("Jihadist", app)
         self.assertTrue(app.map["Sudan"].is_governed())
@@ -9665,7 +9796,7 @@ class cardHundredThirteen(unittest.TestCase):
         self.assertTrue(app.map["Sudan"].is_governed())
         self.assertTrue(app.map["Sudan"].aid == 1)
         self.assertTrue(app.map["Sudan"].is_neutral())
-        
+
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.prestige = 6
         app.deck["113"].playEvent("Jihadist", app)
@@ -9681,34 +9812,36 @@ class cardHundredThirteen(unittest.TestCase):
         self.assertTrue(app.map["Sudan"].is_governed())
         self.assertTrue(app.map["Sudan"].besieged == 1)
         self.assertTrue(app.map["Sudan"].is_neutral())
-        
-class cardHundredFourteen(unittest.TestCase):
-    '''GTMO'''
 
-    def testPlayable(self):
+
+class CardHundredFourteen(unittest.TestCase):
+    """GTMO"""
+
+    def test_playable(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertTrue(app.deck["114"].playable("US", app, True))
         self.assertTrue(app.deck["114"].playable("Jihadist", app, False))
 
-    def testPutsCell(self):
+    def test_puts_cell(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertFalse(app.deck["114"].putsCell(app))            
 
-    def testEvent(self):
+    def test_event(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.deck["114"].playEvent("US", app)
         self.assertTrue("GTMO" in app.lapsing)
         self.assertTrue(app.prestige != 7)
-         
+
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.deck["114"].playEvent("Jihadist", app)
         self.assertTrue("GTMO" in app.lapsing)
         self.assertTrue(app.prestige != 7)
-        
-class cardHundredFifteen(unittest.TestCase):
-    '''Hambali'''
 
-    def testPlayable(self):
+
+class CardHundredFifteen(unittest.TestCase):
+    """Hambali"""
+
+    def test_playable(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertFalse(app.deck["115"].playable("US", app, True))
         self.assertFalse(app.deck["115"].playable("Jihadist", app, False))
@@ -9789,18 +9922,18 @@ class cardHundredFifteen(unittest.TestCase):
         self.assertFalse(app.deck["115"].playable("US", app, True))
         self.assertFalse(app.deck["115"].playable("Jihadist", app, False))
 
-    def testPutsCell(self):
+    def test_puts_cell(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertFalse(app.deck["115"].putsCell(app))            
 
-    def testEvent(self):
+    def test_event(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.testCountry("Philippines")
         app.map["Philippines"].sleeperCells = 1
         app.map["Philippines"].posture = "Hard"
         app.deck["115"].playEvent("US", app)
         self.assertTrue(app.map["Philippines"].sleeperCells == 0)
-         
+
         app = Labyrinth(1, 1, testBlankScenarioSetup, ["Indonesia/Malaysia"])
         app.testCountry("Indonesia/Malaysia")
         app.map["Indonesia/Malaysia"].sleeperCells = 1
@@ -9811,18 +9944,19 @@ class cardHundredFifteen(unittest.TestCase):
         print "Choose Indonesia/Malaysia"
         app.deck["115"].playEvent("US", app)
         self.assertTrue(app.map["Indonesia/Malaysia"].sleeperCells == 0)
-         
+
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.testCountry("Indonesia/Malaysia")
         app.map["Indonesia/Malaysia"].sleeperCells = 1
         app.map["Indonesia/Malaysia"].make_ally()
         app.deck["115"].playEvent("Jihadist", app)
         self.assertTrue(app.map["Indonesia/Malaysia"].plots == 1)
-        
-class cardHundredSixteen(unittest.TestCase):
-    '''KSM'''
 
-    def testPlayable(self):
+
+class CardHundredSixteen(unittest.TestCase):
+    """KSM"""
+
+    def test_playable(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertTrue(app.deck["116"].playable("Jihadist", app, False))
         self.assertFalse(app.deck["116"].playable("US", app, True))
@@ -9838,11 +9972,11 @@ class cardHundredSixteen(unittest.TestCase):
         app.map["Canada"].plots = 1
         self.assertTrue(app.deck["116"].playable("US", app, True))
 
-    def testPutsCell(self):
+    def test_puts_cell(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertFalse(app.deck["116"].putsCell(app))            
 
-    def testEvent(self):
+    def test_event(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.testCountry("Iraq")
         app.map["Iraq"].make_ally()
@@ -9856,7 +9990,7 @@ class cardHundredSixteen(unittest.TestCase):
         self.assertTrue(app.map["Iraq"].plots == 0)
         self.assertTrue(app.map["Pakistan"].plots == 2)
         self.assertTrue(app.map["Canada"].plots == 0)
-         
+
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.testCountry("Iraq")
         app.map["Iraq"].sleeperCells = 1
@@ -9886,19 +10020,20 @@ class cardHundredSixteen(unittest.TestCase):
         self.assertTrue(app.map["United States"].activeCells == 0)
         self.assertTrue(app.map["United States"].plots == 1)
 
-class cardHundredSeventeen(unittest.TestCase):
-    '''Oil Price Spike'''
 
-    def testPlayable(self):
+class CardHundredSeventeen(unittest.TestCase):
+    """Oil Price Spike"""
+
+    def test_playable(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertTrue(app.deck["117"].playable("Jihadist", app, False))
         self.assertTrue(app.deck["117"].playable("US", app, True))
 
-    def testPutsCell(self):
+    def test_puts_cell(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertFalse(app.deck["117"].putsCell(app))            
 
-    def testEvent(self):
+    def test_event(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.deck["117"].playEvent("US", app)
         self.assertTrue(app.countryResources("Saudi Arabia") == 4)
@@ -9909,19 +10044,20 @@ class cardHundredSeventeen(unittest.TestCase):
         app.deck["117"].playEvent("US", app)
         self.assertTrue(app.countryResources("Saudi Arabia") == 5)
 
-class cardHundredEightteen(unittest.TestCase):
-    '''Oil Price Spike'''
 
-    def testPlayable(self):
+class CardHundredEightteen(unittest.TestCase):
+    """Oil Price Spike"""
+
+    def test_playable(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertTrue(app.deck["118"].playable("Jihadist", app, False))
         self.assertTrue(app.deck["118"].playable("US", app, True))
 
-    def testPutsCell(self):
+    def test_puts_cell(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertFalse(app.deck["118"].putsCell(app))            
 
-    def testEvent(self):
+    def test_event(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.deck["118"].playEvent("US", app)
         self.assertTrue(app.countryResources("Saudi Arabia") == 4)
@@ -9932,19 +10068,20 @@ class cardHundredEightteen(unittest.TestCase):
         app.deck["118"].playEvent("US", app)
         self.assertTrue(app.countryResources("Saudi Arabia") == 5)
 
-class cardHundredNineteen(unittest.TestCase):
-    '''Saleh'''
 
-    def testPlayable(self):
+class CardHundredNineteen(unittest.TestCase):
+    """Saleh"""
+
+    def test_playable(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertTrue(app.deck["119"].playable("Jihadist", app, False))
         self.assertTrue(app.deck["119"].playable("US", app, True))
 
-    def testPutsCell(self):
+    def test_puts_cell(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertFalse(app.deck["119"].putsCell(app))            
 
-    def testEvent(self):
+    def test_event(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.deck["119"].playEvent("US", app)
         self.assertTrue(app.map["Yemen"].is_governed())
@@ -9965,27 +10102,28 @@ class cardHundredNineteen(unittest.TestCase):
         self.assertTrue(app.map["Yemen"].is_adversary())
         self.assertTrue(app.map["Yemen"].besieged == 1)
 
-class cardHundredTwenty(unittest.TestCase):
-    '''US Election'''
 
-    def testPlayable(self):
+class CardHundredTwenty(unittest.TestCase):
+    """US Election"""
+
+    def test_playable(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertTrue(app.deck["120"].playable("Jihadist", app, False))
         self.assertTrue(app.deck["120"].playable("US", app, True))
 
-    def testPutsCell(self):
+    def test_puts_cell(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertFalse(app.deck["120"].putsCell(app))            
 
-    def testEvent(self):
+    def test_event(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.executeCardUSElection(5)
         self.assertTrue(app.prestige == 8)
-         
+
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.executeCardUSElection(4)
         self.assertTrue(app.prestige == 6)
-         
+
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.deck["120"].playEvent("US", app)
         self.assertTrue(app.prestige != 7)
@@ -9993,6 +10131,7 @@ class cardHundredTwenty(unittest.TestCase):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.deck["120"].playEvent("US", app)
         self.assertTrue(app.prestige != 7)
+
 
 class TestGovernanceClass(unittest.TestCase):
 
@@ -10043,6 +10182,7 @@ class TestGovernanceClass(unittest.TestCase):
     def test_instances_are_hashable(self):
         gov = Governance("anything", 0, 0)
         hash(gov)
+
 
 class TestCountry(unittest.TestCase):
 
@@ -10127,7 +10267,6 @@ class Disrupt(unittest.TestCase):
 
         # Invoke & assert
         self.assertEqual(app.num_disruptable(), 3)
-
 
 if __name__ == "__main__":
     unittest.main()   
