@@ -5,6 +5,7 @@ Mike Houser, 2011
 08112011.1
 """
 from lwotai import Country
+from lwotai import DieRoller
 from lwotai import GOOD
 from lwotai import FAIR
 from lwotai import POOR
@@ -13,6 +14,22 @@ from lwotai import Governances
 from lwotai import Labyrinth
 import unittest
 
+class LabyrinthTest(unittest.TestCase):
+    """Assertions etc for reuse by test classes in this file"""
+
+    def assertCells(self, app, country, expected_cells, include_sadr = False):
+        """Asserts that the given country contains the given number of cells"""
+        self.assertEqual(expected_cells, app.map[country].totalCells(include_sadr))
+
+
+class FakeDieRoller(DieRoller):
+    """Allows die rolls to be faked during unit tests"""
+
+    def __init__(self, *results):
+        self.__results = list(results)
+
+    def roll(self, times):
+        return self.__results
 
 def testScenarioSetup(self):
     self.prestige = 7
@@ -125,7 +142,7 @@ def testBlankScenarioSetup(self):
     self.cells = 11
 
 
-class Scenarios(unittest.TestCase):
+class Scenarios(LabyrinthTest):
     """Scenarios"""
 
     def testScenario4(self):
@@ -133,7 +150,7 @@ class Scenarios(unittest.TestCase):
         self.assertTrue(app.map["United Kingdom"].posture == "Hard")
 
 
-class Map(unittest.TestCase):
+class Map(LabyrinthTest):
     """Map"""
 
     def testDeck(self):
@@ -144,7 +161,7 @@ class Map(unittest.TestCase):
                 self.assertTrue(app.map[country] in link.links)
 
 
-class Deck(unittest.TestCase):
+class Deck(LabyrinthTest):
     """Deck tests"""
 
     def testDeck(self):
@@ -155,7 +172,7 @@ class Deck(unittest.TestCase):
                 self.assertEqual(i, app.deck[str(i)].number)
 
 
-class WOIRollModifiers(unittest.TestCase):
+class WOIRollModifiers(LabyrinthTest):
     """Test War of Ideas Roll Modifiers"""
 
     def testPrestige(self):
@@ -230,7 +247,7 @@ class WOIRollModifiers(unittest.TestCase):
         self.assertEqual(app.modifiedWoIRoll(3, "Gulf States"), 4)
 
 
-class WOIhandler(unittest.TestCase):
+class WOIhandler(LabyrinthTest):
     """Test War of Ideas Handler"""
 
     def testFailRolls(self):
@@ -397,7 +414,7 @@ class WOIhandler(unittest.TestCase):
         self.assertEqual(app.map["Saudi Arabia"].aid, 0)
 
 
-class AlertHandler(unittest.TestCase):
+class AlertHandler(LabyrinthTest):
     """Test Alert"""
 
     def testAlert(self):
@@ -411,7 +428,7 @@ class AlertHandler(unittest.TestCase):
         self.assertEqual(app.map["Iraq"].plots, 0)
 
 
-class ReassessmentHandler(unittest.TestCase):
+class ReassessmentHandler(LabyrinthTest):
     """Test Reassessment"""
 
     def testAlert(self):
@@ -423,7 +440,7 @@ class ReassessmentHandler(unittest.TestCase):
         self.assertEqual(app.map["United States"].posture, "Hard")
 
 
-class RegimeChangeHandler(unittest.TestCase):
+class RegimeChangeHandler(LabyrinthTest):
     """Test Regime Change"""
 
     def testRegimeChange(self):
@@ -586,7 +603,7 @@ class RegimeChangeHandler(unittest.TestCase):
         self.assertEqual(app.map["Pakistan"].troops(), 3)
 
 
-class WithdrawHandler(unittest.TestCase):
+class WithdrawHandler(LabyrinthTest):
     """Test Withdraw"""
 
     def testWithdraw(self):
@@ -633,7 +650,7 @@ class WithdrawHandler(unittest.TestCase):
         self.assertEqual(app.troops, 8)
 
 
-class MajorJihadChoice(unittest.TestCase):
+class MajorJihadChoice(LabyrinthTest):
     """Major Jihad possible?"""
     # For Major Jihad to be possible you need:
     # - A muslim country
@@ -722,7 +739,7 @@ class MajorJihadChoice(unittest.TestCase):
         self.assertEqual(app.majorJihadChoice(1), False)    # 1 Ops
 
 
-class HandleJihad(unittest.TestCase):
+class HandleJihad(LabyrinthTest):
     """Test handleJihad"""
 
     def testHandleJihad(self):
@@ -872,7 +889,7 @@ class HandleJihad(unittest.TestCase):
         self.assertEqual(opsLeft, 0)    
 
 
-class ExecuteJihad(unittest.TestCase):
+class ExecuteJihad(LabyrinthTest):
     """Execute Major Jihad"""
     # A Major jihad needs:
     # - Muslim country not under Islamist Rule
@@ -4385,7 +4402,7 @@ class ExecuteJihad(unittest.TestCase):
         self.assertEqual(app.prestige, 7)
 
 
-class MinorJihadChoice(unittest.TestCase):
+class MinorJihadChoice(LabyrinthTest):
     """Test minorJihadInGoodFairChoice"""
 
     def testMinorJihadOneCellOneOps(self):
@@ -4765,7 +4782,7 @@ class MinorJihadChoice(unittest.TestCase):
         self.assertEqual(app.minorJihadInGoodFairChoice(3), [("Gulf States", 3)])
 
 
-class Recruit(unittest.TestCase):
+class Recruit(LabyrinthTest):
     """Test Recruiting"""
 
     def testRecruitChoice(self):
@@ -5062,7 +5079,7 @@ class Recruit(unittest.TestCase):
         self.assertEqual(app.cells, 14)
 
 
-class NumCellsAvailable(unittest.TestCase):
+class NumCellsAvailable(LabyrinthTest):
     """Test num cells available"""
 
     def testNumCellsAvaialable(self):
@@ -5364,7 +5381,7 @@ class NumCellsAvailable(unittest.TestCase):
         self.assertTrue(app.numCellsAvailable(), 0)
 
 
-class Travel(unittest.TestCase):
+class Travel(LabyrinthTest):
     """Test Travel"""
 
     def testTravelFirstBox(self):
@@ -5648,7 +5665,7 @@ class Travel(unittest.TestCase):
         self.assertEqual(sources, ["Yemen", "Iraq", "Iraq"])
 
 
-class ResolvePlot(unittest.TestCase):
+class ResolvePlot(LabyrinthTest):
     """Resolve Plots"""
 
     def testResolveNonMuslimNonUSPlots(self):
@@ -5924,7 +5941,7 @@ class ResolvePlot(unittest.TestCase):
         self.assertEqual(app.map["Iraq"].plots, 0)
 
 
-class PlacePlots(unittest.TestCase):
+class PlacePlots(LabyrinthTest):
     """Place Plots"""
 
     def testPlacePlot(self):
@@ -6233,7 +6250,7 @@ class PlacePlots(unittest.TestCase):
         self.assertEqual(app.map["Gulf States"].plots, 0)
 
 
-class IsAdjacent(unittest.TestCase):
+class IsAdjacent(LabyrinthTest):
     """Test isAdjacent"""
 
     def testIsAdjacent(self):
@@ -6246,7 +6263,7 @@ class IsAdjacent(unittest.TestCase):
         self.assertFalse(app.isAdjacent("United States", "Lebanon"))
 
 
-class CountryResources(unittest.TestCase):
+class CountryResources(LabyrinthTest):
     """Test countryResources"""
 
     def testCountryResources(self):
@@ -6268,7 +6285,7 @@ class CountryResources(unittest.TestCase):
         self.assertTrue(app.countryResources("Lebanon") == 1)
 
 
-class CountryDistance(unittest.TestCase):
+class CountryDistance(LabyrinthTest):
     """Test countryDistance"""
 
     def testIsAdjacent(self):
@@ -6280,7 +6297,7 @@ class CountryDistance(unittest.TestCase):
         self.assertTrue(app.countryDistance("Russia", "Morocco") == 2)
 
 
-class Card1(unittest.TestCase):
+class Card1(LabyrinthTest):
     """Backlash"""
 
     def test_playable(self):
@@ -6304,7 +6321,7 @@ class Card1(unittest.TestCase):
         self.assertTrue(app.backlashInPlay)
 
 
-class Card2(unittest.TestCase):
+class Card2(LabyrinthTest):
     """Biometrics"""
 
     def test_playable(self):
@@ -6369,7 +6386,7 @@ class Card2(unittest.TestCase):
         app.handleTravel(1)
 
 
-class Card3(unittest.TestCase):
+class Card3(LabyrinthTest):
     """CTR"""
 
     def test_playable(self):
@@ -6410,7 +6427,7 @@ class Card3(unittest.TestCase):
         self.assertTrue("CTR" in app.map["Central Asia"].markers)
 
 
-class Card4(unittest.TestCase):
+class Card4(LabyrinthTest):
     """Moro Talks"""
 
     def test_playable(self):
@@ -6435,7 +6452,7 @@ class Card4(unittest.TestCase):
         self.assertTrue(app.funding == 1)
 
 
-class Card5(unittest.TestCase):
+class Card5(LabyrinthTest):
     """NEST"""
 
     def test_playable(self):
@@ -6449,7 +6466,7 @@ class Card5(unittest.TestCase):
         self.assertTrue("NEST" in app.markers)
 
 
-class Card6and7(unittest.TestCase):
+class Card6and7(LabyrinthTest):
     """Sanctions"""
 
     def test_playable(self):
@@ -6478,7 +6495,7 @@ class Card6and7(unittest.TestCase):
         self.assertTrue(app.funding == 1)
 
 
-class Card8and9and10(unittest.TestCase):
+class Card8and9and10(LabyrinthTest):
     """Special Forces"""
 
     def test_playable(self):
@@ -6508,7 +6525,7 @@ class Card8and9and10(unittest.TestCase):
         app.listCountriesWithCellAndAdjacentTroops()
 
 
-class Card11(unittest.TestCase):
+class Card11(LabyrinthTest):
     """Abbas"""
 
     def test_playable(self):
@@ -6565,7 +6582,7 @@ class Card11(unittest.TestCase):
         self.assertTrue(app.funding == 1)
 
 
-class Card12(unittest.TestCase):
+class Card12(LabyrinthTest):
     """Al-Azhar"""
 
     def test_playable(self):
@@ -6594,7 +6611,7 @@ class Card12(unittest.TestCase):
         self.assertTrue(app.funding == 1)
 
 
-class Card13(unittest.TestCase):
+class Card13(LabyrinthTest):
     """Anbar Awakening"""
 
     def test_playable(self):
@@ -6622,7 +6639,7 @@ class Card13(unittest.TestCase):
         self.assertTrue("Anbar Awakening" in app.markers)
 
 
-class Card14(unittest.TestCase):
+class Card14(LabyrinthTest):
     """Covert Action"""
 
     def test_playable(self):
@@ -6639,7 +6656,7 @@ class Card14(unittest.TestCase):
         app.listAdversaryCountries()
 
 
-class Card15(unittest.TestCase):
+class Card15(LabyrinthTest):
     """Ethiopia Strikes"""
 
     def test_playable(self):
@@ -6668,7 +6685,7 @@ class Card15(unittest.TestCase):
         self.assertTrue(app.map["Sudan"].is_neutral())
 
 
-class Card16(unittest.TestCase):
+class Card16(LabyrinthTest):
     """Euro-Islam"""
 
     def test_playable(self):
@@ -6692,7 +6709,7 @@ class Card16(unittest.TestCase):
         self.assertTrue(app.funding == 1)
 
 
-class Card17(unittest.TestCase):
+class Card17(LabyrinthTest):
     """FSB"""
 
     def test_playable(self):
@@ -6714,7 +6731,7 @@ class Card17(unittest.TestCase):
         app.deck["17"].playEvent("US", app)
 
 
-class Card18(unittest.TestCase):
+class Card18(LabyrinthTest):
     """Intel Community"""
 
     def test_playable(self):
@@ -6726,7 +6743,7 @@ class Card18(unittest.TestCase):
         app.deck["18"].playEvent("US", app)
 
 
-class Card19(unittest.TestCase):
+class Card19(LabyrinthTest):
     """Kemalist Republic"""
 
     def test_playable(self):
@@ -6740,7 +6757,7 @@ class Card19(unittest.TestCase):
         self.assertTrue(app.map["Turkey"].is_ally())
 
 
-class Card20(unittest.TestCase):
+class Card20(LabyrinthTest):
     """King Abdullah"""
 
     def test_playable(self):
@@ -6767,7 +6784,7 @@ class Card20(unittest.TestCase):
         self.assertTrue(app.prestige == 12)
 
 
-class Card21(unittest.TestCase):
+class Card21(LabyrinthTest):
     """Let's Roll"""
 
     def test_playable(self):
@@ -6800,7 +6817,7 @@ class Card21(unittest.TestCase):
         self.assertTrue(app.map["Saudi Arabia"].plots == 0)
 
 
-class Card22(unittest.TestCase):
+class Card22(LabyrinthTest):
     """Mossad and Shin Bet"""
 
     def test_playable(self):
@@ -6836,7 +6853,7 @@ class Card22(unittest.TestCase):
         self.assertTrue(app.map["Iraq"].sleeperCells == 2)
 
 
-class Card23and24and25(unittest.TestCase):
+class Card23and24and25(LabyrinthTest):
     """Predator"""
 
     def test_playable(self):
@@ -6874,7 +6891,7 @@ class Card23and24and25(unittest.TestCase):
         self.assertTrue(app.map["Iraq"].sleeperCells == 1)
 
 
-class Card26(unittest.TestCase):
+class Card26(LabyrinthTest):
     """Quartet"""
 
     def test_playable(self):
@@ -6897,7 +6914,7 @@ class Card26(unittest.TestCase):
         self.assertTrue(app.funding == 2)
 
 
-class Card27(unittest.TestCase):
+class Card27(LabyrinthTest):
     """Saddam Captured"""
 
     def test_playable(self):
@@ -6914,7 +6931,7 @@ class Card27(unittest.TestCase):
         self.assertTrue(app.map["Iraq"].aid == 1)
 
 
-class Card28(unittest.TestCase):
+class Card28(LabyrinthTest):
     """Sharia"""
 
     def test_playable(self):
@@ -6929,12 +6946,8 @@ class Card28(unittest.TestCase):
         app.deck["28"].playEvent("US", app)
         self.assertTrue(app.map["Iraq"].besieged == 0)
 
-        app = Labyrinth(1, 1, testBlankScenarioSetup)
-        app.map["Iraq"].besieged = 1
-        app.map["Pakistan"].besieged = 1
-        # app.deck["28"].playEvent("US", app)     TODO re-enable test
 
-class Card29(unittest.TestCase):
+class Card29(LabyrinthTest):
     """Tony Blair"""
 
     def test_playable(self):
@@ -6944,8 +6957,6 @@ class Card29(unittest.TestCase):
     def test_event(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.map["United States"].posture = "Hard"
-        # app.deck["29"].playEvent("US", app)
-        # self.assertTrue(app.map["United Kingdom"].posture == "Hard")
 
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         app.map["United States"].posture = "Hard"
@@ -6953,10 +6964,9 @@ class Card29(unittest.TestCase):
         self.assertTrue(app.map["Spain"].posture == "Soft")
         app.executeNonMuslimWOI("France", 5)
         self.assertTrue(app.map["France"].posture == "Hard")
-        # app.deck["29"].playEvent("US", app)
 
 
-class Card30(unittest.TestCase):
+class Card30(LabyrinthTest):
     """UN Nation Building"""
 
     def test_playable(self):
@@ -7001,7 +7011,7 @@ class Card30(unittest.TestCase):
         self.assertTrue(app.map["Iraq"].is_fair())
 
 
-class Card31(unittest.TestCase):
+class Card31(LabyrinthTest):
     """Wiretapping"""
 
     def test_playable(self):
@@ -7115,7 +7125,7 @@ class Card31(unittest.TestCase):
         self.assertTrue(app.map["Canada"].plots == 0)
 
 
-class Card32(unittest.TestCase):
+class Card32(LabyrinthTest):
     """Back Channel"""
 
     def test_playable(self):
@@ -7160,7 +7170,7 @@ class Card32(unittest.TestCase):
         self.assertTrue(app.map["Pakistan"].is_adversary())
 
 
-class Card33(unittest.TestCase):
+class Card33(LabyrinthTest):
     """Benazir Bhutto"""
 
     def test_playable(self):
@@ -7226,7 +7236,7 @@ class Card33(unittest.TestCase):
         self.assertEqual(app.majorJihadPossible(3), ["Iraq"])
 
 
-class Card34(unittest.TestCase):
+class Card34(LabyrinthTest):
     """Enhanced Measures"""
 
     def test_playable(self):
@@ -7264,7 +7274,7 @@ class Card34(unittest.TestCase):
         self.assertTrue(app.map["Iraq"].cadre == 0)
 
 
-class Card35(unittest.TestCase):
+class Card35(LabyrinthTest):
     """Hajib"""
 
     def test_playable(self):
@@ -7284,7 +7294,7 @@ class Card35(unittest.TestCase):
         self.assertTrue(app.funding == 3)
 
 
-class Card36(unittest.TestCase):
+class Card36(LabyrinthTest):
     """Indo-Pakistani Talks"""
 
     def test_playable(self):
@@ -7312,7 +7322,7 @@ class Card36(unittest.TestCase):
         self.assertFalse("Indo-Pakistani Talks" in app.markers)
 
 
-class Card37(unittest.TestCase):
+class Card37(LabyrinthTest):
     """Iraqi WMD"""
 
     def test_playable(self):
@@ -7332,7 +7342,7 @@ class Card37(unittest.TestCase):
         self.assertFalse("Iraqi WMD" in app.markers)
 
 
-class Card38(unittest.TestCase):
+class Card38(LabyrinthTest):
     """Libyan Desl"""
 
     def test_playable(self):
@@ -7362,7 +7372,7 @@ class Card38(unittest.TestCase):
         self.assertTrue(app.map["Spain"].posture == "Hard")
 
 
-class Card39(unittest.TestCase):
+class Card39(LabyrinthTest):
     """Libyan WMD"""
 
     def test_playable(self):
@@ -7386,7 +7396,7 @@ class Card39(unittest.TestCase):
         self.assertFalse("Libyan WMD" in app.markers)
 
 
-class Card40(unittest.TestCase):
+class Card40(LabyrinthTest):
     """Mass Turnout"""
 
     def test_playable(self):
@@ -7431,7 +7441,7 @@ class Card40(unittest.TestCase):
         self.assertTrue(app.map["Iraq"].aid == 0)
 
 
-class Card41(unittest.TestCase):
+class Card41(LabyrinthTest):
     """NATO"""
 
     def test_playable(self):
@@ -7478,7 +7488,7 @@ class Card41(unittest.TestCase):
         self.assertTrue("NATO" in app.map["Iraq"].markers)
 
 
-class Card42(unittest.TestCase):
+class Card42(LabyrinthTest):
     """Pakistani Offensive"""
 
     def test_playable(self):
@@ -7501,7 +7511,7 @@ class Card42(unittest.TestCase):
         self.assertTrue("FATA" not in app.map["Pakistan"].markers)
 
 
-class Card43(unittest.TestCase):
+class Card43(LabyrinthTest):
     """Patriot Act"""
 
     def test_playable(self):
@@ -7526,7 +7536,7 @@ class Card43(unittest.TestCase):
                 self.assertFalse(app.isAdjacent("United States", country))
 
 
-class Card44(unittest.TestCase):
+class Card44(LabyrinthTest):
     """Renditions"""
 
     def test_playable(self):
@@ -7570,7 +7580,7 @@ class Card44(unittest.TestCase):
         self.assertTrue(app.map["Pakistan"].sleeperCells == 0)
 
 
-class Card45(unittest.TestCase):
+class Card45(LabyrinthTest):
     """Safer Now"""
 
     def test_playable(self):
@@ -7606,7 +7616,7 @@ class Card45(unittest.TestCase):
         self.assertTrue(app.map["Spain"].posture == "Hard")
 
 
-class Card46(unittest.TestCase):
+class Card46(LabyrinthTest):
     """Sistani"""
 
     def test_playable(self):
@@ -7675,7 +7685,7 @@ class Card46(unittest.TestCase):
         self.assertTrue(app.map["Lebanon"].is_good())
 
 
-class Card47(unittest.TestCase):
+class Card47(LabyrinthTest):
     """The door of Itjihad was closed"""
 
     def test_playable(self):
@@ -7694,28 +7704,33 @@ class Card47(unittest.TestCase):
         self.assertTrue(app.deck["114"].playable("Jihadist", app, False))
 
 
-class Card48(unittest.TestCase):
+class Card48(LabyrinthTest):
     """Adam Gadahn"""
 
     def test_playable(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup, ["n", "y"])
+        app.cells = 0
+        self.assertFalse(app.deck["48"].playable("Jihadist", app, False))
+        app.cells = 9
         print "Say No"
         self.assertFalse(app.deck["48"].playable("Jihadist", app, False))
         print "Say Yes"
         self.assertTrue(app.deck["48"].playable("Jihadist", app, False))
-        app.cells = 4
-        self.assertFalse(app.deck["48"].playable("Jihadist", app, False))        
 
     def test_puts_cell(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
         self.assertTrue(app.deck["48"].putsCell(app))            
 
     def test_event(self):
+        die_roller = FakeDieRoller(1, 3, 2)
         app = Labyrinth(1, 1, testBlankScenarioSetup, ["120"])
-        # app.deck["48"].playEvent("Jihadist", app)  # TODO fix hanging test
+        self.assertTrue(app.numCellsAvailable() > 0)
+        self.assertCells(app, "United States", 0)
+        app.deck["48"].playEvent("Jihadist", app, die_roller)
+        self.assertCells(app, "United States", 2)
 
 
-class Card49(unittest.TestCase):
+class Card49(LabyrinthTest):
     """Al-Ittihad al-Islami"""
 
     def test_playable(self):
@@ -7736,7 +7751,7 @@ class Card49(unittest.TestCase):
         self.assertTrue(app.map["Somalia"].sleeperCells == 1)
 
 
-class Card50(unittest.TestCase):
+class Card50(LabyrinthTest):
     """Ansar al-Islam"""
 
     def test_playable(self):
@@ -7762,7 +7777,7 @@ class Card50(unittest.TestCase):
         self.assertTrue(app.map["Iraq"].sleeperCells == 1 or app.map["Iran"].sleeperCells == 1)
 
 
-class Card51(unittest.TestCase):
+class Card51(LabyrinthTest):
     """FREs"""
 
     def test_playable(self):
@@ -7797,7 +7812,7 @@ class Card51(unittest.TestCase):
         self.assertTrue(app.map["Iraq"].sleeperCells == 3)
 
 
-class Card52(unittest.TestCase):
+class Card52(LabyrinthTest):
     """IEDs"""
 
     def test_playable(self):
@@ -7817,7 +7832,7 @@ class Card52(unittest.TestCase):
         app.deck["52"].playEvent("Jihadist", app)
 
 
-class Card53(unittest.TestCase):
+class Card53(LabyrinthTest):
     """Madrassas"""
 
     def test_playable(self):
@@ -7836,7 +7851,7 @@ class Card53(unittest.TestCase):
         app.deck["53"].playEvent("Jihadist", app)
 
 
-class Card54(unittest.TestCase):
+class Card54(LabyrinthTest):
     """Moqtada al-Sadr"""
 
     def test_playable(self):
@@ -7855,7 +7870,7 @@ class Card54(unittest.TestCase):
         self.assertTrue("Sadr" in app.map["Iraq"].markers)
 
 
-class Card55(unittest.TestCase):
+class Card55(LabyrinthTest):
     """Uyghur Jihad"""
 
     def test_playable(self):
@@ -7878,7 +7893,7 @@ class Card55(unittest.TestCase):
                 self.assertTrue(app.map["Central Asia"].sleeperCells == 1)
 
 
-class Card56(unittest.TestCase):
+class Card56(LabyrinthTest):
     """Vieira de Mello Slain"""
 
     def test_playable(self):
@@ -7901,7 +7916,7 @@ class Card56(unittest.TestCase):
         self.assertTrue(app.prestige == 6)
 
 
-class Card57(unittest.TestCase):
+class Card57(LabyrinthTest):
     """Abu Sayyaf"""
 
     def test_playable(self):
@@ -7925,7 +7940,7 @@ class Card57(unittest.TestCase):
         self.assertTrue(app.prestige == 5)
 
 
-class Card58(unittest.TestCase):
+class Card58(LabyrinthTest):
     """Al-Anbar"""
 
     def test_playable(self):
@@ -7980,7 +7995,7 @@ class Card58(unittest.TestCase):
         self.assertTrue(app.map["Iraq"].cadre == 1)
 
 
-class Card59(unittest.TestCase):
+class Card59(LabyrinthTest):
     """Amerithrax"""
 
     def test_playable(self):
@@ -7996,7 +8011,7 @@ class Card59(unittest.TestCase):
         app.deck["59"].playEvent("Jihadist", app)
 
 
-class Card60(unittest.TestCase):
+class Card60(LabyrinthTest):
     """Bhutto Shot"""
 
     def test_playable(self):
@@ -8015,7 +8030,7 @@ class Card60(unittest.TestCase):
         self.assertTrue("Bhutto Shot" in app.markers)
 
 
-class Card61(unittest.TestCase):
+class Card61(LabyrinthTest):
     """Detainee Release"""
 
     def test_playable(self):
@@ -8044,7 +8059,7 @@ class Card61(unittest.TestCase):
         self.assertTrue(app.map["Iraq"].sleeperCells == 1)
 
 
-class Card62(unittest.TestCase):
+class Card62(LabyrinthTest):
     """Ex-KGB"""
 
     def test_playable(self):
@@ -8096,7 +8111,7 @@ class Card62(unittest.TestCase):
         self.assertTrue(app.map["Central Asia"].is_neutral())
 
 
-class Card63(unittest.TestCase):
+class Card63(LabyrinthTest):
     """Gaza War"""
 
     def test_playable(self):
@@ -8114,7 +8129,7 @@ class Card63(unittest.TestCase):
         self.assertTrue(app.prestige == 6)
 
 
-class Card64(unittest.TestCase):
+class Card64(LabyrinthTest):
     """Hariri Killed"""
 
     def test_playable(self):
@@ -8159,7 +8174,7 @@ class Card64(unittest.TestCase):
         self.assertTrue(app.map["Syria"].is_adversary())
 
 
-class Card65(unittest.TestCase):
+class Card65(LabyrinthTest):
     """HEU"""
 
     def test_playable(self):
@@ -8210,7 +8225,7 @@ class Card65(unittest.TestCase):
         app.deck["65"].playEvent("Jihadist", app)
 
 
-class Card66(unittest.TestCase):
+class Card66(LabyrinthTest):
     """Homegrown"""
 
     def test_playable(self):
@@ -8228,7 +8243,7 @@ class Card66(unittest.TestCase):
         self.assertTrue(app.map["United Kingdom"].sleeperCells == 1)
 
 
-class Card67(unittest.TestCase):
+class Card67(LabyrinthTest):
     """Islamic Jihad Union"""
 
     def test_playable(self):
@@ -8252,7 +8267,7 @@ class Card67(unittest.TestCase):
         self.assertTrue(app.map["Afghanistan"].sleeperCells == 0)
 
 
-class Card68(unittest.TestCase):
+class Card68(LabyrinthTest):
     """Jemaah Islamiya"""
 
     def test_playable(self):
@@ -8274,7 +8289,7 @@ class Card68(unittest.TestCase):
         self.assertTrue(app.map["Indonesia/Malaysia"].sleeperCells == 1)
 
 
-class Card69(unittest.TestCase):
+class Card69(LabyrinthTest):
     """Kazakh Strain"""
 
     def test_playable(self):
@@ -8305,7 +8320,7 @@ class Card69(unittest.TestCase):
         app.deck["69"].playEvent("Jihadist", app)
 
 
-class Card70(unittest.TestCase):
+class Card70(LabyrinthTest):
     """Lashkar-e-Tayyiba"""
 
     def test_playable(self):
@@ -8331,7 +8346,7 @@ class Card70(unittest.TestCase):
         self.assertTrue(app.map["India"].sleeperCells == 0)
 
 
-class Card71(unittest.TestCase):
+class Card71(LabyrinthTest):
     """Kazakh Strain"""
 
     def test_playable(self):
@@ -8362,7 +8377,7 @@ class Card71(unittest.TestCase):
         app.deck["71"].playEvent("Jihadist", app)
 
 
-class Card72(unittest.TestCase):
+class Card72(LabyrinthTest):
     """Opium"""
 
     def test_playable(self):
@@ -8399,7 +8414,7 @@ class Card72(unittest.TestCase):
         self.assertTrue(app.map["Afghanistan"].sleeperCells == 3)
 
 
-class Card73(unittest.TestCase):
+class Card73(LabyrinthTest):
     """Pirates"""
 
     def test_playable(self):
@@ -8436,7 +8451,7 @@ class Card73(unittest.TestCase):
         self.assertTrue(app.funding == 5)
 
 
-class Card74(unittest.TestCase):
+class Card74(LabyrinthTest):
     """Schengen Visas"""
 
     def test_playable(self):
@@ -8452,7 +8467,7 @@ class Card74(unittest.TestCase):
         app.deck["74"].playEvent("Jihadist", app)
 
 
-class Card75(unittest.TestCase):
+class Card75(LabyrinthTest):
     """Schroeder & Chirac"""
 
     def test_playable(self):
@@ -8473,7 +8488,7 @@ class Card75(unittest.TestCase):
         self.assertTrue(app.prestige == 6)
 
 
-class Card76(unittest.TestCase):
+class Card76(LabyrinthTest):
     """Abu Ghurayb"""
 
     def test_playable(self):
@@ -8509,7 +8524,7 @@ class Card76(unittest.TestCase):
         self.assertTrue(app.prestige == 5)
 
 
-class Card77(unittest.TestCase):
+class Card77(LabyrinthTest):
     """Al Jazeera"""
 
     def test_playable(self):
@@ -8555,7 +8570,7 @@ class Card77(unittest.TestCase):
         self.assertTrue(app.map["Yemen"].is_adversary())
 
 
-class Card78(unittest.TestCase):
+class Card78(LabyrinthTest):
     """Axis of Evil"""
 
     def test_playable(self):
@@ -8575,7 +8590,7 @@ class Card78(unittest.TestCase):
             self.assertTrue(app.prestige != 7)
 
 
-class Card79(unittest.TestCase):
+class Card79(LabyrinthTest):
     """Clean Operatives"""
 
     def test_playable(self):
@@ -8592,7 +8607,7 @@ class Card79(unittest.TestCase):
         self.assertTrue(app.map["United States"].sleeperCells == 2)
 
 
-class Card80(unittest.TestCase):
+class Card80(LabyrinthTest):
     """FATA"""
 
     def test_playable(self):
@@ -8610,7 +8625,7 @@ class Card80(unittest.TestCase):
         self.assertTrue("FATA" in app.map["Pakistan"].markers)
 
 
-class Card81(unittest.TestCase):
+class Card81(LabyrinthTest):
     """Foreign Fighters"""
 
     def test_playable(self):
@@ -8644,7 +8659,7 @@ class Card81(unittest.TestCase):
         self.assertTrue(app.map["Iraq"].aid == 0)
 
 
-class Card82(unittest.TestCase):
+class Card82(LabyrinthTest):
     """Jihadist Videos"""
 
     def test_playable(self):
@@ -8660,7 +8675,7 @@ class Card82(unittest.TestCase):
         app.deck["82"].playEvent("Jihadist", app)
 
 
-class Card83(unittest.TestCase):
+class Card83(LabyrinthTest):
     """Kashmir"""
 
     def test_playable(self):
@@ -8681,7 +8696,7 @@ class Card83(unittest.TestCase):
         self.assertTrue(app.map["Pakistan"].sleeperCells == 1)
 
 
-class Card84(unittest.TestCase):
+class Card84(LabyrinthTest):
     """Leak"""
 
     def test_playable(self):
@@ -8725,7 +8740,7 @@ class Card84(unittest.TestCase):
         self.assertTrue(app.prestige != 7)
 
 
-class Card85(unittest.TestCase):
+class Card85(LabyrinthTest):
     """Leak"""
 
     def test_playable(self):
@@ -8769,7 +8784,7 @@ class Card85(unittest.TestCase):
         self.assertTrue(app.prestige != 7)
 
 
-class Card86(unittest.TestCase):
+class Card86(LabyrinthTest):
     """Lebanon War"""
 
     def test_playable(self):
@@ -8786,7 +8801,7 @@ class Card86(unittest.TestCase):
         self.assertTrue(app.prestige == 6)
 
 
-class Card87(unittest.TestCase):
+class Card87(LabyrinthTest):
     """Martyrdom Operation"""
 
     def test_playable(self):
@@ -8826,7 +8841,7 @@ class Card87(unittest.TestCase):
         self.assertTrue(app.map["United States"].plots == 2)
 
 
-class Card88(unittest.TestCase):
+class Card88(LabyrinthTest):
     """Martyrdom Operation"""
 
     def test_playable(self):
@@ -8866,7 +8881,7 @@ class Card88(unittest.TestCase):
         self.assertTrue(app.map["United States"].plots == 2)
 
 
-class Card89(unittest.TestCase):
+class Card89(LabyrinthTest):
     """Martyrdom Operation"""
 
     def test_playable(self):
@@ -8906,7 +8921,7 @@ class Card89(unittest.TestCase):
         self.assertTrue(app.map["United States"].plots == 2)
 
 
-class Card90(unittest.TestCase):
+class Card90(LabyrinthTest):
     """Quagmire"""
 
     def test_playable(self):
@@ -8936,7 +8951,7 @@ class Card90(unittest.TestCase):
         self.assertTrue(app.map["United States"].posture == "Soft")
 
 
-class Card91(unittest.TestCase):
+class Card91(LabyrinthTest):
     """Regional al-Qaeda"""
 
     def test_playable(self):
@@ -8975,7 +8990,7 @@ class Card91(unittest.TestCase):
         self.assertTrue(app.map["Lebanon"].sleeperCells == 1)
 
 
-class Card92(unittest.TestCase):
+class Card92(LabyrinthTest):
     """Saddam"""
 
     def test_playable(self):
@@ -9000,7 +9015,7 @@ class Card92(unittest.TestCase):
         self.assertTrue(app.funding == 9)         
 
 
-class Card93(unittest.TestCase):
+class Card93(LabyrinthTest):
     """Taliban"""
 
     def test_playable(self):
@@ -9052,7 +9067,7 @@ class Card93(unittest.TestCase):
         self.assertTrue(app.prestige == 6)
 
 
-class Card94(unittest.TestCase):
+class Card94(LabyrinthTest):
     """The door of Itjihad was closed"""
 
     def test_playable(self):
@@ -9075,7 +9090,7 @@ class Card94(unittest.TestCase):
         self.assertTrue(app.map["Iraq"].is_poor())
 
 
-class Card95(unittest.TestCase):
+class Card95(LabyrinthTest):
     """Wahhabism"""
 
     def test_playable(self):
@@ -9111,7 +9126,7 @@ class Card95(unittest.TestCase):
         self.assertTrue(app.funding == 9)
 
 
-class Card96(unittest.TestCase):
+class Card96(LabyrinthTest):
     """Danish Cartoons"""
 
     def test_playable(self):
@@ -9133,7 +9148,7 @@ class Card96(unittest.TestCase):
         self.assertTrue(app.map["Scandinavia"].posture == "Hard")
 
 
-class Card97(unittest.TestCase):
+class Card97(LabyrinthTest):
     """Fatwa"""
 
     def test_playable(self):
@@ -9153,7 +9168,7 @@ class Card97(unittest.TestCase):
         app.deck["97"].playEvent("Jihadist", app)
 
 
-class Card98(unittest.TestCase):
+class Card98(LabyrinthTest):
     """Gaza Withdrawl"""
 
     def test_playable(self):
@@ -9176,7 +9191,7 @@ class Card98(unittest.TestCase):
         self.assertTrue(app.cells == 10)
 
 
-class Card99(unittest.TestCase):
+class Card99(LabyrinthTest):
     """HAMAS Elected"""
 
     def test_playable(self):
@@ -9200,7 +9215,7 @@ class Card99(unittest.TestCase):
         self.assertTrue(app.prestige == 6)
 
 
-class CardHundred(unittest.TestCase):
+class CardHundred(LabyrinthTest):
     """His Ut-Tahrir"""
 
     def test_playable(self):
@@ -9242,7 +9257,7 @@ class CardHundred(unittest.TestCase):
         self.assertTrue(app.funding == 3)
 
 
-class CardHundredOne(unittest.TestCase):
+class CardHundredOne(LabyrinthTest):
     """Kosovo"""
 
     def test_playable(self):
@@ -9267,7 +9282,7 @@ class CardHundredOne(unittest.TestCase):
         self.assertTrue(app.map["Serbia"].posture == "Hard")
 
 
-class CardHundredTwo(unittest.TestCase):
+class CardHundredTwo(LabyrinthTest):
     """Former Soviet Union"""
 
     def test_playable(self):
@@ -9293,7 +9308,7 @@ class CardHundredTwo(unittest.TestCase):
         self.assertTrue(app.map["Central Asia"].is_neutral())
 
 
-class CardHundredThree(unittest.TestCase):
+class CardHundredThree(LabyrinthTest):
     """Hizballah"""
 
     def test_playable(self):
@@ -9341,7 +9356,7 @@ class CardHundredThree(unittest.TestCase):
         self.assertTrue(app.map["Iraq"].sleeperCells == 0)
 
 
-class CardHundredFour(unittest.TestCase):
+class CardHundredFour(LabyrinthTest):
     """Iran"""
 
     def test_playable(self):
@@ -9371,7 +9386,7 @@ class CardHundredFour(unittest.TestCase):
         app.deck["104"].playEvent("Jihadist", app)
 
 
-class CardHundredFive(unittest.TestCase):
+class CardHundredFive(LabyrinthTest):
     """Iran"""
 
     def test_playable(self):
@@ -9401,7 +9416,7 @@ class CardHundredFive(unittest.TestCase):
         app.deck["105"].playEvent("Jihadist", app)
 
 
-class CardHundredSix(unittest.TestCase):
+class CardHundredSix(LabyrinthTest):
     """Jaysh al-Mahdi"""
 
     def test_playable(self):
@@ -9464,7 +9479,7 @@ class CardHundredSix(unittest.TestCase):
         app.deck["106"].playEvent("Jihadist", app)
 
 
-class CardHundredSeven(unittest.TestCase):
+class CardHundredSeven(LabyrinthTest):
     """Kurdistan"""
 
     def test_playable(self):
@@ -9504,7 +9519,7 @@ class CardHundredSeven(unittest.TestCase):
         self.assertTrue(app.map["Iraq"].is_fair())
 
 
-class CardHundredEight(unittest.TestCase):
+class CardHundredEight(LabyrinthTest):
     """Musharraf"""
 
     def test_playable(self):
@@ -9529,7 +9544,7 @@ class CardHundredEight(unittest.TestCase):
         app.map["Pakistan"].sleeperCells = 1
         app.map["Pakistan"].make_good()
         app.deck["108"].playEvent("US", app)
-        self.assertTrue(app.map["Pakistan"].totalCells(True) == 0)
+        self.assertCells(app, "Pakistan", 0, True)
         self.assertTrue(app.map["Pakistan"].is_poor())
         self.assertTrue(app.map["Pakistan"].is_ally())
 
@@ -9539,12 +9554,12 @@ class CardHundredEight(unittest.TestCase):
         app.map["Pakistan"].make_islamist_rule()
         app.map["Pakistan"].make_adversary()
         app.deck["108"].playEvent("Jihadist", app)
-        self.assertTrue(app.map["Pakistan"].totalCells(True) == 2)
+        self.assertCells(app, "Pakistan", 2, True)
         self.assertTrue(app.map["Pakistan"].is_poor())
         self.assertTrue(app.map["Pakistan"].is_ally())
 
 
-class CardHundredNine(unittest.TestCase):
+class CardHundredNine(LabyrinthTest):
     """Tora Bora"""
 
     def test_playable(self):
@@ -9569,7 +9584,7 @@ class CardHundredNine(unittest.TestCase):
         app.map["Pakistan"].sleeperCells = 2
         app.map["Pakistan"].regimeChange = 1
         app.deck["109"].playEvent("US", app)
-        self.assertTrue(app.map["Pakistan"].totalCells(True) == 0)
+        self.assertCells(app, "Pakistan", 0, True)
         self.assertTrue(app.prestige != 7)
 
         app = Labyrinth(1, 1, testBlankScenarioSetup)
@@ -9577,7 +9592,7 @@ class CardHundredNine(unittest.TestCase):
         app.map["Pakistan"].sleeperCells = 2
         app.map["Pakistan"].regimeChange = 1
         app.deck["109"].playEvent("Jihadist", app)
-        self.assertTrue(app.map["Pakistan"].totalCells(True) == 0)
+        self.assertCells(app, "Pakistan", 0, True)
         self.assertTrue(app.prestige != 7)
 
         app = Labyrinth(1, 1, testBlankScenarioSetup, ["Iraq"])
@@ -9589,11 +9604,11 @@ class CardHundredNine(unittest.TestCase):
         app.map["Iraq"].regimeChange = 1
         print "Choose Iraq"
         app.deck["109"].playEvent("US", app)
-        self.assertTrue(app.map["Iraq"].totalCells(True) == 0)
+        self.assertCells(app, "Iraq", 0, True)
         self.assertTrue(app.prestige != 7)
 
 
-class CardHundredTen(unittest.TestCase):
+class CardHundredTen(LabyrinthTest):
     """Zarqawi"""
 
     def test_playable(self):
@@ -9648,7 +9663,7 @@ class CardHundredTen(unittest.TestCase):
         self.assertTrue(app.map["Iraq"].plots == 1)
 
 
-class CardHundredEleven(unittest.TestCase):
+class CardHundredEleven(LabyrinthTest):
     """Zawahiri"""
 
     def test_playable(self):
@@ -9694,7 +9709,7 @@ class CardHundredEleven(unittest.TestCase):
         self.assertTrue(app.prestige == 4)
 
 
-class CardHundredTwelve(unittest.TestCase):
+class CardHundredTwelve(LabyrinthTest):
     """Bin Ladin"""
 
     def test_playable(self):
@@ -9740,7 +9755,7 @@ class CardHundredTwelve(unittest.TestCase):
         self.assertTrue(app.prestige == 3)
 
 
-class CardHundredThirteen(unittest.TestCase):
+class CardHundredThirteen(LabyrinthTest):
     """Darfur"""
 
     def test_playable(self):
@@ -9814,7 +9829,7 @@ class CardHundredThirteen(unittest.TestCase):
         self.assertTrue(app.map["Sudan"].is_neutral())
 
 
-class CardHundredFourteen(unittest.TestCase):
+class CardHundredFourteen(LabyrinthTest):
     """GTMO"""
 
     def test_playable(self):
@@ -9838,7 +9853,7 @@ class CardHundredFourteen(unittest.TestCase):
         self.assertTrue(app.prestige != 7)
 
 
-class CardHundredFifteen(unittest.TestCase):
+class CardHundredFifteen(LabyrinthTest):
     """Hambali"""
 
     def test_playable(self):
@@ -9953,7 +9968,7 @@ class CardHundredFifteen(unittest.TestCase):
         self.assertTrue(app.map["Indonesia/Malaysia"].plots == 1)
 
 
-class CardHundredSixteen(unittest.TestCase):
+class CardHundredSixteen(LabyrinthTest):
     """KSM"""
 
     def test_playable(self):
@@ -10021,7 +10036,7 @@ class CardHundredSixteen(unittest.TestCase):
         self.assertTrue(app.map["United States"].plots == 1)
 
 
-class CardHundredSeventeen(unittest.TestCase):
+class CardHundredSeventeen(LabyrinthTest):
     """Oil Price Spike"""
 
     def test_playable(self):
@@ -10045,7 +10060,7 @@ class CardHundredSeventeen(unittest.TestCase):
         self.assertTrue(app.countryResources("Saudi Arabia") == 5)
 
 
-class CardHundredEightteen(unittest.TestCase):
+class CardHundredEightteen(LabyrinthTest):
     """Oil Price Spike"""
 
     def test_playable(self):
@@ -10069,7 +10084,7 @@ class CardHundredEightteen(unittest.TestCase):
         self.assertTrue(app.countryResources("Saudi Arabia") == 5)
 
 
-class CardHundredNineteen(unittest.TestCase):
+class CardHundredNineteen(LabyrinthTest):
     """Saleh"""
 
     def test_playable(self):
@@ -10103,7 +10118,7 @@ class CardHundredNineteen(unittest.TestCase):
         self.assertTrue(app.map["Yemen"].besieged == 1)
 
 
-class CardHundredTwenty(unittest.TestCase):
+class CardHundredTwenty(LabyrinthTest):
     """US Election"""
 
     def test_playable(self):
@@ -10133,7 +10148,7 @@ class CardHundredTwenty(unittest.TestCase):
         self.assertTrue(app.prestige != 7)
 
 
-class TestGovernanceClass(unittest.TestCase):
+class TestGovernanceClass(LabyrinthTest):
 
     def test_with_good_index(self):
         gov = Governances.with_index(2)
@@ -10184,7 +10199,7 @@ class TestGovernanceClass(unittest.TestCase):
         hash(gov)
 
 
-class TestCountry(unittest.TestCase):
+class TestCountry(LabyrinthTest):
 
     def test_improve_country_from_fair_to_good(self):
         # Set up
@@ -10203,7 +10218,22 @@ class TestCountry(unittest.TestCase):
         self.assertEqual(0, country.regimeChange)
 
 
-class Disrupt(unittest.TestCase):
+class DieRollerTest(LabyrinthTest):
+
+    def test_rolls_correct_number_of_times(self):
+        roller = DieRoller()
+        times = 5
+        results = roller.roll(times)
+        self.assertEqual(len(results), times)
+
+    def test_rolls_are_within_correct_range(self):
+        roller = DieRoller()
+        results = roller.roll(1000)
+        for roll in results:
+            self.assertTrue(1 <= roll <= 6)
+
+
+class Disrupt(LabyrinthTest):
 
     def test_cannot_disrupt_in_neutral_muslim_country_with_no_troops(self):
         # Set up

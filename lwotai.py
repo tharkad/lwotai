@@ -119,6 +119,17 @@ class Alignments:
     NEUTRAL = Alignment("Neutral")
 
 
+class DieRoller:
+    """Rolls the die"""
+
+    def __init__(self):
+        pass
+
+    def roll(self, times):
+        """Rolls a d6 the given number of times and returns a list of the results"""
+        return [random.randint(1, 6) for i in range(times)]
+
+
 class Governance:
     def __init__(self, name, max_success_roll, levels_above_poor):
         self.__name = Utils.require_type(name, str)
@@ -1023,7 +1034,7 @@ class Card:
             return False
         return False
     
-    def playEvent(self, side, app):
+    def playEvent(self, side, app, die_roller = DieRoller()):
         app.outputToHistory("Card played for Event.", True)
         if self.type == "US" and side == "Jihadist":
             return False
@@ -1619,9 +1630,7 @@ class Card:
                     app.outputToHistory("No cards left to recruit to US.", True)
                     return
                 ops = app.deck[str(cardNum)].ops
-                rolls = []
-                for i in range(ops):
-                    rolls.append(random.randint(1,6))
+                rolls = die_roller.roll(ops)
                 app.executeRecruit("United States", ops, rolls, 2)
             elif self.number == 49: # Al-Ittihad al-Islami
                 app.placeCells("Somalia", 1)
@@ -3913,7 +3922,7 @@ class Labyrinth(cmd.Cmd):
         cells = self.numCellsAvailable(isMadrassas or isJihadistVideos)
 
         cellsToRecruit = min(cellsRequested, cells)
-        if (self.map[country].regimeChange or self.map[country].is_islamist_rule()):
+        if self.map[country].regimeChange or self.map[country].is_islamist_rule():
             if self.map[country].regimeChange:
                 self.outputToHistory("Recruit to Regime Change country automatically successful.", False)
             else:
