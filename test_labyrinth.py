@@ -21,6 +21,12 @@ class LabyrinthTest(unittest.TestCase):
         """Asserts that the given country contains the given number of cells"""
         self.assertEqual(expected_cells, app.map[country].totalCells(include_sadr))
 
+    def assert_new_messages(self, app, message_count_before, expected_messages):
+        expected_message_count = len(expected_messages)
+        self.assertEquals(len(app.history), message_count_before + expected_message_count)
+        new_messages = app.history[-expected_message_count:]
+        self.assertEquals(new_messages, expected_messages)
+
 
 class FakeDieRoller(DieRoller):
     """Allows die rolls to be faked during unit tests"""
@@ -6740,7 +6746,14 @@ class Card18(LabyrinthTest):
 
     def test_event(self):
         app = Labyrinth(1, 1, testBlankScenarioSetup)
+        history_before = len(app.history)
         app.deck["18"].playEvent("US", app)
+        self.assert_new_messages(app, history_before, [
+            'Card played for Event.',
+            'Examine Jihadist hand. Do not change order of cards.',
+            'Conduct a 1-value operation (Use commands: alert, deploy, disrupt, reassessment, regime, withdraw, or woi).',
+            'You may now interrupt this action phase to play another card (Use the u command).'
+        ])
 
 
 class Card19(LabyrinthTest):
