@@ -136,7 +136,8 @@ class Randomizer:
     def __init__(self):
         pass
 
-    def pick(self, quantity, candidates):
+    @staticmethod
+    def pick(quantity, candidates):
         """Picks the given quantity of items from the given list of candidates"""
         assert quantity <= len(candidates)
         new_list = list(candidates)
@@ -465,7 +466,8 @@ class Country:
             return "Untested"
         return str(self.__governance)
 
-    def typePretty(self, theType):
+    @staticmethod
+    def typePretty(theType):
         if theType == "Non-Muslim":
             return "NM"
         elif theType == "Suni":
@@ -1886,8 +1888,7 @@ class Card:
                     app.testCountry(possibles[i])
                     # number of available cells does not matter for Jihadist Videos
                     # if app.cells > 0:
-                    rolls = []
-                    rolls.append(random.randint(1,6))
+                    rolls = [random.randint(1, 6)]
                     app.executeRecruit(possibles[i], 1, rolls, False, True)
             elif self.number == 83: # Kashmir
                 app.placeCells("Pakistan", 1)
@@ -2622,9 +2623,10 @@ class Labyrinth(cmd.Cmd):
         print "%d (Turn %s)" % (self.startYear + (self.turn - 1), self.turn)
         print ""
             
-    def debugPrint(self, str):
+    @staticmethod
+    def debugPrint(str):
         return
-        print str
+        # print str
         
     def outputToHistory(self, output, lineFeed = True):
         print output
@@ -3218,8 +3220,7 @@ class Labyrinth(cmd.Cmd):
             possible = []
             for country in self.map:
                 if input.lower() == country.lower():
-                    possible = []
-                    possible.append(country)
+                    possible = [country]
                     break
                 elif input.lower() in country.lower():
                     possible.append(country)
@@ -3273,7 +3274,7 @@ class Labyrinth(cmd.Cmd):
                 if input.lower() == "w" or input.lower() == "wmd":
                     return "WMD"
                 input = int(input)
-                if input <= 3 and input >= 1:
+                if 1 <= input <= 3:
                     return input
                 else:
                     print "Enter 1, 2, 3 or W for WMD."
@@ -3292,7 +3293,7 @@ class Labyrinth(cmd.Cmd):
                     print "Roll: %d" % roll
                     return roll
                 input = int(input)
-                if 1 <= input and input <= 6:
+                if 1 <= input <= 6:
                     return input
                 else:
                     raise
@@ -4033,11 +4034,12 @@ class Labyrinth(cmd.Cmd):
     def adjacentCountryHasCell(self, targetCountry):
         for country in self.map:
             if self.isAdjacent(targetCountry, country):
-                if (self.map[country].totalCells(True) > 0):
+                if self.map[country].totalCells(True) > 0:
                     return True
         return False
     
-    def inLists(self, country, lists):
+    @staticmethod
+    def inLists(country, lists):
         for list in lists:
             if country in lists:    
                 return True
@@ -4079,7 +4081,7 @@ class Labyrinth(cmd.Cmd):
             
     def travelDestinations(self, ops, isRadicalization = False):
         dests = []
-    # A non-Islamist Rule country with Regime Change, Besieged Regime, or Aid, if any
+        # A non-Islamist Rule country with Regime Change, Besieged Regime, or Aid, if any
         if not isRadicalization:
             subdests = []
             for country in self.map:
@@ -4094,7 +4096,7 @@ class Labyrinth(cmd.Cmd):
             if len(dests) == ops:
                 return dests
             
-    # A Poor country where Major Jihad would be possible if two (or fewer) cells were added.
+        # A Poor country where Major Jihad would be possible if two (or fewer) cells were added.
         subdests = []
         for country in self.map:
             if (self.map[country].is_poor()) and (((self.map[country].totalCells(True) + 2) - self.map[country].troops()) >= self.excessCellsNeededForMajorJihad()):
@@ -4108,10 +4110,10 @@ class Labyrinth(cmd.Cmd):
         if len(dests) == ops:
             return dests
             
-    # A Good or Fair Muslim country with at least one cell adjacent.
+        # A Good or Fair Muslim country with at least one cell adjacent.
         subdests = []
         for country in self.map:
-            if ((self.map[country].is_good()) or (self.map[country].is_fair())) and ((self.map[country].type == "Suni") or (self.map[country].type == "Shia-Mix")):
+            if (self.map[country].is_good() or self.map[country].is_fair()) and self.map[country].is_muslim():
                 if self.adjacentCountryHasCell(country):
                     if (not isRadicalization) and ("Biometrics" in self.lapsing) and (not self.adjacentCountryHasCell(country)):
                         continue
@@ -4123,7 +4125,7 @@ class Labyrinth(cmd.Cmd):
         if len(dests) == ops:
             return dests
     
-    # An unmarked non-Muslim country if US Posture is Hard, or a Soft non-Muslim country if US Posture is Soft.
+        # An unmarked non-Muslim country if US Posture is Hard, or a Soft non-Muslim country if US Posture is Soft.
         subdests = []
         if self.map["United States"].posture == "Hard":
             for country in self.map:
@@ -4317,10 +4319,7 @@ class Labyrinth(cmd.Cmd):
             self.outputToHistory("%s tested, governance %s" % (self.map[country].name, self.map[country].govStr()), False)
             
     def getCountriesWithUSPostureByGovernance(self):
-        dict = {}
-        dict[GOOD] = []
-        dict[FAIR] = []
-        dict[POOR] = []
+        dict = {GOOD: [], FAIR: [], POOR: []}
         for country in self.map:
             if (country != "United States") and (self.map[country].posture == self.map["United States"].posture):
                 if self.map[country].is_good():
@@ -4332,10 +4331,7 @@ class Labyrinth(cmd.Cmd):
         return dict
     
     def getCountriesWithTroopsByGovernance(self):
-        dict = {}
-        dict[GOOD] = []
-        dict[FAIR] = []
-        dict[POOR] = []
+        dict = {GOOD: [], FAIR: [], POOR: []}
         for country in self.map:
             if self.map[country].troops() > 0:
                 if self.map[country].is_good():
@@ -4347,10 +4343,7 @@ class Labyrinth(cmd.Cmd):
         return dict
     
     def getCountriesWithAidByGovernance(self):
-        dict = {}
-        dict[GOOD] = []
-        dict[FAIR] = []
-        dict[POOR] = []
+        dict = {GOOD: [], FAIR: [], POOR: []}
         for country in self.map:
             if self.map[country].aid > 0:
                 if self.map[country].is_good():
@@ -4362,10 +4355,7 @@ class Labyrinth(cmd.Cmd):
         return dict
     
     def getNonMuslimCountriesByGovernance(self):
-        dict = {}
-        dict[GOOD] = []
-        dict[FAIR] = []
-        dict[POOR] = []
+        dict = {GOOD: [], FAIR: [], POOR: []}
         for country in self.map:
             if (country != "United States") and (self.map[country].type == "Non-Muslim"):
                 if self.map[country].is_good():
@@ -4918,7 +4908,7 @@ class Labyrinth(cmd.Cmd):
         print ""
         print "Contries with Troops"
         print "--------------------"
-        if needed == None:
+        if needed is None:
             needed = 0
         if self.troops > needed:
             print "Troop Track: %d" % self.troops
@@ -5115,8 +5105,7 @@ class Labyrinth(cmd.Cmd):
             possible = []
             for country in self.map:
                 if rest.lower() == country.lower():
-                    possible = []
-                    possible.append(country)
+                    possible = [country]
                     break
                 elif rest.lower() in country.lower():
                     possible.append(country)
@@ -5290,7 +5279,8 @@ class Labyrinth(cmd.Cmd):
         print "%d (Turn %s)" % (self.startYear + (self.turn - 1), self.turn)
         print ""
         
-    def help_status(self):
+    @staticmethod
+    def help_status():
         print "Display game status.  status [country] will print out status of single country."
         print ""
         
@@ -5376,7 +5366,8 @@ class Labyrinth(cmd.Cmd):
             print "Lapsing: %s" % ", ".join(self.lapsing)
         print ""
         
-    def help_summary(self):
+    @staticmethod
+    def help_summary():
         print "Display summary of game status."
         print ""
         
@@ -5386,8 +5377,8 @@ class Labyrinth(cmd.Cmd):
     def help_sum(self):
         self.help_summary()
 
-
-    def help_adjust(self):
+    @staticmethod
+    def help_adjust():
         print "Adjust game settings - no rule checking applied."
         print ""
 
@@ -5396,26 +5387,25 @@ class Labyrinth(cmd.Cmd):
         
     def getAdjustFromUser(self):
         while True:
-            input = self.my_raw_input("Enter 'ideology', 'prestige', 'funding', 'lapsing', 'marker' or country ?: ")
-            if input == "":
+            input_str = self.my_raw_input("Enter 'ideology', 'prestige', 'funding', 'lapsing', 'marker' or country ?: ")
+            if input_str == "":
                 return ""
-            if input.lower() == "ideology" or input.lower() == "ide" :
+            if input_str.lower() == "ideology" or input_str.lower() == "ide" :
                 return "ideology"
-            if input.lower() == "prestige" or input.lower() == "pre" :
+            if input_str.lower() == "prestige" or input_str.lower() == "pre" :
                 return "prestige"
-            if input.lower() == "funding" or input.lower() == "fun" :
+            if input_str.lower() == "funding" or input_str.lower() == "fun" :
                 return "funding"
-            if input.lower() == "lapsing" or input.lower() == "lap" :
+            if input_str.lower() == "lapsing" or input_str.lower() == "lap" :
                 return "lapsing"
-            if input.lower() == "marker" or input.lower() == "mar" :
+            if input_str.lower() == "marker" or input_str.lower() == "mar" :
                 return "marker"
             possible = []
             for country in self.map:
-                if input.lower() == country.lower():
-                    possible = []
-                    possible.append(country)
+                if input_str.lower() == country.lower():
+                    possible = [country]
                     break
-                elif input.lower() in country.lower():
+                elif input_str.lower() in country.lower():
                     possible.append(country)
             if len(possible) == 0:
                 print "Unrecognized response."
@@ -5430,22 +5420,22 @@ class Labyrinth(cmd.Cmd):
         while True:
             print "Ideologies are:"
             print "(1) Normal"
-            print "(2) Coherent: Plot success places 2 Plots"
+            print "(2) Coherent:   Plot success places 2 Plots"
             print "(3) Attractive: ...and Recruit success places 2 cells"
-            print "(4) Potent: ...and Major Jihad if 3 or more cells than troops"
+            print "(4) Potent:     ...and Major Jihad if 3 or more cells than troops"
             print "(5) Infectious: ...and US plays all its cards (not enforced by program)"
-            print "(6) Virulent: ...and Jihad failure does not remove cells"
-            input = self.my_raw_input("Enter new ideology (1-6): ")
-            if input == "":
+            print "(6) Virulent:   ...and Jihad failure does not remove cells"
+            input_str = self.my_raw_input("Enter new ideology (1-6): ")
+            if input_str == "":
                 return ""
             try:
-                input = int(input)
-                if input < 1 or input > 6:
-                    print "Invalid prestige value - ", input
+                input_int = int(input_str)
+                if input_int < 1 or input_int > 6:
+                    print "Invalid prestige value - ", input_int
                 else:
-                    return input
+                    return input_int
             except:
-                print "Invalid ideology value - ", input
+                print "Invalid ideology value - ", input_str
             
     def adjustIdeology(self):
         print "Adjusting ideology"
@@ -6001,7 +5991,8 @@ class Labyrinth(cmd.Cmd):
                     print ""
         self.handleDisrupt(where)
 
-    def help_disrupt(self):
+    @staticmethod
+    def help_disrupt():
         print "Disrupt Cells or Cadre."
         print ""
 
@@ -6051,7 +6042,8 @@ class Labyrinth(cmd.Cmd):
             self.outputToHistory("Modified Roll: %d" % modRoll)
             self.handleMuslimWoI(modRoll, where)
                 
-    def help_woi(self):
+    @staticmethod
+    def help_woi():
         print "Conduct War of Ideas operation."
         
     def do_alert(self, rest):
@@ -6069,7 +6061,8 @@ class Labyrinth(cmd.Cmd):
                     where = input
         self.handleAlert(where)
                     
-    def help_alert(self):
+    @staticmethod
+    def help_alert():
         print "Alert an active Plot."
 
     def do_alr(self, rest):
@@ -6081,7 +6074,8 @@ class Labyrinth(cmd.Cmd):
     def do_reassessment(self, rest):
         self.handleReassessment()
                     
-    def help_reassessment(self):
+    @staticmethod
+    def help_reassessment():
         print "Reassessment of US Posture."
 
     def do_rea(self, rest):
@@ -6150,7 +6144,8 @@ class Labyrinth(cmd.Cmd):
         preThirdRoll = self.getRollFromUser("Enter third die for Prestige roll or r to have program roll: ")
         self.handleRegimeChange(where, moveFrom, howMany, govRoll, (preFirstRoll, preSecondRoll, preThirdRoll))
         
-    def help_regime(self):
+    @staticmethod
+    def help_regime():
         print "Regime Change in Islamist Rule Country."
                 
     def do_reg(self, rest):
@@ -6205,7 +6200,8 @@ class Labyrinth(cmd.Cmd):
         preThirdRoll = self.getRollFromUser("Enter third die for Prestige roll or r to have program roll: ")
         self.handleWithdraw(moveFrom, moveTo, howMany, (preFirstRoll, preSecondRoll, preThirdRoll))
 
-    def help_withdraw(self):
+    @staticmethod
+    def help_withdraw():
         print "Withdraw Troops from Regime Change Country."
                 
     def do_wit(self, rest):
@@ -6263,7 +6259,8 @@ class Labyrinth(cmd.Cmd):
         if self.jCard
     '''    
 
-    def help_j(self):
+    @staticmethod
+    def help_j():
         print "Enter the number of the Jihadist card when it is their card play."
 
     def do_u(self, rest):
@@ -6315,7 +6312,8 @@ class Labyrinth(cmd.Cmd):
             self.outputToHistory("Unplayable %s Event" % self.deck[str(cardNum)].type, False)
             print "%d Ops available. Use commands: alert, deploy, disrupt, reassessment, regime, withdraw, or woi" % self.deck[str(cardNum)].ops
                     
-    def help_u(self):
+    @staticmethod
+    def help_u():
         print "Enter the number of the US card when it is your card play."
 
     def do_plot(self, rest):
@@ -6371,7 +6369,8 @@ class Labyrinth(cmd.Cmd):
             self.outputToHistory("[[ No unblocked plots to resolve ]]", True)
         self.backlashInPlay = False
         
-    def help_plot(self):
+    @staticmethod
+    def help_plot():
         print "Use this command after the US Action Phase to resolve any unblocked plots."
 
     def do_turn(self, rest):
@@ -6458,16 +6457,19 @@ class Labyrinth(cmd.Cmd):
         self.outputToHistory("", False)        
         self.outputToHistory("[[ %d (Turn %s) ]]" % (self.startYear + (self.turn - 1), self.turn), False)
         
-    def help_turn(self):
+    @staticmethod
+    def help_turn():
         print "Use this command at the end of the turn."
         
-    def help_undo(self):
+    @staticmethod
+    def help_undo():
         print "Rolls back to last card played."
 
     def do_undo(self, args):
         self.undo = self.getYesNoFromUser("Undo to last card played? (y/n): ")
     
-    def help_quit(self):
+    @staticmethod
+    def help_quit():
         print "Quits game and prompt to save."
 
     def do_quit(self, args):
@@ -6495,7 +6497,8 @@ class Labyrinth(cmd.Cmd):
     def help_roll(self):
         self.help_rollback()
         
-    def help_rollback(self):
+    @staticmethod
+    def help_rollback():
         print "Roll back to any previous turn in the game."
         
     def do_rollback(self, args):
@@ -6563,7 +6566,6 @@ def main():
         if res:
             loadfile = 1
     
-    
     if loadfile == 0:
         while scenario == 0:
             try:
@@ -6572,10 +6574,10 @@ def main():
                 print "(2) You Can Call Me Al"
                 print "(3) Anaconda"
                 print "(4) Mission Accomplished?"
-                input = raw_input("Enter choice: ")
-                input = int(input)
-                if input >= 1 and input <= 5:
-                    scenario = input
+                input_str = raw_input("Enter choice: ")
+                input_int = int(input_str)
+                if 1 <= input_int <= 5:
+                    scenario = input_int
                     print ""
                 else:
                     raise
@@ -6592,14 +6594,14 @@ def main():
                 print "(4) Potent: ...and Major Jihad if 3 or more cells than troops"
                 print "(5) Infectious: ...and US plays all its cards (not enforced by program)"
                 print "(6) Virulent: ...and Jihad failure does not remove cells"
-                input = raw_input("Enter choice: ")
-                input = int(input)
-                if input >= 1 and input <= 6:
-                    ideology = input
+                input_str = raw_input("Enter choice: ")
+                input_int = int(input_str)
+                if 1 <= input_int <= 6:
+                    ideology = input_int
                     print ""
                 else:
                     raise
-            except:
+            except ValueError:
                 print "Entry error"
                 print ""
         
@@ -6616,7 +6618,7 @@ def main():
         
     
     rollback = True
-    while rollback == True:
+    while rollback:
     
         app.cmdloop()
         
