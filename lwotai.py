@@ -130,6 +130,20 @@ class DieRoller:
         return [random.randint(1, 6) for i in range(times)]
 
 
+class Randomizer:
+    """Picks things at random"""
+
+    def __init__(self):
+        pass
+
+    def pick(self, quantity, candidates):
+        """Picks the given quantity of items from the given list of candidates"""
+        assert quantity <= len(candidates)
+        new_list = list(candidates)
+        random.shuffle(new_list)
+        return new_list[0:quantity]
+
+
 class Governance:
     def __init__(self, name, max_success_roll, levels_above_poor):
         self.__name = Utils.require_type(name, str)
@@ -1220,7 +1234,7 @@ class Card:
                         app.outputToHistory("There are no cells in Russia or Central Asia.", False)    
                 app.outputToHistory("Shuffle Jihadist hand.", True)
             elif self.number == 18: # Intel Community
-                app.outputToHistory("Examine Jihadist hand.  Do not change order of cards.", False)
+                app.outputToHistory("Examine Jihadist hand. Do not change order of cards.", False)
                 app.outputToHistory("Conduct a 1-value operation (Use commands: alert, deploy, disrupt, reassessment, regime, withdraw, or woi).", False)
                 app.outputToHistory("You may now interrupt this action phase to play another card (Use the u command).", True)
             elif self.number == 19: # Kemalist Republic
@@ -2497,7 +2511,7 @@ class Labyrinth(cmd.Cmd):
     backlashInPlay = False
     testUserInput = []
 
-    def __init__(self, scenario, ideology, setup_function = None, test_user_input = []):
+    def __init__(self, scenario, ideology, setup_function = None, test_user_input = [], **kwargs):
         cmd.Cmd.__init__(self)
         self.scenario = scenario
         self.ideology = ideology
@@ -2520,6 +2534,7 @@ class Labyrinth(cmd.Cmd):
         self.validLapsingMarkers = []
         self.whichPlayer= ""
         self.testUserInput = test_user_input
+        self.randomizer = kwargs.get('randomizer', Randomizer())
         if setup_function:
             setup_function(self)
         else:
@@ -4143,35 +4158,26 @@ class Labyrinth(cmd.Cmd):
                 dests.append(random.choice(self.map.keys()))        
         
         return dests
+
+    def names_of_countries(self, predicate):
+        """Returns the names of countries matching the given predicate"""
+        return [country for country in self.map if predicate(self.map[country])]
     
     def travelDestinationsSchengenVisas(self):
-        dests = []
-    # An unmarked non-Muslim country if US Posture is Hard, or a Soft non-Muslim country if US Posture is Soft.
-        subdests = []
+        """
+        Returns the names of countries that are valid travel
+        destinations for the Schengen Visas event
+        """
         if self.map["United States"].posture == "Hard":
-            for country in self.map:
-                if self.map[country].schengen and self.map[country].posture == "":
-                    subdests.append(country)
-                    print "SCHENGEN:", country
+            candidates = self.names_of_countries(lambda c: c.schengen and c.posture == '')
         else:
-            for country in self.map:
-                if country != "United States" and self.map[country].schengen and self.map[country].posture == "Soft":
-                    subdests.append(country)
-        if len(subdests) == 1:
-            dests.append(subdests[0])
-            dests.append(subdests[0])
-        elif len(subdests) > 1:
-            random.shuffle(subdests)
-            dests.append(subdests[0])
-            dests.append(subdests[1])
-        elif len(subdests) == 0:
-            for country in self.map:
-                if self.map[country].schengen:
-                    subdests.append(country)
-            random.shuffle(subdests)
-            dests.append(subdests[0])
-            dests.append(subdests[1])
-        return dests
+            candidates = self.names_of_countries(lambda c: c.schengen and c.posture == 'Soft')
+        if len(candidates) == 1:
+            return [candidates[0], candidates[0]]  # yes, same one twice
+        if len(candidates) > 1:
+            return self.randomizer.pick(2, candidates)
+        schengens = self.names_of_countries(lambda c: c.schengen)
+        return self.randomizer.pick(2, schengens)
     
     def travelSourceChooseBasedOnPriority(self, countryList, i, destinations):
         subPossibles = []
@@ -4371,10 +4377,7 @@ class Labyrinth(cmd.Cmd):
         return dict
     
     def getMuslimCountriesByGovernance(self):
-        dict = {}
-        dict[GOOD] = []
-        dict[FAIR] = []
-        dict[POOR] = []
+        dict = {GOOD: [], FAIR: [], POOR: []}
         for country in self.map:
             if self.map[country].type != "Non-Muslim":
                 if self.map[country].is_good():
