@@ -439,6 +439,10 @@ class Country:
         if "Sadr" in self.markers:
             total += 1
         return total
+
+    def reduce_aid_by(self, aid_lost):
+        """Reduces the level of aid by the given amount, but not below zero"""
+        self.aid = max(self.aid - aid_lost, 0)
     
     def removeActiveCell(self):
         self.activeCells -= 1
@@ -3742,67 +3746,67 @@ class Labyrinth(cmd.Cmd):
     def executeJihad(self, country, rollList):
         successes = 0
         failures = 0
-        originalBesieged = self.map[country].besieged    #20150303PS save besieged status in case changed by major jihad failure
+        target_country = self.map[country]
+        originalBesieged = target_country.besieged    #20150303PS save besieged status in case changed by major jihad failure
         for roll in rollList:
-            if self.map[country].is_non_recruit_success(roll):
+            if target_country.is_non_recruit_success(roll):
                 successes += 1
             else:
                 failures += 1
+        target_country.reduce_aid_by(successes)  # Same for major and minor
         isMajorJihad = country in self.majorJihadPossible(len(rollList))
         self.outputToHistory("Jihad operation.  %d Successes rolled, %d Failures rolled" % (successes, failures), False)
         if isMajorJihad: # all cells go active
             self.outputToHistory("* Major Jihad attempt in %s" % country, False) 
-            sleepers = self.map[country].sleeperCells
-            self.map[country].sleeperCells = 0
-            self.map[country].activeCells += sleepers
+            sleepers = target_country.sleeperCells
+            target_country.sleeperCells = 0
+            target_country.activeCells += sleepers
             self.outputToHistory("All cells go Active", False)
-            if ((failures >= 2  and self.map[country].besieged == 0) or (failures == 3 and self.map[country].besieged == 1))  and (len(rollList) == 3) and self.map[country].is_poor():
+            if ((failures >= 2  and target_country.besieged == 0) or (failures == 3 and target_country.besieged == 1))  and (len(rollList) == 3) and target_country.is_poor():
                 self.outputToHistory("Major Jihad Failure", False) 
-                self.map[country].besieged = 1
+                target_country.besieged = 1
                 self.outputToHistory("Besieged Regime", False) 
-                if self.map[country].is_adversary():
-                    self.map[country].make_neutral()
-                elif self.map[country].is_neutral():
-                    self.map[country].make_ally()
-                self.outputToHistory("Alignment %s" % self.map[country].alignment(), False)
+                if target_country.is_adversary():
+                    target_country.make_neutral()
+                elif target_country.is_neutral():
+                    target_country.make_ally()
+                self.outputToHistory("Alignment %s" % target_country.alignment(), False)
         else: # a cell is active for each roll
             self.outputToHistory("* Minor Jihad attempt in %s" % country, False) 
-            for i in range(len(rollList) - self.map[country].numActiveCells()):
+            for i in range(len(rollList) - target_country.numActiveCells()):
                 self.outputToHistory("Cell goes Active", False)
-                self.map[country].sleeperCells -= 1
-                self.map[country].activeCells += 1
-        while successes > 0 and self.map[country].governance_is_better_than(POOR):
-            self.map[country].worsenGovernance()
+                target_country.sleeperCells -= 1
+                target_country.activeCells += 1
+        while successes > 0 and target_country.governance_is_better_than(POOR):
+            target_country.worsenGovernance()
             successes -= 1
-            self.outputToHistory("Governance to %s" % self.map[country].govStr(), False)
-            if self.map[country].aid > 0:        #20150131PS reduce by 1 rather than set to 0
-                self.map[country].aid -= 1
+            self.outputToHistory("Governance to %s" % target_country.govStr(), False)
         if isMajorJihad and ((successes >= 2) or ((originalBesieged > 0) and (successes >= 1))) : # Major Jihad
             self.outputToHistory("Islamist Revolution in %s" % country, False)
-            self.map[country].make_islamist_rule()
+            target_country.make_islamist_rule()
             self.outputToHistory("Governance to Islamist Rule", False)
-            self.map[country].make_adversary()
+            target_country.make_adversary()
             self.outputToHistory("Alignment to Adversary", False) 
-            self.map[country].regimeChange = 0
-            if self.map[country].besieged > 0:
+            target_country.regimeChange = 0
+            if target_country.besieged > 0:
                 self.outputToHistory("Besieged Regime marker removed.", False) 
                 
-            self.map[country].besieged = 0
-            self.map[country].aid = 0
+            target_country.besieged = 0
+            target_country.aid = 0
             self.funding = min(9, self.funding + self.countryResources(country))
             self.outputToHistory("Funding now %d" % self.funding, False) 
-            if self.map[country].troops() > 0:
+            if target_country.troops() > 0:
                 self.prestige = 1
                 self.outputToHistory("Troops present so US Prestige now 1", False) 
         if self.ideology <= 5:
             for i in range(failures):
-                if self.map[country].numActiveCells() > 0:
-                    self.map[country].removeActiveCell()
+                if target_country.numActiveCells() > 0:
+                    target_country.removeActiveCell()
                 else:
-                    self.map[country].sleeperCells -= 1        
+                    target_country.sleeperCells -= 1
                     self.outputToHistory("Sleeper cell Removed to Funding Track", False)
                     self.cells += 1
-        self.outputToHistory(self.map[country].countryStr(), False) 
+        self.outputToHistory(target_country.countryStr(), False)
         print ""
         
     def handleJihad(self, country, ops):
