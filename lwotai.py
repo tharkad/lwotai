@@ -5287,9 +5287,8 @@ class Labyrinth(cmd.Cmd):
         
     @staticmethod
     def help_status():
-        print "Display game status.  status [country] will print out status of single country."
-        print ""
-        
+        print "Display game status.  status [country] will print out status of single country.\n"
+
     def do_sta(self, rest):
         """Alias for the 'status' command"""
         self.do_status(rest)
@@ -5375,9 +5374,8 @@ class Labyrinth(cmd.Cmd):
         
     @staticmethod
     def help_summary():
-        print "Display summary of game status."
-        print ""
-        
+        print "Display summary of game status.\n"
+
     def do_sum(self, rest):
         self.do_summary(rest)
         
@@ -5386,8 +5384,7 @@ class Labyrinth(cmd.Cmd):
 
     @staticmethod
     def help_adjust():
-        print "Adjust game settings - no rule checking applied."
-        print ""
+        print "Adjust game settings - no rule checking applied.\n"
 
     def help_adj(self):
         self.help_adjust()
@@ -5883,10 +5880,10 @@ class Labyrinth(cmd.Cmd):
             print str
         print ""
 
-    def help_history(self):
-        print "Display Game History.  Type 'history save' to save history to a file called history.txt."
-        print ""
-        
+    @staticmethod
+    def help_history():
+        print "Display Game History.  Type 'history save' to save history to a file called history.txt.\n"
+
     def do_his(self, rest):
         self.do_history(rest)
         
@@ -5962,10 +5959,10 @@ class Labyrinth(cmd.Cmd):
             troopsNow = self.map[moveTo].troops()
         self.outputToHistory("* %d troops deployed from %s (%d) to %s (%d)" % (howMany, moveFrom, troopsLeft, moveTo, troopsNow))
         
-    def help_deploy(self):
-        print "Move Troops"
-        print ""
-        
+    @staticmethod
+    def help_deploy():
+        print "Move Troops\n"
+
     def do_dep(self, rest):
         self.do_deploy(rest)
         
@@ -6000,8 +5997,7 @@ class Labyrinth(cmd.Cmd):
 
     @staticmethod
     def help_disrupt():
-        print "Disrupt Cells or Cadre."
-        print ""
+        print "Disrupt Cells or Cadre.\n"
 
     def do_dis(self, rest):
         self.do_disrupt(rest)
@@ -6051,7 +6047,7 @@ class Labyrinth(cmd.Cmd):
                 
     @staticmethod
     def help_woi():
-        print "Conduct War of Ideas operation."
+        print "Conduct War of Ideas operation.\n"
         
     def do_alert(self, rest):
         where = None
@@ -6070,7 +6066,7 @@ class Labyrinth(cmd.Cmd):
                     
     @staticmethod
     def help_alert():
-        print "Alert an active Plot."
+        print "Alert an active Plot.\n"
 
     def do_alr(self, rest):
         self.do_alert(rest)
@@ -6083,7 +6079,7 @@ class Labyrinth(cmd.Cmd):
                     
     @staticmethod
     def help_reassessment():
-        print "Reassessment of US Posture."
+        print "Reassessment of US Posture.\n"
 
     def do_rea(self, rest):
         self.do_reassessment(rest)
@@ -6153,7 +6149,7 @@ class Labyrinth(cmd.Cmd):
         
     @staticmethod
     def help_regime():
-        print "Regime Change in Islamist Rule Country."
+        print "Regime Change in Islamist Rule Country.\n"
                 
     def do_reg(self, rest):
         self.do_regime(rest)
@@ -6162,7 +6158,7 @@ class Labyrinth(cmd.Cmd):
         self.help_regime()
         
     def do_withdraw(self, rest):
-        if     self.map["United States"].posture == "Hard":
+        if self.map["United States"].posture == "Hard":
             print "No Withdrawal with US Posture Hard"
             print ""
             return
@@ -6209,7 +6205,7 @@ class Labyrinth(cmd.Cmd):
 
     @staticmethod
     def help_withdraw():
-        print "Withdraw Troops from Regime Change Country."
+        print "Withdraw Troops from Regime Change Country.\n"
                 
     def do_wit(self, rest):
         self.do_withdraw(rest)
@@ -6268,7 +6264,7 @@ class Labyrinth(cmd.Cmd):
 
     @staticmethod
     def help_j():
-        print "Enter the number of the Jihadist card when it is their card play."
+        print "Enter the number of the Jihadist card when it is their card play.\n"
 
     def do_u(self, rest):
         cardNum = None
@@ -6321,7 +6317,7 @@ class Labyrinth(cmd.Cmd):
                     
     @staticmethod
     def help_u():
-        print "Enter the number of the US card when it is your card play."
+        print "Enter the number of the US card when it is your card play.\n"
 
     def do_plot(self, rest):
         foundPlot = False
@@ -6378,7 +6374,7 @@ class Labyrinth(cmd.Cmd):
         
     @staticmethod
     def help_plot():
-        print "Use this command after the US Action Phase to resolve any unblocked plots."
+        print "Use this command after the US Action Phase to resolve any unblocked plots.\n"
 
     def do_turn(self, rest):
         self.SaveTurn()
@@ -6466,18 +6462,18 @@ class Labyrinth(cmd.Cmd):
         
     @staticmethod
     def help_turn():
-        print "Use this command at the end of the turn."
+        print "Use this command at the end of the turn.\n"
         
     @staticmethod
     def help_undo():
-        print "Rolls back to the last card played."
+        print "Rolls back to the last card played.\n"
 
     def do_undo(self, args):
         self.undo = self.getYesNoFromUser("Undo to last card played? (y/n): ")
     
     @staticmethod
     def help_quit():
-        print "Quits game and prompt to save."
+        print "Quits game and prompt to save.\n"
 
     def do_quit(self, args):
         if self.getYesNoFromUser("Save? (y/n): "):
@@ -6506,7 +6502,7 @@ class Labyrinth(cmd.Cmd):
         
     @staticmethod
     def help_rollback():
-        print "Roll back to any previous turn in the game."
+        print "Roll back to any previous turn in the game.\n"
         
     def do_rollback(self, args):
         self.rollturn = -1

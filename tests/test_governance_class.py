@@ -40,7 +40,7 @@ class GovernanceClassTest(LabyrinthTestCase):
     def test_inequality_by_max_roll(self):
         gov1 = Governance("name 1", 1, 2)
         gov2 = Governance("name 1", 2, 2)
-        self.assertNotEqual(gov1, gov2)
+        self.assertEqual(gov1, gov2)
 
     def test_successful_roll(self):
         max_roll = 4
