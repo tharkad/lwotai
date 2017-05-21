@@ -158,7 +158,7 @@ class Governance:
         self.__levels_above_poor = levels_above_poor
 
     def __eq__(self, other):
-        return isinstance(other, self.__class__) and other.__dict__ == self.__dict__
+        return isinstance(other, self.__class__) and other.__name == self.__name
 
     def __ne__(self, other):
         return not self.__eq__(other)
@@ -6470,7 +6470,7 @@ class Labyrinth(cmd.Cmd):
         
     @staticmethod
     def help_undo():
-        print "Rolls back to last card played."
+        print "Rolls back to the last card played."
 
     def do_undo(self, args):
         self.undo = self.getYesNoFromUser("Undo to last card played? (y/n): ")
@@ -6486,10 +6486,10 @@ class Labyrinth(cmd.Cmd):
 
         print "Exiting."
 
-    def Save(self, fname):
-        f = open(fname,'wb')
-        pickle.dump(self,f,2)
-        f.close()
+    def Save(self, save_file_name):
+        save_file = open(save_file_name, 'wb')
+        pickle.dump(self, save_file, 2)
+        save_file.close()
         
     def SaveUndo(self):
         self.Save(UNDO_FILE)
@@ -6621,6 +6621,7 @@ def main():
         f = open(SUSPEND_FILE,'rb')
         app = pickle.load(f)        
         app.stdout = sys.stdout
+        app.undo = False
         f.close()          
         
     
