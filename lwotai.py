@@ -1,18 +1,24 @@
-'''
+"""
 LWOTai - A Python implementation of the Single-Player AI for Labyrinth: the War on Terror by GMT Games.
 Mike Houser, 2011
 
 Thanks to Dave Horn for implementing the Save and Undo system.
 
-1. A save game is created after every single command whether you want it or not. If someone screws up and closes the window, pc battery dies, crashes, whatever, no problem, load it up again and you will be asked if you want to load the suspended game.
+1. A save game is created after every single command whether you want it or not. If someone screws up and closes the
+   window, PC battery dies, crashes, whatever, no problem, load it up again and you will be asked if you want to load
+   the suspended game.
 
-2. Rollback files are created at the beginning of each turn. You can rollback to any previous turn using 'roll' or 'rollback' command. You will be prompted to enter which turn you want to rollback to.
+2. Rollback files are created at the beginning of each turn. You can roll back to any previous turn using the 'roll' or
+   'rollback' command. You will be prompted to enter the turn to which you want to roll back.
 
-3. An undo file is created after every card played. Player can undo to the last card at any time (two exceptions) by typing 'undo'. Exceptions are when you load from a previously suspended game or after executing a rollback. The undo file is removed at that exact point to prevent player from undoing themselves to some other game in the past!
+3. An undo file is created after every card played. The player can undo to the last card at any time (with two
+   exceptions) by typing 'undo'. The exceptions are:
+   - when you load from a previously suspended game, or
+   - after executing a rollback. The undo file is removed at that exact point, to prevent the player from undoing
+     themselves to some other game from the past!
 
-Thanks to Peter Shaw for implementing the Adjust system and to bunch of bug fixes and cleanup.
-
-'''
+Thanks to Peter Shaw for implementing the Adjust system and for a bunch of bug fixes and cleanup.
+"""
 
 #    Change indicated by comment with 20150616PS:
 #    1. Made use of CTR consistent - was adding CRT but testing for CTR (reported by Morten Kristensen)
@@ -3800,7 +3806,7 @@ class Labyrinth(cmd.Cmd):
         print ""
         
     def handleJihad(self, country, ops):
-        '''Returns number of unused Ops'''
+        """Returns number of unused Ops"""
         cells = self.map[country].totalCells(True)
         rollList = []
         for i in range(min(cells, ops)):
@@ -3824,7 +3830,7 @@ class Labyrinth(cmd.Cmd):
         return "Benazir Bhutto" in self.markers
 
     def majorJihadPossible(self, ops):
-        '''Return list of countries where major jihad is possible.'''
+        """Return list of countries where major jihad is possible."""
         targets = []
         excessCellsNeeded = self.excessCellsNeededForMajorJihad()
         bhutto = self.bhutto_in_play()
@@ -3834,7 +3840,7 @@ class Labyrinth(cmd.Cmd):
         return targets
                 
     def majorJihadChoice(self, ops):
-        '''Return AI choice country.'''
+        """Return AI choice country."""
         possible = self.majorJihadPossible(ops)
         if possible == []:
             return False
@@ -5098,16 +5104,16 @@ class Labyrinth(cmd.Cmd):
                     if self.map[country].is_ally():
                         self.map[country].printCountry()
 
-    def do_status(self, rest):
+    def do_status(self, country_name):
         
-        if rest:
+        if country_name:
             goodCountry = False
             possible = []
             for country in self.map:
-                if rest.lower() == country.lower():
+                if country_name.lower() == country.lower():
                     possible = [country]
                     break
-                elif rest.lower() in country.lower():
+                elif country_name.lower() in country.lower():
                     possible.append(country)
             if len(possible) == 0:
                 print "Unrecognized country."
@@ -5285,6 +5291,7 @@ class Labyrinth(cmd.Cmd):
         print ""
         
     def do_sta(self, rest):
+        """Alias for the 'status' command"""
         self.do_status(rest)
         
     def help_sta(self):
