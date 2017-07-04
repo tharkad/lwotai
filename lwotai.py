@@ -5918,7 +5918,7 @@ class Labyrinth(cmd.Cmd):
                     print ""
                     return
                 else:
-                    print "Deploy from %s = %d availalbe" % (input, self.map[input].troops())
+                    print "Deploy from %s = %d available" % (input, self.map[input].troops())
                     print ""
                     available = self.map[input].troops()
                     moveFrom = input
@@ -6131,7 +6131,7 @@ class Labyrinth(cmd.Cmd):
                     print ""
                     return
                 else:
-                    print "Deploy from %s = %d availalbe" % (input, self.map[input].troops())
+                    print "Deploy from %s = %d available" % (input, self.map[input].troops())
                     print ""
                     available = self.map[input].troops()
                     moveFrom = input
