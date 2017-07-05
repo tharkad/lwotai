@@ -142,8 +142,7 @@ class Randomizer:
     def __init__(self):
         pass
 
-    @staticmethod
-    def pick(quantity, candidates):
+    def pick(self, quantity, candidates):
         """Picks the given quantity of items from the given list of candidates"""
         assert quantity <= len(candidates)
         new_list = list(candidates)
@@ -4613,7 +4612,7 @@ class Labyrinth(cmd.Cmd):
     # First box
         if opsRemaining > 0:
             if self.cells > 0:
-                country = random.choice(self.map.keys())
+                country = self.randomizer.pick(1, self.map.keys())
                 self.map[country].sleeperCells += 1
                 self.cells -= 1
                 self.outputToHistory("--> Cell placed in %s." % country, True)
