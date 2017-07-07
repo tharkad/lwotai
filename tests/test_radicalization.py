@@ -10,7 +10,7 @@ class RadicalizationTest(LabyrinthTestCase):
         # Set up
         country_name = "Iraq"
         fake_randomizer = FakeRandomizer()
-        fake_randomizer.set_choices(country_name)
+        fake_randomizer.set_choices([country_name])
         app = Labyrinth(1, 1, self.set_up_test_scenario, randomizer=fake_randomizer)
         country = app.map[country_name]
         country.cadre = 1
