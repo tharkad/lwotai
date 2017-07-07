@@ -1693,16 +1693,9 @@ class Card:
                 app.testCountry("China")
                 if app.cells > 0:
                     if app.map["China"].posture == "Soft":
-                        app.map["China"].sleeperCells += 1
-                        app.cells -= 1
-                        app.outputToHistory("Sleeper Cell placed in China", False)
-                        app.outputToHistory(app.map["China"].countryStr(), True)
+                        app.place_cell("China")
                     else:
-                        app.testCountry("Central Asia")
-                        app.map["Central Asia"].sleeperCells += 1
-                        app.cells -= 1
-                        app.outputToHistory("Sleeper Cell placed in Central Asia", False)
-                        app.outputToHistory(app.map["Central Asia"].countryStr(), True)
+                        app.place_cell("Central Asia")
                 else:
                     app.outputToHistory("No cells to place.", True)
             elif self.number == 56: # Vieira de Mello Slain
@@ -1717,9 +1710,7 @@ class Card:
                 app.outputToHistory("Al-Anbar in play.", True)
                 app.testCountry("Iraq")
                 if app.cells > 0:
-                    app.map["Iraq"].sleeperCells += 1
-                    app.cells -= 1
-                    app.outputToHistory("Sleeper Cell placed in Iraq", True)
+                    app.place_cell("Iraq")
             elif self.number == 59: # Amerithrax
                 app.outputToHistory("US side discards its highest-value US-associated event card, if it has any.", True)
             elif self.number == 60: # Bhutto Shot
@@ -1736,11 +1727,7 @@ class Card:
                         else:
                             target = input
                             break
-                    app.testCountry(target)
-                    app.map[target].sleeperCells += 1
-                    app.cells -= 1
-                    app.outputToHistory("Sleeper Cell placed in %s" % target, False)
-                    app.outputToHistory(app.map[target].countryStr(), True)
+                    app.place_cell(target)
                 app.outputToHistory("Draw a card for the Jihadist and put it on the top of their hand.", True)
             elif self.number == 62: # Ex-KGB
                 if "CTR" in app.map["Russia"].markers:
@@ -4626,12 +4613,8 @@ class Labyrinth(cmd.Cmd):
     # First box
         if opsRemaining > 0:
             if self.cells > 0:
-                country = self.randomizer.pick(1, self.map.keys())
-                self.map[country].sleeperCells += 1
-                self.cells -= 1
-                self.outputToHistory("--> Cell placed in %s." % country, True)
-                self.testCountry(country)
-                self.outputToHistory(self.map[country].countryStr(), True)
+                country_name = self.randomizer.pick_one(self.map.keys())
+                self.place_cell(country_name)
                 opsRemaining -= 1
     # Second box
         if opsRemaining > 0:
