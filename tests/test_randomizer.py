@@ -21,7 +21,15 @@ class RandomizerTest(TestCase):
         # Check
         self.assertEqual(picks, [])
 
-    def test_pick_one_item_from_single_item_list(self):
+    def test_pick_one_items_from_single_item_list(self):
+        # Invoke
+        item = 'Bob'
+        pick = self.randomizer.pick_one([item])
+
+        # Check
+        self.assertEqual(pick, item)
+
+    def test_pick_single_item_from_single_item_list(self):
         # Invoke
         picks = self.randomizer.pick(1, ['Bob'])
 

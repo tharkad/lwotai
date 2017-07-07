@@ -143,11 +143,15 @@ class Randomizer:
         pass
 
     def pick(self, quantity, candidates):
-        """Picks the given quantity of items from the given list of candidates"""
+        """Picks the given quantity of items from the given list of candidates (returns a list)"""
         assert quantity <= len(candidates)
         new_list = list(candidates)
         random.shuffle(new_list)
         return new_list[0:quantity]
+
+    def pick_one(self, candidates):
+        """Picks the one item from the given list of candidates (returns the item)"""
+        return self.pick(1, candidates)[0]
 
 
 class Governance:

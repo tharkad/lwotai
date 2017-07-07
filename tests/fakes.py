@@ -24,3 +24,7 @@ class FakeRandomizer(Randomizer):
     def pick(self, quantity, candidates):
         """Returns the choices set up by the 'set_choices' method"""
         return self.choices
+
+    def pick_one(self, candidates):
+        """Returns the first choice set up by the 'set_choices' method"""
+        return self.choices[0]
