@@ -4609,7 +4609,17 @@ class Labyrinth(cmd.Cmd):
         for i in range(ops):
             plotRolls.append(random.randint(1,6))
         return self.executePlot(ops, isOps, plotRolls)
-                        
+
+    def place_cell(self, country_name):
+        """Places a cell from the funding track into the given country"""
+        country = self.map[country_name]
+        country.cadre = 0
+        country.sleeperCells += 1
+        self.cells -= 1
+        self.testCountry(country_name)
+        self.outputToHistory("--> Sleeper Cell placed in %s." % country_name, True)
+        self.outputToHistory(self.map[country_name].countryStr(), True)
+
     def handleRadicalization(self, ops):
         self.outputToHistory("* Radicalization with %d ops." % ops, False)
         opsRemaining = ops
