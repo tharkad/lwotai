@@ -49,7 +49,10 @@ class RandomizerTest(TestCase):
 
     def test_roll_d6(self):
         # Invoke
-        d6_roll = self.randomizer.roll_d6()
+        roll_count = 1000
+        rolls = self.randomizer.roll_d6(roll_count)
 
         # Check
-        self.assertIn(d6_roll, [1, 2, 3, 4, 5, 6])
+        self.assertEqual(len(rolls), roll_count)
+        for roll in rolls:
+            self.assertIn(roll, [1, 2, 3, 4, 5, 6])

@@ -3,7 +3,7 @@ import unittest
 from mockito import when, mock
 
 from labyrinth_test_case import LabyrinthTestCase
-from lwotai import Labyrinth, DieRoller
+from lwotai import Labyrinth, Randomizer
 from lwotai import POOR
 
 
@@ -1440,14 +1440,14 @@ class Card48(LabyrinthTestCase):
 
     def test_event(self):
         # Set up
-        app = Labyrinth(1, 1, self.set_up_blank_test_scenario, ["120"])
+        mock_randomizer = mock(Randomizer())
+        when(mock_randomizer).roll_d6(3).thenReturn([1, 3, 2])
+        app = Labyrinth(1, 1, self.set_up_blank_test_scenario, ["120"], randomizer=mock_randomizer)
         self.assertTrue(app.numCellsAvailable() > 0)
         self.assertCells(app, "United States", 0)
-        die_roller = mock(DieRoller())
-        when(die_roller).roll(3).thenReturn([1, 3, 2])
 
         # Invoke
-        app.deck["48"].playEvent("Jihadist", app, die_roller)
+        app.deck["48"].playEvent("Jihadist", app)
 
         # Check
         self.assertCells(app, "United States", 2)

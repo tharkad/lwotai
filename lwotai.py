@@ -125,17 +125,6 @@ class Alignments:
     NEUTRAL = Alignment("Neutral")
 
 
-class DieRoller:
-    """Rolls the die"""
-
-    def __init__(self):
-        pass
-
-    def roll(self, times):
-        """Rolls a d6 the given number of times and returns a list of the results"""
-        return [random.randint(1, 6) for i in range(times)]
-
-
 class Randomizer:
     """Picks things at random"""
     def __init__(self):
@@ -152,9 +141,10 @@ class Randomizer:
         """Picks the one item from the given list of candidates (returns the item)"""
         return self.pick(1, candidates)[0]
 
-    def roll_d6(self):
-        """Returns the result of rolling a six-sided die (1-6)"""
-        return self.pick_one(range(1, 7))
+    def roll_d6(self, times):
+        """Returns the result of rolling a six-sided die the given number of
+        times (returns a list of that size containing numbers from 1 to 6)"""
+        return [self.pick_one(range(1, 7)) for index in range(times)]
 
 
 class Governance:
@@ -1066,7 +1056,7 @@ class Card:
             return False
         return False
     
-    def playEvent(self, side, app, die_roller = DieRoller()):
+    def playEvent(self, side, app):
         app.outputToHistory("Card played for Event.", True)
         if self.type == "US" and side == "Jihadist":
             return False
@@ -1662,7 +1652,7 @@ class Card:
                     app.outputToHistory("No cards left to recruit to US.", True)
                     return
                 ops = app.deck[str(cardNum)].ops
-                rolls = die_roller.roll(ops)
+                rolls = app.randomizer.roll_d6(ops)
                 app.executeRecruit("United States", ops, rolls, 2)
             elif self.number == 49: # Al-Ittihad al-Islami
                 app.placeCells("Somalia", 1)
