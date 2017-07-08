@@ -340,6 +340,21 @@ class Country:
     def make_governance(self, governance):
         self.__governance = Utils.require_type_or_none(governance, Governance)
 
+    def make_hard(self):
+        """Sets a Non-Muslim country to Hard posture"""
+        if self.type == "Non-Muslim":
+            self.posture = "Hard"
+
+    def make_soft(self):
+        """Sets a Non-Muslim country to Soft posture"""
+        if self.type == "Non-Muslim":
+            self.posture = "Soft"
+
+    def remove_posture(self):
+        """Removes any posture from a Non-Muslim country"""
+        if self.type == "Non-Muslim":
+            self.posture = ""
+
     def is_non_recruit_success(self, roll):
         return self.is_governed() and self.__governance.is_success(roll)
 
@@ -2505,7 +2520,7 @@ class Labyrinth(cmd.Cmd):
     backlashInPlay = False
     testUserInput = []
 
-    def __init__(self, scenario, ideology, setup_function = None, test_user_input = [], **kwargs):
+    def __init__(self, scenario, ideology, setup_function = None, test_user_input=[], **kwargs):
         cmd.Cmd.__init__(self)
         self.scenario = scenario
         self.ideology = ideology
@@ -3191,6 +3206,7 @@ class Labyrinth(cmd.Cmd):
     #20150131PS End    
 
     def my_raw_input(self, prompt):
+        """Reads a line from the test input, if any is left, otherwise from standard input"""
         if len(self.testUserInput) > 0:
             retVal = self.testUserInput[0]
             self.testUserInput.remove(retVal)
