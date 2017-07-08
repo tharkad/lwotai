@@ -1,10 +1,8 @@
 import unittest
 
-from fakes import FakeDieRoller
 from labyrinth_test_case import LabyrinthTestCase
 from lwotai import GOOD
 from lwotai import Labyrinth
-from lwotai import POOR
 
 
 class Card100(LabyrinthTestCase):
