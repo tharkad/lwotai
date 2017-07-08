@@ -524,24 +524,24 @@ class Card:
         elif self.type == "Jihadist" and side == "US":
             return False
         elif self.type == "US" and side == "US":
-            if self.number == 1: # Backlash
+            if self.number == 1:  # Backlash
                 for country in app.map:
                     if (app.map[country].type != "Non-Muslim") and (app.map[country].plots > 0):
                         return True
                 return False
-            elif self.number == 2: # Biometrics
+            elif self.number == 2:  # Biometrics
                 return True
-            elif self.number == 3: # CTR    20150616PS
+            elif self.number == 3:  # CTR    20150616PS
                 return app.map["United States"].posture == "Soft"
-            elif self.number == 2: # Biometrics
+            elif self.number == 2:  # Biometrics
                 return True
-            elif self.number == 4: # Moro Talks
+            elif self.number == 4:  # Moro Talks
                 return True
-            elif self.number == 5: # NEST
+            elif self.number == 5:  # NEST
                 return True
-            elif self.number == 6 or self.number == 7 : # Sanctions
+            elif self.number == 6 or self.number == 7 :  # Sanctions
                 return "Patriot Act" in app.markers
-            elif self.number == 8 or self.number == 9 or self.number == 10: # Special Forces
+            elif self.number == 8 or self.number == 9 or self.number == 10:  # Special Forces
                 for country in app.map:
                     if app.map[country].totalCells(True) > 0:
                         for subCountry in app.map:
@@ -549,50 +549,50 @@ class Card:
                                 if app.map[subCountry].troops() > 0:
                                     return True
                 return False
-            elif self.number == 11: # Abbas
+            elif self.number == 11:  # Abbas
                 return True
-            elif self.number == 12: # Al-Azhar
+            elif self.number == 12:  # Al-Azhar
                 return True
-            elif self.number == 13: # Anbar Awakening
+            elif self.number == 13:  # Anbar Awakening
                 return (app.map["Iraq"].troops() > 0) or (app.map["Syria"].troops() > 0)
-            elif self.number == 14: # Covert Action
+            elif self.number == 14:  # Covert Action
                 for country in app.map:
                     if app.map[country].is_adversary():
                         return True
                 return False
-            elif self.number == 15: # Ethiopia Strikes
+            elif self.number == 15:  # Ethiopia Strikes
                 return (app.map["Somalia"].is_islamist_rule()) or (app.map["Sudan"].is_islamist_rule())
-            elif self.number == 16: # Euro-Islam
+            elif self.number == 16:  # Euro-Islam
                 return True
-            elif self.number == 17: # FSB
+            elif self.number == 17:  # FSB
                 return True
-            elif self.number == 18: # Intel Community
+            elif self.number == 18:  # Intel Community
                 return True
-            elif self.number == 19: # Kemalist Republic
+            elif self.number == 19:  # Kemalist Republic
                 return True
-            elif self.number == 20: # King Abdullah
+            elif self.number == 20:  # King Abdullah
                 return True
-            elif self.number == 21: # Let's Roll
+            elif self.number == 21:  # Let's Roll
                 allyGoodPlotCountries = 0
                 for country in app.map:
                     if app.map[country].plots > 0:
                         if app.map[country].is_ally() or app.map[country].is_good():
                             allyGoodPlotCountries += 1
                 return allyGoodPlotCountries > 0
-            elif self.number == 22: # Mossad and Shin Bet
+            elif self.number == 22:  # Mossad and Shin Bet
                 targetCells = 0
                 targetCells += app.map["Israel"].totalCells()
                 targetCells += app.map["Jordan"].totalCells()
                 targetCells += app.map["Lebanon"].totalCells()
                 return targetCells > 0
-            elif self.number == 23 or self.number == 24 or self.number == 25: # Predator
+            elif self.number == 23 or self.number == 24 or self.number == 25:  # Predator
                 numMuslimCellCountries = 0
                 for country in app.map:
                     if app.map[country].totalCells(True) > 0:
                         if app.map[country].type == "Suni" or app.map[country].type == "Shia-Mix":
                             numMuslimCellCountries += 1
                 return numMuslimCellCountries > 0
-            elif self.number == 26: # Quartet
+            elif self.number == 26:  # Quartet
                 if not "Abbas" in app.markers:
                     return False
                 if app.troops <= 4:
@@ -602,23 +602,23 @@ class Card:
                         if app.map[country].is_islamist_rule():
                             return False
                 return True
-            elif self.number == 27: # Saddam Captured
+            elif self.number == 27:  # Saddam Captured
                 return app.map["Iraq"].troops() > 0
-            elif self.number == 28: # Sharia
+            elif self.number == 28:  # Sharia
                 return app.numBesieged() > 0
-            elif self.number == 29: # Tony Blair
+            elif self.number == 29:  # Tony Blair
                 return True
-            elif self.number == 30: # UN Nation Building
+            elif self.number == 30:  # UN Nation Building
                 numRC = app.numRegimeChange()
                 return (numRC > 0) and ("Vieira de Mello Slain" not in app.markers)
-            elif self.number == 31: # Wiretapping
+            elif self.number == 31:  # Wiretapping
                 if "Leak-Wiretapping" in app.markers:
                     return False
                 for country in ["United States", "United Kingdom", "Canada"]:
                     if app.map[country].totalCells() > 0 or app.map[country].cadre > 0 or app.map[country].plots > 0:
                         return True
                 return False
-            elif self.number == 32: # Back Channel
+            elif self.number == 32:  # Back Channel
                 if app.map["United States"].posture == "Hard":
                     return False
                 numAdv = app.numAdversary()
@@ -626,7 +626,7 @@ class Card:
                     return False
                 app.listAdversaryCountries()
                 return app.getYesNoFromUser("Do you have a card with a value that exactly matches an Adversary's Resources? (y/n): ")
-            elif self.number == 33: # Benazir Bhutto
+            elif self.number == 33:  # Benazir Bhutto
                 if "Bhutto Shot" in app.markers:
                     return False
                 if app.map["Pakistan"].is_islamist_rule():
@@ -635,40 +635,40 @@ class Card:
                     if countryObj.is_islamist_rule():
                         return False
                 return True
-            elif self.number == 34: # Enhanced Measures
+            elif self.number == 34:  # Enhanced Measures
                 if "Leak-Enhanced Measures" in app.markers or app.map["United States"].posture == "Soft":
                     return False
                 return app.num_disruptable() > 0
-            elif self.number == 35: # Hajib
+            elif self.number == 35:  # Hajib
                 return app.numIslamistRule() == 0
-            elif self.number == 36: # Indo-Pakistani Talks
+            elif self.number == 36:  # Indo-Pakistani Talks
                 if app.map['Pakistan'].is_good() or app.map['Pakistan'].is_fair():
                     return True
                 return False
-            elif self.number == 37: # Iraqi WMD
+            elif self.number == 37:  # Iraqi WMD
                 if app.map["United States"].posture == "Hard" and app.map["Iraq"].is_adversary():
                     return True
                 return False
-            elif self.number == 38: # Libyan Deal
+            elif self.number == 38:  # Libyan Deal
                 if app.map["Libya"].is_poor():
                     if app.map["Iraq"].is_ally() or app.map["Syria"].is_ally():
                         return True
                 return False
-            elif self.number == 39: # Libyan WMD
+            elif self.number == 39:  # Libyan WMD
                 if app.map["United States"].posture == "Hard" and app.map["Libya"].is_adversary() and "Libyan Deal" not in app.markers:
                     return True
                 return False
-            elif self.number == 40: # Mass Turnout
+            elif self.number == 40:  # Mass Turnout
                 return app.numRegimeChange() > 0
-            elif self.number == 41: # NATO
+            elif self.number == 41:  # NATO
                 return (app.numRegimeChange() > 0) and (app.gwotPenalty() >= 0)
-            elif self.number == 42: # Pakistani Offensive
+            elif self.number == 42:  # Pakistani Offensive
                 return (app.map["Pakistan"].is_ally()) and ("FATA" in app.map["Pakistan"].markers)
-            elif self.number == 43: # Patriot Act
+            elif self.number == 43:  # Patriot Act
                 return True
-            elif self.number == 44: # Renditions
+            elif self.number == 44:  # Renditions
                 return (app.map["United States"].posture == "Hard") and ("Leak-Renditions" not in app.markers)
-            elif self.number == 45: # Safer Now
+            elif self.number == 45:  # Safer Now
                 if app.numIslamistRule() > 0:
                     return False
                 for country in app.map:
@@ -676,7 +676,7 @@ class Card:
                         if app.map[country].totalCells(True) > 0 or app.map[country].plots > 0:
                             return False
                 return True
-            elif self.number == 46: # Sistani
+            elif self.number == 46:  # Sistani
                 targetCountries = 0
                 for country in app.map:
                     if app.map[country].type == "Shia-Mix":
@@ -684,93 +684,93 @@ class Card:
                             if (app.map[country].totalCells(True)) > 0:
                                 targetCountries += 1
                 return targetCountries > 0
-            elif self.number == 47: # The door of Itjihad was closed
+            elif self.number == 47:  # The door of Itjihad was closed
                 return True
             else:
                 return False
         elif self.type == "Jihadist" and side == "Jihadist":
             if "The door of Itjihad was closed" in app.lapsing and not ignoreItjihad:
                 return False
-            if self.number == 48: # Adam Gadahn
+            if self.number == 48:  # Adam Gadahn
                 if app.numCellsAvailable() <= 0:
                     return False
                 return app.getYesNoFromUser("Is this the 1st card of the Jihadist Action Phase? (y/n): ")
-            elif self.number == 49: # Al-Ittihad al-Islami
+            elif self.number == 49:  # Al-Ittihad al-Islami
                 return True
-            elif self.number == 50: # Ansar al-Islam
+            elif self.number == 50:  # Ansar al-Islam
                 return app.map["Iraq"].governance_is_worse_than(GOOD)
-            elif self.number == 51: # FREs
+            elif self.number == 51:  # FREs
                 return app.map["Iraq"].troops() > 0
-            elif self.number == 52: # IDEs
+            elif self.number == 52:  # IDEs
                 for country in app.map:
                     if app.map[country].regimeChange > 0:
                         if (app.map[country].totalCells(True)) > 0:
                             return True
                 return False
-            elif self.number == 53: # Madrassas
+            elif self.number == 53:  # Madrassas
                 return app.getYesNoFromUser("Is this the 1st card of the Jihadist Action Phase? (y/n): ")
-            elif self.number == 54: # Moqtada al-Sadr
+            elif self.number == 54:  # Moqtada al-Sadr
                 return app.map["Iraq"].troops() > 0
-            elif self.number == 55: # Uyghur Jihad
+            elif self.number == 55:  # Uyghur Jihad
                 return True
-            elif self.number == 56: # Vieira de Mello Slain
+            elif self.number == 56:  # Vieira de Mello Slain
                 for country in app.map:
                     if app.map[country].regimeChange > 0 and app.map[country].totalCells() > 0:
                         return True
                 return False
-            elif self.number == 57: # Abu Sayyaf
+            elif self.number == 57:  # Abu Sayyaf
                 return "Moro Talks" not in app.markers
-            elif self.number == 58: # Al-Anbar
+            elif self.number == 58:  # Al-Anbar
                 return "Anbar Awakening" not in app.markers
-            elif self.number == 59: # Amerithrax
+            elif self.number == 59:  # Amerithrax
                 return True
-            elif self.number == 60: # Bhutto Shot
+            elif self.number == 60:  # Bhutto Shot
                 return app.map["Pakistan"].totalCells() > 0
-            elif self.number == 61: # Detainee Release
+            elif self.number == 61:  # Detainee Release
                 if "GTMO" in app.lapsing or "Renditions" in app.markers:
                     return False
                 return app.getYesNoFromUser("Did the US Disrupt during this or the last Action Phase? (y/n): ")
-            elif self.number == 62: # Ex-KGB
+            elif self.number == 62:  # Ex-KGB
                 return True
-            elif self.number == 63: # Gaza War
+            elif self.number == 63:  # Gaza War
                 return True
-            elif self.number == 64: # Hariri Killed
+            elif self.number == 64:  # Hariri Killed
                 return True
-            elif self.number == 65: # HEU
+            elif self.number == 65:  # HEU
                 possibles = 0
                 if app.map["Russia"].totalCells() > 0 and "CTR" not in app.map["Russia"].markers:
                     possibles += 1
                 if app.map["Central Asia"].totalCells() > 0 and "CTR" not in app.map["Central Asia"].markers:
                     possibles += 1
                 return possibles > 0
-            elif self.number == 66: # Homegrown
+            elif self.number == 66:  # Homegrown
                 return True
-            elif self.number == 67: # Islamic Jihad Union
+            elif self.number == 67:  # Islamic Jihad Union
                 return True
-            elif self.number == 68: # Jemaah Islamiya
+            elif self.number == 68:  # Jemaah Islamiya
                 return True
-            elif self.number == 69: # Kazakh Strain
+            elif self.number == 69:  # Kazakh Strain
                 return app.map["Central Asia"].totalCells() > 0 and "CTR" not in app.map["Central Asia"].markers
-            elif self.number == 70: # Lashkar-e-Tayyiba
+            elif self.number == 70:  # Lashkar-e-Tayyiba
                 return "Indo-Pakistani Talks" not in app.markers
-            elif self.number == 71: # Loose Nuke
+            elif self.number == 71:  # Loose Nuke
                 return app.map["Russia"].totalCells() > 0 and "CTR" not in app.map["Russia"].markers
-            elif self.number == 72: # Opium
+            elif self.number == 72:  # Opium
                 return app.map["Afghanistan"].totalCells() > 0
-            elif self.number == 73: # Pirates
+            elif self.number == 73:  # Pirates
                 return app.map["Somalia"].is_islamist_rule() or app.map["Yemen"].is_islamist_rule()
-            elif self.number == 74: # Schengen Visas
+            elif self.number == 74:  # Schengen Visas
                 return True
-            elif self.number == 75: # Schroeder & Chirac
+            elif self.number == 75:  # Schroeder & Chirac
                 return app.map["United States"].posture == "Hard"
-            elif self.number == 76: # Abu Ghurayb
+            elif self.number == 76:  # Abu Ghurayb
                 targetCountries = 0
                 for country in app.map:
                     if app.map[country].regimeChange > 0:
                         if (app.map[country].totalCells(True)) > 0:
                             targetCountries += 1
                 return targetCountries > 0
-            elif self.number == 77: # Al Jazeera
+            elif self.number == 77:  # Al Jazeera
                 if app.map["Saudi Arabia"].troops() > 0:
                     return True
                 for country in app.map:
@@ -778,29 +778,29 @@ class Card:
                         if app.map[country].troops() > 0:
                             return True
                 return False                
-            elif self.number == 78: # Axis of Evil
+            elif self.number == 78:  # Axis of Evil
                 return True
-            elif self.number == 79: # Clean Operatives
+            elif self.number == 79:  # Clean Operatives
                 return True
-            elif self.number == 80: # FATA
+            elif self.number == 80:  # FATA
                 return True
-            elif self.number == 81: # Foreign Fighters
+            elif self.number == 81:  # Foreign Fighters
                 return app.numRegimeChange() > 0
-            elif self.number == 82: # Jihadist Videos
+            elif self.number == 82:  # Jihadist Videos
                 return True
-            elif self.number == 83: # Kashmir
+            elif self.number == 83:  # Kashmir
                 return "Indo-Pakistani Talks" not in app.markers
-            elif self.number == 84 or self.number == 85: # Leak
+            elif self.number == 84 or self.number == 85:  # Leak
                 return ("Enhanced Measures" in app.markers) or ("Renditions" in app.markers) or ("Wiretapping" in app.markers)
-            elif self.number == 86: # Lebanon War
+            elif self.number == 86:  # Lebanon War
                 return True
-            elif self.number == 87 or self.number == 88 or self.number == 89: # Martyrdom Operation
+            elif self.number == 87 or self.number == 88 or self.number == 89:  # Martyrdom Operation
                 for country in app.map:
                     if not app.map[country].is_islamist_rule():
                         if app.map[country].totalCells(True) > 0:
                             return True
                 return False
-            elif self.number == 90: # Quagmire
+            elif self.number == 90:  # Quagmire
                 if app.prestige >= 7:
                     return False
                 for country in app.map:
@@ -808,65 +808,65 @@ class Card:
                         if app.map[country].totalCells(True) > 0:
                             return True
                 return False
-            elif self.number == 91: # Regional al-Qaeda
+            elif self.number == 91:  # Regional al-Qaeda
                 num = 0
                 for country in app.map:
                     if app.map[country].type == "Suni" or app.map[country].type == "Shia-Mix":
                         if app.map[country].is_ungoverned():
                             num += 1
                 return num >= 2
-            elif self.number == 92: # Saddam
+            elif self.number == 92:  # Saddam
                 if "Saddam Captured" in app.markers:
                     return False
                 return (app.map["Iraq"].is_poor()) and (app.map["Iraq"].is_adversary())
-            elif self.number == 93: # Taliban
+            elif self.number == 93:  # Taliban
                 return True
-            elif self.number == 94: # The door of Itjihad was closed
+            elif self.number == 94:  # The door of Itjihad was closed
                 return app.getYesNoFromUser("Was a country tested or improved to Fair or Good this or last Action Phase.? (y/n): ")
-            elif self.number == 95: # Wahhabism
+            elif self.number == 95:  # Wahhabism
                 return True
-        else: # Unassociated Events
+        else:  # Unassociated Events
             if side == "Jihadist" and "The door of Itjihad was closed" in app.lapsing and not ignoreItjihad:
                 return False
-            if self.number == 96: # Danish Cartoons
+            if self.number == 96:  # Danish Cartoons
                 return True
-            elif self.number == 97: # Fatwa
+            elif self.number == 97:  # Fatwa
                 return app.getYesNoFromUser("Do both sides have cards remaining beyond this one? (y/n): ")
-            elif self.number == 98: # Gaza Withdrawl
+            elif self.number == 98:  # Gaza Withdrawl
                 return True
-            elif self.number == 99: # HAMAS Elected
+            elif self.number == 99:  # HAMAS Elected
                 return True
-            elif self.number == 100: # His Ut-Tahrir
+            elif self.number == 100:  # His Ut-Tahrir
                 return True
-            elif self.number == 101: # Kosovo
+            elif self.number == 101:  # Kosovo
                 return True
-            elif self.number == 102: # Former Soviet Union    #20150312PS
+            elif self.number == 102:  # Former Soviet Union    #20150312PS
                 return True
-            elif self.number == 103: # Hizballah
+            elif self.number == 103:  # Hizballah
                 return True
-            elif self.number == 104 or self.number == 105: # Iran
+            elif self.number == 104 or self.number == 105:  # Iran
                 return True
-            elif self.number == 106: # Jaysh al-Mahdi
+            elif self.number == 106:  # Jaysh al-Mahdi
                 for country in app.map:
                     if app.map[country].type == "Shia-Mix":
                         if app.map[country].troops() > 0 and app.map[country].totalCells() > 0:
                             return True
                 return False
-            elif self.number == 107: # Kurdistan
+            elif self.number == 107:  # Kurdistan
                 return True
-            elif self.number == 108: # Musharraf
+            elif self.number == 108:  # Musharraf
                 if "Benazir Bhutto" in app.markers:
                     return False
                 return app.map["Pakistan"].totalCells() > 0
-            elif self.number == 109: # Tora Bora
+            elif self.number == 109:  # Tora Bora
                 for country in app.map:
                     if app.map[country].regimeChange > 0:
                         if app.map[country].totalCells() >= 2:
                             return True
                 return False
-            elif self.number == 110: # Zarqawi
+            elif self.number == 110:  # Zarqawi
                 return app.map["Iraq"].troops() > 0 or app.map["Syria"].troops() > 0 or app.map["Lebanon"].troops() > 0 or app.map["Jordan"].troops() > 0
-            elif self.number == 111: # Zawahiri
+            elif self.number == 111:  # Zawahiri
                 if side == "US":
                     if "FATA" in app.map["Pakistan"].markers:
                         return False
@@ -875,7 +875,7 @@ class Card:
                     return app.numIslamistRule() == 0
                 else:
                     return True
-            elif self.number == 112: # Bin Ladin
+            elif self.number == 112:  # Bin Ladin
                 if side == "US":
                     if "FATA" in app.map["Pakistan"].markers:
                         return False
@@ -884,11 +884,11 @@ class Card:
                     return app.numIslamistRule() == 0
                 else:
                     return True
-            elif self.number == 113: # Darfur
+            elif self.number == 113:  # Darfur
                 return True
-            elif self.number == 114: # GTMO
+            elif self.number == 114:  # GTMO
                 return True
-            elif self.number == 115: # Hambali
+            elif self.number == 115:  # Hambali
                 possibles = ["Indonesia/Malaysia"]
                 for countryObj in app.map["Indonesia/Malaysia"].links:
                     possibles.append(countryObj.name)
@@ -900,7 +900,7 @@ class Card:
                         else:
                             if app.map[country].is_ally():
                                 return True
-            elif self.number == 116: # KSM
+            elif self.number == 116:  # KSM
                 if side == "US":
                     for country in app.map:
                         if app.map[country].plots > 0:
@@ -909,150 +909,150 @@ class Card:
                     return False
                 else:
                     return True
-            elif self.number == 117 or self.number == 118: # Oil Price Spike
+            elif self.number == 117 or self.number == 118:  # Oil Price Spike
                 return True
-            elif self.number == 119: # Saleh
+            elif self.number == 119:  # Saleh
                 return True
-            elif self.number == 120: # US Election
+            elif self.number == 120:  # US Election
                 return True
             return False
                 
     def putsCell(self, app):
-        if self.number == 48: # Adam Gadahn
+        if self.number == 48:  # Adam Gadahn
             return True
-        elif self.number == 49: # Al-Ittihad al-Islami
+        elif self.number == 49:  # Al-Ittihad al-Islami
             return True
-        elif self.number == 50: # Ansar al-Islam
+        elif self.number == 50:  # Ansar al-Islam
             return True
-        elif self.number == 51: # FREs
+        elif self.number == 51:  # FREs
             return True
-        elif self.number == 52: # IDEs
+        elif self.number == 52:  # IDEs
             return False
-        elif self.number == 53: # Madrassas
+        elif self.number == 53:  # Madrassas
             return True
-        elif self.number == 54: # Moqtada al-Sadr
+        elif self.number == 54:  # Moqtada al-Sadr
             return False
-        elif self.number == 55: # Uyghur Jihad
+        elif self.number == 55:  # Uyghur Jihad
             return True
-        elif self.number == 56: # Vieira de Mello Slain
+        elif self.number == 56:  # Vieira de Mello Slain
             return False
-        elif self.number == 57: # Abu Sayyaf
+        elif self.number == 57:  # Abu Sayyaf
             return True
-        elif self.number == 58: # Al-Anbar
+        elif self.number == 58:  # Al-Anbar
             return True
-        elif self.number == 59: # Amerithrax
+        elif self.number == 59:  # Amerithrax
             return False
-        elif self.number == 60: # Bhutto Shot
+        elif self.number == 60:  # Bhutto Shot
             return False
-        elif self.number == 61: # Detainee Release
+        elif self.number == 61:  # Detainee Release
             return True
-        elif self.number == 62: # Ex-KGB
+        elif self.number == 62:  # Ex-KGB
             return False
-        elif self.number == 63: # Gaza War
+        elif self.number == 63:  # Gaza War
             return False
-        elif self.number == 64: # Hariri Killed
+        elif self.number == 64:  # Hariri Killed
             return False
-        elif self.number == 65: # HEU
+        elif self.number == 65:  # HEU
             return False
-        elif self.number == 66: # Homegrown
+        elif self.number == 66:  # Homegrown
             return True
-        elif self.number == 67: # Islamic Jihad Union
+        elif self.number == 67:  # Islamic Jihad Union
             return True
-        elif self.number == 68: # Jemaah Islamiya
+        elif self.number == 68:  # Jemaah Islamiya
             return True
-        elif self.number == 69: # Kazakh Strain
+        elif self.number == 69:  # Kazakh Strain
             return False
-        elif self.number == 70: # Lashkar-e-Tayyiba
+        elif self.number == 70:  # Lashkar-e-Tayyiba
             return True
-        elif self.number == 71: # Loose Nuke
+        elif self.number == 71:  # Loose Nuke
             return False
-        elif self.number == 72: # Opium
+        elif self.number == 72:  # Opium
             return True
-        elif self.number == 73: # Pirates
+        elif self.number == 73:  # Pirates
             return False
-        elif self.number == 74: # Schengen Visas
+        elif self.number == 74:  # Schengen Visas
             return False
-        elif self.number == 75: # Schroeder & Chirac
+        elif self.number == 75:  # Schroeder & Chirac
             return False
-        elif self.number == 76: # Abu Ghurayb
+        elif self.number == 76:  # Abu Ghurayb
             return False
-        elif self.number == 77: # Al Jazeera
+        elif self.number == 77:  # Al Jazeera
             return False
-        elif self.number == 78: # Axis of Evil
+        elif self.number == 78:  # Axis of Evil
             return False
-        elif self.number == 79: # Clean Operatives
+        elif self.number == 79:  # Clean Operatives
             return False
-        elif self.number == 80: # FATA
+        elif self.number == 80:  # FATA
             return True
-        elif self.number == 81: # Foreign Fighters
+        elif self.number == 81:  # Foreign Fighters
             return True
-        elif self.number == 82: # Jihadist Videos
+        elif self.number == 82:  # Jihadist Videos
             return True
-        elif self.number == 83: # Kashmir
+        elif self.number == 83:  # Kashmir
             return True
-        elif self.number == 84 or self.number == 85: # Leak
+        elif self.number == 84 or self.number == 85:  # Leak
             return False
-        elif self.number == 86: # Lebanon War
+        elif self.number == 86:  # Lebanon War
             return True
-        elif self.number == 87 or self.number == 88 or self.number == 89: # Martyrdom Operation
+        elif self.number == 87 or self.number == 88 or self.number == 89:  # Martyrdom Operation
             return False
-        elif self.number == 90: # Quagmire
+        elif self.number == 90:  # Quagmire
             return False
-        elif self.number == 91: # Regional al-Qaeda
+        elif self.number == 91:  # Regional al-Qaeda
             return True
-        elif self.number == 92: # Saddam
+        elif self.number == 92:  # Saddam
             return False
-        elif self.number == 93: # Taliban
+        elif self.number == 93:  # Taliban
             return True
-        elif self.number == 94: # The door of Itjihad was closed
+        elif self.number == 94:  # The door of Itjihad was closed
             return False
-        elif self.number == 95: # Wahhabism
+        elif self.number == 95:  # Wahhabism
             return False
-        elif self.number == 96: # Danish Cartoons
+        elif self.number == 96:  # Danish Cartoons
             return False
-        elif self.number == 97: # Fatwa
+        elif self.number == 97:  # Fatwa
             return False
-        elif self.number == 98: # Gaza Withdrawl
+        elif self.number == 98:  # Gaza Withdrawl
             return True
-        elif self.number == 99: # HAMAS Elected
+        elif self.number == 99:  # HAMAS Elected
             return False
-        elif self.number == 100: # His Ut-Tahrir
+        elif self.number == 100:  # His Ut-Tahrir
             return False
-        elif self.number == 101: # Kosovo
+        elif self.number == 101:  # Kosovo
             return False
-        elif self.number == 102: # Former Soviet Union
+        elif self.number == 102:  # Former Soviet Union
             return False
-        elif self.number == 103: # Hizballah
+        elif self.number == 103:  # Hizballah
             return False
-        elif self.number == 104 or self.number == 105: # Iran
+        elif self.number == 104 or self.number == 105:  # Iran
             return False
-        elif self.number == 106: # Jaysh al-Mahdi
+        elif self.number == 106:  # Jaysh al-Mahdi
             return False
-        elif self.number == 107: # Kurdistan
+        elif self.number == 107:  # Kurdistan
             return False
-        elif self.number == 108: # Musharraf
+        elif self.number == 108:  # Musharraf
             return False
-        elif self.number == 109: # Tora Bora
+        elif self.number == 109:  # Tora Bora
             return False
-        elif self.number == 110: # Zarqawi
+        elif self.number == 110:  # Zarqawi
             return True
-        elif self.number == 111: # Zawahiri
+        elif self.number == 111:  # Zawahiri
             return False
-        elif self.number == 112: # Bin Ladin
+        elif self.number == 112:  # Bin Ladin
             return False
-        elif self.number == 113: # Darfur
+        elif self.number == 113:  # Darfur
             return False
-        elif self.number == 114: # GTMO
+        elif self.number == 114:  # GTMO
             return False
-        elif self.number == 115: # Hambali
+        elif self.number == 115:  # Hambali
             return False
-        elif self.number == 116: # KSM
+        elif self.number == 116:  # KSM
             return False
-        elif self.number == 117 or self.number == 118: # Oil Price Spike
+        elif self.number == 117 or self.number == 118:  # Oil Price Spike
             return False
-        elif self.number == 119: # Saleh
+        elif self.number == 119:  # Saleh
             return False
-        elif self.number == 120: # US Election
+        elif self.number == 120:  # US Election
             return False
         return False
     
@@ -1063,36 +1063,36 @@ class Card:
         elif self.type == "Jihadist" and side == "US":
             return False
         elif self.type == "US" and side == "US":
-            if self.number == 1: # Backlash
+            if self.number == 1:  # Backlash
                 for country in app.map:
                     if (app.map[country].type != "Non-Muslim") and (app.map[country].plots > 0):
                         app.outputToHistory("Plot in Muslim country found. Select the plot during plot phase. Backlash in play", True)  #20150131PS
                         app.backlashInPlay = True
                         return True
                 return False
-            elif self.number == 2: # Biometrics
+            elif self.number == 2:  # Biometrics
                 app.lapsing.append("Biometrics")
                 app.outputToHistory("Biometrics in play. This turn, travel to adjacent Good countries must roll to succeed and no non-adjacent travel.", True)
-            elif self.number == 3: # CTR    20150616PS
+            elif self.number == 3:  # CTR    20150616PS
                 app.map["Russia"].markers.append("CTR")    # 20150616PS
                 app.outputToHistory("CTR Marker added Russia", True)    # 20150616PS
                 if (app.map["Central Asia"].is_ally()) or (app.map["Central Asia"].is_neutral()):
                     app.map["Central Asia"].markers.append("CTR")    # 20150616PS
                     app.outputToHistory("CTR Marker added in Central Asia", True)    # 20150616PS
-            elif self.number == 4: # Moro Talks
+            elif self.number == 4:  # Moro Talks
                 app.markers.append("Moro Talks")
                 app.outputToHistory("Moro Talks in play.", False)
                 app.testCountry("Philippines")
                 app.changeFunding(-1)
-            elif self.number == 5: # NEST
+            elif self.number == 5:  # NEST
                 app.markers.append("NEST")
                 app.outputToHistory("NEST in play. If jihadists have WMD, all plots in the US placed face up.", True)
-            elif self.number == 6 or self.number == 7: # Sanctions
+            elif self.number == 6 or self.number == 7:  # Sanctions
                 if "Patriot Act" in app.markers:
                     app.changeFunding(-2)
                 else:
                     return False
-            elif self.number == 8 or self.number == 9 or self.number == 10: # Special Forces
+            elif self.number == 8 or self.number == 9 or self.number == 10:  # Special Forces
                 while True:
                     input = app.getCountryFromUser("Remove a cell from what country that has troops or is adjacent to a country with troops (? for list)?: ",  "XXX", app.listCountriesWithCellAndAdjacentTroops)    
                     if input == "":
@@ -1116,7 +1116,7 @@ class Card:
                                 app.removeCell(input, side)    # 20150131PS added side
                                 app.outputToHistory(app.map[input].countryStr(), True)
                                 break
-            elif self.number == 11: # Abbas
+            elif self.number == 11:  # Abbas
                 numIRIsrael = 0
                 for country in app.map:
                     if app.isAdjacent(country, "Israel"):
@@ -1128,14 +1128,14 @@ class Card:
                 if app.troops >= 5 and numIRIsrael <= 0:
                     app.changePrestige(1, False)
                     app.changeFunding(-2, True)
-            elif self.number == 12: # Al-Azhar
+            elif self.number == 12:  # Al-Azhar
                 app.testCountry("Egypt")
                 numIR = app.numIslamistRule()
                 if numIR <= 0:
                     app.changeFunding(-4, True)
                 else:
                     app.changeFunding(-2, True)
-            elif self.number == 13: # Anbar Awakening
+            elif self.number == 13:  # Anbar Awakening
                 if (app.map["Iraq"].troops() > 0) or (app.map["Syria"].troops() > 0):
                     app.markers.append("Anbar Awakening")
                     app.outputToHistory("Anbar Awakening in play.", False)
@@ -1157,7 +1157,7 @@ class Card:
                     print ""
                 else:
                     return False
-            elif self.number == 14: # Covert Action
+            elif self.number == 14:  # Covert Action
                 targetCountry = ""
                 numAdv = 0
                 for country in app.map:
@@ -1185,7 +1185,7 @@ class Card:
                     app.outputToHistory(app.map[input].countryStr(), True)
                 else:
                     app.outputToHistory("Covert Action fails.", True)
-            elif self.number == 15: # Ethiopia Strikes
+            elif self.number == 15:  # Ethiopia Strikes
                 if (app.map["Somalia"].is_islamist_rule()) or (app.map["Sudan"].is_islamist_rule()):
                     if not app.map["Somalia"].is_islamist_rule():
                         app.map["Sudan"].make_poor()
@@ -1212,10 +1212,10 @@ class Card:
                     print ""
                 else:
                     return False
-            elif self.number == 16: # Euro-Islam
+            elif self.number == 16:  # Euro-Islam
                 posStr = app.getPostureFromUser("Select Benelux's Posture (hard or soft): ")
                 app.executeCardEuroIslam(posStr)
-            elif self.number == 17: # FSB
+            elif self.number == 17:  # FSB
                 app.outputToHistory("Examine Jihadist hand for Loose Nukes, HEU, or Kazakh Strain.", False)
                 hasThem = app.getYesNoFromUser("Does the Jihadist hand have Loose Nukes, HEU, or Kazakh Strain? (y/n): ")
                 if hasThem:
@@ -1241,23 +1241,23 @@ class Card:
                     else:
                         app.outputToHistory("There are no cells in Russia or Central Asia.", False)    
                 app.outputToHistory("Shuffle Jihadist hand.", True)
-            elif self.number == 18: # Intel Community
+            elif self.number == 18:  # Intel Community
                 app.outputToHistory("Examine Jihadist hand. Do not change order of cards.", False)
                 app.outputToHistory("Conduct a 1-value operation (Use commands: alert, deploy, disrupt, reassessment, regime, withdraw, or woi).", False)
                 app.outputToHistory("You may now interrupt this action phase to play another card (Use the u command).", True)
-            elif self.number == 19: # Kemalist Republic
+            elif self.number == 19:  # Kemalist Republic
                 app.outputToHistory("Turkey now a Fair Ally.", False)
                 app.map["Turkey"].make_fair()
                 app.map["Turkey"].make_ally()
                 app.outputToHistory(app.map["Turkey"].countryStr(), True)
-            elif self.number == 20: # King Abdullah
+            elif self.number == 20:  # King Abdullah
                 app.outputToHistory("Jordan now a Fair Ally.", False)
                 app.map["Jordan"].make_fair()
                 app.map["Jordan"].make_ally()
                 app.outputToHistory(app.map["Jordan"].countryStr(), True)
                 app.changePrestige(1)
                 app.changeFunding(-1)
-            elif self.number == 21: # Let's Roll
+            elif self.number == 21:  # Let's Roll
                 while True:
                     plotCountry = app.getCountryFromUser("Draw a card.  Choose an Ally or Good country to remove a plot from (? for list): ", "XXX", app.listGoodAllyPlotCountries)
                     if plotCountry == "":
@@ -1284,12 +1284,12 @@ class Card:
                                         postureStr = app.getPostureFromUser("What Posture should %s have (h or s)? " % postureCountry)
                                         app.executeCardLetsRoll(plotCountry, postureCountry, postureStr)
                                         return
-            elif self.number == 22: # Mossad and Shin Bet
+            elif self.number == 22:  # Mossad and Shin Bet
                 app.removeAllCellsFromCountry("Israel")
                 app.removeAllCellsFromCountry("Jordan")
                 app.removeAllCellsFromCountry("Lebanon")
                 app.outputToHistory("", False)
-            elif self.number == 23 or self.number == 24 or self.number == 25: # Predator
+            elif self.number == 23 or self.number == 24 or self.number == 25:  # Predator
                 while True:
                     input = app.getCountryFromUser("Choose non-Iran Muslim Country to remove a cell from (? for list): ", "XXX", app.listMuslimCountriesWithCells)
                     if input == "":
@@ -1309,7 +1309,7 @@ class Card:
                             app.removeCell(input, side)    # 20150131PS added side
                             app.outputToHistory(app.map[input].countryStr(), True)
                             break
-            elif self.number == 26: # Quartet
+            elif self.number == 26:  # Quartet
                 if not "Abbas" in app.markers:
                     return False
                 if app.troops <= 4:
@@ -1321,7 +1321,7 @@ class Card:
                 app.changePrestige(2)
                 app.changeFunding(-3)
                 app.outputToHistory("", False)
-            elif self.number == 27: # Saddam Captured
+            elif self.number == 27:  # Saddam Captured
                 if app.map["Iraq"].troops() == 0:
                     return False
                 app.markers.append("Saddam Captured")
@@ -1329,7 +1329,7 @@ class Card:
                 app.outputToHistory("Aid added in Iraq", False)
                 app.changePrestige(1)
                 app.outputToHistory(app.map["Iraq"].countryStr(), True)
-            elif self.number == 28: # Sharia
+            elif self.number == 28:  # Sharia
                 numBesieged = app.numBesieged()
                 target = ""
                 if numBesieged <= 0:
@@ -1355,7 +1355,7 @@ class Card:
                 app.map[target].besieged = 0
                 app.outputToHistory("%s is no longer a Besieged Regime." % target, False)
                 app.outputToHistory(app.map[target].countryStr(), True)                
-            elif self.number == 29: # Tony Blair
+            elif self.number == 29:  # Tony Blair
                 app.map["United Kingdom"].posture = app.map["United States"].posture
                 app.outputToHistory("United Kingdom posture now %s" % app.map["United Kingdom"].posture, False)
                 print "You may roll War of Ideas in up to 3 Schengen countries."
@@ -1382,7 +1382,7 @@ class Card:
                     if finishedPicking:
                         break
                 app.outputToHistory("", False)
-            elif self.number == 30: # UN Nation Building
+            elif self.number == 30:  # UN Nation Building
                 numRC = app.numRegimeChange()
                 if (numRC <= 0) or ("Vieira de Mello Slain" in app.markers):
                     return False
@@ -1410,7 +1410,7 @@ class Card:
                 woiRoll = app.getRollFromUser("Enter WOI Roll or r to have program roll: ")
                 modRoll = app.modifiedWoIRoll(woiRoll, target, False)
                 app.handleMuslimWoI(modRoll, target)                
-            elif self.number == 31: # Wiretapping
+            elif self.number == 31:  # Wiretapping
                 if "Leak-Wiretapping" in app.markers:
                     return False
                 for country in ["United States", "United Kingdom", "Canada"]:
@@ -1438,7 +1438,7 @@ class Card:
                             app.outputToHistory("%d Plots remove(d) from %s." % (num, country), False)
                 app.markers.append("Wiretapping")
                 app.outputToHistory("Wiretapping in Play.", True)
-            elif self.number == 32: # Back Channel
+            elif self.number == 32:  # Back Channel
                 if app.map["United States"].posture == "Hard":
                     return False
                 numAdv = app.numAdversary()
@@ -1461,7 +1461,7 @@ class Card:
                                 app.outputToHistory("Aid added to %s." % input, False)
                                 app.outputToHistory(app.map[input].countryStr(), True)
                                 break
-            elif self.number == 33: # Benazir Bhutto
+            elif self.number == 33:  # Benazir Bhutto
                 app.markers.append("Benazir Bhutto")
                 app.outputToHistory("Benazir Bhutto in Play.", False)
                 if app.map["Pakistan"].is_poor():
@@ -1469,13 +1469,13 @@ class Card:
                     app.outputToHistory("Pakistan now Fair governance.", False)
                 app.outputToHistory("No Jihads in Pakistan.", False)
                 app.outputToHistory(app.map["Pakistan"].countryStr(), True)
-            elif self.number == 34: # Enhanced Measures
+            elif self.number == 34:  # Enhanced Measures
                 app.markers.append("Enhanced Measures")
                 app.outputToHistory("Enhanced Measures in Play.", False)
                 app.outputToHistory("Take a random card from the Jihadist hand.", False)
                 app.do_disrupt("")
                 app.outputToHistory("", False)
-            elif self.number == 35: # Hajib
+            elif self.number == 35:  # Hajib
                 app.testCountry("Turkey")
                 app.map["Turkey"].improve_governance()
                 app.outputToHistory("Turkey Governance now %s." % app.map["Turkey"].govStr(), False)
@@ -1484,7 +1484,7 @@ class Card:
                 app.map["France"].posture = posStr
                 app.outputToHistory(app.map["Turkey"].countryStr(), False)
                 app.outputToHistory(app.map["France"].countryStr(), True)
-            elif self.number == 36: # Indo-Pakistani Talks
+            elif self.number == 36:  # Indo-Pakistani Talks
                 app.markers.append("Indo-Pakistani Talks")
                 app.outputToHistory("Indo-Pakistani Talks in Play.", False)
                 app.map['Pakistan'].make_ally()
@@ -1493,11 +1493,11 @@ class Card:
                 app.map["India"].posture = posStr
                 app.outputToHistory(app.map["Pakistan"].countryStr(), False)
                 app.outputToHistory(app.map["India"].countryStr(), True)
-            elif self.number == 37: # Iraqi WMD
+            elif self.number == 37:  # Iraqi WMD
                 app.markers.append("Iraqi WMD")
                 app.outputToHistory("Iraqi WMD in Play.", False)
                 app.outputToHistory("Use this or a later card for Regime Change in Iraq at any Governance.", True)
-            elif self.number == 38: # Libyan Deal
+            elif self.number == 38:  # Libyan Deal
                 app.markers.append("Libyan Deal")
                 app.outputToHistory("Libyan Deal in Play.", False)
                 app.map["Libya"].is_ally()
@@ -1521,11 +1521,11 @@ class Card:
                                 app.map[target].posture = posStr
                                 app.outputToHistory(app.map[target].countryStr(), False)
                 app.outputToHistory("", False)                
-            elif self.number == 39: # Libyan WMD
+            elif self.number == 39:  # Libyan WMD
                 app.markers.append("Libyan WMD")
                 app.outputToHistory("Libyan WMD in Play.", False)
                 app.outputToHistory("Use this or a later card for Regime Change in Libya at any Governance.", True)
-            elif self.number == 40: # Mass Turnout
+            elif self.number == 40:  # Mass Turnout
                 numRC = app.numRegimeChange()
                 target = ""
                 if numRC <= 0:
@@ -1551,7 +1551,7 @@ class Card:
                 app.improveGovernance(target)
                 app.outputToHistory("%s Governance improved." % target, False)
                 app.outputToHistory(app.map[target].countryStr(), True)                
-            elif self.number == 41: # NATO
+            elif self.number == 41:  # NATO
                 numRC = app.numRegimeChange()
                 target = ""
                 if numRC <= 0:
@@ -1579,20 +1579,20 @@ class Card:
                 app.map[target].aid += 1
                 app.outputToHistory("Aid added in %s" % target, False)
                 app.outputToHistory(app.map[target].countryStr(), True)                
-            elif self.number == 42: # Pakistani Offensive
+            elif self.number == 42:  # Pakistani Offensive
                 if "FATA" in app.map["Pakistan"].markers:
                     app.map["Pakistan"].markers.remove("FATA")
                     app.outputToHistory("FATA removed from Pakistan", True)
-            elif self.number == 43: # Patriot Act
+            elif self.number == 43:  # Patriot Act
                 app.markers.append("Patriot Act")
-            elif self.number == 44: # Renditions
+            elif self.number == 44:  # Renditions
                 app.markers.append("Renditions")
                 app.outputToHistory("Renditions in Play.", False)
                 app.outputToHistory("Discard a random card from the Jihadist hand.", False)
                 if app.num_disruptable() > 0:
                     app.do_disrupt("")
                 app.outputToHistory("", False)
-            elif self.number == 45: # Safer Now
+            elif self.number == 45:  # Safer Now
                 app.changePrestige(3)
                 postureRoll = app.getRollFromUser("Enter US Posture Roll or r to have program roll: ")
                 if postureRoll <= 4:
@@ -1616,7 +1616,7 @@ class Card:
                             app.outputToHistory(app.map["United States"].countryStr(), False)                
                             app.outputToHistory(app.map[postureCountry].countryStr(), True)    
                             break
-            elif self.number == 46: # Sistani
+            elif self.number == 46:  # Sistani
                 targetCountries = []
                 for country in app.map:
                     if app.map[country].type == "Shia-Mix":
@@ -1641,12 +1641,12 @@ class Card:
                 app.improveGovernance(target)
                 app.outputToHistory("%s Governance improved." % target, False)
                 app.outputToHistory(app.map[target].countryStr(), True)                
-            elif self.number == 47: # The door of Itjihad was closed
+            elif self.number == 47:  # The door of Itjihad was closed
                 app.lapsing.append("The door of Itjihad was closed")
             else:
                 return False
         elif self.type == "Jihadist" and side == "Jihadist":
-            if self.number == 48: # Adam Gadahn
+            if self.number == 48:  # Adam Gadahn
                 cardNum = app.getCardNumFromUser("Enter the number of the next Jihadist card or none if there are none left: ")
                 if cardNum == "none":
                     app.outputToHistory("No cards left to recruit to US.", True)
@@ -1654,22 +1654,22 @@ class Card:
                 ops = app.deck[str(cardNum)].ops
                 rolls = app.randomizer.roll_d6(ops)
                 app.executeRecruit("United States", ops, rolls, 2)
-            elif self.number == 49: # Al-Ittihad al-Islami
+            elif self.number == 49:  # Al-Ittihad al-Islami
                 app.placeCells("Somalia", 1)
-            elif self.number == 50: # Ansar al-Islam
+            elif self.number == 50:  # Ansar al-Islam
                 possible = ["Iraq", "Iran"]
                 target = random.choice(possible)
                 app.placeCells(target, 1)
-            elif self.number == 51: # FREs
+            elif self.number == 51:  # FREs
                 if "Saddam Captured" in app.markers:
                     cellsToMove = 2
                 else:
                     cellsToMove = 4                    
                 cellsToMove = min(cellsToMove, app.cells)
                 app.placeCells("Iraq", cellsToMove)
-            elif self.number == 52: # IDEs
+            elif self.number == 52:  # IDEs
                 app.outputToHistory("US randomly discards one card.", True)
-            elif self.number == 53: # Madrassas
+            elif self.number == 53:  # Madrassas
                 app.handleRecruit(1, True)
                 cardNum = app.getCardNumFromUser("Enter the number of the next Jihadist card or none if there are none left: ")
                 if cardNum == "none":
@@ -1679,10 +1679,10 @@ class Card:
                 ops = app.deck[str(cardNum)].ops
                 app.handleRecruit(ops, True)        
                 #app.outputToHistory("Jihadist Activity Phase finished, enter plot command.", True)
-            elif self.number == 54: # Moqtada al-Sadr
+            elif self.number == 54:  # Moqtada al-Sadr
                 app.map["Iraq"].markers.append("Sadr")
                 app.outputToHistory("Sadr Marker added in Iraq", True)
-            elif self.number == 55: # Uyghur Jihad
+            elif self.number == 55:  # Uyghur Jihad
                 app.testCountry("China")
                 if app.cells > 0:
                     if app.map["China"].posture == "Soft":
@@ -1691,25 +1691,25 @@ class Card:
                         app.place_cell("Central Asia")
                 else:
                     app.outputToHistory("No cells to place.", True)
-            elif self.number == 56: # Vieira de Mello Slain
+            elif self.number == 56:  # Vieira de Mello Slain
                 app.markers.append("Vieira de Mello Slain")
                 app.outputToHistory("Vieira de Mello Slain in play.", False)
                 app.changePrestige(-1)
-            elif self.number == 57: # Abu Sayyaf
+            elif self.number == 57:  # Abu Sayyaf
                 app.placeCells("Philippines", 1)
                 app.markers.append("Abu Sayyaf")
-            elif self.number == 58: # Al-Anbar
+            elif self.number == 58:  # Al-Anbar
                 app.markers.append("Al-Anbar")
                 app.outputToHistory("Al-Anbar in play.", True)
                 app.testCountry("Iraq")
                 if app.cells > 0:
                     app.place_cell("Iraq")
-            elif self.number == 59: # Amerithrax
+            elif self.number == 59:  # Amerithrax
                 app.outputToHistory("US side discards its highest-value US-associated event card, if it has any.", True)
-            elif self.number == 60: # Bhutto Shot
+            elif self.number == 60:  # Bhutto Shot
                 app.markers.append("Bhutto Shot")
                 app.outputToHistory("Bhutto Shot in play.", True)
-            elif self.number == 61: # Detainee Release
+            elif self.number == 61:  # Detainee Release
                 if app.cells > 0:
                     target = None
                     while not target:
@@ -1722,7 +1722,7 @@ class Card:
                             break
                     app.place_cell(target)
                 app.outputToHistory("Draw a card for the Jihadist and put it on the top of their hand.", True)
-            elif self.number == 62: # Ex-KGB
+            elif self.number == 62:  # Ex-KGB
                 if "CTR" in app.map["Russia"].markers:
                     app.map["Russia"].markers.remove("CTR")
                     app.outputToHistory("CTR removed from Russia.", True)
@@ -1754,11 +1754,11 @@ class Card:
                             app.map["Central Asia"].make_adversary()
                             app.outputToHistory("Central Asia now Adversary.", True)
                         app.outputToHistory(app.map["Central Asia"].countryStr(), True)
-            elif self.number == 63: # Gaza War
+            elif self.number == 63:  # Gaza War
                 app.changeFunding(1)
                 app.changePrestige(-1)
                 app.outputToHistory("US discards a random card.", True)
-            elif self.number == 64: # Hariri Killed
+            elif self.number == 64:  # Hariri Killed
                 app.testCountry("Lebanon")
                 app.testCountry("Syria")
                 app.map["Syria"].make_adversary()
@@ -1768,7 +1768,7 @@ class Card:
                     app.outputToHistory("Governance in Syria worsened.", False)
                     app.outputToHistory(app.map["Syria"].countryStr(), True)
                 app.outputToHistory(app.map["Lebanon"].countryStr(), True)
-            elif self.number == 65: # HEU
+            elif self.number == 65:  # HEU
                 possibles = []
                 if app.map["Russia"].totalCells() > 0 and "CTR" not in app.map["Russia"].markers:
                     possibles.append("Russia")
@@ -1777,44 +1777,44 @@ class Card:
                 target = random.choice(possibles)
                 roll = random.randint(1,6)
                 app.executeCardHEU(target, roll)
-            elif self.number == 66: # Homegrown
+            elif self.number == 66:  # Homegrown
                 app.placeCells("United Kingdom", 1)
-            elif self.number == 67: # Islamic Jihad Union
+            elif self.number == 67:  # Islamic Jihad Union
                 app.placeCells("Central Asia", 1)
                 if app.cells > 0:
                     app.placeCells("Afghanistan", 1)
-            elif self.number == 68: # Jemaah Islamiya
+            elif self.number == 68:  # Jemaah Islamiya
                 app.placeCells("Indonesia/Malaysia", 2)
-            elif self.number == 69: # Kazakh Strain
+            elif self.number == 69:  # Kazakh Strain
                 roll = random.randint(1,6)
                 app.executeCardHEU("Central Asia", roll)
-            elif self.number == 70: # Lashkar-e-Tayyiba
+            elif self.number == 70:  # Lashkar-e-Tayyiba
                 app.placeCells("Pakistan", 1)
                 if app.cells > 0:
                     app.placeCells("India", 1)
-            elif self.number == 71: # Loose Nuke
+            elif self.number == 71:  # Loose Nuke
                 roll = random.randint(1,6)
                 app.executeCardHEU("Russia", roll)
-            elif self.number == 72: # Opium
+            elif self.number == 72:  # Opium
                 cellsToPlace = min(app.cells, 3)
                 if app.map["Afghanistan"].is_islamist_rule():
                     cellsToPlace = app.cells
                 app.placeCells("Afghanistan", cellsToPlace)
-            elif self.number == 73: # Pirates
+            elif self.number == 73:  # Pirates
                 app.markers.append("Pirates")
                 app.outputToHistory("Pirates in play.", False)
-            elif self.number == 74: # Schengen Visas
+            elif self.number == 74:  # Schengen Visas
                 if app.cells == 15:
                     app.outputToHistory("No cells to travel.", False)
                     return
                 app.handleTravel(2, False, True)
-            elif self.number == 75: # Schroeder & Chirac
+            elif self.number == 75:  # Schroeder & Chirac
                 app.map["Germany"].posture = "Soft"
                 app.outputToHistory("%s Posture now %s" % ("Germany", app.map["Germany"].posture), True)
                 app.map["France"].posture = "Soft"
                 app.outputToHistory("%s Posture now %s" % ("France", app.map["France"].posture), True)
                 app.changePrestige(-1)
-            elif self.number == 76: # Abu Ghurayb
+            elif self.number == 76:  # Abu Ghurayb
                 app.outputToHistory("Draw 2 cards.", False)
                 app.changePrestige(-2)
                 allys = app.minorJihadInGoodFairChoice(1, True)
@@ -1824,7 +1824,7 @@ class Card:
                     target = allys[0][0]
                     app.map[target].make_neutral()
                     app.outputToHistory("%s Alignment shifted to Neutral." % target, True)
-            elif self.number == 77: # Al Jazeera
+            elif self.number == 77:  # Al Jazeera
                 choices = app.minorJihadInGoodFairChoice(1, False, True)
                 if not choices:
                     app.outputToHistory("No countries to shift.", True)
@@ -1835,7 +1835,7 @@ class Card:
                     elif app.map[target].is_neutral():    
                         app.map[target].make_adversary()
                     app.outputToHistory("%s Alignment shifted to %s." % (target, app.map[target].alignment()), True)
-            elif self.number == 78: # Axis of Evil
+            elif self.number == 78:  # Axis of Evil
                 app.outputToHistory("US discards any Iran, Hizballah, or Jaysh al-Mahdi cards from hand.", False)
                 if app.map["United States"].posture == "Soft":
                     app.map["United States"].posture = "Hard"
@@ -1847,15 +1847,15 @@ class Card:
                 if prestigeRolls[0] <= 4:
                     presMultiplier = -1
                 app.changePrestige(min(prestigeRolls[1], prestigeRolls[2]) * presMultiplier)
-            elif self.number == 79: # Clean Operatives
+            elif self.number == 79:  # Clean Operatives
                 app.handleTravel(2, False, False, True)
-            elif self.number == 80: # FATA
+            elif self.number == 80:  # FATA
                 app.testCountry("Pakistan")
                 if app.map["Pakistan"].markers.count("FATA") == 0:
                     app.map["Pakistan"].markers.append("FATA")
                     app.outputToHistory("FATA marker added in Pakistan", True)
                 app.placeCells("Pakistan", 1)
-            elif self.number == 81: # Foreign Fighters
+            elif self.number == 81:  # Foreign Fighters
                 possibles = []
                 for country in app.map:
                     if app.map[country].regimeChange > 0:
@@ -1871,7 +1871,7 @@ class Card:
                     app.map[target].besieged = 1
                     app.outputToHistory("%s to Besieged Regime" % target, False)
                 app.outputToHistory(app.map[target].countryStr(), True)
-            elif self.number == 82: # Jihadist Videos
+            elif self.number == 82:  # Jihadist Videos
                 possibles = []
                 for country in app.map:
                     if app.map[country].totalCells() == 0:
@@ -1883,7 +1883,7 @@ class Card:
                     # if app.cells > 0:
                     rolls = [random.randint(1, 6)]
                     app.executeRecruit(possibles[i], 1, rolls, False, True)
-            elif self.number == 83: # Kashmir
+            elif self.number == 83:  # Kashmir
                 app.placeCells("Pakistan", 1)
                 if app.map["Pakistan"].is_ally():
                     app.map["Pakistan"].make_neutral()
@@ -1891,7 +1891,7 @@ class Card:
                     app.map["Pakistan"].make_adversary()
                 app.outputToHistory("%s Alignment shifted to %s." % ("Pakistan", app.map["Pakistan"].alignment()), True)
                 app.outputToHistory(app.map["Pakistan"].countryStr(), True)
-            elif self.number == 84 or self.number == 85: # Leak
+            elif self.number == 84 or self.number == 85:  # Leak
                 possibles = []
                 if "Enhanced Measures" in app.markers:
                     possibles.append("Enhanced Measures")
@@ -1923,7 +1923,7 @@ class Card:
                     target = allies[0][0]
                     app.map[target].make_neutral()
                     app.outputToHistory("%s Alignment shifted to Neutral." % target, True)
-            elif self.number == 86: # Lebanon War
+            elif self.number == 86:  # Lebanon War
                 app.outputToHistory("US discards a random card.", False)    
                 app.changePrestige(-1, False)
                 possibles = []
@@ -1932,16 +1932,16 @@ class Card:
                         possibles.append(country)
                 target = random.choice(possibles)
                 app.placeCells(target, 1)
-            elif self.number == 87 or self.number == 88 or self.number == 89: # Martyrdom Operation
+            elif self.number == 87 or self.number == 88 or self.number == 89:  # Martyrdom Operation
                 if app.executePlot(1, False, [1], True) == 1:
                     app.outputToHistory("No plots could be placed.", True)
                     app.handleRadicalization(app.deck[str(self.number)].ops)                    
-            elif self.number == 90: # Quagmire
+            elif self.number == 90:  # Quagmire
                 app.map["United States"].posture = "Soft"
                 app.outputToHistory("US Posture now Soft.", False)
                 app.outputToHistory("US randomly discards two cards and Jihadist plays them.", False)
                 app.outputToHistory("Do this using the j # command for each card.", True)
-            elif self.number == 91: # Regional al-Qaeda
+            elif self.number == 91:  # Regional al-Qaeda
                 possibles = []
                 for country in app.map:
                     if app.map[country].is_muslim() and app.map[country].is_ungoverned():
@@ -1953,10 +1953,10 @@ class Card:
                 else:
                     app.placeCells(possibles[0], 1)
                     app.placeCells(possibles[1], 1)
-            elif self.number == 92: # Saddam
+            elif self.number == 92:  # Saddam
                 app.funding = 9
                 app.outputToHistory("Jihadist Funding now 9.", True)
-            elif self.number == 93: # Taliban
+            elif self.number == 93:  # Taliban
                 app.testCountry("Afghanistan")
                 app.map["Afghanistan"].besieged = 1
                 app.outputToHistory("Afghanistan is now a Besieged Regime.", False)
@@ -1966,7 +1966,7 @@ class Card:
                     app.changePrestige(-3)
                 else:
                     app.changePrestige(-1)
-            elif self.number == 94: # The door of Itjihad was closed
+            elif self.number == 94:  # The door of Itjihad was closed
                 target = None
                 while not target:
                     country = app.getCountryFromUser("Choose a country tested or improved to Fair or Good this or last Action Phase: ", "XXX", None)
@@ -1979,13 +1979,13 @@ class Card:
                 app.map[target].worsenGovernance()
                 app.outputToHistory("%s Governance worsened." % target, False)
                 app.outputToHistory(app.map[target].countryStr(), True)
-            elif self.number == 95: # Wahhabism
+            elif self.number == 95:  # Wahhabism
                 if app.map["Saudi Arabia"].is_islamist_rule():
                     app.changeFunding(9)
                 else:
                     app.changeFunding(app.map["Saudi Arabia"].governance_as_funding())
         else:
-            if self.number == 96: # Danish Cartoons
+            if self.number == 96:  # Danish Cartoons
                 posStr = app.getPostureFromUser("Select Scandinavia's Posture (hard or soft): ")
                 app.map["Scandinavia"].posture = posStr
                 app.outputToHistory("Scandinavia posture now %s." % posStr, False)
@@ -2000,27 +2000,27 @@ class Card:
                 else:
                     app.outputToHistory("Place a Plot 1 in %s." % target, False)
                 app.map[target].plots += 1
-            elif self.number == 97: # Fatwa
+            elif self.number == 97:  # Fatwa
                 app.outputToHistory("Trade random cards.", False)
                 if side == "US":
                     app.outputToHistory("Conduct a 1-value operation (Use commands: alert, deploy, disrupt, reassessment, regime, withdraw, or woi).", False)
                 else:
                     app.aiFlowChartMajorJihad(97)                
-            elif self.number == 98: # Gaza Withdrawl
+            elif self.number == 98:  # Gaza Withdrawl
                 if side == "US":
                     app.changeFunding(-1)
                 else:
                     app.placeCells("Israel", 1)
-            elif self.number == 99: # HAMAS Elected
+            elif self.number == 99:  # HAMAS Elected
                 app.outputToHistory("US selects and discards one card.", False)
                 app.changePrestige(-1)
                 app.changeFunding(-1)    
-            elif self.number == 100: # His Ut-Tahrir
+            elif self.number == 100:  # His Ut-Tahrir
                 if app.troops >= 10:
                     app.changeFunding(-2)
                 elif app.troops < 5:
                     app.changeFunding(2)
-            elif self.number == 101: # Kosovo
+            elif self.number == 101:  # Kosovo
                 app.changePrestige(1)
                 app.testCountry("Serbia")
                 if app.map["United States"].posture == "Soft":
@@ -2028,7 +2028,7 @@ class Card:
                 else:
                     app.map["Serbia"].posture = "Soft"
                 app.outputToHistory("Serbia Posture now %s." %                         app.map["Serbia"].posture, True)        
-            elif self.number == 102: # Former Soviet Union
+            elif self.number == 102:  # Former Soviet Union
                 testRoll = random.randint(1,6)
                 if testRoll <= 4:
                     app.map["Central Asia"].make_poor()
@@ -2036,7 +2036,7 @@ class Card:
                     app.map["Central Asia"].make_fair()
                 app.map["Central Asia"].make_neutral()
                 app.outputToHistory("%s tested, governance %s" % (app.map["Central Asia"].name, app.map["Central Asia"].govStr()), False)
-            elif self.number == 103: # Hizballah
+            elif self.number == 103:  # Hizballah
                 if side == "US":
                     oneAway = []
                     twoAway = []
@@ -2090,7 +2090,7 @@ class Card:
                     app.outputToHistory("Lebanon governance now Poor.", False)
                     app.map["Lebanon"].make_neutral()
                     app.outputToHistory("Lebanon alignment now Neutral.", True)
-            elif self.number == 104 or self.number == 105: # Iran
+            elif self.number == 104 or self.number == 105:  # Iran
                 if side == "US":
                     target = None
                     while not target:
@@ -2172,7 +2172,7 @@ class Card:
                         else:
                             app.outputToHistory("Roll failed.  No change to governance in %s." % target, False)
                             
-            elif self.number == 106: # Jaysh al-Mahdi
+            elif self.number == 106:  # Jaysh al-Mahdi
                 if side == "US":
                     target = None
                     possibles = []
@@ -2238,7 +2238,7 @@ class Card:
                             app.map[target].worsenGovernance()
                             app.outputToHistory("Governance worsened in %s." % target, False)
                             app.outputToHistory(app.map[target].countryStr(), True)
-            elif self.number == 107: # Kurdistan
+            elif self.number == 107:  # Kurdistan
                 if side == "US":
                     app.testCountry("Iraq")
                     app.map["Iraq"].aid += 1
@@ -2276,13 +2276,13 @@ class Card:
                     app.map[target].worsenGovernance()
                     app.outputToHistory("Governance worsened in %s." % target, False)
                     app.outputToHistory(app.map[target].countryStr(), True)
-            elif self.number == 108: # Musharraf
+            elif self.number == 108:  # Musharraf
                 app.removeCell("Pakistan", side)    # 20150131PS added side
                 app.map["Pakistan"].make_poor()
                 app.map["Pakistan"].make_ally()
                 app.outputToHistory("Pakistan now Poor Ally.", False)
                 app.outputToHistory(app.map["Pakistan"].countryStr(), True)
-            elif self.number == 109: # Tora Bora
+            elif self.number == 109:  # Tora Bora
                 possibles = []
                 for country in app.map:
                     if app.map[country].regimeChange > 0:
@@ -2318,7 +2318,7 @@ class Card:
                 if prestigeRolls[0] <= 4:
                     presMultiplier = -1
                 app.changePrestige(min(prestigeRolls[1], prestigeRolls[2]) * presMultiplier)
-            elif self.number == 110: # Zarqawi
+            elif self.number == 110:  # Zarqawi
                 if side == "US":
                     app.changePrestige(3)
                     app.outputToHistory("Remove card from game.", False)
@@ -2332,7 +2332,7 @@ class Card:
                     app.map[target].plots += 1
                     app.outputToHistory("Add a Plot 2 to %s." % target, False)
                     app.outputToHistory(app.map[target].countryStr(), True)                
-            elif self.number == 111: # Zawahiri
+            elif self.number == 111:  # Zawahiri
                 if side == "US":
                     app.changeFunding(-2)
                 else:
@@ -2340,7 +2340,7 @@ class Card:
                         app.changePrestige(-3)
                     else:
                         app.changePrestige(-1)
-            elif self.number == 112: # Bin Ladin
+            elif self.number == 112:  # Bin Ladin
                 if side == "US":
                     app.changeFunding(-4)
                     app.changePrestige(1)
@@ -2350,7 +2350,7 @@ class Card:
                         app.changePrestige(-4)
                     else:
                         app.changePrestige(-2)
-            elif self.number == 113: # Darfur
+            elif self.number == 113:  # Darfur
                 app.testCountry("Sudan")
                 if app.prestige >= 7:
                     app.map["Sudan"].aid += 1
@@ -2371,7 +2371,7 @@ class Card:
                         app.map["Sudan"].make_adversary()
                         app.outputToHistory("Sudan alignment worsened.", False)
                 app.outputToHistory(app.map["Sudan"].countryStr(), True)                
-            elif self.number == 114: # GTMO
+            elif self.number == 114:  # GTMO
                 app.lapsing.append("GTMO")
                 app.outputToHistory("GTMO in play. No recruit operations or Detainee Release the rest of this turn.", False)
                 prestigeRolls = []
@@ -2381,7 +2381,7 @@ class Card:
                 if prestigeRolls[0] <= 4:
                     presMultiplier = -1
                 app.changePrestige(min(prestigeRolls[1], prestigeRolls[2]) * presMultiplier)                                
-            elif self.number == 115: # Hambali
+            elif self.number == 115:  # Hambali
                 if side == "US":
                     possibles = ["Indonesia/Malaysia"]
                     targets = []
@@ -2428,7 +2428,7 @@ class Card:
                     target = random.choice(targets)
                     app.map[target].plots += 1
                     app.outputToHistory("Place an plot in %s." % target, True)
-            elif self.number == 116: # KSM
+            elif self.number == 116:  # KSM
                 if side == "US":
                     for country in app.map:
                         if app.map[country].plots > 0:
@@ -2440,7 +2440,7 @@ class Card:
                 else:
                     if app.executePlot(1, False, [1], False, False, True) == 1:
                         app.outputToHistory("No plots could be placed.", True)
-            elif self.number == 117 or self.number == 118: # Oil Price Spike
+            elif self.number == 117 or self.number == 118:  # Oil Price Spike
                 app.lapsing.append("Oil Price Spike")
                 app.outputToHistory("Oil Price Spike in play. Add +1 to the resources of each Oil Exporter country for the turn.", False)
                 if side == "US":
@@ -2448,7 +2448,7 @@ class Card:
                 else:
                     if app.getYesNoFromUser("Are there any Jihadist event cards in the discard pile? "):
                         app.outputToHistory("Draw from the Discard Pile randomly among the highest-value Jihadist-associated event cards. Put the card on top of the Jihadist hand.", True)
-            elif self.number == 119: # Saleh
+            elif self.number == 119:  # Saleh
                 app.testCountry("Yemen")
                 if side == "US":
                     if not app.map["Yemen"].is_islamist_rule():
@@ -2467,7 +2467,7 @@ class Card:
                     app.outputToHistory("Yemen Alignment worsened to %s." % app.map["Yemen"].alignment(), False)
                     app.map["Yemen"].besieged = 1
                     app.outputToHistory("Yemen now Besieged Regime.", True)
-            elif self.number == 120: # US Election
+            elif self.number == 120:  # US Election
                 app.executeCardUSElection(random.randint(1,6))
         if self.remove:
             app.outputToHistory("Remove card from game.", True)
@@ -2814,7 +2814,7 @@ class Labyrinth(cmd.Cmd):
         self.map["Iran"].links.append(self.map["Caucasus"])
         
     def scenarioSetup(self):
-        if self.scenario == 1 or self.scenario == 2: # Let's Roll
+        if self.scenario == 1 or self.scenario == 2:  # Let's Roll
             self.startYear = 2001
             self.turn = 1
             self.prestige = 7
@@ -2986,7 +2986,7 @@ class Labyrinth(cmd.Cmd):
             
     
     def testScenarioSetup(self):
-        if self.scenario == 1 or self.scenario == 2: # Let's Roll
+        if self.scenario == 1 or self.scenario == 2:  # Let's Roll
             self.startYear = 2001
             self.turn = 1
             self.prestige = 7
@@ -3739,7 +3739,7 @@ class Labyrinth(cmd.Cmd):
         target_country.reduce_aid_by(successes)  # Same for major and minor
         isMajorJihad = country in self.majorJihadPossible(len(rollList))
         self.outputToHistory("Jihad operation.  %d Successes rolled, %d Failures rolled" % (successes, failures), False)
-        if isMajorJihad: # all cells go active
+        if isMajorJihad:  # all cells go active
             self.outputToHistory("* Major Jihad attempt in %s" % country, False) 
             sleepers = target_country.sleeperCells
             target_country.sleeperCells = 0
@@ -3754,7 +3754,7 @@ class Labyrinth(cmd.Cmd):
                 elif target_country.is_neutral():
                     target_country.make_ally()
                 self.outputToHistory("Alignment %s" % target_country.alignment(), False)
-        else: # a cell is active for each roll
+        else:  # a cell is active for each roll
             self.outputToHistory("* Minor Jihad attempt in %s" % country, False) 
             for i in range(len(rollList) - target_country.numActiveCells()):
                 self.outputToHistory("Cell goes Active", False)
@@ -3764,7 +3764,7 @@ class Labyrinth(cmd.Cmd):
             target_country.worsenGovernance()
             successes -= 1
             self.outputToHistory("Governance to %s" % target_country.govStr(), False)
-        if isMajorJihad and ((successes >= 2) or ((originalBesieged > 0) and (successes >= 1))) : # Major Jihad
+        if isMajorJihad and ((successes >= 2) or ((originalBesieged > 0) and (successes >= 1))) :  # Major Jihad
             self.outputToHistory("Islamist Revolution in %s" % country, False)
             target_country.make_islamist_rule()
             self.outputToHistory("Governance to Islamist Rule", False)
@@ -6013,7 +6013,7 @@ class Labyrinth(cmd.Cmd):
                 else:
                     print "Country not eligible for War of Ideas."
                     print ""
-        if self.map[where].type == "Non-Muslim" and input != "United States": # Non-Muslim
+        if self.map[where].type == "Non-Muslim" and input != "United States":  # Non-Muslim
             postureRoll = self.getRollFromUser("Enter Posture Roll or r to have program roll: ")
             if postureRoll > 4:
                 self.map[where].posture = "Hard"
@@ -6031,7 +6031,7 @@ class Labyrinth(cmd.Cmd):
                     if self.prestige > 12:
                         self.prestige = 12
                     self.outputToHistory("US Prestige now %d" % self.prestige)
-        else: # Muslim
+        else:  # Muslim
             self.testCountry(where)
             woiRoll = self.getRollFromUser("Enter WoI roll or r to have program roll: ")
             modRoll = self.modifiedWoIRoll(woiRoll, where)
