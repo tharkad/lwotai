@@ -49,7 +49,7 @@ import cmd
 import os.path
 import random
 import sys
-import shutil
+
 try:
     import cPickle as pickle
 except:
@@ -138,7 +138,6 @@ class DieRoller:
 
 class Randomizer:
     """Picks things at random"""
-
     def __init__(self):
         pass
 
@@ -152,6 +151,10 @@ class Randomizer:
     def pick_one(self, candidates):
         """Picks the one item from the given list of candidates (returns the item)"""
         return self.pick(1, candidates)[0]
+
+    def roll_d6(self):
+        """Returns the result of rolling a six-sided die (1-6)"""
+        return self.pick_one(range(1, 7))
 
 
 class Governance:

@@ -46,3 +46,10 @@ class RandomizerTest(TestCase):
         # Check
         self.assertEqual(1, len(picks))
         self.assertTrue(picks[0] in options)
+
+    def test_roll_d6(self):
+        # Invoke
+        d6_roll = self.randomizer.roll_d6()
+
+        # Check
+        self.assertIn(d6_roll, [1, 2, 3, 4, 5, 6])
