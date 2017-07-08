@@ -5599,22 +5599,27 @@ class Labyrinth(cmd.Cmd):
             print "Invalid alignment value -", alignment
     
     def adjustCountryPosture(self, country):
+        """Prompts the user to set the posture of the given country (returns true if successful)"""
         print "Adjusting posture for -", country
         while True:
             posture = self.my_raw_input("Enter posture ('Hard', 'Soft', 'Untested'): ")
-            if posture == "":
+            if posture == "":  # User aborted
                 return False
-            if posture == "Hard" or posture == "Soft" or posture == "Untested":
-                print "Changing posture to", posture
-                if posture == "Untested":
-                    self.map[country].posture = ""
-                    return True
-                else:
-                    self.map[country].posture = posture
-                    return True
-            else:
-                print "Invalid posture value -", posture
-    
+            if posture.lower() == "hard":
+                print "Changing posture to Hard"
+                self.map[country].make_hard()
+                return True
+            if posture.lower() == "soft":
+                print "Changing posture to Soft"
+                self.map[country].make_soft()
+                return True
+            if posture.lower() == "untested":
+                print "Changing posture to Untested"
+                self.map[country].remove_posture()
+                return True
+            print "Invalid posture value '{}'".format(posture)
+            return False
+
     def adjustCountryTroops(self, country):
         print "Adjusting troops for - ", country
         if 'NATO' in self.map[country].markers:
