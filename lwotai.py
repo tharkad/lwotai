@@ -49,7 +49,7 @@ import cmd
 import os.path
 import random
 import sys
-import shutil
+
 try:
     import cPickle as pickle
 except:
@@ -125,30 +125,26 @@ class Alignments:
     NEUTRAL = Alignment("Neutral")
 
 
-class DieRoller:
-    """Rolls the die"""
-
-    def __init__(self):
-        pass
-
-    def roll(self, times):
-        """Rolls a d6 the given number of times and returns a list of the results"""
-        return [random.randint(1, 6) for i in range(times)]
-
-
 class Randomizer:
     """Picks things at random"""
-
     def __init__(self):
         pass
 
-    @staticmethod
-    def pick(quantity, candidates):
-        """Picks the given quantity of items from the given list of candidates"""
+    def pick(self, quantity, candidates):
+        """Picks the given quantity of items from the given list of candidates (returns a list)"""
         assert quantity <= len(candidates)
         new_list = list(candidates)
         random.shuffle(new_list)
         return new_list[0:quantity]
+
+    def pick_one(self, candidates):
+        """Picks the one item from the given list of candidates (returns the item)"""
+        return self.pick(1, candidates)[0]
+
+    def roll_d6(self, times):
+        """Returns the result of rolling a six-sided die the given number of
+        times (returns a list of that size containing numbers from 1 to 6)"""
+        return [self.pick_one(range(1, 7)) for index in range(times)]
 
 
 class Governance:
@@ -1060,7 +1056,7 @@ class Card:
             return False
         return False
     
-    def playEvent(self, side, app, die_roller = DieRoller()):
+    def playEvent(self, side, app):
         app.outputToHistory("Card played for Event.", True)
         if self.type == "US" and side == "Jihadist":
             return False
@@ -1656,7 +1652,7 @@ class Card:
                     app.outputToHistory("No cards left to recruit to US.", True)
                     return
                 ops = app.deck[str(cardNum)].ops
-                rolls = die_roller.roll(ops)
+                rolls = app.randomizer.roll_d6(ops)
                 app.executeRecruit("United States", ops, rolls, 2)
             elif self.number == 49: # Al-Ittihad al-Islami
                 app.placeCells("Somalia", 1)
@@ -1690,16 +1686,9 @@ class Card:
                 app.testCountry("China")
                 if app.cells > 0:
                     if app.map["China"].posture == "Soft":
-                        app.map["China"].sleeperCells += 1
-                        app.cells -= 1
-                        app.outputToHistory("Sleeper Cell placed in China", False)
-                        app.outputToHistory(app.map["China"].countryStr(), True)
+                        app.place_cell("China")
                     else:
-                        app.testCountry("Central Asia")
-                        app.map["Central Asia"].sleeperCells += 1
-                        app.cells -= 1
-                        app.outputToHistory("Sleeper Cell placed in Central Asia", False)
-                        app.outputToHistory(app.map["Central Asia"].countryStr(), True)
+                        app.place_cell("Central Asia")
                 else:
                     app.outputToHistory("No cells to place.", True)
             elif self.number == 56: # Vieira de Mello Slain
@@ -1714,9 +1703,7 @@ class Card:
                 app.outputToHistory("Al-Anbar in play.", True)
                 app.testCountry("Iraq")
                 if app.cells > 0:
-                    app.map["Iraq"].sleeperCells += 1
-                    app.cells -= 1
-                    app.outputToHistory("Sleeper Cell placed in Iraq", True)
+                    app.place_cell("Iraq")
             elif self.number == 59: # Amerithrax
                 app.outputToHistory("US side discards its highest-value US-associated event card, if it has any.", True)
             elif self.number == 60: # Bhutto Shot
@@ -1733,11 +1720,7 @@ class Card:
                         else:
                             target = input
                             break
-                    app.testCountry(target)
-                    app.map[target].sleeperCells += 1
-                    app.cells -= 1
-                    app.outputToHistory("Sleeper Cell placed in %s" % target, False)
-                    app.outputToHistory(app.map[target].countryStr(), True)
+                    app.place_cell(target)
                 app.outputToHistory("Draw a card for the Jihadist and put it on the top of their hand.", True)
             elif self.number == 62: # Ex-KGB
                 if "CTR" in app.map["Russia"].markers:
@@ -4606,19 +4589,25 @@ class Labyrinth(cmd.Cmd):
         for i in range(ops):
             plotRolls.append(random.randint(1,6))
         return self.executePlot(ops, isOps, plotRolls)
-                        
+
+    def place_cell(self, country_name):
+        """Places a cell from the funding track into the given country"""
+        country = self.map[country_name]
+        country.cadre = 0
+        country.sleeperCells += 1
+        self.cells -= 1
+        self.testCountry(country_name)
+        self.outputToHistory("--> Sleeper Cell placed in %s." % country_name, True)
+        self.outputToHistory(self.map[country_name].countryStr(), True)
+
     def handleRadicalization(self, ops):
         self.outputToHistory("* Radicalization with %d ops." % ops, False)
         opsRemaining = ops
     # First box
         if opsRemaining > 0:
             if self.cells > 0:
-                country = random.choice(self.map.keys())
-                self.map[country].sleeperCells += 1
-                self.cells -= 1
-                self.outputToHistory("--> Cell placed in %s." % country, True)
-                self.testCountry(country)
-                self.outputToHistory(self.map[country].countryStr(), True)
+                country_name = self.randomizer.pick_one(self.map.keys())
+                self.place_cell(country_name)
                 opsRemaining -= 1
     # Second box
         if opsRemaining > 0:
@@ -5918,7 +5907,7 @@ class Labyrinth(cmd.Cmd):
                     print ""
                     return
                 else:
-                    print "Deploy from %s = %d availalbe" % (input, self.map[input].troops())
+                    print "Deploy from %s = %d available" % (input, self.map[input].troops())
                     print ""
                     available = self.map[input].troops()
                     moveFrom = input
@@ -6131,7 +6120,7 @@ class Labyrinth(cmd.Cmd):
                     print ""
                     return
                 else:
-                    print "Deploy from %s = %d availalbe" % (input, self.map[input].troops())
+                    print "Deploy from %s = %d available" % (input, self.map[input].troops())
                     print ""
                     available = self.map[input].troops()
                     moveFrom = input

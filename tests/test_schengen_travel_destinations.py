@@ -25,7 +25,7 @@ class TravelDestinationsForSchengenVisasTest(LabyrinthTestCase):
     def test_us_hard_and_multiple_unmarked_schengens(self):
         # Set up
         mock_randomizer = mock(Randomizer())
-        app = Labyrinth(1, 1, self.set_up_test_scenario, randomizer = mock_randomizer)
+        app = Labyrinth(1, 1, self.set_up_test_scenario, randomizer=mock_randomizer)
         schengen_countries = self.schengen_countries(app)
         schengen_country_names = [country.name for country in schengen_countries]
         chosen_countries = ['c1', 'c2']

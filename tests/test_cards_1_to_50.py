@@ -1,8 +1,9 @@
 import unittest
 
-from fakes import FakeDieRoller
+from mockito import when, mock
+
 from labyrinth_test_case import LabyrinthTestCase
-from lwotai import Labyrinth
+from lwotai import Labyrinth, Randomizer
 from lwotai import POOR
 
 
@@ -1438,11 +1439,17 @@ class Card48(LabyrinthTestCase):
         self.assertTrue(app.deck["48"].putsCell(app))            
 
     def test_event(self):
-        die_roller = FakeDieRoller(1, 3, 2)
-        app = Labyrinth(1, 1, self.set_up_blank_test_scenario, ["120"])
+        # Set up
+        mock_randomizer = mock(Randomizer())
+        when(mock_randomizer).roll_d6(3).thenReturn([1, 3, 2])
+        app = Labyrinth(1, 1, self.set_up_blank_test_scenario, ["120"], randomizer=mock_randomizer)
         self.assertTrue(app.numCellsAvailable() > 0)
         self.assertCells(app, "United States", 0)
-        app.deck["48"].playEvent("Jihadist", app, die_roller)
+
+        # Invoke
+        app.deck["48"].playEvent("Jihadist", app)
+
+        # Check
         self.assertCells(app, "United States", 2)
 
 
