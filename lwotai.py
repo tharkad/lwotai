@@ -355,6 +355,11 @@ class Country:
         if self.type == "Non-Muslim":
             self.posture = ""
 
+    def remove_plot_marker(self):
+        """Removes one plot marker from this country, if any are present"""
+        if self.plots > 0:
+            self.plots -= 1
+
     def is_non_recruit_success(self, roll):
         return self.is_governed() and self.__governance.is_success(roll)
 
@@ -3415,11 +3420,11 @@ class Labyrinth(cmd.Cmd):
             return 0
             
     def changePrestige(self, delta, lineFeed=True):
-        self.prestige += delta
-        if self.prestige < 1:
-            self.prestige = 1
-        elif self.prestige > 12:
-            self.prestige = 12
+        """Changes US prestige by the given amount, then prints the new value"""
+        if delta < 0:
+            self._reduce_prestige(-delta)
+        elif delta > 0:
+            self._increase_prestige(delta)
         self.outputToHistory("Prestige now %d" % self.prestige, lineFeed)
                 
     def changeFunding(self, delta, lineFeed=True):
@@ -3666,9 +3671,7 @@ class Labyrinth(cmd.Cmd):
                 self.outputToHistory("Cadre added in %s." % where, False)
                 self.map[where].cadre = 1
             if self.map[where].troops() >= 2:
-                self.prestige += 1
-                if self.prestige > 12:
-                    self.prestige = 12
+                self._increase_prestige(1)
                 self.outputToHistory("US Prestige now %d." % self.prestige, False)
             self.outputToHistory(self.map[where].countryStr(), True)
         else:
@@ -3730,9 +3733,7 @@ class Labyrinth(cmd.Cmd):
                         self.map[where].activeCells += 2
                         self.outputToHistory("* %d cell(s) disrupted in %s." % (numToDisrupt, where))
             if self.map[where].troops() >= 2:
-                self.prestige += 1
-                if self.prestige > 12:
-                    self.prestige = 12
+                self._increase_prestige(1)
                 self.outputToHistory("US Prestige now %d." % self.prestige, False)
             self.outputToHistory(self.map[where].countryStr(), True)
         
@@ -3900,7 +3901,21 @@ class Labyrinth(cmd.Cmd):
                 if opsRemaining <= 0:
                     break
             return returnList
-            
+
+    def _increase_prestige(self, amount):
+        """Increases US prestige by the given amount (to no more than 12)"""
+        assert amount > 0
+        self.prestige += amount
+        if self.prestige > 12:
+            self.prestige = 12
+
+    def _reduce_prestige(self, amount):
+        """Reduces US prestige by the given amount (to no less than 1)"""
+        assert amount > 0
+        self.prestige -= amount
+        if self.prestige < 1:
+            self.prestige = 1
+
     def recruitChoice(self, ops, isMadrassas=False):
         self.debugPrint("DEBUG: recruit with remaining %d ops" % ops)
         self.debugPrint("DEBUG: recruit with remaining %d ops" % (2*ops))
@@ -4657,111 +4672,112 @@ class Labyrinth(cmd.Cmd):
     def resolvePlot(self, country, plotType, postureRoll, usPrestigeRolls, schCountries, schPostureRolls, govRolls, isBacklash=False):
         self.outputToHistory("--> Resolve \"%s\" plot in %s" % (str(plotType), country), False)
         if country == "United States":
-            if plotType == "WMD":
-                self.gameOver = True
-                self.outputToHistory("== GAME OVER - JIHADIST AUTOMATIC VICTORY ==", True)
-            else:
-                self.funding = 9
-                self.outputToHistory("Jihadist Funding now 9", False)
-                presMultiplier = 1
-                if usPrestigeRolls[0] <= 4:
-                    presMultiplier = -1
-                self.changePrestige(min(usPrestigeRolls[1], usPrestigeRolls[2]) * presMultiplier)
-                self.outputToHistory("US Prestige now %d" % self.prestige, False)    
-                if postureRoll <= 4:
-                    self.map["United States"].posture = "Soft"
-                else:
-                    self.map["United States"].posture = "Hard"
-                self.outputToHistory("US Posture now %s" % self.map["United States"].posture, True)    
-        elif self.map[country].type != "Non-Muslim":
-            if not isBacklash:
-                if self.map[country].is_good():
-                    self.changeFunding(2)
-                else:
-                    self.changeFunding(1)
-                self.outputToHistory("Jihadist Funding now %d" % self.funding, False)
-            else:
-                if plotType == "WMD":
-                    self.funding = 1
-                else:
-                    self.funding -= 1
-                    if self.map[country].is_good():
-                        self.funding -= 1
-                    if self.funding < 1:
-                        self.funding = 1
-                self.outputToHistory("BACKLASH: Jihadist Funding now %d" % self.funding, False)
-            if self.map[country].troops() > 0:
-                if plotType == "WMD":
-                    self.prestige = 1
-                else:
-                    self.prestige -= 1
-                if self.prestige < 1:
-                    self.prestige = 1
-                self.outputToHistory("Troops present so US Prestige now %d" % self.prestige, False)
-            if country != "Iran":
-                successes = 0
-                failures = 0
-                for roll in govRolls:
-                    if self.map[country].is_non_recruit_success(roll):
-                        successes += 1
-                    else:
-                        failures += 1
-                self.outputToHistory("Governance rolls: %d Successes rolled, %d Failures rolled" % (successes, failures), False)
-                if self.map[country].aid and successes > 0:
-                    self.map[country].aid -= successes    #20150131PS remove 1 aid for each success
-                    if self.map[country].aid < 0:
-                        self.map[country].aid = 0
-                    self.outputToHistory("Aid removed.", False)
-                if self.map[country].is_poor() and successes > 0:
-                    self.outputToHistory("Governance stays at %s" % self.map[country].govStr(), True)
-                while successes > 0 and self.map[country].governance_is_better_than(POOR):
-                    self.map[country].worsenGovernance()
-                    successes -= 1
-                    self.outputToHistory("Governance to %s" % self.map[country].govStr(), True)
+            self._resolve_plot_in_us(plotType, postureRoll, usPrestigeRolls)
         elif self.map[country].type == "Non-Muslim":
-            if country == "Israel" and "Abbas" in self.markers:
-                self.markers.remove("Abbas")
-                self.outputToHistory("Abbas no longer in play.", True)
-            if country == "India" and "Indo-Pakistani Talks" in self.markers:
-                self.markers.remove("Indo-Pakistani Talks")
-                self.outputToHistory("Indo-Pakistani Talks no longer in play.", True)
-            if plotType == "WMD":
-                self.funding = 9
+            self._resolve_plot_in_non_muslim_country(country, plotType, postureRoll, schCountries, schPostureRolls)
+        else:  # e.g. Iran
+            self._resolve_plot_in_muslim_country(country, govRolls, isBacklash, plotType)
+        self.map[country].remove_plot_marker()
+
+    def _resolve_plot_in_non_muslim_country(self, country, plotType, postureRoll, schCountries, schPostureRolls):
+        if country == "Israel" and "Abbas" in self.markers:
+            self.markers.remove("Abbas")
+            self.outputToHistory("Abbas no longer in play.", True)
+        if country == "India" and "Indo-Pakistani Talks" in self.markers:
+            self.markers.remove("Indo-Pakistani Talks")
+            self.outputToHistory("Indo-Pakistani Talks no longer in play.", True)
+        if plotType == "WMD":
+            self.funding = 9
+        else:
+            if self.map[country].is_good():
+                self.changeFunding(plotType * 2)
             else:
-                if self.map[country].is_good():
-                    self.changeFunding(plotType * 2)
+                self.changeFunding(plotType)
+        self.outputToHistory("Jihadist Funding now %d" % self.funding, False)
+        if country != "Israel":
+            if postureRoll <= 4:
+                self.map[country].posture = "Soft"
+            else:
+                self.map[country].posture = "Hard"
+            self.outputToHistory("%s Posture now %s" % (country, self.map[country].posture), True)
+        if self.map[country].troops() > 0:
+            if plotType == "WMD":
+                self.prestige = 1
+            else:
+                self._reduce_prestige(1)
+            self.outputToHistory("Troops present so US Prestige now %d" % self.prestige, False)
+        if self.map[country].schengen:
+            for i in range(len(schCountries)):
+                if schPostureRolls[i] <= 4:
+                    self.map[schCountries[i]].posture = "Soft"
                 else:
-                    self.changeFunding(plotType)
+                    self.map[schCountries[i]].posture = "Hard"
+                self.outputToHistory("%s Posture now %s" % (schCountries[i], self.map[schCountries[i]].posture), False)
+        self.outputToHistory("", False)
+
+    def _resolve_plot_in_muslim_country(self, country, govRolls, isBacklash, plotType):
+        if not isBacklash:
+            if self.map[country].is_good():
+                self.changeFunding(2)
+            else:
+                self.changeFunding(1)
             self.outputToHistory("Jihadist Funding now %d" % self.funding, False)
-            if country != "Israel":
-                if postureRoll <= 4:
-                    self.map[country].posture = "Soft"
+        else:
+            if plotType == "WMD":
+                self.funding = 1
+            else:
+                self.funding -= 1
+                if self.map[country].is_good():
+                    self.funding -= 1
+                if self.funding < 1:
+                    self.funding = 1
+            self.outputToHistory("BACKLASH: Jihadist Funding now %d" % self.funding, False)
+        if self.map[country].troops() > 0:
+            if plotType == "WMD":
+                self.prestige = 1
+            else:
+                self._reduce_prestige(1)
+            self.outputToHistory("Troops present so US Prestige now %d" % self.prestige, False)
+        if country != "Iran":
+            successes = 0
+            failures = 0
+            for roll in govRolls:
+                if self.map[country].is_non_recruit_success(roll):
+                    successes += 1
                 else:
-                    self.map[country].posture = "Hard"
-                self.outputToHistory("%s Posture now %s" % (country, self.map[country].posture), True)
+                    failures += 1
+            self.outputToHistory("Governance rolls: %d Successes rolled, %d Failures rolled" % (successes, failures),
+                                 False)
+            if self.map[country].aid and successes > 0:
+                self.map[country].aid -= successes  # 20150131PS remove 1 aid for each success
+                if self.map[country].aid < 0:
+                    self.map[country].aid = 0
+                self.outputToHistory("Aid removed.", False)
+            if self.map[country].is_poor() and successes > 0:
+                self.outputToHistory("Governance stays at %s" % self.map[country].govStr(), True)
+            while successes > 0 and self.map[country].governance_is_better_than(POOR):
+                self.map[country].worsenGovernance()
+                successes -= 1
+                self.outputToHistory("Governance to %s" % self.map[country].govStr(), True)
 
-            if self.map[country].troops() > 0:
-                if plotType == "WMD":
-                    self.prestige = 1
-                else:
-                    self.prestige -= 1
-                if self.prestige < 1:
-                    self.prestige = 1
-                self.outputToHistory("Troops present so US Prestige now %d" % self.prestige, False)
+    def _resolve_plot_in_us(self, plotType, postureRoll, usPrestigeRolls):
+        if plotType == "WMD":
+            self.gameOver = True
+            self.outputToHistory("== GAME OVER - JIHADIST AUTOMATIC VICTORY ==", True)
+        else:
+            self.funding = 9
+            self.outputToHistory("Jihadist Funding now 9", False)
+            presMultiplier = 1
+            if usPrestigeRolls[0] <= 4:
+                presMultiplier = -1
+            self.changePrestige(min(usPrestigeRolls[1], usPrestigeRolls[2]) * presMultiplier)
+            self.outputToHistory("US Prestige now %d" % self.prestige, False)
+            if postureRoll <= 4:
+                self.map["United States"].posture = "Soft"
+            else:
+                self.map["United States"].posture = "Hard"
+            self.outputToHistory("US Posture now %s" % self.map["United States"].posture, True)
 
-
-            if self.map[country].schengen:
-                for i in range(len(schCountries)):
-                    if schPostureRolls[i] <= 4:
-                        self.map[schCountries[i]].posture = "Soft"
-                    else:
-                        self.map[schCountries[i]].posture = "Hard"
-                    self.outputToHistory("%s Posture now %s" % (schCountries[i], self.map[schCountries[i]].posture), False)
-            self.outputToHistory("", False)
-        self.map[country].plots -= 1
-        if self.map[country].plots < 0:
-            self.map[country].plots = 0
-    
     def eventPutsCell(self, cardNum):
         return self.deck[str(cardNum)].putsCell(self)
         
@@ -6033,17 +6049,13 @@ class Labyrinth(cmd.Cmd):
                 self.map[where].posture = "Hard"
                 self.outputToHistory("* War of Ideas in %s - Posture Hard" % where)
                 if self.map["United States"].posture == "Hard":
-                    self.prestige += 1
-                    if self.prestige > 12:
-                        self.prestige = 12
+                    self._increase_prestige(1)
                     self.outputToHistory("US Prestige now %d" % self.prestige)
             else:
                 self.map[where].posture = "Soft"
                 self.outputToHistory("* War of Ideas in %s - Posture Soft" % where)
                 if self.map["United States"].posture == "Soft":
-                    self.prestige += 1
-                    if self.prestige > 12:
-                        self.prestige = 12
+                    self._increase_prestige(1)
                     self.outputToHistory("US Prestige now %d" % self.prestige)
         else:  # Muslim
             self.testCountry(where)
@@ -6400,12 +6412,10 @@ class Labyrinth(cmd.Cmd):
                 anyIR = True
                 break
         if anyIR:
-            self.prestige -= 1
-            if self.prestige < 1:
-                self.prestige = 1
-                self.outputToHistory("Islamist Rule - US Prestige now %d" % self.prestige, False)
+            self._reduce_prestige(1)
+            self.outputToHistory("Islamist Rule - US Prestige now %d" % self.prestige, False)
         else:
-            self.outputToHistory("No Islamist Rule - US Prestige stays at %d" % self.prestige, False)    #20150131PS - added
+            self.outputToHistory("No Islamist Rule - US Prestige stays at %d" % self.prestige, False)  # 20150131PS - added
         worldPos = 0
         for country in self.map:
             if not (self.map[country].type == "Shia-Mix" or self.map[country].type == "Suni") and self.map[country].type != "Iran" and self.map[country].name != "United States":
@@ -6414,9 +6424,7 @@ class Labyrinth(cmd.Cmd):
                 elif self.map[country].posture == "Soft":
                     worldPos -= 1
         if (self.map["United States"].posture == "Hard" and worldPos >= 3) or (self.map["United States"].posture == "Soft" and worldPos <= -3):
-            self.prestige += 1
-            if self.prestige > 12:
-                self.prestige = 12
+            self._increase_prestige(1)
             self.outputToHistory("GWOT World posture is 3 and matches US - US Prestige now %d" % self.prestige, False)
         for event in self.lapsing:
             self.outputToHistory("%s has Lapsed." % event, False)
