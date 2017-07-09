@@ -5123,8 +5123,26 @@ class Labyrinth(cmd.Cmd):
                     if self.map[country].is_ally():
                         self.map[country].printCountry()
 
+    @staticmethod
+    def do_reserves(na=None):
+        """Allows the US player to play a card for the Reserves action (6.3.3)"""
+        print "Discard this card and add its Ops value to the US Reserves track."
+
+    def do_res(self, na=None):
+        """Alias for the 'reserves' command"""
+        self.do_reserves()
+
+    @staticmethod
+    def help_reserves():
+        """Provides help for the 'reserves' command"""
+        print "The 'Reserves' command adds a card's Ops value to the US Reserves track."
+        print "Remember to set this track to 0 when you use it or at end of turn, whichever comes first."
+
+    def help_res(self):
+        """Alias for the 'help reserves' command"""
+        self.help_reserves()
+
     def do_status(self, country_name):
-        
         if country_name:
             goodCountry = False
             possible = []
