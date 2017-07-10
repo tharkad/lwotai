@@ -504,18 +504,29 @@ class Card20(LabyrinthTestCase):
 class Card21(LabyrinthTestCase):
     """Let's Roll"""
 
-    def test_playable(self):
+    event_owner = "US"
+
+    def test_playable_if_plot_in_ally_country(self):
         app = Labyrinth(1, 1, self.set_up_blank_test_scenario)
-        self.assertFalse(app.deck["21"].playable("US", app, True))
-        app.map["Canada"].plots = 1
-        self.assertTrue(app.deck["21"].playable("US", app, True))
-        app.map["Canada"].plots = 0
-        self.assertFalse(app.deck["21"].playable("US", app, True))
-        app.map["Saudi Arabia"].make_fair()
-        app.map["Saudi Arabia"].plots = 1
-        self.assertFalse(app.deck["21"].playable("US", app, True))
-        app.map["Saudi Arabia"].make_good()
-        self.assertTrue(app.deck["21"].playable("US", app, True))
+        potential_ally = "Saudi Arabia"  # only Muslim countries can be allies
+        app.map[potential_ally].plots = 1
+        app.map[potential_ally].make_ally()
+        self.assert_playable(app, True)
+        app.map[potential_ally].make_neutral()
+        self.assert_playable(app, False)
+
+    def test_playable_if_plot_in_good_country(self):
+        app = Labyrinth(1, 1, self.set_up_blank_test_scenario)
+        good_country = "Canada"  # Canada is always Good
+        app.map[good_country].plots = 1
+        self.assert_playable(app, True)
+        app.map[good_country].plots = 0
+        self.assert_playable(app, False)
+
+    def assert_playable(self, app, expected_value):
+        """Asserts that this card is (or is not) playable for the given game state"""
+        playable = app.deck["21"].playable(self.event_owner, app, True)
+        self.assertEqual(playable, expected_value)
 
     def test_event(self):
         app = Labyrinth(1, 1, self.set_up_blank_test_scenario)
@@ -529,7 +540,7 @@ class Card21(LabyrinthTestCase):
         app.map["Spain"].posture = "Soft"
         app.map["Saudi Arabia"].make_good()
         app.map["Saudi Arabia"].plots = 1
-        app.deck["21"].playEvent("US", app)
+        app.deck["21"].playEvent(self.event_owner, app)
         self.assertTrue(app.map["Spain"].posture == "Hard")
         self.assertTrue(app.map["Saudi Arabia"].plots == 0)
 
