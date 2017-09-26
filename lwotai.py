@@ -4966,7 +4966,7 @@ class Labyrinth(cmd.Cmd):
         print "-------------------------------"
         for country in self.map:
             if self.map[country].is_neutral() or self.map[country].is_ally() or self.map[country].is_ungoverned():
-                print "%s, %s %s - %d Active Cells, %d Sleeper Cells, %d Cadre, %d troops" % (country, self.map[country].govStr(), self.map[country].__alignment, self.map[country].activeCells, self.map[country].sleeperCells, self.map[country].cadre, self.map[country].troops())
+                print "%s, %s %s - %d Active Cells, %d Sleeper Cells, %d Cadre, %d troops" % (country, self.map[country].govStr(), self.map[country].alignment(), self.map[country].activeCells, self.map[country].sleeperCells, self.map[country].cadre, self.map[country].troops())
         for country in self.map:
             if self.map[country].type == "Non-Muslim" and country != "United States" and self.map[country].posture == "Hard":
                 print "%s, Posture %s" % (country, self.map[country].posture)
