@@ -112,6 +112,14 @@ class Alignment:
     def __str__(self):
         return self.__name
 
+    def __eq__(self, other):
+        if isinstance(other, self.__class__):
+            return self.__name == other.__name
+        return False
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
 
 # The possible alignments (or None)
 # noinspection PyGlobalUndefined
